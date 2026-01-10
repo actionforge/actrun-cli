@@ -1,0 +1,45 @@
+editor:
+  version:
+    created: v1.20.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 0
+      y: 0
+  - id: http-v1-yellow-gooseberry-kangaroo
+    type: core/http@v1
+    position:
+      x: 340
+      y: -160
+    inputs:
+      url: http://localhost:19999
+  - id: print-v1-black-pomegranate-pineapple
+    type: core/print@v1
+    position:
+      x: 880
+      y: -120
+    inputs:
+      values[0]: null
+connections:
+  - src:
+      node: http-v1-yellow-gooseberry-kangaroo
+      port: body
+    dst:
+      node: print-v1-black-pomegranate-pineapple
+      port: values[0]
+executions:
+  - src:
+      node: http-v1-yellow-gooseberry-kangaroo
+      port: exec-success
+    dst:
+      node: print-v1-black-pomegranate-pineapple
+      port: exec
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: http-v1-yellow-gooseberry-kangaroo
+      port: exec

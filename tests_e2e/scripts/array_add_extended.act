@@ -1,0 +1,124 @@
+editor:
+  version:
+    created: v1.28.1
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: -1030
+      y: 40
+  - id: array-add-v1-seahorse-chicken-butterfly
+    type: core/array-add@v1
+    position:
+      x: 340
+      y: -20
+  - id: string-array-v1-banana-dragonfruit-horse
+    type: core/string-array@v1
+    position:
+      x: -290
+      y: 300
+    inputs:
+      inputs[0]: foo
+      inputs[1]: bar
+      inputs[2]: bas
+  - id: print-v1-peach-whale-strawberry
+    type: core/print@v1
+    position:
+      x: 1140
+      y: 130
+    inputs:
+      values[0]: null
+      values[1]: null
+  - id: for-loop-v1-orange-purple-cranberry
+    type: core/for-loop@v1
+    position:
+      x: -610
+      y: 30
+    inputs:
+      first_index: 0
+      last_index: 100
+  - id: select-v1-ostrich-silver-mango
+    type: core/select-data@v1
+    position:
+      x: 390
+      y: -280
+    inputs:
+      choices[0]: null
+      choices[1]: null
+  - id: math-compare-op-v1-grapefruit-brown-crab
+    type: core/math-compare-op@v1
+    position:
+      x: -160
+      y: -160
+    inputs:
+      operator: '!='
+connections:
+  - src:
+      node: string-array-v1-banana-dragonfruit-horse
+      port: array
+    dst:
+      node: print-v1-peach-whale-strawberry
+      port: values[1]
+  - src:
+      node: for-loop-v1-orange-purple-cranberry
+      port: index
+    dst:
+      node: array-add-v1-seahorse-chicken-butterfly
+      port: item
+  - src:
+      node: for-loop-v1-orange-purple-cranberry
+      port: index
+    dst:
+      node: math-compare-op-v1-grapefruit-brown-crab
+      port: op1
+  - src:
+      node: math-compare-op-v1-grapefruit-brown-crab
+      port: result
+    dst:
+      node: select-v1-ostrich-silver-mango
+      port: index
+  - src:
+      node: string-array-v1-banana-dragonfruit-horse
+      port: array
+    dst:
+      node: select-v1-ostrich-silver-mango
+      port: choices[0]
+  - src:
+      node: array-add-v1-seahorse-chicken-butterfly
+      port: array
+    dst:
+      node: select-v1-ostrich-silver-mango
+      port: choices[1]
+  - src:
+      node: select-v1-ostrich-silver-mango
+      port: value
+    dst:
+      node: array-add-v1-seahorse-chicken-butterfly
+      port: array
+  - src:
+      node: array-add-v1-seahorse-chicken-butterfly
+      port: array
+    dst:
+      node: print-v1-peach-whale-strawberry
+      port: values[0]
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: for-loop-v1-orange-purple-cranberry
+      port: exec
+  - src:
+      node: for-loop-v1-orange-purple-cranberry
+      port: exec-body
+    dst:
+      node: array-add-v1-seahorse-chicken-butterfly
+      port: exec
+  - src:
+      node: for-loop-v1-orange-purple-cranberry
+      port: exec-completed
+    dst:
+      node: print-v1-peach-whale-strawberry
+      port: exec

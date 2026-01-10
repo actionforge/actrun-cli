@@ -1,0 +1,50 @@
+build hasn't expired yet
+looking for value: 'env_file'
+  no value (is optional) found for: 'env_file'
+looking for value: 'config_file'
+  no value (is optional) found for: 'config_file'
+looking for value: 'concurrency'
+  no value (is optional) found for: 'concurrency'
+looking for value: 'graph_file'
+  found value in: 'env (shell)'
+  evaluated to: 'inputs-exec.act'
+looking for value: 'session_token'
+  no value (is optional) found for: 'session_token'
+looking for value: 'create_debug_session'
+  found value in flags
+  evaluated to: 'false'
+PushNodeVisit: start, execute: true
+🟢 Execute 'Group (core-group-v1-nectarine-apricot-cat)'
+PushNodeVisit: core-group-v1-nectarine-apricot-cat, execute: true
+🟢 Execute 'Group Inputs (core-group-inputs-v1-boysenberry-gold-brown)'
+PushNodeVisit: core-group-inputs-v1-boysenberry-gold-brown, execute: true
+🟢 Execute 'Print (core-print-v1-panda-peach-raspberry)'
+PushNodeVisit: core-print-v1-panda-peach-raspberry, execute: true
+PushNodeVisit: core-string-fmt-v1-pear-chicken-pear, execute: false
+In First Group Node: non-empty-string: (ROOT GROUP); also-non-empty-string: (only on most outer group)
+🟢 Execute 'Group (core-group-v1-nectarine-apricot-cat)'
+PushNodeVisit: core-group-v1-nectarine-apricot-cat, execute: true
+🟢 Execute 'Group Inputs (core-group-inputs-v1-boysenberry-gold-brown)'
+PushNodeVisit: core-group-inputs-v1-boysenberry-gold-brown, execute: true
+🟢 Execute 'Print (core-print-v1-panda-peach-raspberry)'
+PushNodeVisit: core-print-v1-panda-peach-raspberry, execute: true
+PushNodeVisit: core-string-fmt-v1-pear-chicken-pear, execute: false
+Input Value: must not be empty: (INNER GROUP); must be empty: (); must also be empty: ()
+🟢 Execute 'Group Output (core-group-outputs-v1-fox-grape-crab)'
+PushNodeVisit: core-group-outputs-v1-fox-grape-crab, execute: true
+🟢 Execute 'Group (core-group-v1-nectarine-apricot-cat)'
+PushNodeVisit: core-group-v1-nectarine-apricot-cat, execute: true
+🟢 Execute 'Print (core-print-v1-lobster-red-kiwano)'
+PushNodeVisit: core-print-v1-lobster-red-kiwano, execute: true
+PushNodeVisit: core-group-v1-nectarine-apricot-cat, execute: false
+PushNodeVisit: core-group-outputs-v1-fox-grape-crab, execute: false
+PushNodeVisit: core-string-fmt-v1-persimmon-apricot-orange, execute: false
+Funnelled Data: INNER GROUP
+🟢 Execute 'Group Output (core-group-outputs-v1-fox-grape-crab)'
+PushNodeVisit: core-group-outputs-v1-fox-grape-crab, execute: true
+🟢 Execute 'Group (core-group-v1-nectarine-apricot-cat)'
+PushNodeVisit: core-group-v1-nectarine-apricot-cat, execute: true
+🟢 Execute 'Print (core-print-v1-panda-peach-raspberry)'
+PushNodeVisit: core-print-v1-panda-peach-raspberry, execute: true
+PushNodeVisit: core-string-fmt-v1-pear-chicken-pear, execute: false
+Input Value: must be empty=() must also be empty=()

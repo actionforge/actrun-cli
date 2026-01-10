@@ -1,0 +1,1 @@
+This folder contains test files and examples copies from various projects hosted on GitHub. The license files for these projects reflect the source.

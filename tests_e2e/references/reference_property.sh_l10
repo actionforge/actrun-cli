@@ -1,0 +1,39 @@
+build hasn't expired yet
+looking for value: 'env_file'
+  no value (is optional) found for: 'env_file'
+looking for value: 'config_file'
+  no value (is optional) found for: 'config_file'
+looking for value: 'concurrency'
+  no value (is optional) found for: 'concurrency'
+looking for value: 'graph_file'
+  found value in: 'env (shell)'
+  evaluated to: 'property.act'
+looking for value: 'session_token'
+  no value (is optional) found for: 'session_token'
+looking for value: 'create_debug_session'
+  found value in flags
+  evaluated to: 'false'
+PushNodeVisit: start, execute: true
+🟢 Execute 'File Read (file-read-v1-starfruit-crab-persimmon)'
+PushNodeVisit: file-read-v1-starfruit-crab-persimmon, execute: true
+PushNodeVisit: const-string-v1-starfish-goat-gooseberry, execute: false
+🟢 Execute 'Parser (parser-v1-magenta-horse-passionfruit)'
+PushNodeVisit: parser-v1-magenta-horse-passionfruit, execute: true
+PushNodeVisit: (cached) file-read-v1-starfruit-crab-persimmon, execute: false
+🟢 Execute 'File Read (file-read-v1-peach-purple-date)'
+PushNodeVisit: file-read-v1-peach-purple-date, execute: true
+PushNodeVisit: const-string-v1-starfish-goat-gooseberry, execute: false
+🟢 Execute 'Property Setter (property-setter-v1-elephant-dog-elephant)'
+PushNodeVisit: property-setter-v1-elephant-dog-elephant, execute: true
+PushNodeVisit: (cached) parser-v1-magenta-horse-passionfruit, execute: false
+PushNodeVisit: (cached) file-read-v1-peach-purple-date, execute: false
+🟢 Execute 'Property Setter (property-setter-v1-dog-lime-tangerine)'
+PushNodeVisit: property-setter-v1-dog-lime-tangerine, execute: true
+PushNodeVisit: (cached) property-setter-v1-elephant-dog-elephant, execute: false
+PushNodeVisit: const-number-v1-coconut-fig-grapefruit, execute: false
+🟢 Execute 'Serializer (serializer-v1-chicken-strawberry-teal)'
+PushNodeVisit: serializer-v1-chicken-strawberry-teal, execute: true
+PushNodeVisit: (cached) property-setter-v1-dog-lime-tangerine, execute: false
+🟢 Execute 'File Write (file-write-v1-persimmon-pomegranate-octopus)'
+PushNodeVisit: file-write-v1-persimmon-pomegranate-octopus, execute: true
+PushNodeVisit: (cached) serializer-v1-chicken-strawberry-teal, execute: false

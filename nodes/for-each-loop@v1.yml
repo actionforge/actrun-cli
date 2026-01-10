@@ -1,0 +1,47 @@
+yaml-version: 3.0
+
+id: core/for-each-loop
+name: For Each Loop
+version: 1
+category: flow
+style:
+  header:
+    background: "#50858d"
+  body:
+    background: "#2f5054"
+icon: tablerArrowIteration
+short_desc: Iterators are a way to walk through an array or map.
+outputs:
+  exec-body:
+    name: Body
+    exec: true
+    index: 0
+  key:
+    type: unknown
+    name: Key
+    desc: A number index or key of a map.
+    index: 1
+  value:
+    type: unknown
+    name: Value
+    desc: The value of the item
+    index: 2
+  exec-completed:
+    name: Completed
+    exec: true
+    index: 3
+inputs:
+  exec:
+    name: Execute
+    exec: true
+    index: 0
+    desc: Executes the loop.
+    required: true
+  exec-break:
+    exec: true
+    name: Break
+    index: 1
+    desc: Breaks the loop.
+  input:
+    type: iterable
+    index: 2

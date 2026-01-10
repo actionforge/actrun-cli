@@ -1,0 +1,349 @@
+editor:
+  version:
+    created: v1.11.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 10
+      y: 1420
+  - id: sequence-v1-strawberry-squirrel-cat
+    type: core/sequence@v1
+    position:
+      x: 400
+      y: 1030
+    outputs:
+      exec[0]: null
+      exec[1]: null
+      exec[2]: null
+      exec[3]: null
+      exec[4]: null
+      exec[5]: null
+      exec[6]: null
+      exec[7]: null
+      exec[8]: null
+      exec[9]: null
+      exec[10]: null
+      exec[11]: null
+  - id: print-v1-squirrel-zebra-coconut
+    type: core/print@v1
+    position:
+      x: 900
+      y: -0.0
+    inputs:
+      values[0]: null
+  - id: print-v1-blue-raspberry-zebra
+    type: core/print@v1
+    position:
+      x: 910
+      y: -210
+    inputs:
+      values[0]: null
+  - id: print-v1-cranberry-dolphin-cat
+    type: core/print@v1
+    position:
+      x: 920
+      y: 240
+    inputs:
+      values[0]: null
+  - id: const-string-v1-banana-orange-kangaroo
+    type: core/const-string@v1
+    position:
+      x: 280
+      y: -100
+    inputs:
+      value: one
+  - id: print-v1-gold-pineapple-cranberry
+    type: core/print@v1
+    position:
+      x: 920
+      y: 470
+    inputs:
+      values[0]: null
+  - id: print-v1-pear-pear-purple
+    type: core/print@v1
+    position:
+      x: 930
+      y: 760
+    inputs:
+      values[0]: null
+  - id: print-v1-shark-coconut-gold
+    type: core/print@v1
+    position:
+      x: 950
+      y: 1030
+    inputs:
+      values[0]: null
+  - id: print-v1-lemon-gray-cat
+    type: core/print@v1
+    position:
+      x: 950
+      y: 1270
+    inputs:
+      values[0]: null
+  - id: print-v1-cherry-zebra-rabbit
+    type: core/print@v1
+    position:
+      x: 930
+      y: 1560
+    inputs:
+      values[0]: null
+  - id: print-v1-lion-mango-pink
+    type: core/print@v1
+    position:
+      x: 920
+      y: 1790
+    inputs:
+      values[0]: null
+  - id: print-v1-silver-panda-banana
+    type: core/print@v1
+    position:
+      x: 910
+      y: 2020
+    inputs:
+      values[0]: null
+  - id: print-v1-dolphin-brown-koala
+    type: core/print@v1
+    position:
+      x: 960
+      y: 2290
+    inputs:
+      values[0]: null
+  - id: print-v1-gray-blue-blueberry
+    type: core/print@v1
+    position:
+      x: 890
+      y: 2730
+    inputs:
+      values[0]: null
+  - id: const-string-v1-lemon-parrot-penguin
+    type: core/const-string@v1
+    position:
+      x: 270
+      y: 70
+    inputs:
+      value: two
+  - id: const-string-v1-dog-yellow-koala
+    type: core/const-string@v1
+    position:
+      x: 270
+      y: 280
+    inputs:
+      value: three
+  - id: const-string-v1-pink-yellow-apple
+    type: core/const-string@v1
+    position:
+      x: 260
+      y: 640
+    inputs:
+      value: four
+  - id: const-string-v1-apple-pomegranate-orange
+    type: core/const-string@v1
+    position:
+      x: 240
+      y: 910
+    inputs:
+      value: five
+  - id: const-string-v1-kiwi-parrot-pineapple
+    type: core/const-string@v1
+    position:
+      x: 580
+      y: 1210
+    inputs:
+      value: six
+  - id: const-string-v1-peach-lemon-penguin
+    type: core/const-string@v1
+    position:
+      x: 560
+      y: 1450
+    inputs:
+      value: seven
+  - id: const-string-v1-purple-lemon-kangaroo
+    type: core/const-string@v1
+    position:
+      x: 420
+      y: 1670
+    inputs:
+      value: eight
+  - id: const-string-v1-purple-monkey-cherry
+    type: core/const-string@v1
+    position:
+      x: 370
+      y: 1790
+    inputs:
+      value: nine
+  - id: const-string-v1-shark-strawberry-lion
+    type: core/const-string@v1
+    position:
+      x: 340
+      y: 2170
+    inputs:
+      value: ten
+  - id: const-string-v1-pomegranate-cherry-grape
+    type: core/const-string@v1
+    position:
+      x: 340
+      y: 2480
+    inputs:
+      value: eleven
+  - id: const-string-v1-blueberry-blackberry-cranberry
+    type: core/const-string@v1
+    position:
+      x: 320
+      y: 2850
+    inputs:
+      value: twelve
+connections:
+  - src:
+      node: const-string-v1-banana-orange-kangaroo
+      port: result
+    dst:
+      node: print-v1-blue-raspberry-zebra
+      port: values[0]
+  - src:
+      node: const-string-v1-blueberry-blackberry-cranberry
+      port: result
+    dst:
+      node: print-v1-gray-blue-blueberry
+      port: values[0]
+  - src:
+      node: const-string-v1-pomegranate-cherry-grape
+      port: result
+    dst:
+      node: print-v1-dolphin-brown-koala
+      port: values[0]
+  - src:
+      node: const-string-v1-shark-strawberry-lion
+      port: result
+    dst:
+      node: print-v1-silver-panda-banana
+      port: values[0]
+  - src:
+      node: const-string-v1-purple-monkey-cherry
+      port: result
+    dst:
+      node: print-v1-lion-mango-pink
+      port: values[0]
+  - src:
+      node: const-string-v1-purple-lemon-kangaroo
+      port: result
+    dst:
+      node: print-v1-cherry-zebra-rabbit
+      port: values[0]
+  - src:
+      node: const-string-v1-peach-lemon-penguin
+      port: result
+    dst:
+      node: print-v1-lemon-gray-cat
+      port: values[0]
+  - src:
+      node: const-string-v1-kiwi-parrot-pineapple
+      port: result
+    dst:
+      node: print-v1-shark-coconut-gold
+      port: values[0]
+  - src:
+      node: const-string-v1-apple-pomegranate-orange
+      port: result
+    dst:
+      node: print-v1-pear-pear-purple
+      port: values[0]
+  - src:
+      node: const-string-v1-pink-yellow-apple
+      port: result
+    dst:
+      node: print-v1-gold-pineapple-cranberry
+      port: values[0]
+  - src:
+      node: const-string-v1-dog-yellow-koala
+      port: result
+    dst:
+      node: print-v1-cranberry-dolphin-cat
+      port: values[0]
+  - src:
+      node: const-string-v1-lemon-parrot-penguin
+      port: result
+    dst:
+      node: print-v1-squirrel-zebra-coconut
+      port: values[0]
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: sequence-v1-strawberry-squirrel-cat
+      port: exec
+  - src:
+      node: sequence-v1-strawberry-squirrel-cat
+      port: exec[2]
+    dst:
+      node: print-v1-cranberry-dolphin-cat
+      port: exec
+  - src:
+      node: sequence-v1-strawberry-squirrel-cat
+      port: exec[3]
+    dst:
+      node: print-v1-gold-pineapple-cranberry
+      port: exec
+  - src:
+      node: sequence-v1-strawberry-squirrel-cat
+      port: exec[4]
+    dst:
+      node: print-v1-pear-pear-purple
+      port: exec
+  - src:
+      node: sequence-v1-strawberry-squirrel-cat
+      port: exec[5]
+    dst:
+      node: print-v1-shark-coconut-gold
+      port: exec
+  - src:
+      node: sequence-v1-strawberry-squirrel-cat
+      port: exec[6]
+    dst:
+      node: print-v1-lemon-gray-cat
+      port: exec
+  - src:
+      node: sequence-v1-strawberry-squirrel-cat
+      port: exec[7]
+    dst:
+      node: print-v1-cherry-zebra-rabbit
+      port: exec
+  - src:
+      node: sequence-v1-strawberry-squirrel-cat
+      port: exec[8]
+    dst:
+      node: print-v1-lion-mango-pink
+      port: exec
+  - src:
+      node: sequence-v1-strawberry-squirrel-cat
+      port: exec[9]
+    dst:
+      node: print-v1-silver-panda-banana
+      port: exec
+  - src:
+      node: sequence-v1-strawberry-squirrel-cat
+      port: exec[10]
+    dst:
+      node: print-v1-dolphin-brown-koala
+      port: exec
+  - src:
+      node: sequence-v1-strawberry-squirrel-cat
+      port: exec[11]
+    dst:
+      node: print-v1-gray-blue-blueberry
+      port: exec
+  - src:
+      node: sequence-v1-strawberry-squirrel-cat
+      port: exec[0]
+    dst:
+      node: print-v1-blue-raspberry-zebra
+      port: exec
+  - src:
+      node: sequence-v1-strawberry-squirrel-cat
+      port: exec[1]
+    dst:
+      node: print-v1-squirrel-zebra-coconut
+      port: exec

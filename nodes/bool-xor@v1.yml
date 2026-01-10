@@ -1,0 +1,39 @@
+yaml-version: 3.0
+
+id: core/bool-xor
+name: Bool Xor
+label: Xor
+version: 1
+icon: tablerLogicXor
+style:
+  header:
+    background: "#388a34"
+  body:
+    background: "#22591f"
+category: computation
+short_desc: Apply the `Xor` operator on two or more boolean values.
+addendum: |
+  ## Example
+
+  Below is the truth table for the `XOR` operator applied to two boolean values:
+
+  | Input 1 | Input 2 | Output (1 XOR 2) |
+  |---------|---------|------------------|
+  |    0    |    0    |        0         |
+  |    0    |    1    |        1         |
+  |    1    |    0    |        1         |
+  |    1    |    1    |        0         |
+
+compact: true
+inputs:
+  inputs:
+    type: bool
+    index: 0
+    array: true
+    array_initial_count: 2
+    desc: The boolean values to apply the `XOR` operator on.
+outputs:
+  result:
+    type: bool
+    index: 0
+    desc: The result of the boolean operation. `true` if an odd number of input values are `true`, `false` otherwise.

@@ -1,0 +1,68 @@
+build hasn't expired yet
+looking for value: 'env_file'
+  no value (is optional) found for: 'env_file'
+looking for value: 'config_file'
+  found value in: 'env (shell)'
+  evaluated to: '[REDACTED]/s3_aws_walk.actconfig'
+looking for value: 'concurrency'
+  no value (is optional) found for: 'concurrency'
+looking for value: 'graph_file'
+  found value in: 'env (shell)'
+  evaluated to: 's3_aws_walk.act'
+looking for value: 'session_token'
+  no value (is optional) found for: 'session_token'
+looking for value: 'create_debug_session'
+  found value in flags
+  evaluated to: 'false'
+PushNodeVisit: start, execute: true
+🟢 Execute 'Storage Walk (storage-walk-v1-cranberry-rhinoceros-durian)'
+PushNodeVisit: storage-walk-v1-cranberry-rhinoceros-durian, execute: true
+PushNodeVisit: storage-provider-s3-v1-maroon-duck-shark, execute: false
+PushNodeVisit: env-get-v1-giraffe-koala-pineapple, execute: false
+PushNodeVisit: env-get-v1-pineapple-green-gold, execute: false
+PushNodeVisit: credentials-accesskey-v1-passionfruit-monkey-cherry, execute: false
+PushNodeVisit: env-get-v1-donkey-peach-kiwi, execute: false
+PushNodeVisit: env-get-v1-ivory-chicken-nectarine, execute: false
+actrun: s3_aws_walk.act
+
+error:
+   1: execute 'Start' (start)
+   2: execute 'Storage Walk' (storage-walk-v1-cranberry-rhinoceros-durian)
+      error during execution
+       ↳ failed to list objects
+        ↳ dir path must not start with a slash '/'
+
+
+
+stack trace:
+github.com/actionforge/actrun-cli/nodes.(*StorageListNode).ExecuteImpl
+	storage-walk@v1.go:45
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*StartNode).ExecuteImpl
+	start@v1.go:49
+github.com/actionforge/actrun-cli/nodes.(*StartNode).ExecuteEntry
+	start@v1.go:44
+github.com/actionforge/actrun-cli/core.RunGraph
+	graph.go:426
+github.com/actionforge/actrun-cli/core.RunGraphFromString
+	graph.go:1013
+github.com/actionforge/actrun-cli/core.RunGraphFromFile
+	graph.go:1031
+github.com/actionforge/actrun-cli/cmd.cmdRootRun
+	cmd_root.go:175
+github.com/spf13/cobra.(*Command).execute
+	command.go:-1
+github.com/spf13/cobra.(*Command).ExecuteC
+	command.go:-1
+github.com/spf13/cobra.(*Command).Execute
+	command.go:-1
+github.com/actionforge/actrun-cli/cmd.Execute
+	cmd_root.go:190
+main.main
+	main.go:26
+runtime.main
+	proc.go:-1
+runtime.goexit
+	asm_{..}.s:-1
+

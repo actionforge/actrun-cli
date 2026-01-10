@@ -1,0 +1,34 @@
+yaml-version: 3.0
+
+id: core/env-array
+version: 1
+name: Environment Vars
+icon: tablerVariablePlus
+category: system
+short_desc: List of environment variables.
+long_desc: |
+  The provided list of environment variables will be merged with the current execution state's existing environment variables.
+  
+  For example, when you add `SOME_VARIABLE=VALUE`, the node will return a new list of environment list that includes `SOME_VARIABLE` in addition to the environment variables that are available in the current execution state.
+style:
+  header:
+    background: "#3794ff"
+  body:
+    background: "#1f4f86"
+inputs:
+  env:
+    name: "Additional Env Vars"
+    type: string
+    array: true
+    array_initial_count: 1
+    default: ""
+    hint: "MY_VAR=VALUE"
+    index: 0
+    desc: The list of environment variables that you want to add. These fields support the [Expression Syntax](./../../../reference/expressions.md).
+
+outputs:
+  env:
+    name: ""
+    type: "[]string"
+    index: 0
+    desc: The list of environment variables that includes the provided list of environment variables.

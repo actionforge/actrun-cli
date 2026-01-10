@@ -1,0 +1,126 @@
+build hasn't expired yet
+looking for value: 'env_file'
+  no value (is optional) found for: 'env_file'
+looking for value: 'config_file'
+  no value (is optional) found for: 'config_file'
+looking for value: 'concurrency'
+  no value (is optional) found for: 'concurrency'
+looking for value: 'graph_file'
+  found value in: 'env (shell)'
+  evaluated to: 'for2.act'
+looking for value: 'session_token'
+  no value (is optional) found for: 'session_token'
+looking for value: 'create_debug_session'
+  found value in flags
+  evaluated to: 'false'
+PushNodeVisit: start, execute: true
+🟢 Execute 'For Loop (for-loop-v1-kangaroo-lemon-shark)'
+PushNodeVisit: for-loop-v1-kangaroo-lemon-shark, execute: true
+🟢 Execute 'For Loop (for-loop-v1-navy-squirrel-cat)'
+PushNodeVisit: for-loop-v1-navy-squirrel-cat, execute: true
+🟢 Execute 'Print (print-v1-turkey-whale-duck)'
+PushNodeVisit: print-v1-turkey-whale-duck, execute: true
+PushNodeVisit: (cached) for-loop-v1-navy-squirrel-cat, execute: false
+PushNodeVisit: (cached) for-loop-v1-kangaroo-lemon-shark, execute: false
+0
+0
+🟢 Execute 'Print (print-v1-turkey-whale-duck)'
+PushNodeVisit: print-v1-turkey-whale-duck, execute: true
+PushNodeVisit: (cached) for-loop-v1-navy-squirrel-cat, execute: false
+PushNodeVisit: (cached) for-loop-v1-kangaroo-lemon-shark, execute: false
+1
+0
+🟢 Execute 'Print (print-v1-turkey-whale-duck)'
+PushNodeVisit: print-v1-turkey-whale-duck, execute: true
+PushNodeVisit: (cached) for-loop-v1-navy-squirrel-cat, execute: false
+PushNodeVisit: (cached) for-loop-v1-kangaroo-lemon-shark, execute: false
+2
+0
+🟢 Execute 'Print (print-v1-turkey-whale-duck)'
+PushNodeVisit: print-v1-turkey-whale-duck, execute: true
+PushNodeVisit: (cached) for-loop-v1-navy-squirrel-cat, execute: false
+PushNodeVisit: (cached) for-loop-v1-kangaroo-lemon-shark, execute: false
+3
+0
+🟢 Execute 'For Loop (for-loop-v1-navy-squirrel-cat)'
+PushNodeVisit: for-loop-v1-navy-squirrel-cat, execute: true
+🟢 Execute 'Print (print-v1-turkey-whale-duck)'
+PushNodeVisit: print-v1-turkey-whale-duck, execute: true
+PushNodeVisit: (cached) for-loop-v1-navy-squirrel-cat, execute: false
+PushNodeVisit: (cached) for-loop-v1-kangaroo-lemon-shark, execute: false
+0
+1
+🟢 Execute 'Print (print-v1-turkey-whale-duck)'
+PushNodeVisit: print-v1-turkey-whale-duck, execute: true
+PushNodeVisit: (cached) for-loop-v1-navy-squirrel-cat, execute: false
+PushNodeVisit: (cached) for-loop-v1-kangaroo-lemon-shark, execute: false
+1
+1
+🟢 Execute 'Print (print-v1-turkey-whale-duck)'
+PushNodeVisit: print-v1-turkey-whale-duck, execute: true
+PushNodeVisit: (cached) for-loop-v1-navy-squirrel-cat, execute: false
+PushNodeVisit: (cached) for-loop-v1-kangaroo-lemon-shark, execute: false
+2
+1
+🟢 Execute 'Print (print-v1-turkey-whale-duck)'
+PushNodeVisit: print-v1-turkey-whale-duck, execute: true
+PushNodeVisit: (cached) for-loop-v1-navy-squirrel-cat, execute: false
+PushNodeVisit: (cached) for-loop-v1-kangaroo-lemon-shark, execute: false
+3
+1
+🟢 Execute 'For Loop (for-loop-v1-navy-squirrel-cat)'
+PushNodeVisit: for-loop-v1-navy-squirrel-cat, execute: true
+🟢 Execute 'Print (print-v1-turkey-whale-duck)'
+PushNodeVisit: print-v1-turkey-whale-duck, execute: true
+PushNodeVisit: (cached) for-loop-v1-navy-squirrel-cat, execute: false
+PushNodeVisit: (cached) for-loop-v1-kangaroo-lemon-shark, execute: false
+0
+2
+🟢 Execute 'Print (print-v1-turkey-whale-duck)'
+PushNodeVisit: print-v1-turkey-whale-duck, execute: true
+PushNodeVisit: (cached) for-loop-v1-navy-squirrel-cat, execute: false
+PushNodeVisit: (cached) for-loop-v1-kangaroo-lemon-shark, execute: false
+1
+2
+🟢 Execute 'Print (print-v1-turkey-whale-duck)'
+PushNodeVisit: print-v1-turkey-whale-duck, execute: true
+PushNodeVisit: (cached) for-loop-v1-navy-squirrel-cat, execute: false
+PushNodeVisit: (cached) for-loop-v1-kangaroo-lemon-shark, execute: false
+2
+2
+🟢 Execute 'Print (print-v1-turkey-whale-duck)'
+PushNodeVisit: print-v1-turkey-whale-duck, execute: true
+PushNodeVisit: (cached) for-loop-v1-navy-squirrel-cat, execute: false
+PushNodeVisit: (cached) for-loop-v1-kangaroo-lemon-shark, execute: false
+3
+2
+🟢 Execute 'For Loop (for-loop-v1-navy-squirrel-cat)'
+PushNodeVisit: for-loop-v1-navy-squirrel-cat, execute: true
+🟢 Execute 'Print (print-v1-turkey-whale-duck)'
+PushNodeVisit: print-v1-turkey-whale-duck, execute: true
+PushNodeVisit: (cached) for-loop-v1-navy-squirrel-cat, execute: false
+PushNodeVisit: (cached) for-loop-v1-kangaroo-lemon-shark, execute: false
+0
+3
+🟢 Execute 'Print (print-v1-turkey-whale-duck)'
+PushNodeVisit: print-v1-turkey-whale-duck, execute: true
+PushNodeVisit: (cached) for-loop-v1-navy-squirrel-cat, execute: false
+PushNodeVisit: (cached) for-loop-v1-kangaroo-lemon-shark, execute: false
+1
+3
+🟢 Execute 'Print (print-v1-turkey-whale-duck)'
+PushNodeVisit: print-v1-turkey-whale-duck, execute: true
+PushNodeVisit: (cached) for-loop-v1-navy-squirrel-cat, execute: false
+PushNodeVisit: (cached) for-loop-v1-kangaroo-lemon-shark, execute: false
+2
+3
+🟢 Execute 'Print (print-v1-turkey-whale-duck)'
+PushNodeVisit: print-v1-turkey-whale-duck, execute: true
+PushNodeVisit: (cached) for-loop-v1-navy-squirrel-cat, execute: false
+PushNodeVisit: (cached) for-loop-v1-kangaroo-lemon-shark, execute: false
+3
+3
+🟢 Execute 'Print (print-v1-shark-apple-snake)'
+PushNodeVisit: print-v1-shark-apple-snake, execute: true
+PushNodeVisit: const-string-v1-guava-dog-dog, execute: false
+done

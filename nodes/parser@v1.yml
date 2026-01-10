@@ -1,0 +1,54 @@
+yaml-version: 3.0
+
+id: core/parser
+name: Parser
+version: 1
+category: data
+icon: tablerSquareLetterP
+style:
+  header:
+    background: "#a47e5b"
+  body:
+    background: "#7c6652"
+short_desc: Parse JSON, YAML, TOML, INI, and other formats.
+long_desc: The parsed object is of type `unknown` and usually passed to [Property Setter](./../property-setter/v1.md), [Property Getter](./../property-getter/v1.md) or [Serializer](./../serializer/v1.md).
+outputs:
+  exec-success:
+    name: Success
+    exec: true
+    index: 0
+  exec-err:
+    exec: true
+    name: Error
+    index: 1
+  object:
+    type: unknown
+    name: Object
+    index: 2
+    desc: |
+      The parsed object.
+inputs:
+  exec:
+    exec: true
+    index: 0
+  input:
+    type: string
+    name: Input
+    index: 2
+    multiline: true
+  format:
+    name: Format
+    type: option
+    index: 3
+    default: auto
+    options:
+      - name: Auto Detect
+        value: auto
+      - name: JSON
+        value: json
+      - name: YAML
+        value: yaml
+      - name: TOML
+        value: toml
+      - name: INI
+        value: ini

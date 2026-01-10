@@ -1,0 +1,33 @@
+yaml-version: 3.0
+id: core/branch
+name: Branch
+category: flow
+style:
+  header:
+    background: "#50858d"
+  body:
+    background: "#2f5054"
+label: ""
+version: 1
+icon: tablerRouteAltLeft
+short_desc: Conditional execution node for branching workflows.
+long_desc: If `condition` is *true*, execution goes to `Then`, otherwise it goes to `Otherwise`.
+outputs:
+  exec-then:
+    exec: true
+    name: Then
+    index: 0
+    desc: Executes the 'Then' branch when the condition is true.
+  exec-otherwise:
+    exec: true
+    name: Otherwise
+    index: 1
+    desc: Executes the 'Otherwise' branch when the condition is false.
+inputs:
+  exec:
+    exec: true
+    index: 0
+  condition:
+    type: bool
+    desc: Boolean input that determines which branch to execute.
+    index: 1

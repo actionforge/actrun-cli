@@ -1,0 +1,83 @@
+editor:
+  version:
+    created: v1.11.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: -500
+      y: -150
+  - id: hash-v1-blue-zebra-strawberry
+    type: core/hash@v1
+    position:
+      x: 310
+      y: -250
+  - id: const-string-v1-purple-green-parrot
+    type: core/const-string@v1
+    position:
+      x: -270
+      y: 180
+    inputs:
+      value: hello world
+  - id: for-loop-v1-monkey-elephant-pineapple
+    type: core/for-loop@v1
+    position:
+      x: -170
+      y: -280
+    inputs:
+      first_index: 0
+      last_index: 12
+  - id: print-v1-monkey-pomegranate-lion
+    type: core/print@v1
+    position:
+      x: 570
+      y: -250
+    inputs:
+      values[0]: null
+      values[1]: null
+connections:
+  - src:
+      node: const-string-v1-purple-green-parrot
+      port: result
+    dst:
+      node: hash-v1-blue-zebra-strawberry
+      port: input
+  - src:
+      node: for-loop-v1-monkey-elephant-pineapple
+      port: index
+    dst:
+      node: hash-v1-blue-zebra-strawberry
+      port: algorithm
+  - src:
+      node: hash-v1-blue-zebra-strawberry
+      port: hash
+    dst:
+      node: print-v1-monkey-pomegranate-lion
+      port: values[1]
+  - src:
+      node: for-loop-v1-monkey-elephant-pineapple
+      port: index
+    dst:
+      node: print-v1-monkey-pomegranate-lion
+      port: values[0]
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: for-loop-v1-monkey-elephant-pineapple
+      port: exec
+  - src:
+      node: for-loop-v1-monkey-elephant-pineapple
+      port: exec-body
+    dst:
+      node: hash-v1-blue-zebra-strawberry
+      port: exec
+  - src:
+      node: hash-v1-blue-zebra-strawberry
+      port: exec-success
+    dst:
+      node: print-v1-monkey-pomegranate-lion
+      port: exec

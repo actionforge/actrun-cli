@@ -1,0 +1,14 @@
+build hasn't expired yet
+looking for value: 'graph_file'
+  no value (is optional) found for: 'graph_file'
+Validating '[REDACTED]/missing-exec-connection2.act'...
+
+❌ Validation failed with 2 error(s):
+
+--- Error 1 ---
+error:
+   1: unknown node type 'core/print-doesnt-exist@v1'
+
+--- Error 2 ---
+error:
+   1: connection dst node 'core-print-v1-crab-red-gold' does not exist

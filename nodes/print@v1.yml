@@ -1,0 +1,50 @@
+yaml-version: 3.0
+
+id: core/print
+name: Print
+category: system
+version: 1
+icon: tablerClipboardText
+short_desc: Print something to the console
+style:
+  header:
+    background: "#3794ff"
+  body:
+    background: "#1f4f86"
+outputs:
+  exec:
+    exec: true
+    index: 0
+inputs:
+  exec:
+    exec: true
+    index: 0
+  color:
+    name: Color
+    type: option
+    index: 1
+    default: no_color
+    options:
+      - name: No Color
+        value: no_color
+      - name: Black
+        value: fg_black
+      - name: Red
+        value: fg_red
+      - name: Green
+        value: fg_green
+      - name: Yellow
+        value: fg_yellow
+      - name: Blue
+        value: fg_blue
+      - name: Magenta
+        value: fg_magenta
+      - name: Cyan
+        value: fg_cyan
+      - name: White
+        value: fg_white
+  values:
+    array: true
+    array_initial_count: 1
+    type: any
+    index: 2

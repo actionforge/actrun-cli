@@ -1,0 +1,178 @@
+editor:
+  version:
+    created: v1.20.2
+    updated: v1.34.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 30
+      y: 80
+  - id: storage-provider-s3-v1-maroon-duck-shark
+    type: core/storage-provider-s3@v1
+    position:
+      x: 480
+      y: 490
+    inputs:
+      bucket: ''
+      region: ''
+      endpoint: ''
+  - id: storage-walk-v1-cranberry-rhinoceros-durian
+    type: core/storage-walk@v1
+    position:
+      x: 990
+      y: 260
+    inputs:
+      dir: ''
+      glob: ''
+  - id: print-v1-parrot-starfish-lemon
+    type: core/print@v1
+    position:
+      x: 1910
+      y: -0.0
+    inputs:
+      values[0]: null
+      values[1]: null
+      values[2]: null
+      values[3]: null
+  - id: env-get-v1-giraffe-koala-pineapple
+    type: core/env-get@v1
+    position:
+      x: 100
+      y: 400
+    inputs:
+      env: TESTE2E_S3_BUCKET
+  - id: env-get-v1-pineapple-green-gold
+    type: core/env-get@v1
+    position:
+      x: 80
+      y: 540
+    inputs:
+      env: TESTE2E_S3_REGION
+  - id: env-get-v1-ivory-chicken-nectarine
+    type: core/env-get@v1
+    position:
+      x: 490
+      y: 140
+    inputs:
+      env: WALK_GLOB
+  - id: env-get-v1-donkey-peach-kiwi
+    type: core/env-get@v1
+    position:
+      x: 480
+      y: -30
+    inputs:
+      env: WALK_DIR
+  - id: string-fmt-v1-fig-cherry-turquoise
+    type: core/string-fmt@v1
+    position:
+      x: 1200
+      y: -140
+    inputs:
+      substitutes[0]: null
+      fmt: 'Dir Path: %v'
+  - id: string-fmt-v1-duck-snake-red
+    type: core/string-fmt@v1
+    position:
+      x: 1200
+      y: 70
+    inputs:
+      substitutes[0]: null
+      fmt: 'Glob: %v'
+  - id: credentials-accesskey-v1-passionfruit-monkey-cherry
+    type: core/credentials-accesskey@v1
+    position:
+      x: -90
+      y: 720
+    inputs:
+      access_key: TESTE2E_AWS_S3_ACCESS_KEY
+      access_password: TESTE2E_AWS_S3_SECRET_KEY
+connections:
+  - src:
+      node: storage-provider-s3-v1-maroon-duck-shark
+      port: provider
+    dst:
+      node: storage-walk-v1-cranberry-rhinoceros-durian
+      port: provider
+  - src:
+      node: env-get-v1-giraffe-koala-pineapple
+      port: env
+    dst:
+      node: storage-provider-s3-v1-maroon-duck-shark
+      port: bucket
+  - src:
+      node: env-get-v1-pineapple-green-gold
+      port: env
+    dst:
+      node: storage-provider-s3-v1-maroon-duck-shark
+      port: region
+  - src:
+      node: env-get-v1-ivory-chicken-nectarine
+      port: env
+    dst:
+      node: storage-walk-v1-cranberry-rhinoceros-durian
+      port: glob
+  - src:
+      node: env-get-v1-donkey-peach-kiwi
+      port: env
+    dst:
+      node: storage-walk-v1-cranberry-rhinoceros-durian
+      port: dir
+  - src:
+      node: storage-walk-v1-cranberry-rhinoceros-durian
+      port: objects
+    dst:
+      node: print-v1-parrot-starfish-lemon
+      port: values[3]
+  - src:
+      node: storage-walk-v1-cranberry-rhinoceros-durian
+      port: dirs
+    dst:
+      node: print-v1-parrot-starfish-lemon
+      port: values[2]
+  - src:
+      node: env-get-v1-donkey-peach-kiwi
+      port: env
+    dst:
+      node: string-fmt-v1-fig-cherry-turquoise
+      port: substitutes[0]
+  - src:
+      node: string-fmt-v1-fig-cherry-turquoise
+      port: result
+    dst:
+      node: print-v1-parrot-starfish-lemon
+      port: values[0]
+  - src:
+      node: env-get-v1-ivory-chicken-nectarine
+      port: env
+    dst:
+      node: string-fmt-v1-duck-snake-red
+      port: substitutes[0]
+  - src:
+      node: string-fmt-v1-duck-snake-red
+      port: result
+    dst:
+      node: print-v1-parrot-starfish-lemon
+      port: values[1]
+  - src:
+      node: credentials-accesskey-v1-passionfruit-monkey-cherry
+      port: credential
+    dst:
+      node: storage-provider-s3-v1-maroon-duck-shark
+      port: credentials
+    isLoop: false
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: storage-walk-v1-cranberry-rhinoceros-durian
+      port: exec
+  - src:
+      node: storage-walk-v1-cranberry-rhinoceros-durian
+      port: exec-success
+    dst:
+      node: print-v1-parrot-starfish-lemon
+      port: exec

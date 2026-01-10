@@ -1,0 +1,40 @@
+yaml-version: 3.0
+
+id: core/math-not-equal
+name: Math Not Equal To
+category: computation
+style:
+  header:
+    background: "#388a34"
+  body:
+    background: "#22591f"
+icon: matNotEqual
+version: 1
+short_desc: Check if the first number is not equal to the second.
+long_desc: |
+  This node checks if the first input number is not equal to the second input number.
+  
+  ## Example:
+
+  - Input: `10, 3`
+
+  Results in the comparison `10 != 3`.
+
+  - Output: `true`
+
+label: "≠"
+compact: true
+inputs:
+  op1:
+    type: number
+    index: 0
+    desc: The first number.
+  op2:
+    type: number
+    index: 1
+    desc: The second number.
+outputs:
+  result:
+    type: bool
+    index: 0
+    desc: The result of the comparison.

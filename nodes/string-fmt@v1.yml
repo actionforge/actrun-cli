@@ -1,0 +1,38 @@
+yaml-version: 3.0
+
+id: core/string-fmt
+version: 1
+name: String Format
+category: processing
+icon: tablerClearFormatting
+short_desc: Format a string using the provided format string.
+long_desc: |
+  The format string uses placeholders %v for its inputs, which are replaced by the input strings.
+  For example, the format string `Hello %v, welcome to %v` with inputs `Alice` and `Wonderland` will
+  result in `Hello Alice, welcome to Wonderland`. If the input is empty, the placeholder is replaced
+  by an empty string.
+llm_context: "**NEVER** use this node to construct Bash or Python scripts. Consider using `core/run@v1`"
+style:
+  header:
+    background: "#6e6e6e"
+  body:
+    background: "#423f3f"
+outputs:
+  result:
+    name: Result
+    type: string
+    desc: Formatted String
+    index: 0
+inputs:
+  fmt:
+    name: Format String
+    placeholder: "Hello %v!"
+    type: string
+    desc: The format string with placeholders.
+    index: 0
+  substitutes:
+    type: string
+    array: true
+    array_initial_count: 1
+    desc: The input strings to replace the placeholders.
+    index: 1

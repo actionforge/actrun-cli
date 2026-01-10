@@ -1,0 +1,147 @@
+editor:
+  version:
+    created: v1.34.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 20
+      y: 90
+  - id: core-run-v1-gold-banana-brown
+    type: core/run@v1
+    position:
+      x: 540
+      y: 10
+    inputs:
+      script: |-
+        import os
+        print("FOO env (root group):", os.environ.get("FOO", "<FOO in os.environ doesn't exist>"))
+      shell: python
+      args:
+        - ''
+  - id: core-group-v1-pomegranate-jellyfish-crab
+    type: core/group@v1
+    position:
+      x: 980
+      y: 20
+    graph:
+      entry: core-group-inputs-v1-rhinoceros-seahorse-lobster
+      type: group
+      nodes:
+        - id: core-group-inputs-v1-rhinoceros-seahorse-lobster
+          type: core/group-inputs@v1
+          position:
+            x: -250
+            y: 170
+        - id: core-group-outputs-v1-chicken-ivory-magenta
+          type: core/group-outputs@v1
+          position:
+            x: 670
+            y: 40
+        - id: core-run-v1-gold-banana-brown
+          type: core/run@v1
+          position:
+            x: 220
+            y: 10
+          inputs:
+            script: |-
+              import os
+              print("FOO env (inner group):", os.environ.get("FOO", "<FOO in os.environ doesn't exist>"))
+            shell: python
+            args:
+              - ''
+        - id: core-print-v1-boysenberry-shark-coconut
+          type: core/print@v1
+          position:
+            x: -10
+            y: 210
+          inputs:
+            values[0]: null
+        - id: core-const-string-v1-camel-goat-jellyfish
+          type: core/const-string@v1
+          position:
+            x: -320
+            y: 420
+          inputs:
+            value: '👉 {env.FOO} context resolved to: ${{ env.FOO }}'
+      connections:
+        - src:
+            node: core-const-string-v1-camel-goat-jellyfish
+            port: result
+          dst:
+            node: core-print-v1-boysenberry-shark-coconut
+            port: values[0]
+      executions:
+        - src:
+            node: core-run-v1-gold-banana-brown
+            port: exec-success
+          dst:
+            node: core-group-outputs-v1-chicken-ivory-magenta
+            port: exec-seahorse-starfish-camel
+        - src:
+            node: core-group-inputs-v1-rhinoceros-seahorse-lobster
+            port: exec-ostrich-kangaroo-seahorse
+          dst:
+            node: core-print-v1-boysenberry-shark-coconut
+            port: exec
+        - src:
+            node: core-print-v1-boysenberry-shark-coconut
+            port: exec
+          dst:
+            node: core-run-v1-gold-banana-brown
+            port: exec
+      inputs:
+        exec-ostrich-kangaroo-seahorse:
+          name: ''
+          type: ''
+          index: 0
+          exec: true
+          required: true
+      outputs:
+        exec-seahorse-starfish-camel:
+          name: Success
+          type: ''
+          index: 0
+          exec: true
+  - id: core-print-v1-boysenberry-shark-coconut
+    type: core/print@v1
+    position:
+      x: 310
+      y: 150
+    inputs:
+      values[0]: null
+  - id: core-const-string-v1-camel-goat-jellyfish
+    type: core/const-string@v1
+    position:
+      x: 30
+      y: 280
+    inputs:
+      value: '👉 {env.FOO} context resolved to: ${{ env.FOO }}'
+connections:
+  - src:
+      node: core-const-string-v1-camel-goat-jellyfish
+      port: result
+    dst:
+      node: core-print-v1-boysenberry-shark-coconut
+      port: values[0]
+executions:
+  - src:
+      node: core-run-v1-gold-banana-brown
+      port: exec-success
+    dst:
+      node: core-group-v1-pomegranate-jellyfish-crab
+      port: exec-ostrich-kangaroo-seahorse
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: core-print-v1-boysenberry-shark-coconut
+      port: exec
+  - src:
+      node: core-print-v1-boysenberry-shark-coconut
+      port: exec
+    dst:
+      node: core-run-v1-gold-banana-brown
+      port: exec

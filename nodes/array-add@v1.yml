@@ -1,0 +1,145 @@
+yaml-version: 3.0
+
+id: core/array-add
+name: Array Add
+version: 1
+category: data
+style:
+  header:
+    background: "#a47e5b"
+  body:
+    background: "#7c6652"
+icon: tablerPlus
+short_desc: Adds an item to the end of an array.
+outputs:
+  exec:
+    exec: true
+    index: 0
+  array:
+    type: unknown
+    name: ""
+    desc: The array with the added item
+    index: 1
+  index:
+    type: number
+    name: Index
+    desc: The index of the added item
+    index: 2
+inputs:
+  exec:
+    exec: true
+    index: 0
+  array:
+    type: indexable
+    index: 1
+  item:
+    type: unknown
+    index: 2
+addendum: |
+
+  A node that is very helpful in combination with the `Array Add` node is the [Freeze](./../freeze/v1.md) node. Basically, the `Freeze` node provides a value to other nodes until it is replaced.
+  
+  {{graph_editor_graph('''
+  editor:
+  version:
+    created: v1.34.0
+  type: generic
+  entry: ''
+  nodes:
+    - id: freeze-v1-rhinoceros-lime-snake
+      type: core/freeze@v1
+      position:
+        x: -50
+        y: -80
+  connections: []
+  executions: []''', docs=true, permission='readonly', fade=false, header=false, toolbar=false, translate=false, autofit=true, classes='h-48' )}}
+
+  In the example below, we fill an array with strings using a `For Loop` node.
+
+  The `Freeze` node provides an initial array and replaces it after each iteration of the loop with the new array from the `Array Add` node.
+
+  After the for loop is completed, the most up-to-date array is available in the output of the `Freeze` node.
+
+  {{graph_editor_graph('''
+  editor:
+  version:
+    created: v1.34.0
+  type: generic
+  entry: ''
+  nodes:
+    - id: array-add-v1-black-orange-apple
+      type: core/array-add@v1
+      position:
+        x: 550
+        y: -200
+    - id: freeze-v1-rhinoceros-lime-snake
+      type: core/freeze@v1
+      position:
+        x: -50
+        y: -80
+    - id: string-array-v1-parrot-crab-plum
+      type: core/string-array@v1
+      position:
+        x: -350
+        y: 130
+      comment: Initial String Array
+    - id: for-loop-v1-hippopotamus-zebra-white
+      type: core/for-loop@v1
+      position:
+        x: 190
+        y: -300
+      inputs:
+        first_index: 0
+        last_index: 10
+  connections:
+    - src:
+        node: string-array-v1-parrot-crab-plum
+        port: array
+      dst:
+        node: freeze-v1-rhinoceros-lime-snake
+        port: init
+      isLoop: false
+    - src:
+        node: freeze-v1-rhinoceros-lime-snake
+        port: value
+      dst:
+        node: array-add-v1-black-orange-apple
+        port: array
+      isLoop: false
+    - src:
+        node: array-add-v1-black-orange-apple
+        port: array
+      dst:
+        node: freeze-v1-rhinoceros-lime-snake
+        port: replace
+      isLoop: true
+    - src:
+        node: for-loop-v1-hippopotamus-zebra-white
+        port: index
+      dst:
+        node: array-add-v1-black-orange-apple
+        port: item
+      isLoop: false
+  executions:
+    - src:
+        node: array-add-v1-black-orange-apple
+        port: exec
+      dst:
+        node: freeze-v1-rhinoceros-lime-snake
+        port: exec-reset
+      isLoop: true
+    - src:
+        node: freeze-v1-rhinoceros-lime-snake
+        port: exec
+      dst:
+        node: for-loop-v1-hippopotamus-zebra-white
+        port: exec
+      isLoop: false
+    - src:
+        node: for-loop-v1-hippopotamus-zebra-white
+        port: exec-body
+      dst:
+        node: array-add-v1-black-orange-apple
+        port: exec
+      isLoop: false
+    ''', docs=true, permission='readonly', fade=false, header=false, toolbar=false, translate=false, autofit=true, classes='h-96' )}}

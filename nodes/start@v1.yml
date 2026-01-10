@@ -1,0 +1,34 @@
+yaml-version: 3.0
+id: core/start
+name: Start
+version: 1
+short_desc: The entry point for an action graph.
+long_desc: The Start node is the entry point for the graph execution. It is automatically created and cannot be removed or
+  duplicated.
+entry: true
+style:
+  header:
+    background: "#bc9e71"
+  body:
+    background: "#76582b"
+outputs:
+  exec:
+    exec: true
+    desc: Triggers the execution of the next node.
+    index: 0
+  args:
+    name: Args
+    type: "[]string"
+    desc: A list of command-line arguments passed to the graph.
+    index: 1
+  env:
+    name: Environment Variables
+    desc: A list of environment variables available to the process, in `KEY=VALUE` format. For more information check out
+      [Configuration](./../../../reference/configuration.md).
+    type: "[]string"
+    index: 2
+  stdin:
+    name: Stdin
+    type: stream
+    desc: The standard input (stdin) data stream.
+    index: 3

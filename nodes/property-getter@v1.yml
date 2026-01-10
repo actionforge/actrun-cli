@@ -1,0 +1,45 @@
+yaml-version: 3.0
+
+id: core/property-getter
+name: Property Getter
+version: 1
+category: data
+icon: tablerListSearch
+style:
+  header:
+    background: "#a47e5b"
+  body:
+    background: "#7c6652"
+short_desc: Retrieve a value from a parsed JSON, YAML, TOML or INI object. Usually data comes from [Parser](./../parser/v1.md) in order to extract a value from the parsed object.
+outputs:
+  exec-success:
+    name: Success
+    exec: true
+    index: 0
+  exec-err:
+    exec: true
+    name: Error
+    index: 1
+  value:
+    type: unknown
+    name: Value
+    index: 2
+    desc: The extracted object.
+  found:
+    type: bool
+    name: Found
+    index: 3
+inputs:
+  exec:
+    exec: true
+    index: 0
+  object:
+    type: unknown
+    name: Object
+    index: 1
+    desc: The object to extract the value from.
+  path:
+    name: Property Path
+    type: string
+    index: 2
+    desc: The property path to extract the value from. See [Property Path](./../../../reference/property-paths.md) for more info.

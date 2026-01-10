@@ -1,0 +1,171 @@
+yaml-version: 3.0
+
+id: core/storage-provider-s3
+name: Storage Provider S3
+version: 1
+category: network
+icon: tablerBucket
+style:
+  header:
+    background: "#c45d0c"
+  body:
+    background: rgb(142 82 35)
+short_desc: |
+  This S3 Provider node serves as a storage provider that can be plugged into other nodes offering cloud storage operations.
+addendum: |
+
+  ### Clone files between S3 buckets without a middleman
+
+  The AWS S3 Provider comes with a unique feature that allows you to clone files between two S3 buckets without the need to download and re-upload the files through the machine where the action graph is executed.
+  Files can be transferred directly between two S3 buckets, securely within the trusted walls of AWS, saving time, bandwith, resources and money.
+
+  <img src="/assets/nodes/aws-s3-clone.jpg" class="w-10/12 h-auto mx-auto">
+
+  For that to happen, you need to set up the AWS S3 Provider node with the access key, secret key, bucket and region of the source bucket.
+  Then, you can connect the AWS S3 Provider node to the `storage-download` node that reads the file from the source bucket and to the `storage-upload` node that writes the file to the destination bucket.
+
+
+  To set up the permissions correctly, ensure to use the credentials for the target bucket. Additionlly, these credentials must have at least read permissions to the source bucket.
+  With that in place, the AWS S3 Provider node will be able to transfer the file directly between the two buckets.
+
+  {{graph_editor_graph('''
+  version: v0.42.0
+  entry: ''
+  nodes:
+    - id: storage-download-v1-red-shark-blueberry
+      type: core/storage-download@v1
+      position:
+        x: 420
+        y: -30
+      inputs:
+        name: foo.txt
+    - id: storage-upload-v1-mango-green-octopus
+      type: core/storage-upload@v1
+      position:
+        x: 830
+        y: 50
+      inputs:
+        name: bar.txt
+    - id: storage-provider-s3-v1-parrot-kangaroo-lion
+      type: core/storage-provider-s3@v1
+      position:
+        x: 410
+        y: 250
+      inputs:
+        access_key: access keys here
+        secret_key: secret keys here
+        bucket: bucket name of target
+        region: region of target bucket
+    - id: storage-provider-s3-v1-blackberry-gray-raspberry
+      type: core/storage-provider-s3@v1
+      position:
+        x: 20
+        y: 140
+      inputs:
+        access_key: leave empty!
+        secret_key: leave empty!
+        region: region of source bucket
+        bucket: bucket name of source
+  connections:
+    - src:
+        node: storage-download-v1-red-shark-blueberry
+        port: source
+      dst:
+        node: storage-upload-v1-mango-green-octopus
+        port: data
+    - src:
+        node: storage-download-v1-red-shark-blueberry
+        port: exec
+      dst:
+        node: storage-upload-v1-mango-green-octopus
+        port: exec
+    - src:
+        node: storage-provider-s3-v1-parrot-kangaroo-lion
+        port: provider
+      dst:
+        node: storage-upload-v1-mango-green-octopus
+        port: provider
+    - src:
+        node: storage-download-v1-red-shark-blueberry
+        port: source
+      dst:
+        node: storage-upload-v1-mango-green-octopus
+        port: data
+    - src:
+        node: storage-download-v1-red-shark-blueberry
+        port: exec
+      dst:
+        node: storage-upload-v1-mango-green-octopus
+        port: exec
+    - src:
+        node: storage-provider-s3-v1-parrot-kangaroo-lion
+        port: provider
+      dst:
+        node: storage-upload-v1-mango-green-octopus
+        port: provider
+    - src:
+        node: storage-provider-s3-v1-blackberry-gray-raspberry
+        port: provider
+      dst:
+        node: storage-download-v1-red-shark-blueberry
+        port: provider
+  executions:
+    - src:
+        node: storage-download-v1-red-shark-blueberry
+        port: exec
+      dst:
+        node: storage-upload-v1-mango-green-octopus
+        port: exec
+  registries: []
+  ''', docs=true, permission='readonly', header=false, toolbar=false, translate=false, autofit=true, classes='h-96' )}}
+
+  ### Documentation for common S3 Provider
+
+  - **AWS S3**:
+      - 📚 Open [Documentation](https://aws.amazon.com/documentation/s3/)
+      - 🔑 Manage [Access Keys for IAM Users](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html)
+
+  Other S3-compatible bucket providers include:
+
+  - **Digital Ocean Spaces**:
+      - 📚 Open [Documentation](https://www.digitalocean.com/docs/spaces/)
+      - 🔑 Manage [Spaces Access Keys](https://cloud.digitalocean.com/account/api/tokens)
+
+  - **Cloudflare R2**:
+      - 📚 Open [Documentation](https://developers.cloudflare.com/r2/).
+      - 🔑 Manage [API Tokens](https://dash.cloudflare.com/profile/api-tokens)
+
+  - **Backblaze B2**:
+      - 📚 Open [Documentation](https://www.backblaze.com/b2/docs/).
+      - 🔑 Manage [Application Keys](https://secure.backblaze.com/app_keys.htm)
+
+outputs:
+  provider:
+    type: storage-provider
+    index: 0
+    desc: The AWS S3 provider.
+inputs:
+  bucket:
+    name: Bucket
+    type: string
+    index: 1
+    desc: The name of the S3 bucket you want to use.
+    required: true
+  region:
+    name: Region
+    type: string
+    index: 2
+    hint: "E.g: us-east-1"
+    desc: The region where the bucket is located.
+    required: true
+  endpoint:
+    name: Endpoint
+    type: string
+    index: 3
+    hint: "E.g: https://nyc3.digitaloceanspaces.com"
+    desc: Only required for S3-compatible providers that are not AWS S3. E.g. needs to be set for Digital Ocean Spaces, Backblaze B2, etc. Here is a list of [S3-compatible providers](https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-compatible-storage-services.html).
+  credentials:
+    type: "credentials"
+    index: 4
+    desc: Your AWS credentials, consisting of an access key and a secret key. If left empty, the AWS SDK will use its default credential provider chain (environment variables, shared credentials file, IAM role, etc.).
+    optional: true

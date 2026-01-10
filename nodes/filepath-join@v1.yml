@@ -1,0 +1,35 @@
+yaml-version: 3.0
+
+id: core/filepath-join
+name: Filepath Join
+label: 🔗
+category: filesystem
+icon: tablerLink
+version: 1
+style:
+  header:
+    background: rgb(197, 147, 31)
+  body:
+    background: "rgb(164 115 29)"
+short_desc: Perform a join operation on a file path
+long_desc: |
+  | Platform      | Input                                 | Output                    |
+  |---------------|---------------------------------------|---------------------------|
+  | Windows-style | `["C:", "path", "to", "file.txt"]`    | `C:\path\to\file.txt`     |
+  | Windows-style | `["path", "to", "file.txt"]`          | `path\to\file.txt`        |
+  | POSIX-style   | `["/", "path", "to", "file.txt"]`     | `/path/to/file.txt`       |
+  | POSIX-style   | `["path", "to", "file.txt"]`          | `path/to/file.txt`        |
+compact: true
+outputs:
+  result:
+    type: string
+    desc: The joined path.
+    index: 0
+inputs:
+  segments:
+    name: Path Segments
+    type: string
+    desc: The segments of the path to join.
+    index: 0
+    array: true
+    array_initial_count: 2

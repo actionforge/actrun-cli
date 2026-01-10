@@ -1,0 +1,9 @@
+  inflating: extracted_zip/compress_me/file1.txt  
+  inflating: extracted_zip/compress_me/subdir/bar/bar.txt  
+  inflating: extracted_zip/compress_me/subdir/foo1.txt  
+  inflating: extracted_zip/compress_me/subdir/foo2.txt  
+  inflating: extracted_zip/compress_me/subdir/foo3.txt  
+  inflating: extracted_zip/compress_me2/a.txt  
+  inflating: extracted_zip/compress_me2/subdir/b.txt  
+  inflating: extracted_zip/compress_me2/subdir/c.txt  
+Archive:  compressed.zip

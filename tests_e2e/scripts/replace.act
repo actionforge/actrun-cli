@@ -1,0 +1,80 @@
+editor:
+  version:
+    created: v1.28.1
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: -420
+      y: -30
+  - id: string-replace-v1-nectarine-lychee-grape
+    type: core/string-replace@v1
+    position:
+      x: -70
+      y: 40
+    inputs:
+      op: string
+      input: hello world 1234
+      substring: hello
+      replacement: foo
+  - id: print-v1-crab-pear-lobster
+    type: core/print@v1
+    position:
+      x: 640
+      y: -250
+    inputs:
+      values[0]: null
+      values[1]: null
+      values[2]: null
+  - id: string-replace-v1-koala-squirrel-mango
+    type: core/string-replace@v1
+    position:
+      x: -70
+      y: 340
+    inputs:
+      op: regex
+      input: hello world 1234
+      substring: \s[0-9]{2}
+      replacement: ' XX'
+  - id: string-replace-v1-date-donkey-coral
+    type: core/string-replace@v1
+    position:
+      x: -60
+      y: 630
+    inputs:
+      op: regex
+      input: hello world 1234
+      substring: \s([0-9]{2})
+      replacement: .$1.
+connections:
+  - src:
+      node: string-replace-v1-nectarine-lychee-grape
+      port: result
+    dst:
+      node: print-v1-crab-pear-lobster
+      port: values[0]
+    isLoop: false
+  - src:
+      node: string-replace-v1-koala-squirrel-mango
+      port: result
+    dst:
+      node: print-v1-crab-pear-lobster
+      port: values[1]
+    isLoop: false
+  - src:
+      node: string-replace-v1-date-donkey-coral
+      port: result
+    dst:
+      node: print-v1-crab-pear-lobster
+      port: values[2]
+    isLoop: false
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: print-v1-crab-pear-lobster
+      port: exec
+    isLoop: false

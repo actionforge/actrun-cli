@@ -1,0 +1,58 @@
+yaml-version: 3.0
+
+id: core/math-compare-op
+name: Math Compare Op
+category: computation
+style:
+  header:
+    background: "#388a34"
+  body:
+    background: "#22591f"
+icon: tablerArrowsVertical
+version: 1
+short_desc: Compare two numbers.
+long_desc: |
+  This node compares two input numbers based on the selected operator.
+  
+  ## Example:
+
+  - Input: `5, 3` with operator `>`
+
+  Results in the comparison of `5 > 3`.
+
+  - Output: `true`
+
+label: "Compare"
+compact: false
+inputs:
+  op1:
+    type: number
+    index: 0
+    desc: The first number.
+  operator:
+    type: option
+    index: 1
+    default: "=="
+    desc: The comparison operator to use.
+    options:
+      - name: ">"
+        value: ">"
+      - name: "<"
+        value: "<"
+      - name: ">="
+        value: ">="
+      - name: "<="
+        value: "<="
+      - name: "=="
+        value: "=="
+      - name: "!="
+        value: "!="
+  op2:
+    type: number
+    index: 2
+    desc: The second number.
+outputs:
+  result:
+    type: bool
+    index: 0
+    desc: The result of the comparison.

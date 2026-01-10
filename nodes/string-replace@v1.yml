@@ -1,0 +1,45 @@
+yaml-version: 3.0
+
+id: core/string-replace
+version: 1
+name: String Replace
+icon: featherEdit
+category: processing
+short_desc: Replaces occurrences of a substring within a string based on selected criteria.
+style:
+  header:
+    background: "#6e6e6e"
+  body:
+    background: "#423f3f"
+outputs:
+  result:
+    name: Result
+    type: string
+    desc: Output string after replacement
+    index: 0
+inputs:
+  input:
+    name: Input
+    type: string
+    desc: The string to perform the replacement on
+    index: 0
+  op:
+    type: option
+    desc: Type
+    default: string
+    index: 1
+    options:
+      - name: String
+        value: string
+      - name: Regex
+        value: regex
+  substring:
+    name: Substring
+    type: string
+    desc: The substring or regex pattern to replace
+    index: 2
+  replacement:
+    name: Replace With
+    type: string
+    desc: The string to replace the target with
+    index: 3

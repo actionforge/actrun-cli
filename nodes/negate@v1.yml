@@ -1,0 +1,37 @@
+yaml-version: 3.0
+
+id: core/negate
+name: Negate
+label: "!"
+version: 1
+icon: tablerExclamationMark
+category: computation
+style:
+  header:
+    background: "#388a34"
+  body:
+    background: "#22591f"
+short_desc: Negate the input. Input must be of type *array*, *string*, *number*, or *bool*. Any other input type will result in an error during runtime.
+compact: true
+inputs:
+  input:
+    type: any
+    index: 1
+    desc: Input value to negate.
+outputs:
+  result:
+    type: bool
+    index: 0
+    desc: Negated value of the input. 
+addendum: |
+    
+    | Data Type            | Example Value  | Boolean Return |
+    |----------------------|----------------|----------------|
+    | {{ port("array") }}  | `[1, 2, 3]`    | `false`        |
+    | {{ port("string") }} | `"hello"`      | `false`        |
+    | {{ port("number") }} | `42`           | `false`        |
+    | {{ port("bool") }}   | `true`         | `false`        |
+    | {{ port("array") }}  | `[]`           | `true`         |
+    | {{ port("string") }} | `""`           | `true`         |
+    | {{ port("number") }} | `0`            | `true`         |
+    | {{ port("bool") }}   | `false`        | `true`         |

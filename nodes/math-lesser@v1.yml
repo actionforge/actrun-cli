@@ -1,0 +1,40 @@
+yaml-version: 3.0
+
+id: core/math-less
+name: Math Less Than
+category: computation
+style:
+  header:
+    background: "#388a34"
+  body:
+    background: "#22591f"
+icon: matLessThan
+version: 1
+short_desc: Check if the first number is less than the second.
+long_desc: |
+  This node checks if the first input number is less than the second input number.
+  
+  ## Example:
+
+  - Input: `10, 3`
+
+  Results in the comparison `10 < 3`.
+
+  - Output: `false`
+
+label: "<"
+compact: true
+inputs:
+  op1:
+    type: number
+    index: 0
+    desc: The first number.
+  op2:
+    type: number
+    index: 1
+    desc: The second number.
+outputs:
+  result:
+    type: bool
+    index: 0
+    desc: The result of the comparison.

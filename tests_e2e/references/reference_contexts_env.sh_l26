@@ -1,0 +1,23 @@
+build hasn't expired yet
+Error: unable to load env file: doesnt_exist
+Usage:
+  actrun [filename] [flags]
+  actrun [command]
+
+Available Commands:
+  completion  Generate the autocompletion script for the specified shell
+  help        Help about any command
+  validate    Validate a graph file.
+  version     Print the version number of actrun
+
+Flags:
+      --concurrency string     Enable or disable concurrency
+      --config_file string     The config file to use
+      --create_debug_session   Create a debug session by connecting to the web app
+      --env_file string        Absolute path to an env file (.env) to load before execution
+  -h, --help                   help for actrun
+      --session_token string   The session token from your browser
+  -v, --version                version for actrun
+
+Use "actrun [command] --help" for more information about a command.
+

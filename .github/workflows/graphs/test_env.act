@@ -1,0 +1,298 @@
+entry: gh-start
+nodes:
+  - id: gh-start
+    type: core/gh-start@v1
+    position:
+      x: -160
+      y: 450
+  - id: gh-actionforge-test-action-node-main-lemon-penguin-yellow
+    type: >-
+      github.com/actionforge/test-action-node@22db00979573158856d37b2a91c05deccde3b41b
+    position:
+      x: 1020
+      y: 510
+    inputs:
+      input1: lorem
+      environment: 'false'
+      input2: dolor
+  - id: run-v1-apple-silver-lion
+    type: core/run@v1
+    position:
+      x: 240
+      y: 960
+    inputs:
+      script: |
+        input1="hello world"
+        env
+
+        if [ "$MY_ENV" == "$input1" ]; then
+            echo "MY_ENV correctly set to $input1"
+        else
+            echo "MY_ENV is not correctly set, got: '$MY_ENV'"
+            exit 1
+        fi
+  - id: run-v1-giraffe-grape-zebra
+    type: core/run@v1
+    position:
+      x: 1460
+      y: 340
+    inputs:
+      script: >
+        input1="lorem"
+
+        if [ "$MY_ENV" == "this env modified by test-action-node and input1
+        value is '$input1'" ]; then
+            echo "MY_ENV correctly contains $input1"
+        else
+            echo "MY_ENV is not correctly set, got: '$MY_ENV'"
+            exit 1
+        fi
+  - id: gh-actionforge-test-action-node-main-blueberry-monkey-plum
+    type: >-
+      github.com/actionforge/test-action-node@22db00979573158856d37b2a91c05deccde3b41b
+    position:
+      x: 1020
+      y: 990
+    inputs:
+      input1: ipsum
+      environment: 'false'
+      input2: lorem
+  - id: concurrent-exec-v1-blackberry-orange-coconut
+    type: core/concurrent-exec@v1
+    position:
+      x: 690
+      y: 870
+    outputs:
+      exec[0]: ''
+      exec[1]: ''
+  - id: run-v1-pink-brown-kangaroo
+    type: core/run@v1
+    position:
+      x: 1460
+      y: 820
+    inputs:
+      script: >
+        input1="ipsum"
+
+        if [ "$MY_ENV" == "this env modified by test-action-node and input1
+        value is '$input1'" ]; then
+            echo "MY_ENV correctly contains $input1"
+        else
+            echo "MY_ENV is not correctly set, got: '$MY_ENV'"
+            exit 1
+        fi
+  - id: run-v1-snake-squirrel-shark
+    type: core/run@v1
+    position:
+      x: 1880
+      y: 660
+    inputs:
+      script: >
+        input1="ipsum"
+
+
+        # check again if MY_ENV was passed through the previous node
+
+        if [ "$MY_ENV" == "this env modified by test-action-node and input1
+        value is '$input1'" ]; then
+            echo "MY_ENV correctly contains $input1"
+        else
+            echo "MY_ENV is not correctly set, got: '$MY_ENV'"
+            exit 1
+        fi
+
+
+        # also overwrite the value 
+
+        echo "MY_ENV=modified by run node '$input1'" >> "$GITHUB_ENV"
+
+
+        # also introduce new env var
+
+        echo "NEW_ENV=1" >> "$GITHUB_ENV"
+
+        echo "NEW_ENV_BY_IPSUM=1" >> "$GITHUB_ENV"
+  - id: run-v1-lemon-pineapple-brown
+    type: core/run@v1
+    position:
+      x: 1880
+      y: 180
+    inputs:
+      script: >
+        input1="lorem"
+
+
+        # check again if MY_ENV was passed through the previous node
+
+        if [ "$MY_ENV" == "this env modified by test-action-node and input1
+        value is '$input1'" ]; then
+            echo "MY_ENV correctly contains $input1"
+        else
+            echo "MY_ENV is not correctly set, got: '$MY_ENV'"
+            exit 1
+        fi
+
+
+        # also overwrite the value 
+
+        echo "MY_ENV=modified by run node '$input1'" >> "$GITHUB_ENV"
+
+
+        # also introduce new env var
+
+        echo "NEW_ENV=1" >> "$GITHUB_ENV"
+
+        echo "NEW_ENV_BY_LOREM=1" >> "$GITHUB_ENV"
+  - id: run-v1-yellow-squirrel-orange
+    type: core/run@v1
+    position:
+      x: 2310
+      y: 490
+    inputs:
+      script: |-
+        input1="ipsum"
+
+        echo "MOEP"
+
+        if [ "$MY_ENV" == "modified by run node '$input1'" ]; then
+            echo "MY_ENV correctly contains $input1"
+        else
+            echo "MY_ENV is not correctly set, got: '$MY_ENV'"
+            exit 1
+        fi
+  - id: run-v1-cranberry-orange-zebra
+    type: core/run@v1
+    position:
+      x: 2310
+      y: 10
+    inputs:
+      script: |-
+        input1="lorem"
+
+        if [ "$MY_ENV" == "modified by run node '$input1'" ]; then
+            echo "MY_ENV correctly contains $input1"
+        else
+            echo "MY_ENV IS not correctly set, got: '$MY_ENV'"
+            exit 1
+        fi
+  - id: run-v1-raspberry-lemon-squirrel
+    type: core/run@v1
+    position:
+      x: 3190
+      y: 270
+    inputs:
+      script: |
+        # check again if MY_ENV was passed through the previous node
+        if [ "$NEW_ENV" == "1" ]; then
+            echo "NEW_ENV correctly contains $NEW_ENV"
+        else
+            echo "NEW_ENV is not correctly set, got: '$NEW_ENV'"
+            exit 1
+        fi
+
+        if [ "$NEW_ENV_BY_LOREM" == "1" ]; then
+            echo "NEW_ENV_BY_LOREM correctly contains $NEW_ENV_BY_LOREM"
+        else
+            echo "NEW_ENV_BY_LOREM is not correctly set, got: '$NEW_ENV_BY_LOREM'"
+            exit 1
+        fi
+
+        if [ "$NEW_ENV_BY_IPSUM" == "1" ]; then
+            echo "NEW_ENV_BY_IPSUM correctly contains $NEW_ENV_BY_IPSUM"
+        else
+            echo "NEW_ENV_BY_IPSUM is not correctly set, got: '$NEW_ENV_BY_IPSUM'"
+            exit 1
+        fi
+  - id: wait-for-v1-cat-green-cherry
+    type: core/wait-for@v1
+    position:
+      x: 2780
+      y: 350
+    inputs:
+      after: 2
+connections: []
+executions:
+  - src:
+      node: gh-actionforge-test-action-node-main-lemon-penguin-yellow
+      port: exec-success
+    dst:
+      node: run-v1-giraffe-grape-zebra
+      port: exec
+  - src:
+      node: run-v1-giraffe-grape-zebra
+      port: exec-success
+    dst:
+      node: run-v1-lemon-pineapple-brown
+      port: exec
+  - src:
+      node: run-v1-pink-brown-kangaroo
+      port: exec-success
+    dst:
+      node: run-v1-snake-squirrel-shark
+      port: exec
+  - src:
+      node: run-v1-apple-silver-lion
+      port: exec-success
+    dst:
+      node: concurrent-exec-v1-blackberry-orange-coconut
+      port: exec
+  - src:
+      node: concurrent-exec-v1-blackberry-orange-coconut
+      port: exec[0]
+    dst:
+      node: gh-actionforge-test-action-node-main-lemon-penguin-yellow
+      port: exec
+  - src:
+      node: run-v1-lemon-pineapple-brown
+      port: exec-success
+    dst:
+      node: run-v1-cranberry-orange-zebra
+      port: exec
+  - src:
+      node: run-v1-snake-squirrel-shark
+      port: exec-success
+    dst:
+      node: run-v1-yellow-squirrel-orange
+      port: exec
+  - src:
+      node: gh-actionforge-test-action-node-main-blueberry-monkey-plum
+      port: exec-success
+    dst:
+      node: run-v1-pink-brown-kangaroo
+      port: exec
+  - src:
+      node: gh-start
+      port: exec-on_push
+    dst:
+      node: run-v1-apple-silver-lion
+      port: exec
+  - src:
+      node: gh-start
+      port: exec-on_workflow_dispatch
+    dst:
+      node: run-v1-apple-silver-lion
+      port: exec
+  - src:
+      node: concurrent-exec-v1-blackberry-orange-coconut
+      port: exec[1]
+    dst:
+      node: gh-actionforge-test-action-node-main-blueberry-monkey-plum
+      port: exec
+  - src:
+      node: wait-for-v1-cat-green-cherry
+      port: exec
+    dst:
+      node: run-v1-raspberry-lemon-squirrel
+      port: exec
+  - src:
+      node: run-v1-cranberry-orange-zebra
+      port: exec-success
+    dst:
+      node: wait-for-v1-cat-green-cherry
+      port: exec
+  - src:
+      node: run-v1-yellow-squirrel-orange
+      port: exec-success
+    dst:
+      node: wait-for-v1-cat-green-cherry
+      port: exec

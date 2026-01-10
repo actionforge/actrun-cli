@@ -1,0 +1,88 @@
+entry: start
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: if-v1-koala-peach-gray
+      port: exec
+  - src:
+      node: if-v1-koala-peach-gray
+      port: exec-then
+    dst:
+      node: run-v1-penguin-pineapple-pineapple
+      port: exec
+  - src:
+      node: if-v1-koala-peach-gray
+      port: exec-otherwise
+    dst:
+      node: run-v1-mango-silver-silver
+      port: exec
+connections:
+  - src:
+      node: env-get-v1-kangaroo-zebra-orange
+      port: env
+    dst:
+      node: string-match-v1-strawberry-orange-dog
+      port: str1
+  - src:
+      node: string-match-v1-strawberry-orange-dog
+      port: result
+    dst:
+      node: if-v1-koala-peach-gray
+      port: condition
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 290
+      y: 70
+    settings:
+      folded: false
+  - id: if-v1-koala-peach-gray
+    type: core/branch@v1
+    position:
+      x: 1100
+      y: 130
+    settings:
+      folded: false
+  - id: run-v1-penguin-pineapple-pineapple
+    type: core/run@v1
+    position:
+      x: 1440
+      y: -90
+    inputs:
+      shell: python
+      script: print("Yes")
+    settings:
+      folded: false
+  - id: run-v1-mango-silver-silver
+    type: core/run@v1
+    position:
+      x: 1440
+      y: 260
+    inputs:
+      shell: python
+      script: print("No")
+    settings:
+      folded: false
+  - id: string-match-v1-strawberry-orange-dog
+    type: core/string-match@v1
+    position:
+      x: 740
+      y: 280
+    inputs:
+      op: equals
+      str2: Hello World!
+    settings:
+      folded: false
+  - id: env-get-v1-kangaroo-zebra-orange
+    type: core/env-get@v1
+    position:
+      x: 440
+      y: 260
+    inputs:
+      env: FOO
+    settings:
+      folded: false
+desc: ''

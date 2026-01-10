@@ -1,0 +1,23 @@
+yaml-version: 3.0
+
+id: core/const-number
+name: Const Number
+version: 1
+category: computation
+icon: tablerNumber123
+short_desc: Constant value of a number.
+compact: true
+style:
+  header:
+    background: "#388a34"
+  body:
+    background: "#22591f"
+inputs:
+  value:
+    type: number
+    hide_socket: true
+    index: 0
+outputs:
+  result:
+    type: number
+    index: 0

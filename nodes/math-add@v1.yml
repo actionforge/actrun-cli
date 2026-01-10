@@ -1,0 +1,38 @@
+yaml-version: 3.0
+
+id: core/math-add
+name: Math Add
+category: computation
+style:
+  header:
+    background: "#388a34"
+  body:
+    background: "#22591f"
+icon: tablerPlus
+version: 1
+short_desc: Add two or more numbers.
+long_desc: |
+  This node adds the input numbers together.
+  
+  ## Example:
+
+  - Input: `1, 2, 3`
+
+  Results in the addition of `1 + 2 + 3`.
+
+  - Output: `6`
+
+label: +
+compact: true
+inputs:
+  inputs:
+    type: number
+    index: 0
+    array: true
+    array_initial_count: 2
+    desc: A set of numbers to add together.
+outputs:
+  result:
+    type: number
+    index: 0
+    desc: The result of the addition.

@@ -1,0 +1,48 @@
+build hasn't expired yet
+looking for value: 'env_file'
+  no value (is optional) found for: 'env_file'
+looking for value: 'config_file'
+  no value (is optional) found for: 'config_file'
+looking for value: 'concurrency'
+  no value (is optional) found for: 'concurrency'
+looking for value: 'graph_file'
+  found value in: 'env (shell)'
+  evaluated to: 'index_error.act'
+looking for value: 'session_token'
+  no value (is optional) found for: 'session_token'
+looking for value: 'create_debug_session'
+  found value in flags
+  evaluated to: 'false'
+PushNodeVisit: start, execute: true
+🟢 Execute 'For Loop (for-loop-v1-purple-bear-lemon)'
+PushNodeVisit: for-loop-v1-purple-bear-lemon, execute: true
+PushNodeVisit: length-v1-butterfly-sheep-blueberry, execute: false
+PushNodeVisit: string-array-v1-lychee-date-octopus, execute: false
+🟢 Execute 'Print (print-v1-indigo-guava-elephant)'
+PushNodeVisit: print-v1-indigo-guava-elephant, execute: true
+PushNodeVisit: array-get-v1-goose-chicken-nectarine, execute: false
+PushNodeVisit: string-array-v1-lychee-date-octopus, execute: false
+PushNodeVisit: (cached) for-loop-v1-purple-bear-lemon, execute: false
+PushNodeVisit: env-get-v1-lime-octopus-grapefruit, execute: false
+hello
+🟢 Execute 'Print (print-v1-indigo-guava-elephant)'
+PushNodeVisit: print-v1-indigo-guava-elephant, execute: true
+PushNodeVisit: array-get-v1-goose-chicken-nectarine, execute: false
+PushNodeVisit: string-array-v1-lychee-date-octopus, execute: false
+PushNodeVisit: (cached) for-loop-v1-purple-bear-lemon, execute: false
+PushNodeVisit: env-get-v1-lime-octopus-grapefruit, execute: false
+world
+🟢 Execute 'Print (print-v1-indigo-guava-elephant)'
+PushNodeVisit: print-v1-indigo-guava-elephant, execute: true
+PushNodeVisit: array-get-v1-goose-chicken-nectarine, execute: false
+PushNodeVisit: string-array-v1-lychee-date-octopus, execute: false
+PushNodeVisit: (cached) for-loop-v1-purple-bear-lemon, execute: false
+PushNodeVisit: env-get-v1-lime-octopus-grapefruit, execute: false
+foo123
+🟢 Execute 'Print (print-v1-indigo-guava-elephant)'
+PushNodeVisit: print-v1-indigo-guava-elephant, execute: true
+PushNodeVisit: array-get-v1-goose-chicken-nectarine, execute: false
+PushNodeVisit: string-array-v1-lychee-date-octopus, execute: false
+PushNodeVisit: (cached) for-loop-v1-purple-bear-lemon, execute: false
+PushNodeVisit: env-get-v1-lime-octopus-grapefruit, execute: false
+

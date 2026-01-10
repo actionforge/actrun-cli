@@ -1,0 +1,71 @@
+editor:
+  version:
+    created: v1.11.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 70
+      y: 130
+  - id: file-write-v1-peach-butterfly-zebra
+    type: core/file-write@v1
+    position:
+      x: 370
+      y: 140
+    inputs:
+      path: hello-world.txt
+  - id: const-string-v1-parrot-pomegranate-plum
+    type: core/const-string@v1
+    position:
+      x: 30
+      y: 330
+    inputs:
+      value: hello this is a simple test
+  - id: file-read-v1-tiger-watermelon-rabbit
+    type: core/file-read@v1
+    position:
+      x: 740
+      y: 30
+    inputs:
+      path: hello-world.txt
+  - id: print-v1-coconut-brown-yellow
+    type: core/print@v1
+    position:
+      x: 1110
+      y: 10
+    inputs:
+      values[0]: null
+connections:
+  - src:
+      node: const-string-v1-parrot-pomegranate-plum
+      port: result
+    dst:
+      node: file-write-v1-peach-butterfly-zebra
+      port: data
+  - src:
+      node: file-read-v1-tiger-watermelon-rabbit
+      port: data
+    dst:
+      node: print-v1-coconut-brown-yellow
+      port: values[0]
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: file-write-v1-peach-butterfly-zebra
+      port: exec
+  - src:
+      node: file-write-v1-peach-butterfly-zebra
+      port: exec-success
+    dst:
+      node: file-read-v1-tiger-watermelon-rabbit
+      port: exec
+  - src:
+      node: file-read-v1-tiger-watermelon-rabbit
+      port: exec-success
+    dst:
+      node: print-v1-coconut-brown-yellow
+      port: exec

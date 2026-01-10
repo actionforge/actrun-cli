@@ -1,0 +1,36 @@
+yaml-version: 3.0
+
+id: core/sequence
+version: 1
+name: Sequence
+
+category: flow
+style:
+  header:
+    background: "#50858d"
+  body:
+    background: "#2f5054"
+icon: tablerCornerUpRightDouble
+short_desc: Executes a series of outputs in sequential order.
+long_desc: 'The Sequence node allows you to control the order of execution for different parts of your graph.
+
+
+  When the `exec` input is triggered, it will execute each connected output pin one by one, in order from top to bottom.
+
+
+  This is useful for ensuring that a series of operations happen in a specific, predictable sequence. You can add or remove
+  output pins as needed.
+
+  '
+inputs:
+  exec:
+    exec: true
+    index: 0
+    desc: Triggers the execution sequence.
+outputs:
+  exec:
+    exec: true
+    array: true
+    array_initial_count: 2
+    index: 0
+    desc: An execution output in the sequence.

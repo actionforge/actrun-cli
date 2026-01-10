@@ -1,0 +1,63 @@
+yaml-version: 3.0
+
+id: core/serializer
+version: 1
+name: Serializer
+category: data
+icon: tablerSquareLetterS
+style:
+  header:
+    background: "#a47e5b"
+  body:
+    background: "#7c6652"
+short_desc: Converts a data structure into a string using a specified format.
+long_desc: |
+  Converts a data structure (like a map or a list) into a text-based string format. This is useful for saving data to a file or sending it over a network.
+
+  ### Supported Formats
+  - **JSON**: JavaScript Object Notation. Widely used and human-readable. Output is indented for clarity.
+  - **YAML**: YAML Ain't Markup Language. A human-friendly data serialization standard.
+  - **TOML**: Tom's Obvious, Minimal Language. A minimal configuration file format.
+  - **INI**: A common configuration file format.
+outputs:
+  exec-success:
+    exec: true
+    index: 0
+    name: Success
+    desc: Executes if serialization is successful.
+  exec-err:
+    exec: true
+    name: Error
+    index: 1
+    desc: Executes if serialization fails.
+  output:
+    type: string
+    name: Output
+    index: 2
+    desc: The serialized string.
+inputs:
+  exec:
+    exec: true
+    index: 0
+    name: Exec
+    desc: Executes the node.
+  object:
+    type: unknown
+    name: Object
+    index: 2
+    desc: The data structure to serialize.
+  format:
+    name: Format
+    type: option
+    index: 3
+    default: json
+    desc: The serialization format to use.
+    options:
+      - name: JSON
+        value: json
+      - name: YAML
+        value: yaml
+      - name: TOML
+        value: toml
+      - name: INI
+        value: ini

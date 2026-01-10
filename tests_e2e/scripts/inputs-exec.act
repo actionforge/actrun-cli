@@ -1,0 +1,267 @@
+editor:
+  version:
+    created: v1.34.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 10
+      y: 10
+  - id: core-group-v1-nectarine-apricot-cat
+    type: core/group@v1
+    position:
+      x: 340
+      y: 30
+    inputs:
+      name-used-across-all-groups: ROOT GROUP
+      dont-print-this-port: shouldnt be printed
+      only-on-most-outer-group: only on most outer group
+    graph:
+      entry: core-group-inputs-v1-boysenberry-gold-brown
+      type: group
+      nodes:
+        - id: core-group-inputs-v1-boysenberry-gold-brown
+          type: core/group-inputs@v1
+          position:
+            x: 200
+            y: 10
+        - id: core-group-outputs-v1-fox-grape-crab
+          type: core/group-outputs@v1
+          position:
+            x: 1160
+            y: 50
+        - id: core-print-v1-panda-peach-raspberry
+          type: core/print@v1
+          position:
+            x: 420
+            y: 90
+          inputs:
+            values[0]: null
+            color: fg_magenta
+        - id: core-string-fmt-v1-pear-chicken-pear
+          type: core/string-fmt@v1
+          position:
+            x: 30
+            y: 190
+          inputs:
+            substitutes[0]: 'non-empty-string: (${{ inputs.name-used-across-all-groups }})'
+            fmt: 'In First Group Node: %v; %v'
+            substitutes[1]: 'also-non-empty-string: (${{ inputs.only-on-most-outer-group }})'
+        - id: core-group-v1-nectarine-apricot-cat
+          type: core/group@v1
+          position:
+            x: 650
+            y: 70
+          inputs:
+            name-used-across-all-groups: INNER GROUP
+          graph:
+            entry: core-group-inputs-v1-boysenberry-gold-brown
+            type: group
+            nodes:
+              - id: core-group-inputs-v1-boysenberry-gold-brown
+                type: core/group-inputs@v1
+                position:
+                  x: -70
+                  y: -20
+              - id: core-group-outputs-v1-fox-grape-crab
+                type: core/group-outputs@v1
+                position:
+                  x: 730
+                  y: 40
+              - id: core-print-v1-panda-peach-raspberry
+                type: core/print@v1
+                position:
+                  x: 380
+                  y: -70
+                inputs:
+                  values[0]: null
+                  color: fg_white
+              - id: core-string-fmt-v1-pear-chicken-pear
+                type: core/string-fmt@v1
+                position:
+                  x: -100
+                  y: 160
+                inputs:
+                  substitutes[0]: >-
+                    must not be empty: (${{ inputs.name-used-across-all-groups
+                    }})
+                  fmt: 'Input Value: %v; %v; %v'
+                  substitutes[1]: 'must be empty: (${{ inputs.dont-print-this-port }})'
+                  substitutes[2]: 'must also be empty: (${{ inputs.only-on-most-outer-group }})'
+              - id: core-string-fmt-v1-persimmon-apricot-orange
+                type: core/string-fmt@v1
+                position:
+                  x: 230
+                  y: 390
+                inputs:
+                  substitutes[0]: ${{ inputs.name-used-across-all-groups }}
+                  fmt: 'Funnelled Data: %v'
+            connections:
+              - src:
+                  node: core-string-fmt-v1-pear-chicken-pear
+                  port: result
+                dst:
+                  node: core-print-v1-panda-peach-raspberry
+                  port: values[0]
+              - src:
+                  node: core-string-fmt-v1-persimmon-apricot-orange
+                  port: result
+                dst:
+                  node: core-group-outputs-v1-fox-grape-crab
+                  port: coconut-penguin-jellyfish
+            executions:
+              - src:
+                  node: core-group-inputs-v1-boysenberry-gold-brown
+                  port: exec-green-durian-papaya
+                dst:
+                  node: core-print-v1-panda-peach-raspberry
+                  port: exec
+              - src:
+                  node: core-print-v1-panda-peach-raspberry
+                  port: exec
+                dst:
+                  node: core-group-outputs-v1-fox-grape-crab
+                  port: exec-indigo-jackfruit-maroon
+            inputs:
+              exec-green-durian-papaya:
+                name: ''
+                type: ''
+                index: 0
+                exec: true
+                required: true
+              name-used-across-all-groups:
+                name: ''
+                type: string
+                index: 1
+            outputs:
+              exec-indigo-jackfruit-maroon:
+                name: ''
+                type: ''
+                index: 0
+                exec: true
+              coconut-penguin-jellyfish:
+                name: Funneled Data
+                type: string
+                index: 1
+        - id: core-print-v1-lobster-red-kiwano
+          type: core/print@v1
+          position:
+            x: 930
+            y: 20
+          inputs:
+            values[0]: null
+            color: fg_yellow
+      connections:
+        - src:
+            node: core-string-fmt-v1-pear-chicken-pear
+            port: result
+          dst:
+            node: core-print-v1-panda-peach-raspberry
+            port: values[0]
+        - src:
+            node: core-group-v1-nectarine-apricot-cat
+            port: coconut-penguin-jellyfish
+          dst:
+            node: core-print-v1-lobster-red-kiwano
+            port: values[0]
+      executions:
+        - src:
+            node: core-group-inputs-v1-boysenberry-gold-brown
+            port: exec-green-durian-papaya
+          dst:
+            node: core-print-v1-panda-peach-raspberry
+            port: exec
+        - src:
+            node: core-print-v1-panda-peach-raspberry
+            port: exec
+          dst:
+            node: core-group-v1-nectarine-apricot-cat
+            port: exec-green-durian-papaya
+        - src:
+            node: core-group-v1-nectarine-apricot-cat
+            port: exec-indigo-jackfruit-maroon
+          dst:
+            node: core-print-v1-lobster-red-kiwano
+            port: exec
+        - src:
+            node: core-print-v1-lobster-red-kiwano
+            port: exec
+          dst:
+            node: core-group-outputs-v1-fox-grape-crab
+            port: exec-indigo-jackfruit-maroon
+      inputs:
+        exec-green-durian-papaya:
+          name: ''
+          type: ''
+          index: 0
+          exec: true
+          required: true
+        name-used-across-all-groups:
+          name: ''
+          type: string
+          index: 1
+        dont-print-this-port:
+          name: blub
+          type: string
+          index: 2
+        only-on-most-outer-group:
+          name: ''
+          type: string
+          index: 3
+      outputs:
+        exec-indigo-jackfruit-maroon:
+          name: ''
+          type: ''
+          index: 0
+          exec: true
+  - id: core-print-v1-panda-peach-raspberry
+    type: core/print@v1
+    position:
+      x: 680
+      y: 90
+    inputs:
+      values[0]: null
+      color: fg_red
+  - id: core-string-fmt-v1-pear-chicken-pear
+    type: core/string-fmt@v1
+    position:
+      x: 230
+      y: 230
+    inputs:
+      substitutes[0]: must be empty=(${{ inputs.name-used-across-all-groups }})
+      fmt: 'Input Value: %v %v'
+      substitutes[1]: must also be empty=(${{ inputs.only-on-most-outer-group }})
+  - id: core-comment-v1-donkey-cranberry-crab
+    type: core/comment@v1
+    position:
+      x: 260
+      y: -120
+    dimensions:
+      width: 220
+      height: 70
+    inputs:
+      markdown: >-
+        A bunch of tests that showcase `${{ inputs.XYZ }}` accessors for a
+        execution group node.
+connections:
+  - src:
+      node: core-string-fmt-v1-pear-chicken-pear
+      port: result
+    dst:
+      node: core-print-v1-panda-peach-raspberry
+      port: values[0]
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: core-group-v1-nectarine-apricot-cat
+      port: exec-green-durian-papaya
+  - src:
+      node: core-group-v1-nectarine-apricot-cat
+      port: exec-indigo-jackfruit-maroon
+    dst:
+      node: core-print-v1-panda-peach-raspberry
+      port: exec

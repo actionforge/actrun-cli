@@ -1,0 +1,36 @@
+yaml-version: 3.0
+
+id: core/file-write
+name: File Write
+version: 1
+category: filesystem
+icon: tablerFileDigit
+short_desc: Write a file to the file system.
+style:
+  header:
+    background: rgb(197, 147, 31)
+  body:
+    background: "rgb(164 115 29)"
+outputs:
+  exec-success:
+    name: Success
+    exec: true
+    index: 0
+  exec-err:
+    name: Error
+    exec: true
+    index: 1
+inputs:
+  exec:
+    exec: true
+    index: 0
+  path:
+    name: Path
+    type: string
+    index: 1
+    required: true
+  data:
+    name: Data
+    type: any
+    required: true
+    index: 2

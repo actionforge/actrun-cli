@@ -1,0 +1,50 @@
+editor:
+  version:
+    created: v1.28.1
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: -250
+      y: 30
+  - id: filepath-location-v1-coral-strawberry-indigo
+    type: core/filepath-location@v1
+    position:
+      x: -250
+      y: 320
+    inputs:
+      location: current_graph
+  - id: print-v1-pineapple-cranberry-kiwi
+    type: core/print@v1
+    position:
+      x: 500
+      y: -10
+    inputs:
+      values[0]: null
+  - id: filepath-op-v1-ivory-nectarine-dolphin
+    type: core/filepath-op@v1
+    position:
+      x: 120
+      y: 250
+connections:
+  - src:
+      node: filepath-location-v1-coral-strawberry-indigo
+      port: result
+    dst:
+      node: filepath-op-v1-ivory-nectarine-dolphin
+      port: path
+  - src:
+      node: filepath-op-v1-ivory-nectarine-dolphin
+      port: result
+    dst:
+      node: print-v1-pineapple-cranberry-kiwi
+      port: values[0]
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: print-v1-pineapple-cranberry-kiwi
+      port: exec

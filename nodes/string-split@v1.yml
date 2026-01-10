@@ -1,0 +1,34 @@
+yaml-version: 3.0
+
+id: core/string-split
+name: String Split
+version: 1
+icon: tablerSquareLetterS
+category: processing
+style:
+  header:
+    background: "#6e6e6e"
+  body:
+    background: "#423f3f"
+short_desc: Split a string into a slice using a delimiter with a limit.
+outputs:
+  segments:
+    type: string
+    name: Segments
+    array: true
+    index: 1
+inputs:
+  string:
+    type: string
+    name: String
+    index: 0
+  delimiter:
+    type: string
+    name: Delimiter
+    required: true
+    index: 1
+  max_segments:
+    type: number
+    name: Max segments
+    default: -1
+    index: 2

@@ -1,0 +1,145 @@
+entry: gh-start
+nodes:
+  - id: gh-start
+    type: core/gh-start@v1
+    position:
+      x: -120
+      y: 130
+  - id: gh-actions-checkout-gray-butterfly-apple
+    type: github.com/actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b
+    position:
+      x: 410
+      y: 450
+  - id: gh-actions-setup-go-shark-pineapple-lemon
+    type: github.com/actions/setup-go@cdcb36043654635271a94b9a6d1392de5bb323a7
+    position:
+      x: 1150
+      y: 220
+    inputs:
+      go-version: '1.25'
+  - id: run-v1-coconut-banana-green
+    type: core/run@v1
+    position:
+      x: 1760
+      y: 70
+    inputs:
+      script: >-
+        go mod tidy
+
+
+        go vet
+
+
+        go test ./... -v -race -coverpkg=./... -cover -coverprofile cover.out
+        --tags=tests_unit,integration_tests,tests_system,github_impl
+
+
+        go tool cover -html cover.out -o cover.html
+      env:
+        - CGO_ENABLED=1
+  - id: gh-actions-upload-artifact-peach-blackberry-purple
+    type: >-
+      github.com/actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808
+    position:
+      x: 3140
+      y: 110
+    inputs:
+      name: cover
+      path: cover.html
+  - id: run-v1-red-raspberry-brown
+    type: core/run@v1
+    position:
+      x: 2350
+      y: -160
+    inputs:
+      script: |-
+        OS="$(uname -s)"
+
+        case "$OS" in
+            Linux*)     OUTPUT="actrun";;
+            Darwin*)    OUTPUT="actrun";;
+            CYGWIN*)    OUTPUT="actrun.exe";;
+            MINGW*)     OUTPUT="actrun.exe";;
+            MSYS*)      OUTPUT="actrun.exe";;
+            *)          OUTPUT="actrun";;
+        esac
+
+        go build --tags=github_impl -o "$OUTPUT" .
+      env:
+        - CGO_ENABLED=1
+  - id: env-get-v1-panda-apple-rabbit
+    type: core/env-get@v1
+    position:
+      x: 2130
+      y: 660
+    inputs:
+      env: UPLOAD_COVER
+  - id: branch-v1-penguin-monkey-kiwi
+    type: core/branch@v1
+    position:
+      x: 2930
+      y: 260
+  - id: string-match-v1-watermelon-giraffe-squirrel
+    type: core/string-match@v1
+    position:
+      x: 2460
+      y: 630
+    inputs:
+      op: equals
+      str2: 'true'
+connections:
+  - src:
+      node: env-get-v1-panda-apple-rabbit
+      port: env
+    dst:
+      node: string-match-v1-watermelon-giraffe-squirrel
+      port: str1
+  - src:
+      node: string-match-v1-watermelon-giraffe-squirrel
+      port: result
+    dst:
+      node: branch-v1-penguin-monkey-kiwi
+      port: condition
+executions:
+  - src:
+      node: run-v1-coconut-banana-green
+      port: exec-success
+    dst:
+      node: run-v1-red-raspberry-brown
+      port: exec
+  - src:
+      node: branch-v1-penguin-monkey-kiwi
+      port: exec-then
+    dst:
+      node: gh-actions-upload-artifact-peach-blackberry-purple
+      port: exec
+  - src:
+      node: run-v1-red-raspberry-brown
+      port: exec-success
+    dst:
+      node: branch-v1-penguin-monkey-kiwi
+      port: exec
+  - src:
+      node: gh-start
+      port: exec-on_workflow_dispatch
+    dst:
+      node: gh-actions-checkout-gray-butterfly-apple
+      port: exec
+  - src:
+      node: gh-start
+      port: exec-on_push
+    dst:
+      node: gh-actions-checkout-gray-butterfly-apple
+      port: exec
+  - src:
+      node: gh-actions-checkout-gray-butterfly-apple
+      port: exec-success
+    dst:
+      node: gh-actions-setup-go-shark-pineapple-lemon
+      port: exec
+  - src:
+      node: gh-actions-setup-go-shark-pineapple-lemon
+      port: exec-success
+    dst:
+      node: run-v1-coconut-banana-green
+      port: exec

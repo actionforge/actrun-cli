@@ -1,0 +1,32 @@
+editor:
+  version:
+    created: v1.34.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 20
+      y: 10
+  - id: core-print-v1-crab-red-gold
+    type: core/print@v1
+    position:
+      x: 410
+      y: 0
+    inputs:
+      values[0]: null
+connections:
+  - src:
+      node: start
+      port: args
+    dst:
+      node: core-print-v1-crab-red-gold
+      port: values[0]
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: core-print-v1-crab-red-gold
+      port: exec

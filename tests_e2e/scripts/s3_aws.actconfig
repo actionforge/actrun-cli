@@ -1,0 +1,5 @@
+env:
+    TESTE2E_S3_BUCKET: actionforge
+    TESTE2E_S3_REGION: us-east-2
+secrets:
+    # come from GITHUB_ACTIONS or ~/.actconfig if run local

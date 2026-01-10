@@ -1,0 +1,256 @@
+build hasn't expired yet
+looking for value: 'env_file'
+  no value (is optional) found for: 'env_file'
+looking for value: 'config_file'
+  no value (is optional) found for: 'config_file'
+looking for value: 'concurrency'
+  no value (is optional) found for: 'concurrency'
+looking for value: 'graph_file'
+  found value in: 'env (shell)'
+  evaluated to: 'group-error.act'
+looking for value: 'session_token'
+  no value (is optional) found for: 'session_token'
+looking for value: 'create_debug_session'
+  found value in flags
+  evaluated to: 'false'
+PushNodeVisit: start, execute: true
+🟢 Execute 'Group (group-v1-giraffe-fox-goat)'
+PushNodeVisit: group-v1-giraffe-fox-goat, execute: true
+🟢 Execute 'Group Inputs (group-inputs-v1-seahorse-koala-purple)'
+PushNodeVisit: group-inputs-v1-seahorse-koala-purple, execute: true
+🟢 Execute 'Group (group-v1-durian-panda-navy)'
+PushNodeVisit: group-v1-durian-panda-navy, execute: true
+🟢 Execute 'Group Inputs (group-inputs-v1-seahorse-koala-purple)'
+PushNodeVisit: group-inputs-v1-seahorse-koala-purple, execute: true
+🟢 Execute 'Run Script (run-v1-banana-indigo-papaya)'
+PushNodeVisit: run-v1-banana-indigo-papaya, execute: true
+run successful
+🟢 Execute 'Group Output (group-outputs-v1-bat-lime-kangaroo)'
+PushNodeVisit: group-outputs-v1-bat-lime-kangaroo, execute: true
+🟢 Execute 'Group (group-v1-durian-panda-navy)'
+PushNodeVisit: group-v1-durian-panda-navy, execute: true
+🟢 Execute 'Group Output (group-outputs-v1-bat-lime-kangaroo)'
+PushNodeVisit: group-outputs-v1-bat-lime-kangaroo, execute: true
+🟢 Execute 'Group (group-v1-giraffe-fox-goat)'
+PushNodeVisit: group-v1-giraffe-fox-goat, execute: true
+🟢 Execute 'Print (print-v1-rabbit-raspberry-lion)'
+PushNodeVisit: print-v1-rabbit-raspberry-lion, execute: true
+PushNodeVisit: const-string-v1-gooseberry-purple-kiwano, execute: false
+group successfully succeeded
+🟢 Execute 'Group (group-v1-ivory-cherry-lobster)'
+PushNodeVisit: group-v1-ivory-cherry-lobster, execute: true
+🟢 Execute 'Group Inputs (group-inputs-v1-seahorse-koala-purple)'
+PushNodeVisit: group-inputs-v1-seahorse-koala-purple, execute: true
+🟢 Execute 'Group (group-v1-durian-panda-navy)'
+PushNodeVisit: group-v1-durian-panda-navy, execute: true
+🟢 Execute 'Group Inputs (group-inputs-v1-seahorse-koala-purple)'
+PushNodeVisit: group-inputs-v1-seahorse-koala-purple, execute: true
+🟢 Execute 'Run Script (run-v1-banana-indigo-papaya)'
+PushNodeVisit: run-v1-banana-indigo-papaya, execute: true
+🟢 Execute 'Group Output (group-outputs-v1-bat-lime-kangaroo)'
+PushNodeVisit: group-outputs-v1-bat-lime-kangaroo, execute: true
+🟢 Execute 'Group (group-v1-durian-panda-navy)'
+PushNodeVisit: group-v1-durian-panda-navy, execute: true
+🟢 Execute 'Group Output (group-outputs-v1-bat-lime-kangaroo)'
+PushNodeVisit: group-outputs-v1-bat-lime-kangaroo, execute: true
+🟢 Execute 'Group (group-v1-ivory-cherry-lobster)'
+PushNodeVisit: group-v1-ivory-cherry-lobster, execute: true
+🟢 Execute 'Print (print-v1-tiger-kiwi-grapefruit)'
+PushNodeVisit: print-v1-tiger-kiwi-grapefruit, execute: true
+PushNodeVisit: const-string-v1-lobster-lion-brown, execute: false
+this error was successfully ignored
+🟢 Execute 'Group (group-v1-durian-panda-navy)'
+PushNodeVisit: group-v1-durian-panda-navy, execute: true
+🟢 Execute 'Group Inputs (group-inputs-v1-seahorse-koala-purple)'
+PushNodeVisit: group-inputs-v1-seahorse-koala-purple, execute: true
+🟢 Execute 'Run Script (run-v1-banana-indigo-papaya)'
+PushNodeVisit: run-v1-banana-indigo-papaya, execute: true
+🟢 Execute 'Group Output (group-outputs-v1-bat-lime-kangaroo)'
+PushNodeVisit: group-outputs-v1-bat-lime-kangaroo, execute: true
+🟢 Execute 'Group (group-v1-durian-panda-navy)'
+PushNodeVisit: group-v1-durian-panda-navy, execute: true
+🟢 Execute 'Print (print-v1-papaya-durian-orange)'
+PushNodeVisit: print-v1-papaya-durian-orange, execute: true
+PushNodeVisit: const-string-v1-kangaroo-date-navy, execute: false
+this error was successfully ignored2
+🟢 Execute 'Group (group-v1-koala-parrot-parrot)'
+PushNodeVisit: group-v1-koala-parrot-parrot, execute: true
+🟢 Execute 'Group Inputs (group-inputs-v1-seahorse-koala-purple)'
+PushNodeVisit: group-inputs-v1-seahorse-koala-purple, execute: true
+🟢 Execute 'Run Script (run-v1-banana-indigo-papaya)'
+PushNodeVisit: run-v1-banana-indigo-papaya, execute: true
+🟢 Execute 'Group Output (group-outputs-v1-bat-lime-kangaroo)'
+PushNodeVisit: group-outputs-v1-bat-lime-kangaroo, execute: true
+🟢 Execute 'Group (group-v1-koala-parrot-parrot)'
+PushNodeVisit: group-v1-koala-parrot-parrot, execute: true
+actrun: group-error.act
+
+error:
+   1: execute 'Start' (start)
+   2: execute 'Group' (group-v1-giraffe-fox-goat)
+   3: execute 'Group Inputs' (group-inputs-v1-seahorse-koala-purple)
+   4: execute 'Group' (group-v1-durian-panda-navy)
+   5: execute 'Group Inputs' (group-inputs-v1-seahorse-koala-purple)
+   6: execute 'Run Script' (run-v1-banana-indigo-papaya)
+   7: execute 'Group Output' (group-outputs-v1-bat-lime-kangaroo)
+   8: execute 'Group' (group-v1-durian-panda-navy)
+   9: execute 'Group Output' (group-outputs-v1-bat-lime-kangaroo)
+  10: execute 'Group' (group-v1-giraffe-fox-goat)
+  11: execute 'Print' (print-v1-rabbit-raspberry-lion)
+  12: execute 'Group' (group-v1-ivory-cherry-lobster)
+  13: execute 'Group Inputs' (group-inputs-v1-seahorse-koala-purple)
+  14: execute 'Group' (group-v1-durian-panda-navy)
+  15: execute 'Group Inputs' (group-inputs-v1-seahorse-koala-purple)
+  16: execute 'Run Script' (run-v1-banana-indigo-papaya)
+  17: execute 'Group Output' (group-outputs-v1-bat-lime-kangaroo)
+  18: execute 'Group' (group-v1-durian-panda-navy)
+  19: execute 'Group Output' (group-outputs-v1-bat-lime-kangaroo)
+  20: execute 'Group' (group-v1-ivory-cherry-lobster)
+  21: execute 'Print' (print-v1-tiger-kiwi-grapefruit)
+  22: execute 'Group' (group-v1-durian-panda-navy)
+  23: execute 'Group Inputs' (group-inputs-v1-seahorse-koala-purple)
+  24: execute 'Run Script' (run-v1-banana-indigo-papaya)
+  25: execute 'Group Output' (group-outputs-v1-bat-lime-kangaroo)
+  26: execute 'Group' (group-v1-durian-panda-navy)
+  27: execute 'Print' (print-v1-papaya-durian-orange)
+  28: execute 'Group' (group-v1-koala-parrot-parrot)
+  29: execute 'Group Inputs' (group-inputs-v1-seahorse-koala-purple)
+  30: execute 'Run Script' (run-v1-banana-indigo-papaya)
+  31: execute 'Group Output' (group-outputs-v1-bat-lime-kangaroo)
+  32: execute 'Group' (group-v1-koala-parrot-parrot)
+      error during execution
+       ↳ failed to run command
+        ↳ exit status 123
+
+
+
+stack trace:
+github.com/actionforge/actrun-cli/nodes.runAndCaptureOutput
+	run@v1.go:384
+github.com/actionforge/actrun-cli/nodes.runCommand
+	run@v1.go:260
+github.com/actionforge/actrun-cli/nodes.(*RunNode).ExecuteImpl
+	run@v1.go:112
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*GroupInputsNode).ExecuteImpl
+	group-inputs@v1.go:39
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*GroupNode).ExecuteImpl
+	group@v1.go:75
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*PrintNode).ExecuteImpl
+	print@v1.go:103
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*GroupNode).ExecuteImpl
+	group@v1.go:75
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*GroupOutputsNode).ExecuteImpl
+	group-outputs@v1.go:30
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*RunNode).ExecuteImpl
+	run@v1.go:129
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*GroupInputsNode).ExecuteImpl
+	group-inputs@v1.go:39
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*GroupNode).ExecuteImpl
+	group@v1.go:75
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*PrintNode).ExecuteImpl
+	print@v1.go:103
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*GroupNode).ExecuteImpl
+	group@v1.go:75
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*GroupOutputsNode).ExecuteImpl
+	group-outputs@v1.go:30
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*GroupNode).ExecuteImpl
+	group@v1.go:75
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*GroupOutputsNode).ExecuteImpl
+	group-outputs@v1.go:30
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*RunNode).ExecuteImpl
+	run@v1.go:129
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*GroupInputsNode).ExecuteImpl
+	group-inputs@v1.go:39
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*GroupNode).ExecuteImpl
+	group@v1.go:75
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*GroupInputsNode).ExecuteImpl
+	group-inputs@v1.go:39
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*GroupNode).ExecuteImpl
+	group@v1.go:75
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*PrintNode).ExecuteImpl
+	print@v1.go:103
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*GroupNode).ExecuteImpl
+	group@v1.go:75
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*GroupOutputsNode).ExecuteImpl
+	group-outputs@v1.go:30
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*GroupNode).ExecuteImpl
+	group@v1.go:75
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*GroupOutputsNode).ExecuteImpl
+	group-outputs@v1.go:30
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*RunNode).ExecuteImpl
+	run@v1.go:146
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*GroupInputsNode).ExecuteImpl
+	group-inputs@v1.go:39
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*GroupNode).ExecuteImpl
+	group@v1.go:75
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*GroupInputsNode).ExecuteImpl
+	group-inputs@v1.go:39
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*GroupNode).ExecuteImpl
+	group@v1.go:75
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*StartNode).ExecuteImpl
+	start@v1.go:49
+github.com/actionforge/actrun-cli/nodes.(*StartNode).ExecuteEntry
+	start@v1.go:44
+github.com/actionforge/actrun-cli/core.RunGraph
+	graph.go:426
+github.com/actionforge/actrun-cli/core.RunGraphFromString
+	graph.go:1013
+

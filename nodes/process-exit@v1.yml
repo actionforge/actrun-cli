@@ -1,0 +1,22 @@
+yaml-version: 3.0
+
+id: core/process-exit
+name: Process Exit
+version: 1
+category: system
+style:
+  header:
+    background: "#3794ff"
+  body:
+    background: "#1f4f86"
+icon: tablerDoorEnter
+short_desc: Node to terminate the current program with a specified exit code.
+inputs:
+  exec:
+    exec: true
+    index: 0
+  code:
+    name: Exit Code
+    type: number
+    index: 1
+    desc: The exit code to terminate the program with.

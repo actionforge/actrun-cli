@@ -1,0 +1,66 @@
+build hasn't expired yet
+looking for value: 'env_file'
+  no value (is optional) found for: 'env_file'
+looking for value: 'config_file'
+  no value (is optional) found for: 'config_file'
+looking for value: 'concurrency'
+  no value (is optional) found for: 'concurrency'
+looking for value: 'graph_file'
+  found value in: 'env (shell)'
+  evaluated to: 'sequence.act'
+looking for value: 'session_token'
+  no value (is optional) found for: 'session_token'
+looking for value: 'create_debug_session'
+  found value in flags
+  evaluated to: 'false'
+PushNodeVisit: start, execute: true
+🟢 Execute 'Sequence (sequence-v1-strawberry-squirrel-cat)'
+PushNodeVisit: sequence-v1-strawberry-squirrel-cat, execute: true
+🟢 Execute 'Print (print-v1-blue-raspberry-zebra)'
+PushNodeVisit: print-v1-blue-raspberry-zebra, execute: true
+PushNodeVisit: const-string-v1-banana-orange-kangaroo, execute: false
+one
+🟢 Execute 'Print (print-v1-squirrel-zebra-coconut)'
+PushNodeVisit: print-v1-squirrel-zebra-coconut, execute: true
+PushNodeVisit: const-string-v1-lemon-parrot-penguin, execute: false
+two
+🟢 Execute 'Print (print-v1-cranberry-dolphin-cat)'
+PushNodeVisit: print-v1-cranberry-dolphin-cat, execute: true
+PushNodeVisit: const-string-v1-dog-yellow-koala, execute: false
+three
+🟢 Execute 'Print (print-v1-gold-pineapple-cranberry)'
+PushNodeVisit: print-v1-gold-pineapple-cranberry, execute: true
+PushNodeVisit: const-string-v1-pink-yellow-apple, execute: false
+four
+🟢 Execute 'Print (print-v1-pear-pear-purple)'
+PushNodeVisit: print-v1-pear-pear-purple, execute: true
+PushNodeVisit: const-string-v1-apple-pomegranate-orange, execute: false
+five
+🟢 Execute 'Print (print-v1-shark-coconut-gold)'
+PushNodeVisit: print-v1-shark-coconut-gold, execute: true
+PushNodeVisit: const-string-v1-kiwi-parrot-pineapple, execute: false
+six
+🟢 Execute 'Print (print-v1-lemon-gray-cat)'
+PushNodeVisit: print-v1-lemon-gray-cat, execute: true
+PushNodeVisit: const-string-v1-peach-lemon-penguin, execute: false
+seven
+🟢 Execute 'Print (print-v1-cherry-zebra-rabbit)'
+PushNodeVisit: print-v1-cherry-zebra-rabbit, execute: true
+PushNodeVisit: const-string-v1-purple-lemon-kangaroo, execute: false
+eight
+🟢 Execute 'Print (print-v1-lion-mango-pink)'
+PushNodeVisit: print-v1-lion-mango-pink, execute: true
+PushNodeVisit: const-string-v1-purple-monkey-cherry, execute: false
+nine
+🟢 Execute 'Print (print-v1-silver-panda-banana)'
+PushNodeVisit: print-v1-silver-panda-banana, execute: true
+PushNodeVisit: const-string-v1-shark-strawberry-lion, execute: false
+ten
+🟢 Execute 'Print (print-v1-dolphin-brown-koala)'
+PushNodeVisit: print-v1-dolphin-brown-koala, execute: true
+PushNodeVisit: const-string-v1-pomegranate-cherry-grape, execute: false
+eleven
+🟢 Execute 'Print (print-v1-gray-blue-blueberry)'
+PushNodeVisit: print-v1-gray-blue-blueberry, execute: true
+PushNodeVisit: const-string-v1-blueberry-blackberry-cranberry, execute: false
+twelve

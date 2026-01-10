@@ -1,0 +1,126 @@
+editor:
+  version:
+    created: v1.11.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 10
+      y: 100
+  - id: select-v1-grape-peach-snake
+    type: core/select-data@v1
+    position:
+      x: 680
+      y: 290
+    inputs:
+      choices[0]: null
+      choices[1]: null
+      choices[2]: null
+      choices[3]: null
+      choices[4]: null
+  - id: for-loop-v1-grape-mango-cat
+    type: core/for-loop@v1
+    position:
+      x: 290
+      y: 10
+    inputs:
+      first_index: 0
+      last_index: 5
+  - id: print-v1-gold-gold-panda
+    type: core/print@v1
+    position:
+      x: 900
+      y: 90
+    inputs:
+      values[0]: null
+  - id: const-number-v1-red-lemon-cat
+    type: core/const-number@v1
+    position:
+      x: 410
+      y: 290
+  - id: const-number-v1-raspberry-watermelon-peach
+    type: core/const-number@v1
+    position:
+      x: 410
+      y: 370
+    inputs:
+      value: 1
+  - id: const-number-v1-dog-butterfly-monkey
+    type: core/const-number@v1
+    position:
+      x: 410
+      y: 450
+    inputs:
+      value: 2
+  - id: const-number-v1-cranberry-cherry-yellow
+    type: core/const-number@v1
+    position:
+      x: 410
+      y: 530
+    inputs:
+      value: 3
+  - id: const-number-v1-purple-yellow-shark
+    type: core/const-number@v1
+    position:
+      x: 410
+      y: 610
+    inputs:
+      value: 4
+connections:
+  - src:
+      node: for-loop-v1-grape-mango-cat
+      port: index
+    dst:
+      node: select-v1-grape-peach-snake
+      port: index
+  - src:
+      node: const-number-v1-purple-yellow-shark
+      port: result
+    dst:
+      node: select-v1-grape-peach-snake
+      port: choices[4]
+  - src:
+      node: const-number-v1-cranberry-cherry-yellow
+      port: result
+    dst:
+      node: select-v1-grape-peach-snake
+      port: choices[3]
+  - src:
+      node: const-number-v1-dog-butterfly-monkey
+      port: result
+    dst:
+      node: select-v1-grape-peach-snake
+      port: choices[2]
+  - src:
+      node: const-number-v1-raspberry-watermelon-peach
+      port: result
+    dst:
+      node: select-v1-grape-peach-snake
+      port: choices[1]
+  - src:
+      node: const-number-v1-red-lemon-cat
+      port: result
+    dst:
+      node: select-v1-grape-peach-snake
+      port: choices[0]
+  - src:
+      node: select-v1-grape-peach-snake
+      port: value
+    dst:
+      node: print-v1-gold-gold-panda
+      port: values[0]
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: for-loop-v1-grape-mango-cat
+      port: exec
+  - src:
+      node: for-loop-v1-grape-mango-cat
+      port: exec-body
+    dst:
+      node: print-v1-gold-gold-panda
+      port: exec

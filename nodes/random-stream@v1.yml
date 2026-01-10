@@ -1,0 +1,52 @@
+yaml-version: 3.0
+
+id: core/random-stream
+name: Random Stream
+version: 1
+category: data
+icon: ionDice
+style:
+  header:
+    background: "#a47e5b"
+  body:
+    background: "#7c6652"
+short_desc: Creates a random stream based on user-defined character set preferences.
+outputs:
+  stream:
+    type: stream
+    name: Random Stream
+    desc: The generated random stream
+    index: 0
+inputs:
+  length:
+    type: number
+    name: Length
+    desc: The length of the stream.
+    index: 0
+    initial: 10
+  include_numbers:
+    type: bool
+    name: Numbers
+    desc: Include numbers (0-9) in the stream.
+    index: 1
+  include_characters:
+    type: bool
+    name: Characters
+    desc: Include lower-case characters (a-z) in the stream.
+    index: 2
+    initial: true
+  include_uppercase:
+    type: bool
+    name: Upper-case Characters
+    desc: Include upper-case characters (A-Z) in the stream.
+    index: 3
+  include_special:
+    type: bool
+    name: Special Characters
+    desc: Include special characters (!@#$%^&*() etc.) in the stream.
+    index: 4
+  seed:
+    type: number
+    name: Seed
+    desc: The seed for the random number generator (-1 for true randomness)
+    index: 5

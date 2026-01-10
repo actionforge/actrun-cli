@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<installer-gui-script minSpecVersion="1">
+    <title>actrun</title>
+    <pkg-ref id="dev.actionforge.actrun"/>
+    <options customize="never" require-scripts="false"/>
+    <choices-outline>
+        <line choice="default">
+            <line choice="dev.actionforge.actrun"/>
+        </line>
+    </choices-outline>
+    <choice id="default"/>
+    <choice id="dev.actionforge.actrun" visible="false">
+        <pkg-ref id="dev.actionforge.actrun"/>
+    </choice>
+    <pkg-ref id="dev.actionforge.actrun">actrun-cli.pkg</pkg-ref>
+</installer-gui-script>

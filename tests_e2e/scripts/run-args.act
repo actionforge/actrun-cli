@@ -1,0 +1,57 @@
+editor:
+  version:
+    created: v1.28.1
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: -240
+      y: -10
+  - id: run-exec-v1-papaya-mango-yellow
+    type: core/run-exec@v1
+    position:
+      x: 190
+      y: -120
+    inputs:
+      path: echo
+      args:
+        - '    -n     '
+        - '    hello world without newline    '
+  - id: comment-v1-bear-red-rhinoceros
+    type: core/comment@v1
+    position:
+      x: 260
+      y: -270
+    dimensions:
+      width: 350
+      height: 118
+    inputs:
+      markdown: >-
+        args are surrounded by spaces. Test to ensure the args are space
+        trimmed, otherwise args are often not parsed properly by many commands
+  - id: run-v1-apple-orange-strawberry
+    type: core/run@v1
+    position:
+      x: 800
+      y: -140
+    inputs:
+      script: echo $*
+      args:
+        - '    -n     '
+        - '    hello world without newline    '
+connections: []
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: run-exec-v1-papaya-mango-yellow
+      port: exec
+  - src:
+      node: run-exec-v1-papaya-mango-yellow
+      port: exec-success
+    dst:
+      node: run-v1-apple-orange-strawberry
+      port: exec

@@ -1,0 +1,25 @@
+build hasn't expired yet
+looking for value: 'env_file'
+  no value (is optional) found for: 'env_file'
+looking for value: 'config_file'
+  no value (is optional) found for: 'config_file'
+looking for value: 'concurrency'
+  no value (is optional) found for: 'concurrency'
+looking for value: 'graph_file'
+  found value in: 'env (shell)'
+  evaluated to: 'output_cache.act'
+looking for value: 'session_token'
+  no value (is optional) found for: 'session_token'
+looking for value: 'create_debug_session'
+  found value in flags
+  evaluated to: 'false'
+PushNodeVisit: start, execute: true
+🟢 Execute 'Print (print-v1-gooseberry-rabbit-kiwano)'
+PushNodeVisit: print-v1-gooseberry-rabbit-kiwano, execute: true
+PushNodeVisit: string-split-v1-elephant-orange-nectarine, execute: false
+PushNodeVisit: const-string-v1-pear-goose-coconut, execute: false
+PushNodeVisit: (cached) string-split-v1-elephant-orange-nectarine, execute: false
+PushNodeVisit: (cached) string-split-v1-elephant-orange-nectarine, execute: false
+[foo bar test]
+[foo bar test]
+[foo bar test]

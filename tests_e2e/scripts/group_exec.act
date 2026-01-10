@@ -1,0 +1,141 @@
+editor:
+  version:
+    created: v1.11.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: -380
+      y: 200
+  - id: group-v1-kiwi-squirrel-plum
+    type: core/group@v1
+    position:
+      x: 290
+      y: 290
+    graph:
+      entry: group-inputs-v1-blueberry-strawberry-blue
+      type: group
+      nodes:
+        - id: group-inputs-v1-blueberry-strawberry-blue
+          type: core/group-inputs@v1
+          position:
+            x: 10
+            y: 60
+        - id: group-outputs-v1-brown-blueberry-brown
+          type: core/group-outputs@v1
+          position:
+            x: 600
+            y: 40
+        - id: branch-v1-squirrel-shark-koala
+          type: core/branch@v1
+          position:
+            x: 220
+            y: 10
+      connections:
+        - src:
+            node: group-inputs-v1-blueberry-strawberry-blue
+            port: orange-penguin-green
+          dst:
+            node: branch-v1-squirrel-shark-koala
+            port: condition
+      executions:
+        - src:
+            node: branch-v1-squirrel-shark-koala
+            port: exec-then
+          dst:
+            node: group-outputs-v1-brown-blueberry-brown
+            port: exec-orange-lion-snake
+        - src:
+            node: branch-v1-squirrel-shark-koala
+            port: exec-otherwise
+          dst:
+            node: group-outputs-v1-brown-blueberry-brown
+            port: exec-lemon-peach-kangaroo
+        - src:
+            node: group-inputs-v1-blueberry-strawberry-blue
+            port: exec-blueberry-kangaroo-penguin
+          dst:
+            node: branch-v1-squirrel-shark-koala
+            port: exec
+      inputs:
+        exec-blueberry-kangaroo-penguin:
+          type: ''
+          index: 0
+          exec: true
+        orange-penguin-green:
+          type: bool
+          index: 128
+      outputs:
+        exec-orange-lion-snake:
+          name: ''
+          type: ''
+          index: 0
+          exec: true
+        exec-lemon-peach-kangaroo:
+          name: Otherwise
+          type: ''
+          index: 128
+          exec: true
+  - id: run-v1-pink-blue-koala
+    type: core/run@v1
+    position:
+      x: 570
+      y: 10
+    inputs:
+      script: echo "YES"
+  - id: run-v1-purple-peach-kangaroo
+    type: core/run@v1
+    position:
+      x: 570
+      y: 490
+    inputs:
+      script: echo "NO"
+  - id: string-match-v1-watermelon-orange-gray
+    type: core/string-match@v1
+    position:
+      x: -140
+      y: 460
+    inputs:
+      str2: 'true'
+      op: equals
+  - id: env-get-v1-dog-tiger-panda
+    type: core/env-get@v1
+    position:
+      x: -480
+      y: 480
+    inputs:
+      env: BOOL_VAR
+connections:
+  - src:
+      node: env-get-v1-dog-tiger-panda
+      port: env
+    dst:
+      node: string-match-v1-watermelon-orange-gray
+      port: str1
+  - src:
+      node: string-match-v1-watermelon-orange-gray
+      port: result
+    dst:
+      node: group-v1-kiwi-squirrel-plum
+      port: orange-penguin-green
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: group-v1-kiwi-squirrel-plum
+      port: exec-blueberry-kangaroo-penguin
+  - src:
+      node: group-v1-kiwi-squirrel-plum
+      port: exec-orange-lion-snake
+    dst:
+      node: run-v1-pink-blue-koala
+      port: exec
+  - src:
+      node: group-v1-kiwi-squirrel-plum
+      port: exec-lemon-peach-kangaroo
+    dst:
+      node: run-v1-purple-peach-kangaroo
+      port: exec

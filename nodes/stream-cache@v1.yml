@@ -1,0 +1,26 @@
+yaml-version: 3.0
+
+id: core/stream-cache
+name: Stream Cache
+category: processing
+icon: featherDatabase
+version: 1
+compact: true
+style:
+  header:
+    background: "#6e6e6e"
+  body:
+    background: "#423f3f"
+short_desc: Cache a stream and output it as a string.
+long_desc: Like the [File Read](./../file-read/v1.md) node, some streams are readable only by a single consumer. This node caches the stream and outputs it as a string, which can be used by multiple consumers.
+outputs:
+  result:
+    type: string
+    desc: The cached stream as a string.
+    index: 0
+inputs:
+  stream:
+    type: stream
+    desc: The input stream to be cached.
+    index: 0
+    required: true

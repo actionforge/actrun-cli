@@ -1,0 +1,102 @@
+yaml-version: 3.0
+
+id: core/http
+name: Http
+version: 1
+category: network
+icon: matHttp
+style:
+  header:
+    background: "#c45d0c"
+  body:
+    background: rgb(142 82 35)
+short_desc: Node to make http requests. The node is fully executed after the response header is received. The http connection is kept open until the response body stream is fully read or somehow closed.
+llm_context: To implement Basic HTTP Authentication, construct the 'Authorization' header string using a string formatting node and pass it to the string array node connected to the 'header' input. Nodes providing `credentials` outputs are not compatible with this node, so don't use them to achieve any kind of authentication.
+addendum: |
+  HTTP status messages provide information about the outcome of an HTTP request. They are categorized into five groups:
+
+  - **1xx Informational**: The request was received and the process is continuing.
+      - *100 Continue*: The server has received the request headers, and the client should proceed to send the request body.
+      - *101 Switching Protocols*: The requester has asked the server to switch protocols, and the server is acknowledging that it will do so.
+
+  - **2xx Success**: The request was successfully received, understood, and accepted.
+      - *200 OK*: The request was successful.
+      - *201 Created*: The request was successful, and a new resource was created.
+
+  - **3xx Redirection**: Further action must be taken to complete the request.
+      - *301 Moved Permanently*: The resource has permanently moved to a new URI.
+      - *302 Found*: The resource has temporarily moved to a different URI.
+
+  - **4xx Client Error**: The request contains bad syntax or cannot be fulfilled.
+      - *400 Bad Request*: The server could not understand the request due to invalid syntax.
+      - *401 Unauthorized*: Authentication is required and has failed or has not yet been provided.
+
+  - **5xx Server Error**: The server failed to fulfill a valid request.
+      - *500 Internal Server Error*: The server encountered an unexpected condition.
+      - *503 Service Unavailable*: The server is not ready to handle the request, often due to maintenance or overload.
+
+outputs:
+  exec-success:
+    name: Success
+    exec: true
+    index: 0
+    desc: The http request was successful. The status code **is** 2xx.
+  exec-err:
+    name: Error
+    exec: true
+    index: 1
+    desc: The http request was successful. The status code is **not** 2xx.
+  status_code:
+    name: Status Code
+    type: number
+    index: 2
+    desc: The status code of the response.
+  body:
+    name: Body
+    type: stream
+    index: 3
+    desc: The response body.
+inputs:
+  exec:
+    exec: true
+    index: 0
+  method:
+    name: Method
+    type: option
+    index: 1
+    desc: The http method to use for the request.
+    default: get
+    options:
+      - name: OPTIONS
+        value: options
+      - name: GET
+        value: get
+      - name: HEAD
+        value: head
+      - name: POST
+        value: post
+      - name: PUT
+        value: put
+      - name: DELETE
+        value: delete
+      - name: TRACE
+        value: trace
+      - name: CONNECT
+        value: connect
+  url:
+    name: URL
+    type: string
+    index: 2
+    required: true
+    desc: The URL to make the request to. Must start with `http://` or `https://`.
+  body:
+    name: Body
+    type: stream
+    index: 3
+    desc: Optional body to send with the request.
+  header:
+    name: Header
+    type: "[]string"
+    index: 4
+    hint: "X-Random-Header: Hello World"
+    desc: Optional headers to send with the request.

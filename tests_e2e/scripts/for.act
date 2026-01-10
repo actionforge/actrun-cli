@@ -1,0 +1,86 @@
+entry: start
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 10
+      y: 590
+  - id: run-v1-butterfly-gray-shark
+    type: core/run@v1
+    position:
+      x: 1530
+      y: 10
+    inputs:
+      shell: python
+      script: |-
+        import os
+        print(os.environ["COUNT"])
+  - id: env-array-v1-parrot-lemon-blackberry
+    type: core/env-array@v1
+    position:
+      x: 1130
+      y: 310
+    inputs:
+      env[0]: ''
+  - id: string-fmt-v1-octopus-koala-green
+    type: core/string-fmt@v1
+    position:
+      x: 680
+      y: 370
+    inputs:
+      substitutes[0]: null
+      fmt: COUNT=%v
+  - id: run-v1-cherry-banana-brown
+    type: core/run@v1
+    position:
+      x: 680
+      y: 570
+    inputs:
+      shell: python
+      script: print("Done")
+  - id: for-loop-v1-kangaroo-lemon-shark
+    type: core/for-loop@v1
+    position:
+      x: 290
+      y: 500
+    inputs:
+      first_index: 3
+      last_index: 7
+connections:
+  - src:
+      node: string-fmt-v1-octopus-koala-green
+      port: result
+    dst:
+      node: env-array-v1-parrot-lemon-blackberry
+      port: env[0]
+  - src:
+      node: env-array-v1-parrot-lemon-blackberry
+      port: env
+    dst:
+      node: run-v1-butterfly-gray-shark
+      port: env
+  - src:
+      node: for-loop-v1-kangaroo-lemon-shark
+      port: index
+    dst:
+      node: string-fmt-v1-octopus-koala-green
+      port: substitutes[0]
+executions:
+  - src:
+      node: for-loop-v1-kangaroo-lemon-shark
+      port: exec-completed
+    dst:
+      node: run-v1-cherry-banana-brown
+      port: exec
+  - src:
+      node: for-loop-v1-kangaroo-lemon-shark
+      port: exec-body
+    dst:
+      node: run-v1-butterfly-gray-shark
+      port: exec
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: for-loop-v1-kangaroo-lemon-shark
+      port: exec

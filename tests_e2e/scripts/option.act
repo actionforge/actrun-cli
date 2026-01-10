@@ -1,0 +1,42 @@
+entry: start
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 100
+      y: 90
+  - id: run-v1-parrot-kiwi-gold
+    type: core/run@v1
+    position:
+      x: 910
+      y: 30
+    inputs:
+      script: print("Hello World!")
+  - id: run-v1-cranberry-cranberry-grape
+    type: core/run@v1
+    position:
+      x: 470
+      y: 110
+    inputs:
+      shell: python
+      script: print("python")
+connections:
+  - src:
+      node: run-v1-cranberry-cranberry-grape
+      port: output
+    dst:
+      node: run-v1-parrot-kiwi-gold
+      port: shell
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: run-v1-cranberry-cranberry-grape
+      port: exec
+  - src:
+      node: run-v1-cranberry-cranberry-grape
+      port: exec-success
+    dst:
+      node: run-v1-parrot-kiwi-gold
+      port: exec

@@ -1,0 +1,172 @@
+editor:
+  version:
+    created: v1.20.2
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 60
+      y: 530
+  - id: file-read-v1-starfruit-crab-persimmon
+    type: core/file-read@v1
+    position:
+      x: 380
+      y: 410
+    inputs:
+      path: ''
+  - id: parser-v1-magenta-horse-passionfruit
+    type: core/parser@v1
+    position:
+      x: 750
+      y: 360
+    inputs:
+      format: yaml
+  - id: file-read-v1-peach-purple-date
+    type: core/file-read@v1
+    position:
+      x: 1070
+      y: 350
+    inputs:
+      path: ''
+  - id: property-setter-v1-elephant-dog-elephant
+    type: core/property-setter@v1
+    position:
+      x: 1450
+      y: 350
+    inputs:
+      path: bar
+  - id: const-string-v1-starfish-goat-gooseberry
+    type: core/const-string@v1
+    position:
+      x: 80
+      y: 780
+    inputs:
+      value: property.yaml
+  - id: serializer-v1-chicken-strawberry-teal
+    type: core/serializer@v1
+    position:
+      x: 2440
+      y: 60
+    inputs:
+      format: yaml
+  - id: file-write-v1-persimmon-pomegranate-octopus
+    type: core/file-write@v1
+    position:
+      x: 2710
+      y: 10
+    inputs:
+      path: output.yaml
+  - id: property-setter-v1-dog-lime-tangerine
+    type: core/property-setter@v1
+    position:
+      x: 1940
+      y: 90
+    inputs:
+      path: bas
+  - id: const-number-v1-coconut-fig-grapefruit
+    type: core/const-number@v1
+    position:
+      x: 1680
+      y: 280
+    inputs:
+      value: 42
+connections:
+  - src:
+      node: file-read-v1-starfruit-crab-persimmon
+      port: data
+    dst:
+      node: parser-v1-magenta-horse-passionfruit
+      port: input
+  - src:
+      node: const-string-v1-starfish-goat-gooseberry
+      port: result
+    dst:
+      node: file-read-v1-starfruit-crab-persimmon
+      port: path
+  - src:
+      node: const-string-v1-starfish-goat-gooseberry
+      port: result
+    dst:
+      node: file-read-v1-peach-purple-date
+      port: path
+  - src:
+      node: serializer-v1-chicken-strawberry-teal
+      port: output
+    dst:
+      node: file-write-v1-persimmon-pomegranate-octopus
+      port: data
+  - src:
+      node: parser-v1-magenta-horse-passionfruit
+      port: object
+    dst:
+      node: property-setter-v1-elephant-dog-elephant
+      port: object
+  - src:
+      node: file-read-v1-peach-purple-date
+      port: data
+    dst:
+      node: property-setter-v1-elephant-dog-elephant
+      port: value
+  - src:
+      node: const-number-v1-coconut-fig-grapefruit
+      port: result
+    dst:
+      node: property-setter-v1-dog-lime-tangerine
+      port: value
+  - src:
+      node: property-setter-v1-dog-lime-tangerine
+      port: object
+    dst:
+      node: serializer-v1-chicken-strawberry-teal
+      port: object
+  - src:
+      node: property-setter-v1-elephant-dog-elephant
+      port: object
+    dst:
+      node: property-setter-v1-dog-lime-tangerine
+      port: object
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: file-read-v1-starfruit-crab-persimmon
+      port: exec
+  - src:
+      node: file-read-v1-starfruit-crab-persimmon
+      port: exec-success
+    dst:
+      node: parser-v1-magenta-horse-passionfruit
+      port: exec
+  - src:
+      node: parser-v1-magenta-horse-passionfruit
+      port: exec-success
+    dst:
+      node: file-read-v1-peach-purple-date
+      port: exec
+  - src:
+      node: file-read-v1-peach-purple-date
+      port: exec-success
+    dst:
+      node: property-setter-v1-elephant-dog-elephant
+      port: exec
+  - src:
+      node: serializer-v1-chicken-strawberry-teal
+      port: exec-success
+    dst:
+      node: file-write-v1-persimmon-pomegranate-octopus
+      port: exec
+  - src:
+      node: property-setter-v1-elephant-dog-elephant
+      port: exec-success
+    dst:
+      node: property-setter-v1-dog-lime-tangerine
+      port: exec
+  - src:
+      node: property-setter-v1-dog-lime-tangerine
+      port: exec-success
+    dst:
+      node: serializer-v1-chicken-strawberry-teal
+      port: exec

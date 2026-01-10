@@ -1,0 +1,49 @@
+yaml-version: 3.0
+
+id: core/string-match
+version: 1
+name: String Match
+icon: featherSearch
+category: processing
+short_desc: Compares two strings based on selected criteria.
+style:
+  header:
+    background: "#6e6e6e"
+  body:
+    background: "#423f3f"
+outputs:
+  result:
+    name: Result
+    type: bool
+    desc: Output of the string comparison
+    index: 0
+inputs:
+  str1:
+    name: String 1
+    type: string
+    desc: First string for comparison
+    index: 0
+  op:
+    name: Operation
+    type: option
+    desc: Type of comparison to perform
+    default: contains
+    index: 1
+    options:
+      - name: Contains
+        value: contains
+      - name: Not Contains
+        value: notcontains
+      - name: Starts With
+        value: startswith
+      - name: Ends With
+        value: endswith
+      - name: Equals
+        value: equals
+      - name: Regex
+        value: regex
+  str2:
+    name: String 2
+    type: string
+    desc: Second string for comparison
+    index: 2

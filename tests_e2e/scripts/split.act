@@ -1,0 +1,130 @@
+editor:
+  version:
+    created: v1.11.0
+    updated: v1.34.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: -310
+      y: -290
+  - id: string-split-v1-apple-yellow-mango
+    type: core/string-split@v1
+    position:
+      x: -250
+      y: 10
+    inputs:
+      delimiter: ;
+      max_segments: -1
+      string: a;b;c
+    outputs:
+      segments[0]: null
+      segments[1]: null
+      segments[2]: null
+  - id: print-v1-orange-banana-kiwi
+    type: core/print@v1
+    position:
+      x: 380
+      y: -240
+    inputs:
+      values[0]: null
+      values[1]: null
+      values[2]: null
+      values[3]: null
+  - id: print-v1-gray-coconut-sheep
+    type: core/print@v1
+    position:
+      x: 950
+      y: -70
+    inputs:
+      values[0]: null
+      values[1]: null
+      values[2]: null
+      values[3]: null
+  - id: string-split-v1-gold-butterfly-zebra
+    type: core/string-split@v1
+    position:
+      x: 240
+      y: 440
+    inputs:
+      delimiter: ;
+      max_segments: -1
+      string: a;b;c
+    outputs:
+      segments[0]: null
+      segments[1]: null
+      segments[2]: null
+  - id: comment-v1-violet-gooseberry-beige
+    type: core/comment@v1
+    position:
+      x: 250
+      y: 350
+    dimensions:
+      width: 350
+      height: 67
+    inputs:
+      markdown: |-
+        ensure that index ports are populated
+        even if array port is not connected 👇
+connections:
+  - src:
+      node: string-split-v1-apple-yellow-mango
+      port: segments
+    dst:
+      node: print-v1-orange-banana-kiwi
+      port: values[0]
+  - src:
+      node: string-split-v1-apple-yellow-mango
+      port: segments[0]
+    dst:
+      node: print-v1-orange-banana-kiwi
+      port: values[1]
+  - src:
+      node: string-split-v1-apple-yellow-mango
+      port: segments[1]
+    dst:
+      node: print-v1-orange-banana-kiwi
+      port: values[2]
+  - src:
+      node: string-split-v1-apple-yellow-mango
+      port: segments[2]
+    dst:
+      node: print-v1-orange-banana-kiwi
+      port: values[3]
+  - src:
+      node: string-split-v1-gold-butterfly-zebra
+      port: segments[0]
+    dst:
+      node: print-v1-gray-coconut-sheep
+      port: values[0]
+    isLoop: false
+  - src:
+      node: string-split-v1-gold-butterfly-zebra
+      port: segments[1]
+    dst:
+      node: print-v1-gray-coconut-sheep
+      port: values[1]
+    isLoop: false
+  - src:
+      node: string-split-v1-gold-butterfly-zebra
+      port: segments[2]
+    dst:
+      node: print-v1-gray-coconut-sheep
+      port: values[2]
+    isLoop: false
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: print-v1-orange-banana-kiwi
+      port: exec
+  - src:
+      node: print-v1-orange-banana-kiwi
+      port: exec
+    dst:
+      node: print-v1-gray-coconut-sheep
+      port: exec
+    isLoop: false

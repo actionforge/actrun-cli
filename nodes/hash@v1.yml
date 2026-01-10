@@ -1,0 +1,86 @@
+yaml-version: 3.0
+
+id: core/hash
+name: Hash
+version: 1
+category: processing
+short_desc: Computes a cryptographic hash for the given input.
+long_desc: |
+          The Hash node processes an input stream and computes a cryptographic hash using the specified algorithm.
+          This node supports a variety of hash algorithms including SHA, MD5, CRC32, and BLAKE2B. The result is a unique fixed-size string that represents the input data, which is useful for verifying data integrity and for security purposes.
+addendum: |
+  These links provide detailed information and implementation guidance for each hash algorithm:
+
+  1. **SHA-1**: [SHA-1 - Wikipedia](https://en.wikipedia.org/wiki/SHA-1)
+  2. **SHA-224**, **SHA-256**, **SHA-384**, **SHA-512**: [SHA-2 - Wikipedia](https://en.wikipedia.org/wiki/SHA-2)
+  3. **SHA3-256**, **SHA3-384**, **SHA3-512**: [SHA-3 - Wikipedia](https://en.wikipedia.org/wiki/SHA-3)
+  4. **MD5**: [MD5 - Wikipedia](https://en.wikipedia.org/wiki/MD5)
+  5. **CRC32**: [Cyclic redundancy check - Wikipedia](https://en.wikipedia.org/wiki/Cyclic_redundancy_check)
+  6. **BLAKE2B-256**, **BLAKE2B-384**, **BLAKE2B-512**: [BLAKE (hash function) - Wikipedia](https://en.wikipedia.org/wiki/BLAKE_(hash_function))
+
+style:
+  header:
+    background: "#6e6e6e"
+  body:
+    background: "#423f3f"
+icon: tablerHash
+outputs:
+  exec-success:
+    name: Success
+    desc: The hashing process completed successfully.
+    exec: true
+    index: 0
+  exec-err:
+    name: Error
+    exec: true
+    index: 1
+    desc: There was an error during the hashing process.
+  hash:
+    name: Hash
+    type: string
+    index: 2
+    desc: The computed hash as a hexadecimal string.
+inputs:
+  exec:
+    exec: true
+    desc: Triggers the hashing process.
+    index: 0
+  algorithm:
+    name: Algorithm
+    type: option
+    index: 1
+    desc: The hash algorithm to use.
+    default: sha256
+    options:
+      - name: SHA1
+        value: sha1
+      - name: SHA224
+        value: sha224
+      - name: SHA256 (default)
+        value: sha256
+      - name: SHA384
+        value: sha384
+      - name: SHA512
+        value: sha512
+      - name: SHA3-256
+        value: sha3_256
+      - name: SHA3-384
+        value: sha3_384
+      - name: SHA3-512
+        value: sha3_512
+      - name: MD5
+        value: md5
+      - name: CRC32
+        value: crc32
+      - name: BLAKE2B-256
+        value: blake2b256
+      - name: BLAKE2B-384
+        value: blake2b384
+      - name: BLAKE2B-512
+        value: blake2b512
+  input:
+    desc: The input data stream to hash.
+    name: Input
+    type: stream
+    index: 2
+    required: true

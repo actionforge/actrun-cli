@@ -1,0 +1,42 @@
+editor:
+  version:
+    created: v1.34.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: -150
+      y: -40
+  - id: print-v1-horse-mango-cranberry
+    type: core/print@v1
+    position:
+      x: 370
+      y: -50
+    inputs:
+      values[0]: null
+      color: fg_green
+  - id: const-string-v1-plum-silver-gray
+    type: core/const-string@v1
+    position:
+      x: -80
+      y: 250
+    inputs:
+      value: Hello World! 🚀
+connections:
+  - src:
+      node: const-string-v1-plum-silver-gray
+      port: result
+    dst:
+      node: print-v1-horse-mango-cranberry
+      port: values[0]
+    isLoop: false
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: print-v1-horse-mango-cranberry
+      port: exec
+    isLoop: false

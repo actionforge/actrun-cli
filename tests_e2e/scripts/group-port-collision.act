@@ -1,0 +1,65 @@
+editor:
+  version:
+    created: v1.34.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 0
+      y: 0
+  - id: group-v1-jellyfish-bear-orange
+    type: core/group@v1
+    position:
+      x: 450
+      y: 40
+    graph:
+      entry: group-inputs-v1-octopus-lobster-strawberry
+      type: group
+      nodes:
+        - id: group-inputs-v1-octopus-lobster-strawberry
+          type: core/group-inputs@v1
+          position:
+            x: -250
+            y: 90
+        - id: group-outputs-v1-apricot-zebra-persimmon
+          type: core/group-outputs@v1
+          position:
+            x: 580
+            y: 80
+        - id: string-replace-v1-horse-maroon-dolphin
+          type: core/string-replace@v1
+          position:
+            x: 130
+            y: 110
+      connections:
+        - src:
+            node: string-replace-v1-horse-maroon-dolphin
+            port: result
+          dst:
+            node: group-outputs-v1-apricot-zebra-persimmon
+            port: foo
+          isLoop: false
+        - src:
+            node: group-inputs-v1-octopus-lobster-strawberry
+            port: foo
+          dst:
+            node: string-replace-v1-horse-maroon-dolphin
+            port: input
+          isLoop: false
+      executions: []
+      inputs:
+        foo:
+          name: Input
+          type: string
+          desc: ''
+          index: 0
+      outputs:
+        foo:
+          name: Result
+          type: string
+          desc: ''
+          index: 0
+connections: []
+executions: []

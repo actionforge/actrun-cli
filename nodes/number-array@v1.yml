@@ -1,0 +1,27 @@
+yaml-version: 3.0
+
+id: core/number-array
+version: 1
+name: Number Array
+icon: matDataArray
+short_desc: Array of numbers.
+compact: true
+category: processing
+style:
+  header:
+    background: "#6e6e6e"
+  body:
+    background: "#423f3f"
+inputs:
+  inputs:
+    name: ""
+    type: number
+    array: true
+    array_initial_count: 1
+    index: 0
+
+outputs:
+  array:
+    name: ""
+    type: "[]number"
+    index: 0

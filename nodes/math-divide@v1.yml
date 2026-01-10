@@ -1,0 +1,38 @@
+yaml-version: 3.0
+
+id: core/math-divide
+name: Math Divide
+category: computation
+style:
+  header:
+    background: "#388a34"
+  body:
+    background: "#22591f"
+icon: tablerDivide
+version: 1
+short_desc: Divides two or more numbers.
+long_desc: |
+  This node divides the first number by the other input numbers. If one of the divisors is zero, the output will be `0`.
+  
+  ## Example:
+
+  - Input: `100, 10, 5`
+
+  Results in the division of `100 / 10 / 5`.
+
+  - Output: `2`
+
+label: ÷
+compact: true
+inputs:
+  inputs:
+    type: number
+    index: 0
+    array: true
+    array_initial_count: 2
+    desc: A set of numbers with the first as the numerator and the rest as divisors.
+outputs:
+  result:
+    type: number
+    index: 0
+    desc: The result of the division.

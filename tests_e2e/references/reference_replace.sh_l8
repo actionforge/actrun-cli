@@ -1,0 +1,24 @@
+build hasn't expired yet
+looking for value: 'env_file'
+  no value (is optional) found for: 'env_file'
+looking for value: 'config_file'
+  no value (is optional) found for: 'config_file'
+looking for value: 'concurrency'
+  no value (is optional) found for: 'concurrency'
+looking for value: 'graph_file'
+  found value in: 'env (shell)'
+  evaluated to: 'replace.act'
+looking for value: 'session_token'
+  no value (is optional) found for: 'session_token'
+looking for value: 'create_debug_session'
+  found value in flags
+  evaluated to: 'false'
+PushNodeVisit: start, execute: true
+🟢 Execute 'Print (print-v1-crab-pear-lobster)'
+PushNodeVisit: print-v1-crab-pear-lobster, execute: true
+PushNodeVisit: string-replace-v1-nectarine-lychee-grape, execute: false
+PushNodeVisit: string-replace-v1-koala-squirrel-mango, execute: false
+PushNodeVisit: string-replace-v1-date-donkey-coral, execute: false
+foo world 1234
+hello world XX34
+hello world.12.34

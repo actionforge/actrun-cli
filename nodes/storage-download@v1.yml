@@ -1,0 +1,38 @@
+yaml-version: 3.0
+
+id: core/storage-download
+name: Storage Download
+version: 1
+category: network
+icon: featherDownloadCloud
+short_desc: Node to download an object from a remote storage.
+style:
+  header:
+    background: "#c45d0c"
+  body:
+    background: rgb(142 82 35)
+outputs:
+  exec:
+    exec: true
+    index: 0
+  data:
+    name: Data
+    type: stream
+    index: 1
+  provider:
+    type: storage-provider
+    index: 2
+inputs:
+  exec:
+    exec: true
+    index: 0
+  name:
+    name: Name
+    type: string
+    index: 1
+    required: true
+  provider:
+    name: Provider
+    type: storage-provider
+    index: 2
+    required: true

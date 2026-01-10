@@ -1,0 +1,51 @@
+editor:
+  version:
+    created: v1.26.5
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 0
+      y: 0
+  - id: comment-v1-dolphin-green-cherry
+    type: core/comment@v1
+    position:
+      x: 310
+      y: -120
+    dimensions:
+      width: 350
+      height: 93
+    inputs:
+      markdown: >-
+        this is a custom comment test to ensure that its existance doesn't
+        interfer with the execution of a graph
+  - id: print-v1-boysenberry-papaya-blueberry
+    type: core/print@v1
+    position:
+      x: 490
+      y: 30
+    inputs:
+      values[0]: null
+  - id: const-string-v1-wolf-date-wolf
+    type: core/const-string@v1
+    position:
+      x: 80
+      y: 270
+    inputs:
+      value: hello
+connections:
+  - src:
+      node: const-string-v1-wolf-date-wolf
+      port: result
+    dst:
+      node: print-v1-boysenberry-papaya-blueberry
+      port: values[0]
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: print-v1-boysenberry-papaya-blueberry
+      port: exec

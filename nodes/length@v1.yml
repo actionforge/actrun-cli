@@ -1,0 +1,25 @@
+yaml-version: 3.0
+
+id: core/length
+name: Length
+label: Length
+version: 1
+category: computation
+short_desc: Returns the length of the input.
+long_desc: Supports strings and arrays, otherwise returns 0.
+style:
+  header:
+    background: "#388a34"
+  body:
+    background: "#22591f"
+icon: tablerRuler2
+compact: true
+inputs:
+  input:
+    type: any
+    desc: The input to get the length of.
+    index: 0
+outputs:
+  result:
+    type: number
+    index: 0

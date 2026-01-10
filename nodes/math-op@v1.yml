@@ -1,0 +1,52 @@
+yaml-version: 3.0
+
+id: core/math-op
+name: Math Op
+category: computation
+style:
+  header:
+    background: "#388a34"
+  body:
+    background: "#22591f"
+icon: tablerNumber123
+version: 1
+short_desc: Perform basic arithmetic operations.
+long_desc: |
+  This node performs basic arithmetic operations (addition, subtraction, multiplication, and division) on two input numbers based on the selected operator.
+  
+  ## Example:
+
+  - Input: `5, 3` with operator `+`
+
+  Results in the operation of `5 + 3`.
+
+  - Output: `8`
+compact: false
+inputs:
+  op1:
+    type: number
+    index: 0
+    desc: The first number.
+  operator:
+    type: option
+    index: 1
+    default: "+"
+    desc: The arithmetic operator to use.
+    options:
+      - name: "+"
+        value: "+"
+      - name: "-"
+        value: "-"
+      - name: "×"
+        value: "*"
+      - name: "÷"
+        value: "/"
+  op2:
+    type: number
+    index: 2
+    desc: The second number.
+outputs:
+  result:
+    type: number
+    index: 0
+    desc: The result of the arithmetic operation.

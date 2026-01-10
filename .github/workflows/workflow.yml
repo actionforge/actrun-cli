@@ -1,0 +1,95 @@
+on:
+  push:
+    tags:
+      - '*'
+    branches:
+      - main
+
+  workflow_dispatch:
+    inputs:
+      session_token:
+        description: 'Session token'
+        required: false
+        default: ''
+      publish:
+        description: 'Publish'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  build-quick:
+
+    runs-on: ubuntu-latest
+    name: Quick Build and Test on Linux
+
+    steps:
+
+      - name: Build temporary actrun
+        uses: actionforge/action@e5e24692b5a9a1e5f5135852711715a1468590dc # v0.0.1
+        with:
+          graph_file: build-quick.act
+        env:
+          UPLOAD_COVER: true
+
+      - name: Test test_input_output.act
+        # execute on every push that is a tag
+        uses: actionforge/action@ed08177bf37e770602c7d3f0ac43580621ddd727
+        with:
+          # Use actrun in workdir directory
+          runner_path: ${{ github.workspace }}/actrun
+          graph_file: test_input_output.act
+          session_token: ${{ github.event.inputs.session_token }}
+
+      - name: Test test_env.yml
+        # execute on every push that is a tag
+        uses: actionforge/action@ed08177bf37e770602c7d3f0ac43580621ddd727
+        with:
+          # Use actrun in workdir directory
+          runner_path: ${{ github.workspace }}/actrun
+          graph_file: test_env.act
+          session_token: ${{ github.event.inputs.session_token }}
+        env:
+          MY_ENV: "hello world"
+
+  build-test-publish:
+    name: Build, Test and Publish
+    if: startsWith(github.ref, 'refs/tags/') && (github.event_name == 'workflow_dispatch' || (github.event_name == 'push'))
+
+    permissions:
+      packages: write
+      contents: read
+
+    strategy:
+      matrix:
+        license: [free]  # add pro when ready
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    env:
+      PUBLISH_URL: https://beta.actionforge.dev/api/v2/releases/publish
+      PUBLISH_S3_ENDPOINT: https://nyc3.digitaloceanspaces.com
+      PUBLISH_S3_BUCKET: actionforge-dl
+      # Most consumers for the region use the aws-sdk. Since we
+      # are using DigitalOcean Spaces, we need to set the region
+      # to us-east-1. Only Python3 use the correct nyc3 region.
+      # https://docs.digitalocean.com/products/spaces/how-to/use-aws-sdks/#configure-a-client
+      PUBLISH_S3_REGION: us-east-1
+
+    steps:
+      - name: Build temporary actrun
+        uses: actionforge/action@e5e24692b5a9a1e5f5135852711715a1468590dc # v0.0.1
+        with:
+          graph_file: build-quick.act
+
+      - name: (${{ matrix.license }})
+        uses: actionforge/action@e5e24692b5a9a1e5f5135852711715a1468590dc # v0.0.1
+        env:
+          LICENSE: ${{ matrix.license }}
+        with:
+          runner_path: ${{ github.workspace }}/actrun
+          graph_file: build-test-publish.act
+          inputs: ${{ toJson(inputs) }}
+          secrets: ${{ toJson(secrets) }}
+          matrix: ${{ toJson(matrix) }}

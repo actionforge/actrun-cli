@@ -1,0 +1,132 @@
+yaml-version: 3.0
+
+id: core/comment
+name: Comment
+version: 1
+category: flow
+icon: octComment
+style:
+  header:
+    background: "#50858d"
+short_desc: Comment node
+addendum: |
+    Here are the Markdown elements supported by the Comment Node:
+
+    1. **Headings**  
+
+    Use `#`, `##`, `###`, etc., for different heading levels.
+
+    ```markdown
+    # Heading Level 1
+    ## Heading Level 2
+    ### Heading Level 3
+    ```
+
+    2. **Links**
+  
+    Use `[Link Text](URL)` to create links.
+
+    ```markdown
+    [Actionforge.dev](https://www.actionforge.dev)
+    ```
+
+    Example:  
+    [Actionforge](https://www.actionforge.dev)
+
+    3. **Code Blocks**
+
+    Use triple backticks for code blocks.
+
+    ````
+    ```
+    def hello_world():
+        print("Hello, World!")
+    ```
+    ````
+
+    Example:
+
+    ```
+    def hello_world():
+        print("Hello, World!")
+    ```
+
+    4. **Inline Code**
+
+    Use single backticks for inline code.
+
+    ```markdown
+    Use `print()` to output text in Python.
+    ```
+
+    Example:  
+    Use `print()` to output text in Python.
+
+    5. **Italic**
+
+    Use `*text*` or `_text_` for italic text.
+
+    ```markdown
+    *italic* or _italic_
+    ```
+
+    Example:  
+    *italic* or _italic_
+
+    6. **Bold**
+
+    Use `**text**` or `__text__` for bold text.
+
+    ```markdown
+    **bold** or __bold__
+    ```
+
+    Example:  
+    **bold** or __bold__
+
+    7. **Strikethrough**
+
+    Use `~~text~~` for strikethrough text.
+
+    ```markdown
+    ~~strikethrough~~
+    ```
+
+    Example:  
+    ~~strikethrough~~
+
+    #### Example Comment Node
+
+    Here is an example of how you can format your Comment Node:
+
+    ```markdown
+    # My Graph Docs
+
+    Welcome to my **documentation**.
+
+    ## Features
+
+    - **Headings** for structure
+    - [Links](https://example.com) for navigation
+    - `Inline code` for short code snippets
+    - ```python
+      Code blocks for longer code examples
+      def example():
+          return "Hello, World!"
+      ```
+    - *Italic* for emphasis
+    - **Bold** for strong emphasis
+    - ~~Strikethrough~~ for deleted text
+
+    ### Conclusion
+
+    Using the Comment Node, you can easily document and explain parts of your workflow with rich formatting options provided by Markdown.
+    ```
+
+    By utilizing these Markdown elements, you can create comprehensive and well-formatted comments within your node system, enhancing the readability and understanding of your workflows.
+inputs:
+  markdown:
+    index: 0
+    name: Markdown
+    type: string
+    initial: "Edit me 👉"

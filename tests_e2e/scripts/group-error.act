@@ -1,0 +1,632 @@
+editor:
+  version:
+    created: v1.34.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: -1610
+      y: 0
+  - id: group-v1-durian-panda-navy
+    type: core/group@v1
+    position:
+      x: 860
+      y: -280
+    graph:
+      entry: group-inputs-v1-seahorse-koala-purple
+      type: group
+      nodes:
+        - id: group-inputs-v1-seahorse-koala-purple
+          type: core/group-inputs@v1
+          position:
+            x: -230
+            y: 130
+        - id: group-outputs-v1-bat-lime-kangaroo
+          type: core/group-outputs@v1
+          position:
+            x: 660
+            y: 100
+        - id: run-v1-banana-indigo-papaya
+          type: core/run@v1
+          position:
+            x: -0.0
+            y: 20
+          inputs:
+            script: exit 123
+      connections: []
+      executions:
+        - src:
+            node: group-inputs-v1-seahorse-koala-purple
+            port: exec-raspberry-cranberry-yellow
+          dst:
+            node: run-v1-banana-indigo-papaya
+            port: exec
+          isLoop: false
+        - src:
+            node: run-v1-banana-indigo-papaya
+            port: exec-success
+          dst:
+            node: group-outputs-v1-bat-lime-kangaroo
+            port: exec-date-persimmon-kangaroo
+          isLoop: false
+        - src:
+            node: run-v1-banana-indigo-papaya
+            port: exec-err
+          dst:
+            node: group-outputs-v1-bat-lime-kangaroo
+            port: exec-err-passionfruit-nectarine-chicken
+          isLoop: false
+      inputs:
+        exec-raspberry-cranberry-yellow:
+          name: ''
+          type: ''
+          index: 0
+          exec: true
+          desc: ''
+      outputs:
+        exec-date-persimmon-kangaroo:
+          name: Success
+          type: ''
+          index: 0
+          exec: true
+          desc: ''
+        exec-err-passionfruit-nectarine-chicken:
+          name: Error
+          type: ''
+          index: 1
+          exec: true
+          desc: ''
+  - id: group-v1-ivory-cherry-lobster
+    type: core/group@v1
+    position:
+      x: -80
+      y: -200
+    graph:
+      entry: group-inputs-v1-seahorse-koala-purple
+      type: group
+      nodes:
+        - id: group-inputs-v1-seahorse-koala-purple
+          type: core/group-inputs@v1
+          position:
+            x: -680
+            y: 190
+        - id: group-outputs-v1-bat-lime-kangaroo
+          type: core/group-outputs@v1
+          position:
+            x: 660
+            y: 100
+        - id: group-v1-durian-panda-navy
+          type: core/group@v1
+          position:
+            x: -50
+            y: -40
+          graph:
+            entry: group-inputs-v1-seahorse-koala-purple
+            type: group
+            nodes:
+              - id: group-inputs-v1-seahorse-koala-purple
+                type: core/group-inputs@v1
+                position:
+                  x: -230
+                  y: 130
+              - id: group-outputs-v1-bat-lime-kangaroo
+                type: core/group-outputs@v1
+                position:
+                  x: 660
+                  y: 100
+              - id: run-v1-banana-indigo-papaya
+                type: core/run@v1
+                position:
+                  x: -0.0
+                  y: 20
+                inputs:
+                  script: exit 123
+            connections: []
+            executions:
+              - src:
+                  node: group-inputs-v1-seahorse-koala-purple
+                  port: exec-raspberry-cranberry-yellow
+                dst:
+                  node: run-v1-banana-indigo-papaya
+                  port: exec
+                isLoop: false
+              - src:
+                  node: run-v1-banana-indigo-papaya
+                  port: exec-success
+                dst:
+                  node: group-outputs-v1-bat-lime-kangaroo
+                  port: exec-date-persimmon-kangaroo
+                isLoop: false
+              - src:
+                  node: run-v1-banana-indigo-papaya
+                  port: exec-err
+                dst:
+                  node: group-outputs-v1-bat-lime-kangaroo
+                  port: exec-err-passionfruit-nectarine-chicken
+                isLoop: false
+            inputs:
+              exec-raspberry-cranberry-yellow:
+                name: ''
+                type: ''
+                index: 0
+                exec: true
+                desc: ''
+            outputs:
+              exec-date-persimmon-kangaroo:
+                name: Success
+                type: ''
+                index: 0
+                exec: true
+                desc: ''
+              exec-err-passionfruit-nectarine-chicken:
+                name: Error
+                type: ''
+                index: 1
+                exec: true
+                desc: ''
+      connections: []
+      executions:
+        - src:
+            node: group-inputs-v1-seahorse-koala-purple
+            port: exec-raspberry-cranberry-yellow
+          dst:
+            node: group-v1-durian-panda-navy
+            port: exec-raspberry-cranberry-yellow
+          isLoop: false
+        - src:
+            node: group-v1-durian-panda-navy
+            port: exec-date-persimmon-kangaroo
+          dst:
+            node: group-outputs-v1-bat-lime-kangaroo
+            port: exec-date-persimmon-kangaroo
+          isLoop: false
+        - src:
+            node: group-v1-durian-panda-navy
+            port: exec-err-passionfruit-nectarine-chicken
+          dst:
+            node: group-outputs-v1-bat-lime-kangaroo
+            port: exec-err-passionfruit-nectarine-chicken
+          isLoop: false
+      inputs:
+        exec-raspberry-cranberry-yellow:
+          name: ''
+          type: ''
+          index: 0
+          exec: true
+          desc: ''
+      outputs:
+        exec-date-persimmon-kangaroo:
+          name: Success
+          type: ''
+          index: 0
+          exec: true
+          desc: ''
+        exec-err-passionfruit-nectarine-chicken:
+          name: Error
+          type: ''
+          index: 1
+          exec: true
+          desc: ''
+      info:
+        author: ''
+        version: ''
+        contact: ''
+        description: ''
+    label: Group In Group
+    comment: ''
+  - id: print-v1-tiger-kiwi-grapefruit
+    type: core/print@v1
+    position:
+      x: 540
+      y: 10
+    inputs:
+      values[0]: null
+      color: fg_green
+  - id: print-v1-ostrich-purple-durian
+    type: core/print@v1
+    position:
+      x: 530
+      y: -230
+    inputs:
+      values[0]: null
+      color: fg_red
+  - id: const-string-v1-lobster-lion-brown
+    type: core/const-string@v1
+    position:
+      x: 140
+      y: 40
+    inputs:
+      value: this error was successfully ignored
+  - id: const-string-v1-horse-zebra-kangaroo
+    type: core/const-string@v1
+    position:
+      x: 170
+      y: -130
+    inputs:
+      value: this shouldn't happen!
+  - id: print-v1-papaya-durian-orange
+    type: core/print@v1
+    position:
+      x: 1490
+      y: -170
+    inputs:
+      values[0]: null
+      color: fg_green
+  - id: print-v1-maroon-indigo-blueberry
+    type: core/print@v1
+    position:
+      x: 1500
+      y: -400
+    inputs:
+      values[0]: null
+      color: fg_red
+  - id: const-string-v1-kangaroo-date-navy
+    type: core/const-string@v1
+    position:
+      x: 1100
+      y: 0
+    inputs:
+      value: this error was successfully ignored2
+  - id: const-string-v1-kangaroo-horse-guava
+    type: core/const-string@v1
+    position:
+      x: 1130
+      y: -240
+    inputs:
+      value: this shouldn't happen2!
+  - id: group-v1-koala-parrot-parrot
+    type: core/group@v1
+    position:
+      x: 1910
+      y: -330
+    graph:
+      entry: group-inputs-v1-seahorse-koala-purple
+      type: group
+      nodes:
+        - id: group-inputs-v1-seahorse-koala-purple
+          type: core/group-inputs@v1
+          position:
+            x: -230
+            y: 130
+        - id: group-outputs-v1-bat-lime-kangaroo
+          type: core/group-outputs@v1
+          position:
+            x: 660
+            y: 100
+        - id: run-v1-banana-indigo-papaya
+          type: core/run@v1
+          position:
+            x: -0.0
+            y: 20
+          inputs:
+            script: exit 123
+      connections: []
+      executions:
+        - src:
+            node: group-inputs-v1-seahorse-koala-purple
+            port: exec-raspberry-cranberry-yellow
+          dst:
+            node: run-v1-banana-indigo-papaya
+            port: exec
+          isLoop: false
+        - src:
+            node: run-v1-banana-indigo-papaya
+            port: exec-success
+          dst:
+            node: group-outputs-v1-bat-lime-kangaroo
+            port: exec-date-persimmon-kangaroo
+          isLoop: false
+        - src:
+            node: run-v1-banana-indigo-papaya
+            port: exec-err
+          dst:
+            node: group-outputs-v1-bat-lime-kangaroo
+            port: exec-err-passionfruit-nectarine-chicken
+          isLoop: false
+      inputs:
+        exec-raspberry-cranberry-yellow:
+          name: ''
+          type: ''
+          index: 0
+          exec: true
+          desc: ''
+      outputs:
+        exec-date-persimmon-kangaroo:
+          name: Success
+          type: ''
+          index: 0
+          exec: true
+          desc: ''
+        exec-err-passionfruit-nectarine-chicken:
+          name: Error
+          type: ''
+          index: 1
+          exec: true
+          desc: ''
+    comment: this should fail because error is not caught
+  - id: group-v1-giraffe-fox-goat
+    type: core/group@v1
+    position:
+      x: -1200
+      y: -0.0
+    graph:
+      entry: group-inputs-v1-seahorse-koala-purple
+      type: group
+      nodes:
+        - id: group-inputs-v1-seahorse-koala-purple
+          type: core/group-inputs@v1
+          position:
+            x: -680
+            y: 190
+        - id: group-outputs-v1-bat-lime-kangaroo
+          type: core/group-outputs@v1
+          position:
+            x: 660
+            y: 100
+        - id: group-v1-durian-panda-navy
+          type: core/group@v1
+          position:
+            x: -50
+            y: -40
+          graph:
+            entry: group-inputs-v1-seahorse-koala-purple
+            type: group
+            nodes:
+              - id: group-inputs-v1-seahorse-koala-purple
+                type: core/group-inputs@v1
+                position:
+                  x: -230
+                  y: 130
+              - id: group-outputs-v1-bat-lime-kangaroo
+                type: core/group-outputs@v1
+                position:
+                  x: 660
+                  y: 100
+              - id: run-v1-banana-indigo-papaya
+                type: core/run@v1
+                position:
+                  x: -0.0
+                  y: 20
+                inputs:
+                  script: |-
+                    echo "run successful"
+                    exit 0
+            connections: []
+            executions:
+              - src:
+                  node: group-inputs-v1-seahorse-koala-purple
+                  port: exec-raspberry-cranberry-yellow
+                dst:
+                  node: run-v1-banana-indigo-papaya
+                  port: exec
+                isLoop: false
+              - src:
+                  node: run-v1-banana-indigo-papaya
+                  port: exec-success
+                dst:
+                  node: group-outputs-v1-bat-lime-kangaroo
+                  port: exec-date-persimmon-kangaroo
+                isLoop: false
+              - src:
+                  node: run-v1-banana-indigo-papaya
+                  port: exec-err
+                dst:
+                  node: group-outputs-v1-bat-lime-kangaroo
+                  port: exec-err-passionfruit-nectarine-chicken
+                isLoop: false
+            inputs:
+              exec-raspberry-cranberry-yellow:
+                name: ''
+                type: ''
+                index: 0
+                exec: true
+                desc: ''
+            outputs:
+              exec-date-persimmon-kangaroo:
+                name: Success
+                type: ''
+                index: 0
+                exec: true
+                desc: ''
+              exec-err-passionfruit-nectarine-chicken:
+                name: Error
+                type: ''
+                index: 1
+                exec: true
+                desc: ''
+      connections: []
+      executions:
+        - src:
+            node: group-inputs-v1-seahorse-koala-purple
+            port: exec-raspberry-cranberry-yellow
+          dst:
+            node: group-v1-durian-panda-navy
+            port: exec-raspberry-cranberry-yellow
+          isLoop: false
+        - src:
+            node: group-v1-durian-panda-navy
+            port: exec-date-persimmon-kangaroo
+          dst:
+            node: group-outputs-v1-bat-lime-kangaroo
+            port: exec-date-persimmon-kangaroo
+          isLoop: false
+        - src:
+            node: group-v1-durian-panda-navy
+            port: exec-err-passionfruit-nectarine-chicken
+          dst:
+            node: group-outputs-v1-bat-lime-kangaroo
+            port: exec-err-passionfruit-nectarine-chicken
+          isLoop: false
+      inputs:
+        exec-raspberry-cranberry-yellow:
+          name: ''
+          type: ''
+          index: 0
+          exec: true
+          desc: ''
+      outputs:
+        exec-date-persimmon-kangaroo:
+          name: Success
+          type: ''
+          index: 0
+          exec: true
+          desc: ''
+        exec-err-passionfruit-nectarine-chicken:
+          name: Error
+          type: ''
+          index: 1
+          exec: true
+          desc: ''
+      info:
+        author: ''
+        version: ''
+        contact: ''
+        description: ''
+    label: Group In Group Successful
+    comment: ''
+  - id: print-v1-ivory-grape-cranberry
+    type: core/print@v1
+    position:
+      x: -650
+      y: 10
+    inputs:
+      values[0]: null
+      color: fg_red
+  - id: print-v1-rabbit-raspberry-lion
+    type: core/print@v1
+    position:
+      x: -650
+      y: -270
+    inputs:
+      values[0]: null
+      color: fg_green
+  - id: const-string-v1-indigo-papaya-date
+    type: core/const-string@v1
+    position:
+      x: -1110
+      y: 260
+    inputs:
+      value: this error was not expected
+  - id: const-string-v1-gooseberry-purple-kiwano
+    type: core/const-string@v1
+    position:
+      x: -1100
+      y: -120
+    inputs:
+      value: group successfully succeeded
+connections:
+  - src:
+      node: const-string-v1-lobster-lion-brown
+      port: result
+    dst:
+      node: print-v1-tiger-kiwi-grapefruit
+      port: values[0]
+    isLoop: false
+  - src:
+      node: const-string-v1-horse-zebra-kangaroo
+      port: result
+    dst:
+      node: print-v1-ostrich-purple-durian
+      port: values[0]
+    isLoop: false
+  - src:
+      node: const-string-v1-kangaroo-date-navy
+      port: result
+    dst:
+      node: print-v1-papaya-durian-orange
+      port: values[0]
+    isLoop: false
+  - src:
+      node: const-string-v1-kangaroo-horse-guava
+      port: result
+    dst:
+      node: print-v1-maroon-indigo-blueberry
+      port: values[0]
+    isLoop: false
+  - src:
+      node: const-string-v1-indigo-papaya-date
+      port: result
+    dst:
+      node: print-v1-ivory-grape-cranberry
+      port: values[0]
+    isLoop: false
+  - src:
+      node: const-string-v1-gooseberry-purple-kiwano
+      port: result
+    dst:
+      node: print-v1-rabbit-raspberry-lion
+      port: values[0]
+    isLoop: false
+executions:
+  - src:
+      node: group-v1-ivory-cherry-lobster
+      port: exec-date-persimmon-kangaroo
+    dst:
+      node: print-v1-ostrich-purple-durian
+      port: exec
+    isLoop: false
+  - src:
+      node: group-v1-durian-panda-navy
+      port: exec-date-persimmon-kangaroo
+    dst:
+      node: print-v1-maroon-indigo-blueberry
+      port: exec
+    isLoop: false
+  - src:
+      node: group-v1-durian-panda-navy
+      port: exec-err-passionfruit-nectarine-chicken
+    dst:
+      node: print-v1-papaya-durian-orange
+      port: exec
+    isLoop: false
+  - src:
+      node: print-v1-papaya-durian-orange
+      port: exec
+    dst:
+      node: group-v1-koala-parrot-parrot
+      port: exec-raspberry-cranberry-yellow
+    isLoop: false
+  - src:
+      node: group-v1-ivory-cherry-lobster
+      port: exec-err-passionfruit-nectarine-chicken
+    dst:
+      node: print-v1-tiger-kiwi-grapefruit
+      port: exec
+    isLoop: false
+  - src:
+      node: print-v1-tiger-kiwi-grapefruit
+      port: exec
+    dst:
+      node: group-v1-durian-panda-navy
+      port: exec-raspberry-cranberry-yellow
+    isLoop: false
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: group-v1-giraffe-fox-goat
+      port: exec-raspberry-cranberry-yellow
+    isLoop: false
+  - src:
+      node: group-v1-giraffe-fox-goat
+      port: exec-date-persimmon-kangaroo
+    dst:
+      node: print-v1-rabbit-raspberry-lion
+      port: exec
+    isLoop: false
+  - src:
+      node: group-v1-giraffe-fox-goat
+      port: exec-err-passionfruit-nectarine-chicken
+    dst:
+      node: print-v1-ivory-grape-cranberry
+      port: exec
+    isLoop: false
+  - src:
+      node: print-v1-rabbit-raspberry-lion
+      port: exec
+    dst:
+      node: group-v1-ivory-cherry-lobster
+      port: exec-raspberry-cranberry-yellow
+    isLoop: false

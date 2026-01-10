@@ -1,0 +1,175 @@
+build hasn't expired yet
+looking for value: 'env_file'
+  no value (is optional) found for: 'env_file'
+looking for value: 'config_file'
+  found value in: 'env (shell)'
+  evaluated to: '[REDACTED]/expression.actconfig'
+looking for value: 'concurrency'
+  no value (is optional) found for: 'concurrency'
+looking for value: 'graph_file'
+  found value in: 'env (shell)'
+  evaluated to: 'expression.act'
+looking for value: 'session_token'
+  no value (is optional) found for: 'session_token'
+looking for value: 'create_debug_session'
+  found value in flags
+  evaluated to: 'false'
+PushNodeVisit: start, execute: true
+🟢 Execute 'Group (core-group-v1-camel-jackfruit-boysenberry)'
+PushNodeVisit: core-group-v1-camel-jackfruit-boysenberry, execute: true
+🟢 Execute 'Group Inputs (core-group-inputs-v1-fox-penguin-turkey)'
+PushNodeVisit: core-group-inputs-v1-fox-penguin-turkey, execute: true
+🟢 Execute 'Print (core-print-v1-tangerine-gray-pomegranate)'
+PushNodeVisit: core-print-v1-tangerine-gray-pomegranate, execute: true
+PushNodeVisit: core-string-fmt-v1-ostrich-plum-yellow, execute: false
+PushNodeVisit: core-const-string-v1-kiwano-lobster-grape, execute: false
+👉 Hello grape-lime-lobster=(FOO=(this_is_foo_value)) some-hardcoded-string FOO=(this_is_foo_value); snake-fox-zebra=(graph_input_value=graph_input_value) some-other-hardcoded-coded-string FOO=(this_is_foo_value)! FOO=(this_is_foo_value)
+🟢 Execute 'Group Output (core-group-outputs-v1-blackberry-watermelon-blueberry)'
+PushNodeVisit: core-group-outputs-v1-blackberry-watermelon-blueberry, execute: true
+🟢 Execute 'Group (core-group-v1-camel-jackfruit-boysenberry)'
+PushNodeVisit: core-group-v1-camel-jackfruit-boysenberry, execute: true
+🟢 Execute 'For Loop (core-for-loop-v1-lime-black-blueberry)'
+PushNodeVisit: core-for-loop-v1-lime-black-blueberry, execute: true
+🟢 Execute 'Group (core-group-v1-brown-blueberry-turquoise)'
+PushNodeVisit: core-group-v1-brown-blueberry-turquoise, execute: true
+🟢 Execute 'Group Inputs (core-group-inputs-v1-fox-penguin-turkey)'
+PushNodeVisit: core-group-inputs-v1-fox-penguin-turkey, execute: true
+🟢 Execute 'Print (core-print-v1-tangerine-gray-pomegranate)'
+PushNodeVisit: core-print-v1-tangerine-gray-pomegranate, execute: true
+PushNodeVisit: core-string-fmt-v1-ostrich-plum-yellow, execute: false
+PushNodeVisit: (cached) core-for-loop-v1-lime-black-blueberry, execute: false
+👉 Hello grape-lime-lobster=(FOO=(this_is_foo_value)) some-hardcoded-string FOO=(this_is_foo_value); snake-fox-zebra=(0) some-other-hardcoded-coded-string FOO=(this_is_foo_value)! FOO=(this_is_foo_value)
+🟢 Execute 'Group Output (core-group-outputs-v1-blackberry-watermelon-blueberry)'
+PushNodeVisit: core-group-outputs-v1-blackberry-watermelon-blueberry, execute: true
+🟢 Execute 'Group (core-group-v1-brown-blueberry-turquoise)'
+PushNodeVisit: core-group-v1-brown-blueberry-turquoise, execute: true
+🟢 Execute 'Group (core-group-v1-brown-blueberry-turquoise)'
+PushNodeVisit: core-group-v1-brown-blueberry-turquoise, execute: true
+🟢 Execute 'Group Inputs (core-group-inputs-v1-fox-penguin-turkey)'
+PushNodeVisit: core-group-inputs-v1-fox-penguin-turkey, execute: true
+🟢 Execute 'Print (core-print-v1-tangerine-gray-pomegranate)'
+PushNodeVisit: core-print-v1-tangerine-gray-pomegranate, execute: true
+PushNodeVisit: core-string-fmt-v1-ostrich-plum-yellow, execute: false
+PushNodeVisit: (cached) core-for-loop-v1-lime-black-blueberry, execute: false
+👉 Hello grape-lime-lobster=(FOO=(this_is_foo_value)) some-hardcoded-string FOO=(this_is_foo_value); snake-fox-zebra=(1) some-other-hardcoded-coded-string FOO=(this_is_foo_value)! FOO=(this_is_foo_value)
+🟢 Execute 'Group Output (core-group-outputs-v1-blackberry-watermelon-blueberry)'
+PushNodeVisit: core-group-outputs-v1-blackberry-watermelon-blueberry, execute: true
+🟢 Execute 'Group (core-group-v1-brown-blueberry-turquoise)'
+PushNodeVisit: core-group-v1-brown-blueberry-turquoise, execute: true
+🟢 Execute 'Group (core-group-v1-brown-blueberry-turquoise)'
+PushNodeVisit: core-group-v1-brown-blueberry-turquoise, execute: true
+🟢 Execute 'Group Inputs (core-group-inputs-v1-fox-penguin-turkey)'
+PushNodeVisit: core-group-inputs-v1-fox-penguin-turkey, execute: true
+🟢 Execute 'Print (core-print-v1-tangerine-gray-pomegranate)'
+PushNodeVisit: core-print-v1-tangerine-gray-pomegranate, execute: true
+PushNodeVisit: core-string-fmt-v1-ostrich-plum-yellow, execute: false
+PushNodeVisit: (cached) core-for-loop-v1-lime-black-blueberry, execute: false
+👉 Hello grape-lime-lobster=(FOO=(this_is_foo_value)) some-hardcoded-string FOO=(this_is_foo_value); snake-fox-zebra=(2) some-other-hardcoded-coded-string FOO=(this_is_foo_value)! FOO=(this_is_foo_value)
+🟢 Execute 'Group Output (core-group-outputs-v1-blackberry-watermelon-blueberry)'
+PushNodeVisit: core-group-outputs-v1-blackberry-watermelon-blueberry, execute: true
+🟢 Execute 'Group (core-group-v1-brown-blueberry-turquoise)'
+PushNodeVisit: core-group-v1-brown-blueberry-turquoise, execute: true
+🟢 Execute 'Group (core-group-v1-brown-blueberry-turquoise)'
+PushNodeVisit: core-group-v1-brown-blueberry-turquoise, execute: true
+🟢 Execute 'Group Inputs (core-group-inputs-v1-fox-penguin-turkey)'
+PushNodeVisit: core-group-inputs-v1-fox-penguin-turkey, execute: true
+🟢 Execute 'Print (core-print-v1-tangerine-gray-pomegranate)'
+PushNodeVisit: core-print-v1-tangerine-gray-pomegranate, execute: true
+PushNodeVisit: core-string-fmt-v1-ostrich-plum-yellow, execute: false
+PushNodeVisit: (cached) core-for-loop-v1-lime-black-blueberry, execute: false
+👉 Hello grape-lime-lobster=(FOO=(this_is_foo_value)) some-hardcoded-string FOO=(this_is_foo_value); snake-fox-zebra=(3) some-other-hardcoded-coded-string FOO=(this_is_foo_value)! FOO=(this_is_foo_value)
+🟢 Execute 'Group Output (core-group-outputs-v1-blackberry-watermelon-blueberry)'
+PushNodeVisit: core-group-outputs-v1-blackberry-watermelon-blueberry, execute: true
+🟢 Execute 'Group (core-group-v1-brown-blueberry-turquoise)'
+PushNodeVisit: core-group-v1-brown-blueberry-turquoise, execute: true
+🟢 Execute 'Group (core-group-v1-brown-blueberry-turquoise)'
+PushNodeVisit: core-group-v1-brown-blueberry-turquoise, execute: true
+🟢 Execute 'Group Inputs (core-group-inputs-v1-fox-penguin-turkey)'
+PushNodeVisit: core-group-inputs-v1-fox-penguin-turkey, execute: true
+🟢 Execute 'Print (core-print-v1-tangerine-gray-pomegranate)'
+PushNodeVisit: core-print-v1-tangerine-gray-pomegranate, execute: true
+PushNodeVisit: core-string-fmt-v1-ostrich-plum-yellow, execute: false
+PushNodeVisit: (cached) core-for-loop-v1-lime-black-blueberry, execute: false
+👉 Hello grape-lime-lobster=(FOO=(this_is_foo_value)) some-hardcoded-string FOO=(this_is_foo_value); snake-fox-zebra=(4) some-other-hardcoded-coded-string FOO=(this_is_foo_value)! FOO=(this_is_foo_value)
+🟢 Execute 'Group Output (core-group-outputs-v1-blackberry-watermelon-blueberry)'
+PushNodeVisit: core-group-outputs-v1-blackberry-watermelon-blueberry, execute: true
+🟢 Execute 'Group (core-group-v1-brown-blueberry-turquoise)'
+PushNodeVisit: core-group-v1-brown-blueberry-turquoise, execute: true
+🟢 Execute 'Group (core-group-v1-brown-blueberry-turquoise)'
+PushNodeVisit: core-group-v1-brown-blueberry-turquoise, execute: true
+🟢 Execute 'Group Inputs (core-group-inputs-v1-fox-penguin-turkey)'
+PushNodeVisit: core-group-inputs-v1-fox-penguin-turkey, execute: true
+🟢 Execute 'Print (core-print-v1-tangerine-gray-pomegranate)'
+PushNodeVisit: core-print-v1-tangerine-gray-pomegranate, execute: true
+PushNodeVisit: core-string-fmt-v1-ostrich-plum-yellow, execute: false
+PushNodeVisit: (cached) core-for-loop-v1-lime-black-blueberry, execute: false
+👉 Hello grape-lime-lobster=(FOO=(this_is_foo_value)) some-hardcoded-string FOO=(this_is_foo_value); snake-fox-zebra=(5) some-other-hardcoded-coded-string FOO=(this_is_foo_value)! FOO=(this_is_foo_value)
+🟢 Execute 'Group Output (core-group-outputs-v1-blackberry-watermelon-blueberry)'
+PushNodeVisit: core-group-outputs-v1-blackberry-watermelon-blueberry, execute: true
+🟢 Execute 'Group (core-group-v1-brown-blueberry-turquoise)'
+PushNodeVisit: core-group-v1-brown-blueberry-turquoise, execute: true
+🟢 Execute 'Group (core-group-v1-brown-blueberry-turquoise)'
+PushNodeVisit: core-group-v1-brown-blueberry-turquoise, execute: true
+🟢 Execute 'Group Inputs (core-group-inputs-v1-fox-penguin-turkey)'
+PushNodeVisit: core-group-inputs-v1-fox-penguin-turkey, execute: true
+🟢 Execute 'Print (core-print-v1-tangerine-gray-pomegranate)'
+PushNodeVisit: core-print-v1-tangerine-gray-pomegranate, execute: true
+PushNodeVisit: core-string-fmt-v1-ostrich-plum-yellow, execute: false
+PushNodeVisit: (cached) core-for-loop-v1-lime-black-blueberry, execute: false
+👉 Hello grape-lime-lobster=(FOO=(this_is_foo_value)) some-hardcoded-string FOO=(this_is_foo_value); snake-fox-zebra=(6) some-other-hardcoded-coded-string FOO=(this_is_foo_value)! FOO=(this_is_foo_value)
+🟢 Execute 'Group Output (core-group-outputs-v1-blackberry-watermelon-blueberry)'
+PushNodeVisit: core-group-outputs-v1-blackberry-watermelon-blueberry, execute: true
+🟢 Execute 'Group (core-group-v1-brown-blueberry-turquoise)'
+PushNodeVisit: core-group-v1-brown-blueberry-turquoise, execute: true
+🟢 Execute 'Group (core-group-v1-brown-blueberry-turquoise)'
+PushNodeVisit: core-group-v1-brown-blueberry-turquoise, execute: true
+🟢 Execute 'Group Inputs (core-group-inputs-v1-fox-penguin-turkey)'
+PushNodeVisit: core-group-inputs-v1-fox-penguin-turkey, execute: true
+🟢 Execute 'Print (core-print-v1-tangerine-gray-pomegranate)'
+PushNodeVisit: core-print-v1-tangerine-gray-pomegranate, execute: true
+PushNodeVisit: core-string-fmt-v1-ostrich-plum-yellow, execute: false
+PushNodeVisit: (cached) core-for-loop-v1-lime-black-blueberry, execute: false
+👉 Hello grape-lime-lobster=(FOO=(this_is_foo_value)) some-hardcoded-string FOO=(this_is_foo_value); snake-fox-zebra=(7) some-other-hardcoded-coded-string FOO=(this_is_foo_value)! FOO=(this_is_foo_value)
+🟢 Execute 'Group Output (core-group-outputs-v1-blackberry-watermelon-blueberry)'
+PushNodeVisit: core-group-outputs-v1-blackberry-watermelon-blueberry, execute: true
+🟢 Execute 'Group (core-group-v1-brown-blueberry-turquoise)'
+PushNodeVisit: core-group-v1-brown-blueberry-turquoise, execute: true
+🟢 Execute 'Group (core-group-v1-brown-blueberry-turquoise)'
+PushNodeVisit: core-group-v1-brown-blueberry-turquoise, execute: true
+🟢 Execute 'Group Inputs (core-group-inputs-v1-fox-penguin-turkey)'
+PushNodeVisit: core-group-inputs-v1-fox-penguin-turkey, execute: true
+🟢 Execute 'Print (core-print-v1-tangerine-gray-pomegranate)'
+PushNodeVisit: core-print-v1-tangerine-gray-pomegranate, execute: true
+PushNodeVisit: core-string-fmt-v1-ostrich-plum-yellow, execute: false
+PushNodeVisit: (cached) core-for-loop-v1-lime-black-blueberry, execute: false
+👉 Hello grape-lime-lobster=(FOO=(this_is_foo_value)) some-hardcoded-string FOO=(this_is_foo_value); snake-fox-zebra=(8) some-other-hardcoded-coded-string FOO=(this_is_foo_value)! FOO=(this_is_foo_value)
+🟢 Execute 'Group Output (core-group-outputs-v1-blackberry-watermelon-blueberry)'
+PushNodeVisit: core-group-outputs-v1-blackberry-watermelon-blueberry, execute: true
+🟢 Execute 'Group (core-group-v1-brown-blueberry-turquoise)'
+PushNodeVisit: core-group-v1-brown-blueberry-turquoise, execute: true
+🟢 Execute 'Group (core-group-v1-brown-blueberry-turquoise)'
+PushNodeVisit: core-group-v1-brown-blueberry-turquoise, execute: true
+🟢 Execute 'Group Inputs (core-group-inputs-v1-fox-penguin-turkey)'
+PushNodeVisit: core-group-inputs-v1-fox-penguin-turkey, execute: true
+🟢 Execute 'Print (core-print-v1-tangerine-gray-pomegranate)'
+PushNodeVisit: core-print-v1-tangerine-gray-pomegranate, execute: true
+PushNodeVisit: core-string-fmt-v1-ostrich-plum-yellow, execute: false
+PushNodeVisit: (cached) core-for-loop-v1-lime-black-blueberry, execute: false
+👉 Hello grape-lime-lobster=(FOO=(this_is_foo_value)) some-hardcoded-string FOO=(this_is_foo_value); snake-fox-zebra=(9) some-other-hardcoded-coded-string FOO=(this_is_foo_value)! FOO=(this_is_foo_value)
+🟢 Execute 'Group Output (core-group-outputs-v1-blackberry-watermelon-blueberry)'
+PushNodeVisit: core-group-outputs-v1-blackberry-watermelon-blueberry, execute: true
+🟢 Execute 'Group (core-group-v1-brown-blueberry-turquoise)'
+PushNodeVisit: core-group-v1-brown-blueberry-turquoise, execute: true
+🟢 Execute 'Group (core-group-v1-brown-blueberry-turquoise)'
+PushNodeVisit: core-group-v1-brown-blueberry-turquoise, execute: true
+🟢 Execute 'Group Inputs (core-group-inputs-v1-fox-penguin-turkey)'
+PushNodeVisit: core-group-inputs-v1-fox-penguin-turkey, execute: true
+🟢 Execute 'Print (core-print-v1-tangerine-gray-pomegranate)'
+PushNodeVisit: core-print-v1-tangerine-gray-pomegranate, execute: true
+PushNodeVisit: core-string-fmt-v1-ostrich-plum-yellow, execute: false
+PushNodeVisit: (cached) core-for-loop-v1-lime-black-blueberry, execute: false
+👉 Hello grape-lime-lobster=(FOO=(this_is_foo_value)) some-hardcoded-string FOO=(this_is_foo_value); snake-fox-zebra=(10) some-other-hardcoded-coded-string FOO=(this_is_foo_value)! FOO=(this_is_foo_value)
+🟢 Execute 'Group Output (core-group-outputs-v1-blackberry-watermelon-blueberry)'
+PushNodeVisit: core-group-outputs-v1-blackberry-watermelon-blueberry, execute: true
+🟢 Execute 'Group (core-group-v1-brown-blueberry-turquoise)'
+PushNodeVisit: core-group-v1-brown-blueberry-turquoise, execute: true

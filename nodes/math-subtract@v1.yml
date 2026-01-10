@@ -1,0 +1,37 @@
+yaml-version: 3.0
+
+id: core/math-subtract
+name: Math Subtract
+version: 1
+category: computation
+style:
+  header:
+    background: "#388a34"
+  body:
+    background: "#22591f"
+icon: tablerMinus
+short_desc: Subtract two or more numbers.
+long_desc: |
+  This node subtracts the input numbers from the first number.
+  
+  ## Example:
+
+  - Input: `10, 2, 3`
+  
+  Results in the subtraction of `10 - 2 - 3`.
+  
+  - Output: `5`
+label: "-"
+compact: true
+inputs:
+  inputs:
+    type: number
+    index: 0
+    array: true
+    array_initial_count: 2
+    desc: A set of numbers with the first as the minuend and the rest as subtrahends.
+outputs:
+  result:
+    type: number
+    index: 0
+    desc: The result of the subtraction.

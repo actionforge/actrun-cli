@@ -1,0 +1,70 @@
+editor:
+  version:
+    created: v1.26.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 80
+      y: -130
+  - id: string-transform-v1-blue-horse-turquoise
+    type: core/string-transform@v1
+    position:
+      x: 450
+      y: 340
+  - id: env-get-v1-pineapple-pomegranate-coconut
+    type: core/env-get@v1
+    position:
+      x: 10
+      y: 140
+    inputs:
+      env: TRANSFORM_TEXT
+  - id: print-v1-coral-banana-goat
+    type: core/print@v1
+    position:
+      x: 710
+      y: 60
+    inputs:
+      values[0]: null
+      values[1]: null
+  - id: env-get-v1-magenta-navy-turkey
+    type: core/env-get@v1
+    position:
+      x: 30
+      y: 300
+    inputs:
+      env: TRANSFORM_OP
+connections:
+  - src:
+      node: env-get-v1-pineapple-pomegranate-coconut
+      port: env
+    dst:
+      node: string-transform-v1-blue-horse-turquoise
+      port: input
+  - src:
+      node: env-get-v1-magenta-navy-turkey
+      port: env
+    dst:
+      node: string-transform-v1-blue-horse-turquoise
+      port: op
+  - src:
+      node: string-transform-v1-blue-horse-turquoise
+      port: result
+    dst:
+      node: print-v1-coral-banana-goat
+      port: values[1]
+  - src:
+      node: env-get-v1-magenta-navy-turkey
+      port: env
+    dst:
+      node: print-v1-coral-banana-goat
+      port: values[0]
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: print-v1-coral-banana-goat
+      port: exec

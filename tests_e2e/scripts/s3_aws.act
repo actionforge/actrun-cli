@@ -1,0 +1,135 @@
+editor:
+  version:
+    created: v1.11.0
+    updated: v1.34.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 550
+      y: 10
+  - id: storage-provider-s3-v1-zebra-apple-squirrel
+    type: core/storage-provider-s3@v1
+    position:
+      x: 530
+      y: 310
+    inputs:
+      bucket: ''
+      region: ''
+  - id: storage-upload-v1-butterfly-coconut-gray
+    type: core/storage-upload@v1
+    position:
+      x: 990
+      y: -10
+    inputs:
+      name: tests_e2e/s3_aws_test.txt
+  - id: const-string-v1-cherry-banana-koala
+    type: core/const-string@v1
+    position:
+      x: 510
+      y: 220
+    inputs:
+      value: this is a test file
+  - id: env-get-v1-giraffe-koala-pineapple
+    type: core/env-get@v1
+    position:
+      x: 140
+      y: 290
+    inputs:
+      env: TESTE2E_S3_BUCKET
+  - id: env-get-v1-pineapple-green-gold
+    type: core/env-get@v1
+    position:
+      x: 140
+      y: 420
+    inputs:
+      env: TESTE2E_S3_REGION
+  - id: storage-download-v1-apple-brown-plum
+    type: core/storage-download@v1
+    position:
+      x: 1390
+      y: 60
+    inputs:
+      name: tests_e2e/s3_aws_test.txt
+  - id: print-v1-tiger-shark-zebra
+    type: core/print@v1
+    position:
+      x: 1830
+      y: -20
+    inputs:
+      values[0]: null
+  - id: credentials-accesskey-v1-passionfruit-monkey-cherry
+    type: core/credentials-accesskey@v1
+    position:
+      x: -60
+      y: 580
+    inputs:
+      access_key: TESTE2E_AWS_S3_ACCESS_KEY
+      access_password: TESTE2E_AWS_S3_SECRET_KEY
+connections:
+  - src:
+      node: storage-provider-s3-v1-zebra-apple-squirrel
+      port: provider
+    dst:
+      node: storage-upload-v1-butterfly-coconut-gray
+      port: provider
+  - src:
+      node: const-string-v1-cherry-banana-koala
+      port: result
+    dst:
+      node: storage-upload-v1-butterfly-coconut-gray
+      port: data
+  - src:
+      node: env-get-v1-giraffe-koala-pineapple
+      port: env
+    dst:
+      node: storage-provider-s3-v1-zebra-apple-squirrel
+      port: bucket
+    isLoop: false
+  - src:
+      node: env-get-v1-pineapple-green-gold
+      port: env
+    dst:
+      node: storage-provider-s3-v1-zebra-apple-squirrel
+      port: region
+    isLoop: false
+  - src:
+      node: storage-provider-s3-v1-zebra-apple-squirrel
+      port: provider
+    dst:
+      node: storage-download-v1-apple-brown-plum
+      port: provider
+  - src:
+      node: storage-download-v1-apple-brown-plum
+      port: data
+    dst:
+      node: print-v1-tiger-shark-zebra
+      port: values[0]
+  - src:
+      node: credentials-accesskey-v1-passionfruit-monkey-cherry
+      port: credential
+    dst:
+      node: storage-provider-s3-v1-zebra-apple-squirrel
+      port: credentials
+    isLoop: false
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: storage-upload-v1-butterfly-coconut-gray
+      port: exec
+  - src:
+      node: storage-upload-v1-butterfly-coconut-gray
+      port: exec-success
+    dst:
+      node: storage-download-v1-apple-brown-plum
+      port: exec
+  - src:
+      node: storage-download-v1-apple-brown-plum
+      port: exec
+    dst:
+      node: print-v1-tiger-shark-zebra
+      port: exec

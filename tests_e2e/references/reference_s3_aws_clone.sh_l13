@@ -1,0 +1,49 @@
+build hasn't expired yet
+looking for value: 'env_file'
+  no value (is optional) found for: 'env_file'
+looking for value: 'config_file'
+  found value in: 'env (shell)'
+  evaluated to: '[REDACTED]/s3_aws_clone.actconfig'
+looking for value: 'concurrency'
+  no value (is optional) found for: 'concurrency'
+looking for value: 'graph_file'
+  found value in: 'env (shell)'
+  evaluated to: 's3_aws_clone.act'
+looking for value: 'session_token'
+  no value (is optional) found for: 'session_token'
+looking for value: 'create_debug_session'
+  found value in flags
+  evaluated to: 'false'
+PushNodeVisit: start, execute: true
+🟢 Execute 'Storage Upload (storage-upload-v1-lemon-orange-silver)'
+PushNodeVisit: storage-upload-v1-lemon-orange-silver, execute: true
+PushNodeVisit: const-string-v1-watermelon-peach-gray, execute: false
+PushNodeVisit: string-fmt-v1-kiwi-plum-gray, execute: false
+PushNodeVisit: string-fmt-v1-grape-strawberry-grape, execute: false
+PushNodeVisit: system-info-v1-orange-penguin-pineapple, execute: false
+PushNodeVisit: system-info-v1-orange-penguin-pineapple, execute: false
+PushNodeVisit: storage-provider-s3-v1-zebra-apple-squirrel, execute: false
+PushNodeVisit: env-get-v1-giraffe-koala-pineapple, execute: false
+PushNodeVisit: env-get-v1-pineapple-green-gold, execute: false
+PushNodeVisit: credentials-accesskey-v1-passionfruit-monkey-cherry, execute: false
+🟢 Execute 'Storage Download (storage-download-v1-orange-blueberry-orange)'
+PushNodeVisit: storage-download-v1-orange-blueberry-orange, execute: true
+PushNodeVisit: string-fmt-v1-kiwi-plum-gray, execute: false
+PushNodeVisit: string-fmt-v1-grape-strawberry-grape, execute: false
+PushNodeVisit: system-info-v1-orange-penguin-pineapple, execute: false
+PushNodeVisit: system-info-v1-orange-penguin-pineapple, execute: false
+PushNodeVisit: storage-provider-s3-v1-zebra-apple-squirrel, execute: false
+PushNodeVisit: env-get-v1-giraffe-koala-pineapple, execute: false
+PushNodeVisit: env-get-v1-pineapple-green-gold, execute: false
+PushNodeVisit: credentials-accesskey-v1-passionfruit-monkey-cherry, execute: false
+🟢 Execute 'Storage Upload (storage-upload-v1-lemon-yellow-dolphin)'
+PushNodeVisit: storage-upload-v1-lemon-yellow-dolphin, execute: true
+PushNodeVisit: (cached) storage-download-v1-orange-blueberry-orange, execute: false
+PushNodeVisit: string-fmt-v1-pink-watermelon-cat, execute: false
+PushNodeVisit: string-fmt-v1-grape-strawberry-grape, execute: false
+PushNodeVisit: system-info-v1-orange-penguin-pineapple, execute: false
+PushNodeVisit: system-info-v1-orange-penguin-pineapple, execute: false
+PushNodeVisit: storage-provider-s3-v1-gold-elephant-silver, execute: false
+PushNodeVisit: env-get-v1-pink-peach-strawberry, execute: false
+PushNodeVisit: env-get-v1-dolphin-red-cherry, execute: false
+PushNodeVisit: credentials-accesskey-v1-passionfruit-monkey-cherry, execute: false

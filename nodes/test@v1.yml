@@ -1,0 +1,107 @@
+yaml-version: 3.0
+
+id: core/test
+name: Test Node
+version: 1
+short_desc: Test node for integration tests
+show_in_docs: false
+outputs:
+  output_bool-foo123:
+    name: Output Boolean
+    type: bool
+    index: 0
+  output_number-foo123:
+    name: Output Integer
+    type: number
+    index: 1
+  output_string-foo123:
+    name: Output String
+    type: string
+    index: 2
+  output_array_number-foo123:
+    name: Output Slice Integer
+    type: "[]number"
+    index: 3
+  output_array_bool-foo123:
+    name: Output Slice Boolean
+    type: "[]bool"
+    index: 4
+  output_slice_string-foo123:
+    name: Output Slice String
+    type: "[]string"
+    index: 5
+  output_any-foo123:
+    name: Output Unknown
+    type: unknown
+    index: 6
+  output_stream-foo123:
+    name: Output Stream
+    type: stream
+    index: 7
+  output_storage_provider-foo123:
+    name: Storage Provider
+    type: storage-provider
+    index: 8
+  output_map_string_int32-foo123:
+    name: Output Map String Int32
+    type: "map[string]int32"
+    index: 9
+  output_array_string-foo123:
+    name: Output Array String
+    type: string
+    array: true
+    index: 10
+inputs:
+  input_bool-foo123:
+    name: Input Boolean
+    type: bool
+    index: 0
+  input_number-foo123:
+    name: Input Integer
+    type: number
+    index: 1
+  input_string-foo123:
+    name: Input String
+    type: string
+    index: 2
+  input_array_bool-foo123:
+    name: Input Slice Boolean
+    type: "[]bool"
+    index: 3
+  input_array_number-foo123:
+    name: Input Slice Integer
+    type: "[]number"
+    index: 4
+  input_array_string-foo123:
+    name: Input Array String
+    type: string
+    array: true
+    index: 5
+  input_any-foo123:
+    name: Input Any
+    type: any
+    index: 6
+  input_iterable-foo123:
+    name: Iterable
+    type: iterable
+    index: 7
+  input_stream-foo123:
+    name: Stream
+    type: stream
+    index: 8
+  input_storage_provider-foo123:
+    name: Storage Provider
+    type: storage-provider
+    index: 9
+  input_secret-foo123:
+    name: Secret
+    type: secret
+    index: 10
+  input_slice_string-foo123:
+    name: Input Slice String
+    type: "[]string"
+    index: 11
+  input_map_string_int32-foo123:
+    name: Input Map String Int32
+    type: "map[string]int32"
+    index: 12

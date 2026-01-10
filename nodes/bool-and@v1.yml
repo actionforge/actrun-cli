@@ -1,0 +1,39 @@
+yaml-version: 3.0
+
+id: core/bool-and
+name: Bool And
+label: And
+version: 1
+icon: tablerLogicAnd
+category: computation
+style:
+  header:
+    background: "#388a34"
+  body:
+    background: "#22591f"
+short_desc: Apply the `And` operator on two or more boolean values.
+addendum: |
+  ## Example
+
+  Below is the truth table for the `AND` operator applied to two boolean values:
+
+  | Input 1 | Input 2 | Output (1 AND 2) |
+  |---------|---------|------------------|
+  |    0    |    0    |        0         |
+  |    0    |    1    |        0         |
+  |    1    |    0    |        0         |
+  |    1    |    1    |        1         |
+
+compact: true
+inputs:
+  inputs:
+    type: bool
+    index: 0
+    array: true
+    array_initial_count: 2
+    desc: The boolean values to apply the `AND` operator on.
+outputs:
+  result:
+    type: bool
+    index: 0
+    desc: The result of the boolean operation. `true` if all input values are `true`, `false` otherwise.

@@ -1,0 +1,105 @@
+editor:
+  version:
+    created: v1.26.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: -380
+      y: -60
+  - id: array-get-v1-goose-chicken-nectarine
+    type: core/array-get@v1
+    position:
+      x: 980
+      y: 180
+    inputs:
+      bound_check: true
+  - id: for-loop-v1-purple-bear-lemon
+    type: core/for-loop@v1
+    position:
+      x: 610
+      y: -110
+    inputs:
+      first_index: 0
+      last_index: 10
+  - id: length-v1-butterfly-sheep-blueberry
+    type: core/length@v1
+    position:
+      x: -40
+      y: 200
+  - id: math-subtract-v1-gray-shark-boysenberry
+    type: core/math-subtract@v1
+    position:
+      x: 290
+      y: 150
+    inputs:
+      inputs[0]: null
+      inputs[1]: 1
+  - id: print-v1-indigo-guava-elephant
+    type: core/print@v1
+    position:
+      x: 1290
+      y: 50
+    inputs:
+      values[0]: null
+  - id: string-array-v1-lychee-date-octopus
+    type: core/string-array@v1
+    position:
+      x: -440
+      y: 350
+    inputs:
+      inputs[0]: hello
+      inputs[1]: world
+      inputs[2]: foo123
+connections:
+  - src:
+      node: length-v1-butterfly-sheep-blueberry
+      port: result
+    dst:
+      node: math-subtract-v1-gray-shark-boysenberry
+      port: inputs[0]
+  - src:
+      node: math-subtract-v1-gray-shark-boysenberry
+      port: result
+    dst:
+      node: for-loop-v1-purple-bear-lemon
+      port: last_index
+  - src:
+      node: array-get-v1-goose-chicken-nectarine
+      port: result
+    dst:
+      node: print-v1-indigo-guava-elephant
+      port: values[0]
+  - src:
+      node: for-loop-v1-purple-bear-lemon
+      port: index
+    dst:
+      node: array-get-v1-goose-chicken-nectarine
+      port: index
+  - src:
+      node: string-array-v1-lychee-date-octopus
+      port: array
+    dst:
+      node: length-v1-butterfly-sheep-blueberry
+      port: input
+  - src:
+      node: string-array-v1-lychee-date-octopus
+      port: array
+    dst:
+      node: array-get-v1-goose-chicken-nectarine
+      port: array
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: for-loop-v1-purple-bear-lemon
+      port: exec
+  - src:
+      node: for-loop-v1-purple-bear-lemon
+      port: exec-body
+    dst:
+      node: print-v1-indigo-guava-elephant
+      port: exec

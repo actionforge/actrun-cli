@@ -1,0 +1,38 @@
+yaml-version: 3.0
+
+id: core/select-data
+version: 1
+name: Select Data
+icon: tablerListCheck
+category: computation
+short_desc: Select a specific value from a list of choices.
+long_desc: |
+  This node enables dynamic selection and output of a value from a list by specifying the index position.
+
+  For those with a programming background, it functions similarly to a switch-case statement, but with numeric indexes instead.
+style:
+  header:
+    background: "#388a34"
+  body:
+    background: "#22591f"
+inputs:
+  index:
+    name: Index
+    type: number
+    index: 0
+    desc: The index position of the value to select. Must be 0 or greater. An index out of bounds will result in a runtime error.
+
+  choices:
+    name: ""
+    type: unknown
+    array: true
+    array_initial_count: 2
+    index: 1
+    desc: A list of inputs to select from. The first port starts at index 0.
+
+outputs:
+  value:
+    name: "Value"
+    type: unknown
+    index: 0
+    desc: The selected value.

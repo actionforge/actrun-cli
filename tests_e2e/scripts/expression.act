@@ -1,0 +1,223 @@
+editor:
+  version:
+    created: v1.34.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 20
+      y: 10
+  - id: core-group-v1-camel-jackfruit-boysenberry
+    type: core/group@v1
+    position:
+      x: 310
+      y: 80
+    inputs:
+      grape-lime-lobster: FOO=(${{ env.FOO }})
+    graph:
+      entry: core-group-inputs-v1-fox-penguin-turkey
+      type: group
+      nodes:
+        - id: core-group-inputs-v1-fox-penguin-turkey
+          type: core/group-inputs@v1
+          position:
+            x: 140
+            y: -10
+        - id: core-group-outputs-v1-blackberry-watermelon-blueberry
+          type: core/group-outputs@v1
+          position:
+            x: 840
+            y: 80
+        - id: core-print-v1-tangerine-gray-pomegranate
+          type: core/print@v1
+          position:
+            x: 540
+            y: 90
+          inputs:
+            values[0]: null
+            color: fg_blue
+        - id: core-string-fmt-v1-ostrich-plum-yellow
+          type: core/string-fmt@v1
+          position:
+            x: -90
+            y: 290
+          inputs:
+            substitutes[0]: >-
+              grape-lime-lobster=(${{ inputs.grape-lime-lobster }})
+              some-hardcoded-string FOO=(${{env.FOO}})
+            fmt: 👉 Hello %v; %v! FOO=(${{ env.FOO }})
+            substitutes[1]: >-
+              snake-fox-zebra=(${{ inputs.snake-fox-zebra }})
+              some-other-hardcoded-coded-string FOO=(${{env.FOO}})
+      connections:
+        - src:
+            node: core-string-fmt-v1-ostrich-plum-yellow
+            port: result
+          dst:
+            node: core-print-v1-tangerine-gray-pomegranate
+            port: values[0]
+      executions:
+        - src:
+            node: core-group-inputs-v1-fox-penguin-turkey
+            port: exec-peacock-purple-giraffe
+          dst:
+            node: core-print-v1-tangerine-gray-pomegranate
+            port: exec
+        - src:
+            node: core-print-v1-tangerine-gray-pomegranate
+            port: exec
+          dst:
+            node: core-group-outputs-v1-blackberry-watermelon-blueberry
+            port: exec-date-goat-pineapple
+      inputs:
+        exec-peacock-purple-giraffe:
+          name: ''
+          type: ''
+          index: 0
+          exec: true
+          required: true
+        grape-lime-lobster:
+          name: ''
+          type: string
+          index: 1
+        snake-fox-zebra:
+          name: ''
+          type: string
+          index: 2
+      outputs:
+        exec-date-goat-pineapple:
+          name: ''
+          type: ''
+          index: 0
+          exec: true
+  - id: core-const-string-v1-kiwano-lobster-grape
+    type: core/const-string@v1
+    position:
+      x: 30
+      y: 210
+    inputs:
+      value: graph_input_value=${{ inputs.GRAPH_INPUT }}
+  - id: core-group-v1-brown-blueberry-turquoise
+    type: core/group@v1
+    position:
+      x: 1270
+      y: 110
+    inputs:
+      grape-lime-lobster: FOO=(${{ env.FOO }})
+    graph:
+      entry: core-group-inputs-v1-fox-penguin-turkey
+      type: group
+      nodes:
+        - id: core-group-inputs-v1-fox-penguin-turkey
+          type: core/group-inputs@v1
+          position:
+            x: 140
+            y: -10
+        - id: core-group-outputs-v1-blackberry-watermelon-blueberry
+          type: core/group-outputs@v1
+          position:
+            x: 840
+            y: 80
+        - id: core-print-v1-tangerine-gray-pomegranate
+          type: core/print@v1
+          position:
+            x: 540
+            y: 90
+          inputs:
+            values[0]: null
+            color: fg_blue
+        - id: core-string-fmt-v1-ostrich-plum-yellow
+          type: core/string-fmt@v1
+          position:
+            x: -90
+            y: 290
+          inputs:
+            substitutes[0]: >-
+              grape-lime-lobster=(${{ inputs.grape-lime-lobster }})
+              some-hardcoded-string FOO=(${{env.FOO}})
+            fmt: 👉 Hello %v; %v! FOO=(${{ env.FOO }})
+            substitutes[1]: >-
+              snake-fox-zebra=(${{ inputs.snake-fox-zebra }})
+              some-other-hardcoded-coded-string FOO=(${{env.FOO}})
+      connections:
+        - src:
+            node: core-string-fmt-v1-ostrich-plum-yellow
+            port: result
+          dst:
+            node: core-print-v1-tangerine-gray-pomegranate
+            port: values[0]
+      executions:
+        - src:
+            node: core-group-inputs-v1-fox-penguin-turkey
+            port: exec-peacock-purple-giraffe
+          dst:
+            node: core-print-v1-tangerine-gray-pomegranate
+            port: exec
+        - src:
+            node: core-print-v1-tangerine-gray-pomegranate
+            port: exec
+          dst:
+            node: core-group-outputs-v1-blackberry-watermelon-blueberry
+            port: exec-date-goat-pineapple
+      inputs:
+        exec-peacock-purple-giraffe:
+          name: ''
+          type: ''
+          index: 0
+          exec: true
+          required: true
+        grape-lime-lobster:
+          name: ''
+          type: string
+          index: 1
+        snake-fox-zebra:
+          name: ''
+          type: string
+          index: 2
+      outputs:
+        exec-date-goat-pineapple:
+          name: ''
+          type: ''
+          index: 0
+          exec: true
+  - id: core-for-loop-v1-lime-black-blueberry
+    type: core/for-loop@v1
+    position:
+      x: 630
+      y: 10
+    inputs:
+      last_index: 10
+connections:
+  - src:
+      node: core-const-string-v1-kiwano-lobster-grape
+      port: result
+    dst:
+      node: core-group-v1-camel-jackfruit-boysenberry
+      port: snake-fox-zebra
+  - src:
+      node: core-for-loop-v1-lime-black-blueberry
+      port: index
+    dst:
+      node: core-group-v1-brown-blueberry-turquoise
+      port: snake-fox-zebra
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: core-group-v1-camel-jackfruit-boysenberry
+      port: exec-peacock-purple-giraffe
+  - src:
+      node: core-group-v1-camel-jackfruit-boysenberry
+      port: exec-date-goat-pineapple
+    dst:
+      node: core-for-loop-v1-lime-black-blueberry
+      port: exec
+  - src:
+      node: core-for-loop-v1-lime-black-blueberry
+      port: exec-body
+    dst:
+      node: core-group-v1-brown-blueberry-turquoise
+      port: exec-peacock-purple-giraffe

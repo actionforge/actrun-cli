@@ -1,0 +1,6 @@
+env:
+    TESTE2E_S3_BUCKET: actionforge-dl
+    TESTE2E_S3_REGION: us-east-1
+    TESTE2E_S3_ENDPOINT: https://nyc3.digitaloceanspaces.com
+secrets:
+    # come from GITHUB_ACTIONS or ~/.actconfig if run local

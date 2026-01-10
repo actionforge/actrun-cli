@@ -1,0 +1,90 @@
+editor:
+  version:
+    created: v1.34.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 20
+      y: 10
+  - id: core-print-v1-crab-red-gold
+    type: core/print@v1
+    position:
+      x: 440
+      y: 90
+    inputs:
+      values[0]: null
+  - id: core-const-string-v1-zebra-turquoise-lime
+    type: core/const-string@v1
+    position:
+      x: 30
+      y: 210
+    inputs:
+      value: Hello World! 🚀
+  - id: core-group-v1-navy-rhinoceros-ivory
+    type: core/group@v1
+    position:
+      x: 360
+      y: -120
+    graph:
+      entry: core-group-inputs-v1-coconut-jackfruit-pomegranate
+      type: group
+      nodes:
+        - id: core-group-inputs-v1-coconut-jackfruit-pomegranate
+          type: core/group-inputs@v1
+          position:
+            x: 0
+            y: 100
+        - id: core-group-outputs-v1-lobster-kangaroo-squirrel
+          type: core/group-outputs@v1
+          position:
+            x: 400
+            y: 100
+        - id: core-bool-and-v1-gray-dragonfruit-lime
+          type: core/bool-and@v1
+          position:
+            x: 180
+            y: 230
+          inputs:
+            inputs[0]: null
+            inputs[1]: null
+      connections:
+        - src:
+            node: core-group-inputs-v1-coconut-jackfruit-pomegranate
+            port: penguin-teal-cranberry-doesnt-exist
+          dst:
+            node: core-bool-and-v1-gray-dragonfruit-lime
+            port: inputs[0]
+        - src:
+            node: core-bool-and-v1-gray-dragonfruit-lime
+            port: result
+          dst:
+            node: core-group-outputs-v1-lobster-kangaroo-squirrel
+            port: tiger-cranberry-white-doesnt-exist
+      executions: []
+      inputs:
+        penguin-teal-cranberry:
+          name: ''
+          type: bool
+          index: 0
+      outputs:
+        tiger-cranberry-white:
+          name: ''
+          type: bool
+          index: 0
+connections:
+  - src:
+      node: core-const-string-v1-zebra-turquoise-lime
+      port: result
+    dst:
+      node: core-print-v1-crab-red-gold
+      port: values[999999]
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: core-print-v1-crab-red-gold-doesnt-exist
+      port: exec

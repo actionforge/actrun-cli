@@ -1,0 +1,104 @@
+editor:
+  version:
+    created: v1.26.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 280
+      y: -70
+  - id: array-get-v1-goose-chicken-nectarine
+    type: core/array-get@v1
+    position:
+      x: 1020
+      y: 160
+    inputs:
+      bound_check: true
+  - id: for-loop-v1-purple-bear-lemon
+    type: core/for-loop@v1
+    position:
+      x: 630
+      y: -20
+    inputs:
+      first_index: 0
+      last_index: 10
+  - id: length-v1-butterfly-sheep-blueberry
+    type: core/length@v1
+    position:
+      x: 300
+      y: 180
+  - id: print-v1-indigo-guava-elephant
+    type: core/print@v1
+    position:
+      x: 1300
+      y: 10
+    inputs:
+      values[0]: null
+  - id: string-array-v1-lychee-date-octopus
+    type: core/string-array@v1
+    position:
+      x: -410
+      y: 210
+    inputs:
+      inputs[0]: hello
+      inputs[1]: world
+      inputs[2]: foo123
+  - id: env-get-v1-lime-octopus-grapefruit
+    type: core/env-get@v1
+    position:
+      x: 390
+      y: 350
+    inputs:
+      env: BOUND_CHECK
+connections:
+  - src:
+      node: array-get-v1-goose-chicken-nectarine
+      port: result
+    dst:
+      node: print-v1-indigo-guava-elephant
+      port: values[0]
+  - src:
+      node: string-array-v1-lychee-date-octopus
+      port: array
+    dst:
+      node: length-v1-butterfly-sheep-blueberry
+      port: input
+  - src:
+      node: length-v1-butterfly-sheep-blueberry
+      port: result
+    dst:
+      node: for-loop-v1-purple-bear-lemon
+      port: last_index
+  - src:
+      node: string-array-v1-lychee-date-octopus
+      port: array
+    dst:
+      node: array-get-v1-goose-chicken-nectarine
+      port: array
+  - src:
+      node: for-loop-v1-purple-bear-lemon
+      port: index
+    dst:
+      node: array-get-v1-goose-chicken-nectarine
+      port: index
+  - src:
+      node: env-get-v1-lime-octopus-grapefruit
+      port: env
+    dst:
+      node: array-get-v1-goose-chicken-nectarine
+      port: bound_check
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: for-loop-v1-purple-bear-lemon
+      port: exec
+  - src:
+      node: for-loop-v1-purple-bear-lemon
+      port: exec-body
+    dst:
+      node: print-v1-indigo-guava-elephant
+      port: exec

@@ -1,0 +1,85 @@
+yaml-version: 3.0
+id: core/git-clone
+name: Git Clone
+version: 1
+category: git
+icon: tablerBrandGit
+style:
+  header:
+    background: "#f1502f"
+  body:
+    background: "#652619"
+short_desc: Clones a Git repository from a URL into a local directory.
+addendum: |
+  This node uses the `go-git` library to perform a clone operation.
+
+  ### Authentication
+  For private repositories, ensure that the necessary credentials are configured in your environment's Git configuration or provide them through a secrets management system.
+
+  ### Example
+  To clone the main branch of the Actionforge repository into a `my-project` directory:
+  - **URL**: `https://github.com/actionforge/actionforge.git`
+  - **Directory**: `./my-project`
+  - **Branch**: `main`
+outputs:
+  exec-success:
+    name: Success
+    exec: true
+    desc: Executes if the clone operation is successful.
+    index: 0
+  exec-err:
+    name: Error
+    exec: true
+    desc: Executes if the clone operation fails.
+    index: 1
+  repo:
+    type: git-repo
+    name: Repository
+    desc: The cloned Git repository object.
+    index: 2
+inputs:
+  exec:
+    exec: true
+    index: 0
+  url:
+    type: string
+    name: URL
+    hint: "e.g. git@github.com:actionforge/docs.git"
+    desc: The URL of the Git repository to clone (e.g., https, ssh).
+    index: 1
+  directory:
+    type: string
+    name: Directory
+    desc: The local directory path where the repository will be cloned.
+    index: 2
+  ref:
+    type: string
+    name: Reference
+    hint: "main"
+    desc: The specific branch to clone. If empty, the remote's default branch is used.
+    index: 3
+    default: main
+    optional: true
+  checkout:
+    type: bool
+    name: Checkout
+    desc: Whether to checkout the specified reference after cloning. Defaults to true.
+    index: 4
+    default: true
+    optional: true
+  only_ref:
+    type: bool
+    name: Only Ref
+    desc: If true, only the specified reference will be cloned (no other branches or tags).
+    index: 5
+  depth:
+    type: number
+    name: Depth
+    desc: Creates a shallow clone with a history truncated to the specified number of commits. A value of 0 or less means a full clone.
+    index: 6
+    optional: true
+  auth:
+    type: "credentials"
+    desc: Optional credentials for accessing private repositories. If not provided, the node will use the default Git configuration.
+    index: 7
+    optional: true

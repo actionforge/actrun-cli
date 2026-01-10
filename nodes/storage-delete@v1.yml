@@ -1,0 +1,47 @@
+yaml-version: 3.0
+
+id: core/storage-delete
+name: Storage Delete
+version: 1
+category: network
+icon: featherUploadCloud
+short_desc: Node to delete an object on a remote storage.
+style:
+  header:
+    background: "#c45d0c"
+  body:
+    background: rgb(142 82 35)
+outputs:
+  exec-success:
+    name: Success
+    exec: true
+    index: 0
+  exec-err:
+    name: Error
+    exec: true
+    index: 1
+  deleted:
+    name: Deleted
+    type: bool
+    index: 2
+  provider:
+    type: storage-provider
+    index: 3
+inputs:
+  exec:
+    exec: true
+    index: 0
+  name:
+    name: Name
+    type: string
+    index: 1
+    required: true
+  is_dir:
+    name: Is Directory
+    type: bool
+    index: 2
+  provider:
+    name: Provider
+    type: storage-provider
+    index: 3
+    required: true

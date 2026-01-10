@@ -1,0 +1,154 @@
+editor:
+  version:
+    created: v1.11.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: -30
+      y: -120
+  - id: group-v1-tiger-penguin-butterfly
+    type: core/group@v1
+    position:
+      x: 780
+      y: 200
+    graph:
+      entry: group-inputs-v1-plum-parrot-rabbit
+      type: group
+      nodes:
+        - id: group-inputs-v1-plum-parrot-rabbit
+          type: core/group-inputs@v1
+          position:
+            x: -230
+            y: 110
+        - id: group-outputs-v1-rabbit-cat-watermelon
+          type: core/group-outputs@v1
+          position:
+            x: 400
+            y: 100
+        - id: bool-and-v1-silver-orange-cat
+          type: core/bool-and@v1
+          position:
+            x: 60
+            y: 90
+          inputs:
+            inputs[0]: null
+            inputs[1]: null
+      connections:
+        - src:
+            node: group-inputs-v1-plum-parrot-rabbit
+            port: peach-shark-blackberry
+          dst:
+            node: bool-and-v1-silver-orange-cat
+            port: inputs[0]
+        - src:
+            node: group-inputs-v1-plum-parrot-rabbit
+            port: purple-coconut-koala
+          dst:
+            node: bool-and-v1-silver-orange-cat
+            port: inputs[1]
+        - src:
+            node: bool-and-v1-silver-orange-cat
+            port: result
+          dst:
+            node: group-outputs-v1-rabbit-cat-watermelon
+            port: apple-apple-blueberry
+      executions: []
+      inputs:
+        peach-shark-blackberry:
+          type: bool
+          index: 1
+          array: false
+          array_initial_count: 2
+          desc: The boolean values to apply the `AND` operator on.
+        purple-coconut-koala:
+          type: bool
+          index: 2
+          array: false
+          array_initial_count: 2
+          desc: The boolean values to apply the `AND` operator on.
+      outputs:
+        apple-apple-blueberry:
+          name: ''
+          type: bool
+          desc: >-
+            The result of the boolean operation. `true` if all input values are
+            `true`, `false` otherwise.
+          index: 0
+  - id: print-v1-gold-dog-silver
+    type: core/print@v1
+    position:
+      x: 1040
+      y: 40
+    inputs:
+      values[0]: null
+  - id: string-match-v1-yellow-cherry-tiger
+    type: core/string-match@v1
+    position:
+      x: 350
+      y: 140
+    inputs:
+      str2: 'true'
+      op: equals
+  - id: env-get-v1-mango-raspberry-pomegranate
+    type: core/env-get@v1
+    position:
+      x: 30
+      y: 180
+    inputs:
+      env: BOOL1_VAR
+  - id: env-get-v1-parrot-rabbit-dog
+    type: core/env-get@v1
+    position:
+      x: 30
+      y: 380
+    inputs:
+      env: BOOL2_VAR
+  - id: string-match-v1-dog-pineapple-pomegranate
+    type: core/string-match@v1
+    position:
+      x: 350
+      y: 350
+    inputs:
+      op: equals
+      str2: 'true'
+connections:
+  - src:
+      node: env-get-v1-mango-raspberry-pomegranate
+      port: env
+    dst:
+      node: string-match-v1-yellow-cherry-tiger
+      port: str1
+  - src:
+      node: env-get-v1-parrot-rabbit-dog
+      port: env
+    dst:
+      node: string-match-v1-dog-pineapple-pomegranate
+      port: str1
+  - src:
+      node: string-match-v1-yellow-cherry-tiger
+      port: result
+    dst:
+      node: group-v1-tiger-penguin-butterfly
+      port: peach-shark-blackberry
+  - src:
+      node: string-match-v1-dog-pineapple-pomegranate
+      port: result
+    dst:
+      node: group-v1-tiger-penguin-butterfly
+      port: purple-coconut-koala
+  - src:
+      node: group-v1-tiger-penguin-butterfly
+      port: apple-apple-blueberry
+    dst:
+      node: print-v1-gold-dog-silver
+      port: values[0]
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: print-v1-gold-dog-silver
+      port: exec

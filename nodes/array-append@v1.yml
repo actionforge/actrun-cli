@@ -1,0 +1,32 @@
+yaml-version: 3.0
+
+id: core/array-append
+name: Array Append
+version: 1
+category: data
+style:
+  header:
+    background: "#a47e5b"
+  body:
+    background: "#7c6652"
+icon: tablerPlus
+short_desc: Appends one array to another.
+outputs:
+  exec:
+    exec: true
+    index: 0
+  array:
+    type: unknown
+    name: ""
+    desc: The array with the appended items
+    index: 1
+inputs:
+  exec:
+    exec: true
+    index: 0
+  array1:
+    type: indexable
+    index: 1
+  array2:
+    type: indexable
+    index: 2

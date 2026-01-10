@@ -1,0 +1,103 @@
+editor:
+  version:
+    created: v1.34.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: -130
+      y: 10
+  - id: run-v1-beige-watermelon-strawberry
+    type: core/run@v1
+    position:
+      x: 1260
+      y: -450
+    inputs:
+      script: Write-Host "hello from pwsh (1)"
+      shell: pwsh
+  - id: run-v1-watermelon-whale-koala
+    type: core/run@v1
+    position:
+      x: 1790
+      y: -440
+    inputs:
+      script: Write-Host "hello from pwsh (2)"
+      shell: pwsh
+  - id: run-v1-parrot-pear-blue
+    type: core/run@v1
+    position:
+      x: 270
+      y: -510
+    inputs:
+      script: print("hello from python (1)")
+      shell: python
+  - id: run-v1-shark-rabbit-plum
+    type: core/run@v1
+    position:
+      x: 760
+      y: -470
+    inputs:
+      script: print("hello from python (2)")
+      shell: python
+  - id: run-v1-rhinoceros-cow-donkey
+    type: core/run@v1
+    position:
+      x: 2280
+      y: -400
+    inputs:
+      script: echo "hello from bash (1)"
+      shell: bash
+  - id: run-v1-jackfruit-white-pear
+    type: core/run@v1
+    position:
+      x: 2770
+      y: -390
+    inputs:
+      script: echo "hello from bash (2)"
+      shell: bash
+connections: []
+executions:
+  - src:
+      node: run-v1-beige-watermelon-strawberry
+      port: exec-success
+    dst:
+      node: run-v1-watermelon-whale-koala
+      port: exec
+    isLoop: false
+  - src:
+      node: run-v1-parrot-pear-blue
+      port: exec-success
+    dst:
+      node: run-v1-shark-rabbit-plum
+      port: exec
+    isLoop: false
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: run-v1-parrot-pear-blue
+      port: exec
+    isLoop: false
+  - src:
+      node: run-v1-shark-rabbit-plum
+      port: exec-success
+    dst:
+      node: run-v1-beige-watermelon-strawberry
+      port: exec
+    isLoop: false
+  - src:
+      node: run-v1-rhinoceros-cow-donkey
+      port: exec-success
+    dst:
+      node: run-v1-jackfruit-white-pear
+      port: exec
+    isLoop: false
+  - src:
+      node: run-v1-watermelon-whale-koala
+      port: exec-success
+    dst:
+      node: run-v1-rhinoceros-cow-donkey
+      port: exec
+    isLoop: false

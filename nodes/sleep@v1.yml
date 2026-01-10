@@ -1,0 +1,41 @@
+yaml-version: 3.0
+
+id: core/sleep
+name: Sleep
+version: 1
+category: system
+label: ⏳
+icon: tablerHourglass
+compact: true
+style:
+  header:
+    background: "#3794ff"
+  body:
+    background: "#1f4f86"
+short_desc: Pauses the execution for a specified duration. This node does not block or pause the entire workflow, only the current execution path.
+inputs:
+  exec:
+    exec: true
+    index: 0
+  unit:
+    type: option
+    desc: The time unit for the duration (seconds, milliseconds, microseconds, nanoseconds)
+    index: 1
+    default: seconds
+    options:
+      - name: Seconds
+        value: seconds
+      - name: Milliseconds
+        value: milliseconds
+      - name: Microseconds
+        value: microseconds
+  duration:
+    type: number
+    desc: The amount of time to sleep
+    index: 2
+    initial: 1
+outputs:
+  exec:
+    exec: true
+    desc: Executes the next node after the sleep duration
+    index: 0

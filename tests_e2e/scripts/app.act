@@ -1,0 +1,47 @@
+editor:
+  version:
+    created: v1.20.0
+    updated: v1.20.2
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: -80
+      y: -40
+  - id: print-v1-pear-octopus-dolphin
+    type: core/print@v1
+    position:
+      x: 340
+      y: -10
+    inputs:
+      values[0]: null
+      values[1]: null
+  - id: const-string-v1-pomegranate-raspberry-boysenberry
+    type: core/const-string@v1
+    position:
+      x: -60
+      y: 230
+    inputs:
+      value: hello
+connections:
+  - src:
+      node: const-string-v1-pomegranate-raspberry-boysenberry
+      port: result
+    dst:
+      node: print-v1-pear-octopus-dolphin
+      port: values[1]
+  - src:
+      node: start
+      port: args
+    dst:
+      node: print-v1-pear-octopus-dolphin
+      port: values[0]
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: print-v1-pear-octopus-dolphin
+      port: exec

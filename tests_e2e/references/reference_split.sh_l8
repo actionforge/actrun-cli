@@ -1,0 +1,35 @@
+build hasn't expired yet
+looking for value: 'env_file'
+  no value (is optional) found for: 'env_file'
+looking for value: 'config_file'
+  no value (is optional) found for: 'config_file'
+looking for value: 'concurrency'
+  no value (is optional) found for: 'concurrency'
+looking for value: 'graph_file'
+  found value in: 'env (shell)'
+  evaluated to: 'split.act'
+looking for value: 'session_token'
+  no value (is optional) found for: 'session_token'
+looking for value: 'create_debug_session'
+  found value in flags
+  evaluated to: 'false'
+PushNodeVisit: start, execute: true
+🟢 Execute 'Print (print-v1-orange-banana-kiwi)'
+PushNodeVisit: print-v1-orange-banana-kiwi, execute: true
+PushNodeVisit: string-split-v1-apple-yellow-mango, execute: false
+PushNodeVisit: string-split-v1-apple-yellow-mango, execute: false
+PushNodeVisit: string-split-v1-apple-yellow-mango, execute: false
+PushNodeVisit: string-split-v1-apple-yellow-mango, execute: false
+[a b c]
+a
+b
+c
+🟢 Execute 'Print (print-v1-gray-coconut-sheep)'
+PushNodeVisit: print-v1-gray-coconut-sheep, execute: true
+PushNodeVisit: string-split-v1-gold-butterfly-zebra, execute: false
+PushNodeVisit: string-split-v1-gold-butterfly-zebra, execute: false
+PushNodeVisit: string-split-v1-gold-butterfly-zebra, execute: false
+a
+b
+c
+

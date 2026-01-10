@@ -1,0 +1,199 @@
+editor:
+  version:
+    created: v1.11.0
+    updated: v1.34.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 520
+      y: 0
+  - id: storage-provider-s3-v1-zebra-apple-squirrel
+    type: core/storage-provider-s3@v1
+    position:
+      x: 550
+      y: 380
+    inputs:
+      bucket: ''
+      region: ''
+      endpoint: ''
+  - id: storage-upload-v1-butterfly-coconut-gray
+    type: core/storage-upload@v1
+    position:
+      x: 990
+      y: -30
+    inputs:
+      name: ''
+  - id: const-string-v1-cherry-banana-koala
+    type: core/const-string@v1
+    position:
+      x: 510
+      y: 220
+    inputs:
+      value: this is a test file
+  - id: env-get-v1-giraffe-koala-pineapple
+    type: core/env-get@v1
+    position:
+      x: 140
+      y: 290
+    inputs:
+      env: TESTE2E_S3_BUCKET
+  - id: env-get-v1-pineapple-green-gold
+    type: core/env-get@v1
+    position:
+      x: 140
+      y: 420
+    inputs:
+      env: TESTE2E_S3_REGION
+  - id: env-get-v1-pink-plum-elephant
+    type: core/env-get@v1
+    position:
+      x: 140
+      y: 550
+    inputs:
+      env: TESTE2E_S3_ENDPOINT
+  - id: storage-download-v1-apple-brown-plum
+    type: core/storage-download@v1
+    position:
+      x: 1380
+      y: 0
+    inputs:
+      name: ''
+  - id: print-v1-tiger-shark-zebra
+    type: core/print@v1
+    position:
+      x: 1720
+      y: -10
+    inputs:
+      values[0]: null
+  - id: system-info-v1-orange-penguin-pineapple
+    type: core/system-info@v1
+    position:
+      x: -260
+      y: -410
+  - id: string-fmt-v1-grape-strawberry-grape
+    type: core/string-fmt@v1
+    position:
+      x: 160
+      y: -440
+    inputs:
+      substitutes[0]: null
+      substitutes[1]: null
+      fmt: tests_e2e/s3_do_test-%s-%s
+  - id: string-fmt-v1-kiwi-plum-gray
+    type: core/string-fmt@v1
+    position:
+      x: 700
+      y: -380
+    inputs:
+      substitutes[0]: null
+      fmt: '%v.txt'
+  - id: credentials-accesskey-v1-passionfruit-monkey-cherry
+    type: core/credentials-accesskey@v1
+    position:
+      x: -80
+      y: 730
+    inputs:
+      access_key: TESTE2E_DO_S3_ACCESS_KEY
+      access_password: TESTE2E_DO_S3_SECRET_KEY
+connections:
+  - src:
+      node: storage-provider-s3-v1-zebra-apple-squirrel
+      port: provider
+    dst:
+      node: storage-upload-v1-butterfly-coconut-gray
+      port: provider
+  - src:
+      node: const-string-v1-cherry-banana-koala
+      port: result
+    dst:
+      node: storage-upload-v1-butterfly-coconut-gray
+      port: data
+  - src:
+      node: env-get-v1-giraffe-koala-pineapple
+      port: env
+    dst:
+      node: storage-provider-s3-v1-zebra-apple-squirrel
+      port: bucket
+  - src:
+      node: env-get-v1-pineapple-green-gold
+      port: env
+    dst:
+      node: storage-provider-s3-v1-zebra-apple-squirrel
+      port: region
+  - src:
+      node: env-get-v1-pink-plum-elephant
+      port: env
+    dst:
+      node: storage-provider-s3-v1-zebra-apple-squirrel
+      port: endpoint
+  - src:
+      node: storage-provider-s3-v1-zebra-apple-squirrel
+      port: provider
+    dst:
+      node: storage-download-v1-apple-brown-plum
+      port: provider
+  - src:
+      node: storage-download-v1-apple-brown-plum
+      port: data
+    dst:
+      node: print-v1-tiger-shark-zebra
+      port: values[0]
+  - src:
+      node: system-info-v1-orange-penguin-pineapple
+      port: platform_string
+    dst:
+      node: string-fmt-v1-grape-strawberry-grape
+      port: substitutes[0]
+  - src:
+      node: system-info-v1-orange-penguin-pineapple
+      port: arch_string
+    dst:
+      node: string-fmt-v1-grape-strawberry-grape
+      port: substitutes[1]
+  - src:
+      node: string-fmt-v1-kiwi-plum-gray
+      port: result
+    dst:
+      node: storage-upload-v1-butterfly-coconut-gray
+      port: name
+  - src:
+      node: string-fmt-v1-grape-strawberry-grape
+      port: result
+    dst:
+      node: string-fmt-v1-kiwi-plum-gray
+      port: substitutes[0]
+  - src:
+      node: string-fmt-v1-kiwi-plum-gray
+      port: result
+    dst:
+      node: storage-download-v1-apple-brown-plum
+      port: name
+  - src:
+      node: credentials-accesskey-v1-passionfruit-monkey-cherry
+      port: credential
+    dst:
+      node: storage-provider-s3-v1-zebra-apple-squirrel
+      port: credentials
+    isLoop: false
+executions:
+  - src:
+      node: storage-upload-v1-butterfly-coconut-gray
+      port: exec-success
+    dst:
+      node: storage-download-v1-apple-brown-plum
+      port: exec
+  - src:
+      node: storage-download-v1-apple-brown-plum
+      port: exec
+    dst:
+      node: print-v1-tiger-shark-zebra
+      port: exec
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: storage-upload-v1-butterfly-coconut-gray
+      port: exec

@@ -1,0 +1,128 @@
+yaml-version: 3.0
+
+id: core/filepath-op
+name: Filepath Op
+category: filesystem
+icon: lucideScissors
+version: 1
+style:
+  header:
+    background: rgb(197, 147, 31)
+  body:
+    background: "rgb(164 115 29)"
+short_desc: Perform operations on filepaths.
+addendum: |
+  ## Operations
+
+  ### 1. Base
+  Returns the last element of the path. If the path is empty, `Base` returns `.`.
+
+  | Path Style   | Input Path                  | Output    |
+  |--------------|-----------------------------|-----------|
+  | POSIX-style  | `/home/user/file.txt`       | `file.txt`|
+  | POSIX-style  | `/home/user/`               | `user`    |
+  | POSIX-style  | (empty)                     | `.`       |
+  | Windows-style| `C:\Users\user\file.txt`    | `file.txt`|
+  | Windows-style| `C:\Users\user\`            | `user`    |
+  | Windows-style| (empty)                     | `.`       |
+
+  ### 2. Clean
+  Returns the shortest path name equivalent to `path` by purely lexical processing.
+
+  | Path Style   | Input Path                           | Output                   |
+  |--------------|--------------------------------------|--------------------------|
+  | POSIX-style  | `/home/user/../user/file.txt`        | `/home/user/file.txt`    |
+  | POSIX-style  | `/home/user/./file.txt`              | `/home/user/file.txt`    |
+  | POSIX-style  | (empty)                              | `.`                      |
+  | Windows-style| `C:\Users\user\..\user\file.txt`     | `C:\Users\user\file.txt` |
+  | Windows-style| `C:\Users\user\.\file.txt`           | `C:\Users\user\file.txt` |
+  | Windows-style| (empty)                              | `.`                      |
+
+  ### 3. Dir
+  Returns all but the last element of the path, typically the directory. If the path is empty, `Dir` returns `.`.
+
+  | Path Style   | Input Path                  | Output       |
+  |--------------|-----------------------------|--------------|
+  | POSIX-style  | `/home/user/file.txt`       | `/home/user` |
+  | POSIX-style  | `/home/user/`               | `/home`      |
+  | POSIX-style  | `file.txt`                  | `.`          |
+  | POSIX-style  | (empty)                     | `.`          |
+  | Windows-style| `C:\Users\user\file.txt`    | `C:\Users\user`|
+  | Windows-style| `C:\Users\user\`            | `C:\Users`   |
+  | Windows-style| `file.txt`                  | `.`          |
+  | Windows-style| (empty)                     | `.`          |
+
+  ### 4. Ext
+  Returns the file name extension used by `path`. The extension is the suffix beginning at the final dot in the final slash-separated element of `path`; it is empty if there is no dot.
+
+  | Path Style   | Input Path                  | Output |
+  |--------------|-----------------------------|--------|
+  | POSIX-style  | `/home/user/file.txt`       | `.txt` |
+  | POSIX-style  | `/home/user/file`           | ``     |
+  | POSIX-style  | (empty)                     | ``     |
+  | Windows-style| `C:\Users\user\file.txt`    | `.txt` |
+  | Windows-style| `C:\Users\user\file`        | ``     |
+  | Windows-style| (empty)                     | ``     |
+
+  ### 5. From Slash
+  Converts slashes in paths to the native format.
+
+  | Path Style   | Input Path                  | Output                   |
+  |--------------|-----------------------------|--------------------------|
+  | POSIX-style  | `/home/user/file.txt`       | `/home/user/file.txt`    (No change)|
+  | POSIX-style  | (empty)                     | (empty)                  |
+  | Windows-style| `C:/Users/user/file.txt`    | `C:\Users\user\file.txt` |
+  | Windows-style| (empty)                     | (empty)                  |
+
+  ### 6. To Slash
+  Converts the native format to slashes.
+
+  | Path Style   | Input Path                  | Output                   |
+  |--------------|-----------------------------|--------------------------|
+  | POSIX-style  | `/home/user/file.txt`       | `/home/user/file.txt`    (No change)|
+  | POSIX-style  | (empty)                     | (empty)                  |
+  | Windows-style| `C:\Users\user\file.txt`    | `C:/Users/user/file.txt` |
+  | Windows-style| (empty)                     | (empty)                  |
+
+  ### 7. Volume
+  Returns the leading volume name, which is the drive letter followed by a colon for Windows-style paths. For POSIX-style paths, it returns an empty string.
+
+  | Path Style   | Input Path                  | Output |
+  |--------------|-----------------------------|--------|
+  | POSIX-style  | `/home/user/file.txt`       | `""`   |
+  | POSIX-style  | (empty)                     | `""`   |
+  | Windows-style| `C:\Users\user\file.txt`    | `C:`   |
+  | Windows-style| (empty)                     | ``     |
+
+
+compact: true
+outputs:
+  result:
+    type: string
+    index: 0
+    desc: 
+inputs:
+  path:
+    name: Path
+    type: string
+    index: 0
+  op:
+    type: option
+    index: 1
+    default: base
+    desc: Set of operations. Look at the addendum below for more information.
+    options:
+      - name: Base
+        value: base
+      - name: Clean
+        value: clean
+      - name: Dir
+        value: dir
+      - name: Ext
+        value: ext
+      - name: From Slash
+        value: from_slash
+      - name: To Slash
+        value: to_slash
+      - name: Volume
+        value: volume

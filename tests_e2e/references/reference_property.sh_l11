@@ -1,0 +1,5 @@
+bar: |-
+    foo:
+      hello
+bas: 42
+foo: hello

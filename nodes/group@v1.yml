@@ -1,0 +1,55 @@
+yaml-version: 3.0
+
+id: core/group
+name: Group
+version: 1
+icon: tablerFolder
+category: flow
+short_desc: A Group Node is a powerful feature that encapsulates complex operations into a single, reusable node.
+long_desc: |
+  By bundling a series of interconnected nodes, you can create a higher-level of abstraction to simplify your workflow.
+
+  Additionally, the ease of sharing Group Nodes makes them valuable for others as well. By default, a group node has no inputs or outputs, they can be added as needed.
+
+  {{graph_editor_graph('''
+  editor:
+    version:
+      created: v1.20.2
+  type: generic
+  entry: ''
+  nodes:
+    - id: group-v1-squirrel-teal-turquoise
+      type: core/group@v1
+      position:
+        x: 0
+        y: 0
+  connections: []
+  executions: []''', docs=true, permission='readonly', fade=false, header=false, toolbar=false, translate=false, autofit=true, classes='h-48' )}}
+
+  After creating a Group Node, click the hamburger menu :material-menu: of the node in the top right, or select the node and press `Shift+↓`.
+  The editor will open the Group Node, and you will be presented with a new graph canvas that contains 2 nodes: **Group Outputs** and **Group Inputs**.
+
+  {{graph_editor_graph('''
+  type: group
+  entry: ''
+  nodes:
+    - id: group-inputs-v1-black-cherry-sheep
+      type: core/group-inputs@v1
+      position:
+        x: 0
+        y: 100
+    - id: group-outputs-v1-dog-purple-bat
+      type: core/group-outputs@v1
+      position:
+        x: 400
+        y: 100
+  connections: []
+  executions: []''', docs=true, permission='readonly', fade=false, header=false, toolbar=false, translate=false, autofit=true, classes='h-48' )}}
+
+  You can now add nodes and connect them. In order to propagate data between the Group Node and the root graph, you can drag and drop a connection onto :fontawesome-solid-right-to-bracket: and :fontawesome-solid-right-from-bracket:
+
+style:
+  header:
+    background: "#50858d"
+  body:
+    background: "#2f5054"

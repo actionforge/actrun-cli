@@ -1,0 +1,66 @@
+yaml-version: 3.0
+id: core/git-commit
+name: Git Commit
+version: 1
+category: git
+icon: tablerBrandGit
+style:
+  header:
+    background: "#f1502f"
+  body:
+    background: "#652619"
+short_desc: Creates a new commit from the staged changes.
+addendum: |
+  This node records the changes currently in the staging area to the repository's history.
+
+  The `repo` input should be connected to the output of a `git-clone` or `git-open` node. The author information is optional; if not provided, it will be taken from the repository's Git configuration.
+outputs:
+  exec-success:
+    name: Success
+    exec: true
+    desc: Executes if the commit is created successfully.
+    index: 0
+  exec-err:
+    name: Error
+    exec: true
+    desc: Executes if there is an error during the commit.
+    index: 1
+  commit_hash:
+    type: string
+    name: Commit Hash
+    desc: The full hash of the newly created commit.
+    index: 2
+inputs:
+  exec:
+    exec: true
+    index: 0
+  repo:
+    type: git-repo
+    name: Repository
+    desc: The Git repository object from a clone or open node.
+    index: 1
+    required: true
+  message:
+    type: string
+    name: Message
+    desc: The commit message.
+    index: 2
+    required: true
+    multiline: true
+  author_name:
+    type: string
+    name: Author Name
+    desc: The name of the commit author. Overrides the repository's config.
+    index: 3
+    optional: true
+  author_email:
+    type: string
+    name: Author Email
+    desc: The email of the commit author. Overrides the repository's config.
+    index: 4
+    optional: true
+  stage:
+    type: bool
+    name: Stage Changes
+    desc: Whether to stage all changes before committing.
+    index: 5

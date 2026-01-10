@@ -1,0 +1,30 @@
+build hasn't expired yet
+looking for value: 'env_file'
+  no value (is optional) found for: 'env_file'
+looking for value: 'config_file'
+  no value (is optional) found for: 'config_file'
+looking for value: 'concurrency'
+  no value (is optional) found for: 'concurrency'
+looking for value: 'graph_file'
+  found value in: 'env (shell)'
+  evaluated to: 'group_data.act'
+looking for value: 'session_token'
+  no value (is optional) found for: 'session_token'
+looking for value: 'create_debug_session'
+  found value in flags
+  evaluated to: 'false'
+PushNodeVisit: start, execute: true
+🟢 Execute 'Print (print-v1-gold-dog-silver)'
+PushNodeVisit: print-v1-gold-dog-silver, execute: true
+PushNodeVisit: group-v1-tiger-penguin-butterfly, execute: false
+PushNodeVisit: group-outputs-v1-rabbit-cat-watermelon, execute: false
+PushNodeVisit: bool-and-v1-silver-orange-cat, execute: false
+PushNodeVisit: group-inputs-v1-plum-parrot-rabbit, execute: false
+PushNodeVisit: group-v1-tiger-penguin-butterfly, execute: false
+PushNodeVisit: string-match-v1-yellow-cherry-tiger, execute: false
+PushNodeVisit: env-get-v1-mango-raspberry-pomegranate, execute: false
+PushNodeVisit: group-inputs-v1-plum-parrot-rabbit, execute: false
+PushNodeVisit: group-v1-tiger-penguin-butterfly, execute: false
+PushNodeVisit: string-match-v1-dog-pineapple-pomegranate, execute: false
+PushNodeVisit: env-get-v1-parrot-rabbit-dog, execute: false
+true

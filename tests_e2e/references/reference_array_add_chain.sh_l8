@@ -1,0 +1,30 @@
+build hasn't expired yet
+looking for value: 'env_file'
+  no value (is optional) found for: 'env_file'
+looking for value: 'config_file'
+  no value (is optional) found for: 'config_file'
+looking for value: 'concurrency'
+  no value (is optional) found for: 'concurrency'
+looking for value: 'graph_file'
+  found value in: 'env (shell)'
+  evaluated to: 'array_add_chain.act'
+looking for value: 'session_token'
+  no value (is optional) found for: 'session_token'
+looking for value: 'create_debug_session'
+  found value in flags
+  evaluated to: 'false'
+PushNodeVisit: start, execute: true
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: string-array-v1-banana-dragonfruit-horse, execute: false
+PushNodeVisit: const-string-v1-fox-blueberry-starfruit, execute: false
+🟢 Execute 'Array Add (array-add-v1-camel-rabbit-dolphin)'
+PushNodeVisit: array-add-v1-camel-rabbit-dolphin, execute: true
+PushNodeVisit: string-array-v1-banana-dragonfruit-horse, execute: false
+PushNodeVisit: const-string-v1-orange-blue-ivory, execute: false
+🟢 Execute 'Print (print-v1-teal-yellow-dolphin)'
+PushNodeVisit: print-v1-teal-yellow-dolphin, execute: true
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) array-add-v1-camel-rabbit-dolphin, execute: false
+[foo bar bas hello]
+[foo bar bas world]

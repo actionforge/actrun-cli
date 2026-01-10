@@ -1,0 +1,58 @@
+yaml-version: 3.0
+
+id: core/filepath-sort
+name: Filepath Sort
+category: filesystem
+icon: tablerSortAscendingLetters
+version: 1
+style:
+  header:
+    background: rgb(197, 147, 31)
+  body:
+    background: "rgb(164 115 29)"
+short_desc: Sort filepaths based on different criteria.
+addendum: |
+  ## Sorting Options
+
+  ### 1. Alphabetical
+  Sorts filepaths in alphabetical order.
+
+  ### 2. Reverse Alphabetical
+  Sorts filepaths in reverse alphabetical order.
+
+  ### 3. By Extension
+  Sorts filepaths based on their file extensions.
+
+  ### 4. By Directory Depth
+  Sorts filepaths based on their directory depth (number of subdirectories).
+
+  ### 5. By Filename Length
+  Sorts filepaths based on the length of the filename (excluding the directory path).
+
+outputs:
+  result:
+    type: "[]string"
+    index: 0
+    desc: The sorted list of filepaths.
+inputs:
+  paths:
+    name: Paths
+    type: "[]string"
+    index: 0
+    desc: A list of filepaths to sort.
+  sort_by:
+    type: option
+    index: 1
+    default: alphabetical
+    desc: The criterion used for sorting.
+    options:
+      - name: Alphabetical
+        value: alphabetical
+      - name: Reverse Alphabetical
+        value: reverse_alphabetical
+      - name: By Extension
+        value: by_extension
+      - name: By Directory Depth
+        value: by_directory_depth
+      - name: By Filename Length
+        value: by_filename_length

@@ -1,0 +1,43 @@
+build hasn't expired yet
+looking for value: 'env_file'
+  no value (is optional) found for: 'env_file'
+looking for value: 'config_file'
+  no value (is optional) found for: 'config_file'
+looking for value: 'concurrency'
+  no value (is optional) found for: 'concurrency'
+looking for value: 'graph_file'
+  found value in: 'env (shell)'
+  evaluated to: 'bool.act'
+looking for value: 'session_token'
+  no value (is optional) found for: 'session_token'
+looking for value: 'create_debug_session'
+  found value in flags
+  evaluated to: 'false'
+PushNodeVisit: start, execute: true
+🟢 Execute 'Run Script (run-v1-giraffe-dolphin-pink)'
+PushNodeVisit: run-v1-giraffe-dolphin-pink, execute: true
+PushNodeVisit: env-array-v1-purple-zebra-cherry, execute: false
+PushNodeVisit: string-fmt-v1-tiger-watermelon-raspberry, execute: false
+PushNodeVisit: bool-and-v1-gray-elephant-elephant, execute: false
+PushNodeVisit: bool-and-v1-blueberry-penguin-parrot, execute: false
+PushNodeVisit: bool-and-v1-blue-tiger-pomegranate, execute: false
+PushNodeVisit: bool-and-v1-monkey-orange-dog, execute: false
+PushNodeVisit: string-fmt-v1-monkey-brown-coconut, execute: false
+PushNodeVisit: bool-or-v1-parrot-gray-raspberry, execute: false
+PushNodeVisit: bool-or-v1-lemon-snake-rabbit, execute: false
+PushNodeVisit: bool-or-v1-silver-penguin-blackberry, execute: false
+PushNodeVisit: bool-or-v1-kiwi-orange-cranberry, execute: false
+PushNodeVisit: string-fmt-v1-octopus-pomegranate-blueberry, execute: false
+PushNodeVisit: bool-xor-v1-penguin-brown-red, execute: false
+PushNodeVisit: bool-xor-v1-cat-zebra-pineapple, execute: false
+PushNodeVisit: bool-xor-v1-pear-pineapple-shark, execute: false
+PushNodeVisit: bool-xor-v1-watermelon-coconut-zebra, execute: false
+PushNodeVisit: string-fmt-v1-strawberry-brown-strawberry, execute: false
+PushNodeVisit: bool-xand-v1-kangaroo-lion-squirrel, execute: false
+PushNodeVisit: bool-xand-v1-pear-pineapple-coconut, execute: false
+PushNodeVisit: bool-xand-v1-butterfly-cat-zebra, execute: false
+PushNodeVisit: bool-xand-v1-kiwi-blackberry-gold, execute: false
+AND 0&&0=false 1&&0=false 0&&1=false 1&&1=true
+OR 0&&0=false 1&&0=true 0&&1=true 1&&1=true
+XOR 0&&0=false 1&&0=true 0&&1=true 1&&1=false
+XAND 0&&0=true 1&&0=false 0&&1=false 1&&1=true

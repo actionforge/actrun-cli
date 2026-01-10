@@ -1,0 +1,42 @@
+{
+    // Formatting
+    "editor.formatOnSave": false,
+    "editor.formatOnSaveMode": "file",
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "[go]": {
+        "editor.defaultFormatter": "golang.go",
+    },
+    "terminal.integrated.env.windows": {
+        // GCC is required on Windows for cgo since `cpython` is included in `go.buildTags`.
+        "CC": "gcc",
+        "CXX": "g++"
+    },
+    "go.testEnvVars": {
+        // GCC is required on Windows for cgo since `cpython` is included in `go.buildTags`.
+        "CC": "gcc",
+        "CXX": "g++"
+    },
+    "go.diagnostic.vulncheck": "Imports",
+    "go.buildTags": "dev,tests_unit,github_impl,integration_tests,tests_system,api,cpython",
+    "go.testTags": "dev,tests_unit,github_impl,integration_tests,tests_system,api,cpython,main_test",
+    "go.vetOnSave": "package",
+    "go.vetFlags": [
+        "-all"
+    ],
+    "go.lintTool": "golangci-lint",
+    // Theme Colors
+    "workbench.colorCustomizations": {
+        "titleBar.activeBackground": "#2863ed",
+        "titleBar.inactiveBackground": "#0d2868"
+    },
+    // Terminal
+    "terminal.integrated.defaultProfile.osx": "zsh",
+    "terminal.integrated.defaultProfile.windows": "Git Bash",
+    "terminal.integrated.defaultProfile.linux": "sh",
+    "files.associations": {
+        "__config": "c",
+        "stdio.h": "c"
+    },
+}

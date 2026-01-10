@@ -1,0 +1,96 @@
+entry: start
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 10
+      y: 590
+  - id: for-loop-v1-kangaroo-lemon-shark
+    type: core/for-loop@v1
+    position:
+      x: 340
+      y: 520
+    inputs:
+      first_index: 0
+      last_index: 3
+  - id: for-loop-v1-navy-squirrel-cat
+    type: core/for-loop@v1
+    position:
+      x: 740
+      y: 230
+    inputs:
+      first_index: 0
+      last_index: 3
+  - id: print-v1-turkey-whale-duck
+    type: core/print@v1
+    position:
+      x: 1140
+      y: 360
+    inputs:
+      values[0]: null
+      values[1]: null
+  - id: print-v1-shark-apple-snake
+    type: core/print@v1
+    position:
+      x: 1360
+      y: 590
+    inputs:
+      values[0]: null
+  - id: const-string-v1-guava-dog-dog
+    type: core/const-string@v1
+    position:
+      x: 850
+      y: 810
+    inputs:
+      value: done
+connections:
+  - src:
+      node: for-loop-v1-navy-squirrel-cat
+      port: index
+    dst:
+      node: print-v1-turkey-whale-duck
+      port: values[0]
+    isLoop: false
+  - src:
+      node: for-loop-v1-kangaroo-lemon-shark
+      port: index
+    dst:
+      node: print-v1-turkey-whale-duck
+      port: values[1]
+    isLoop: false
+  - src:
+      node: const-string-v1-guava-dog-dog
+      port: result
+    dst:
+      node: print-v1-shark-apple-snake
+      port: values[0]
+    isLoop: false
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: for-loop-v1-kangaroo-lemon-shark
+      port: exec
+    isLoop: false
+  - src:
+      node: for-loop-v1-kangaroo-lemon-shark
+      port: exec-body
+    dst:
+      node: for-loop-v1-navy-squirrel-cat
+      port: exec
+    isLoop: false
+  - src:
+      node: for-loop-v1-navy-squirrel-cat
+      port: exec-body
+    dst:
+      node: print-v1-turkey-whale-duck
+      port: exec
+    isLoop: false
+  - src:
+      node: for-loop-v1-kangaroo-lemon-shark
+      port: exec-completed
+    dst:
+      node: print-v1-shark-apple-snake
+      port: exec
+    isLoop: false

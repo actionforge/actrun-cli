@@ -1,0 +1,28 @@
+yaml-version: 3.0
+
+id: core/select-exec
+name: Select Exec
+version: 1
+category: flow
+icon: tablerArrowMerge
+short_desc: Select an execution path based on the incoming execution index.
+style:
+  header:
+    background: "#50858d"
+  body:
+    background: "#2f5054"
+outputs:
+  exec:
+    exec: true
+    index: 0
+  index:
+    type: number
+    name: Index
+    desc: The index of the incoming execution that triggered this node.
+    index: 1
+inputs:
+  exec:
+    exec: true
+    index: 0
+    array: true
+    array_initial_count: 2

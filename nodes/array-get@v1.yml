@@ -1,0 +1,41 @@
+yaml-version: 3.0
+
+id: core/array-get
+name: Array Get
+category: data
+icon: tablerBrackets
+version: 1
+style:
+  header:
+    background: "#a47e5b"
+  body:
+    background: "#7c6652"
+short_desc: Get an item from an array at a specified index.
+addendum: |
+  This node returns the item at the specified index in the input array.
+  If the index is out of bounds, it will either return nil or raise an exception,
+  depending on the 'out_of_bounds_behavior' input.
+
+  Note: Array indexing is zero-based.
+outputs:
+  result:
+    type: unknown
+    index: 0
+    desc: Item at the specified index or nil if out of bounds
+inputs:
+  array:
+    name: Array
+    type: unknown
+    index: 0
+    desc: Input array
+  index:
+    name: Index
+    type: number
+    index: 1
+    desc: Index of the item to return (zero-based)
+  bound_check:
+    type: bool
+    name: Bound Check
+    index: 2
+    default: true
+    desc: Perform bounds checking, otherwise returns an empty value

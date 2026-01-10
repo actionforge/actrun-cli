@@ -1,0 +1,33 @@
+build hasn't expired yet
+looking for value: 'env_file'
+  no value (is optional) found for: 'env_file'
+looking for value: 'config_file'
+  no value (is optional) found for: 'config_file'
+looking for value: 'concurrency'
+  no value (is optional) found for: 'concurrency'
+looking for value: 'graph_file'
+  found value in: 'env (shell)'
+  evaluated to: 'group_exec.act'
+looking for value: 'session_token'
+  no value (is optional) found for: 'session_token'
+looking for value: 'create_debug_session'
+  found value in flags
+  evaluated to: 'false'
+PushNodeVisit: start, execute: true
+🟢 Execute 'Group (group-v1-kiwi-squirrel-plum)'
+PushNodeVisit: group-v1-kiwi-squirrel-plum, execute: true
+🟢 Execute 'Group Inputs (group-inputs-v1-blueberry-strawberry-blue)'
+PushNodeVisit: group-inputs-v1-blueberry-strawberry-blue, execute: true
+🟢 Execute 'Branch (branch-v1-squirrel-shark-koala)'
+PushNodeVisit: branch-v1-squirrel-shark-koala, execute: true
+PushNodeVisit: group-inputs-v1-blueberry-strawberry-blue, execute: false
+PushNodeVisit: group-v1-kiwi-squirrel-plum, execute: false
+PushNodeVisit: string-match-v1-watermelon-orange-gray, execute: false
+PushNodeVisit: env-get-v1-dog-tiger-panda, execute: false
+🟢 Execute 'Group Output (group-outputs-v1-brown-blueberry-brown)'
+PushNodeVisit: group-outputs-v1-brown-blueberry-brown, execute: true
+🟢 Execute 'Group (group-v1-kiwi-squirrel-plum)'
+PushNodeVisit: group-v1-kiwi-squirrel-plum, execute: true
+🟢 Execute 'Run Script (run-v1-pink-blue-koala)'
+PushNodeVisit: run-v1-pink-blue-koala, execute: true
+YES

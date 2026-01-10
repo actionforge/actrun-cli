@@ -1,0 +1,50 @@
+yaml-version: 3.0
+
+id: core/concurrent-for-each-loop
+name: Concurrent For Each Loop
+version: 1
+category: concurrency
+icon: tablerArrowIteration
+short_desc: Iteratively executes contained nodes concurrently for each element in an array or map.
+style:
+  header:
+    background: "#7e6c9d"
+  body:
+    background: "#473567"
+outputs:
+  exec-body:
+    name: Body
+    exec: true
+    index: 0
+    desc: Executes on each iteration.
+  key:
+    type: unknown
+    name: Key
+    desc: A number index or key of a map.
+    index: 1
+  value:
+    type: unknown
+    name: Value
+    desc: The value of the item
+    index: 2
+  exec-completed:
+    name: Completed
+    exec: true
+    desc: Executes upon completion of the loop.
+    index: 3
+inputs:
+  exec:
+    exec: true
+    index: 0
+    desc: Initiates the loop.
+  input:
+    type: iterable
+    index: 1
+  worker_count:
+    name: Worker Count
+    type: number
+    desc: Number of workers to use for concurrent execution.
+    index: 2
+    initial: 4
+    step: 1
+

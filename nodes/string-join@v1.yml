@@ -1,0 +1,31 @@
+yaml-version: 3.0
+
+id: core/string-join
+name: String Join
+category: processing
+icon: tablerLink
+version: 1
+style:
+  header:
+    background: "#6e6e6e"
+  body:
+    background: "#423f3f"
+short_desc: Perform a join operation on a string.
+outputs:
+  result:
+    type: string
+    desc: The joined string.
+    index: 0
+inputs:
+  delimiter:
+    name: Delimiter
+    type: string
+    desc: The delimiter to use between the segments.
+    index: 0
+  segments:
+    name: String Segments
+    type: string
+    desc: The segments of the string to join.
+    index: 1
+    array: true
+    array_initial_count: 2

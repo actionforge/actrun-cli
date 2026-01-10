@@ -1,0 +1,55 @@
+editor:
+  version:
+    created: v1.34.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: -140
+      y: 0
+  - id: run-python-embedded-v1-lion-banana-guava
+    type: core/run-python-embedded@v1
+    position:
+      x: 380
+      y: -40
+    inputs:
+      script: |-
+        import math
+
+        print("hello from python: ", math.sqrt(42))
+
+        def main():
+            return "hello from the return value of python: " + str(math.sqrt(42))
+  - id: print-v1-giraffe-orange-jackfruit
+    type: core/print@v1
+    position:
+      x: 930
+      y: -10
+    inputs:
+      values[0]: null
+      color: fg_green
+connections:
+  - src:
+      node: run-python-embedded-v1-lion-banana-guava
+      port: return
+    dst:
+      node: print-v1-giraffe-orange-jackfruit
+      port: values[0]
+    isLoop: false
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: run-python-embedded-v1-lion-banana-guava
+      port: exec
+    isLoop: false
+  - src:
+      node: run-python-embedded-v1-lion-banana-guava
+      port: exec-success
+    dst:
+      node: print-v1-giraffe-orange-jackfruit
+      port: exec
+    isLoop: false

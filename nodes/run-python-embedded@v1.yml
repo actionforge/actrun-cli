@@ -1,0 +1,61 @@
+yaml-version: 3.0
+
+id: core/run-python-embedded
+name: Run Python Embedded
+version: 1
+category: system
+icon: simplePython
+style:
+  header:
+    background: "#3794ff"
+  body:
+    background: "#1f4f86"
+short_desc: Run Python code in an existing Python environment.
+llm_context: This node is only used when `actrun` is running **inside** an application like Maya, Blender, Cinema 4D, so **only** use this if the user made that very clear. To execute plain Python code through the standard system interpreter, use the `core/run@v1` node instead.
+long_desc: |
+  The **Run Python Embedded** node directly executes the Python scripts within the host application's embedded Python environment, also providing access to all the modules.
+
+  For example, when running a graph within Blender, Maya, Houdini, Cinema 4D and others, you can directly import Python modules and packages, like `bpy`, `c4d`, `hou`, and others.
+
+  **Note:** This node works only within the <ins>Python package</ins> of `actrun` and won't work if used with the `actrun` CLI tool.
+
+  <img src="/assets/nodes/run-python-embedded-blender.png" class="w-10/12 h-auto mx-auto">
+
+outputs:
+  exec-success:
+    name: Success
+    exec: true
+    index: 0
+  exec-err:
+    name: Error
+    exec: true
+    index: 1
+  return:
+    type: unknown
+    name: Return
+    index: 2
+    desc: Value returned by the `main` function within the script. Supported return values and types are `None`, `bool`, `float`, and `str`. Any other data type will throw a runtime error.
+inputs:
+  exec:
+    exec: true
+    index: 0
+  script:
+    type: string
+    name: Script
+    index: 1
+    multiline: true
+    desc: The script to run.
+    default: |
+      def main():
+          return 42
+  args:
+    name: Args
+    type: "any"
+    array: true
+    desc: Arguments to pass to the script.
+    index: 2
+  stdin:
+    type: stream
+    name: Stdin
+    desc: Stream to pass to the scripts stdin.
+    index: 3

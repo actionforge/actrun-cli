@@ -1,0 +1,36 @@
+yaml-version: 3.0
+id: core/switch-platform
+name: Platform Switch
+version: 1
+category: flow
+style:
+  header:
+    background: "#50858d"
+  body:
+    background: "#2f5054"
+icon: matComputer
+short_desc: The Architecture Switch node allows to change the execution flow based on the platform of the system.
+compact: true
+
+outputs:
+  exec-win:
+    exec: true
+    name: Windows
+    index: 0
+    desc: Executes commands in a Windows environment.
+  exec-macos:
+    exec: true
+    name: MacOS
+    index: 1
+    desc: Executes commands in a MacOS environment.
+  exec-linux:
+    exec: true
+    name: Linux
+    index: 2
+    desc: Executes commands in a Linux environment.
+
+inputs:
+  exec:
+    exec: true
+    index: 0
+    desc:

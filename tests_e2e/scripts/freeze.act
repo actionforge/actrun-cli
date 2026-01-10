@@ -1,0 +1,169 @@
+editor:
+  version:
+    created: v1.28.1
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: -1580
+      y: -110
+  - id: string-split-v1-nectarine-chicken-fig
+    type: core/string-split@v1
+    position:
+      x: -970
+      y: 190
+    inputs:
+      string: >-
+        0;1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30;31;32;33;34;35;36;37;38;39;40;41;42;43;44;45;46;47;48;49;50;51;52;53;54;55;56;57;58;59;60;61;62;63;64;65;66;67;68;69;70;71;72;73;74;75;76;77;78;79;80;81;82;83;84;85;86;87;88;89;90;91;92;93;94;95;96;97;98;99;100
+      delimiter: ;
+  - id: freeze-v1-lime-whale-ostrich
+    type: core/freeze@v1
+    position:
+      x: -710
+      y: -240
+  - id: print-v1-dolphin-orange-orange
+    type: core/print@v1
+    position:
+      x: 190
+      y: -190
+    inputs:
+      values[0]: null
+  - id: string-array-v1-ivory-shark-guava
+    type: core/string-array@v1
+    position:
+      x: -1130
+      y: 120
+  - id: array-add-v1-indigo-duck-camel
+    type: core/array-add@v1
+    position:
+      x: -30
+      y: -420
+  - id: for-each-loop-v1-navy-duck-cat
+    type: core/for-each-loop@v1
+    position:
+      x: -420
+      y: -200
+  - id: for-loop-v1-persimmon-penguin-yellow
+    type: core/for-loop@v1
+    position:
+      x: -1200
+      y: -230
+    inputs:
+      first_index: 0
+      last_index: 10
+  - id: print-v1-hippopotamus-boysenberry-peacock
+    type: core/print@v1
+    position:
+      x: -140
+      y: 60
+    inputs:
+      values[0]: null
+  - id: const-string-v1-parrot-passionfruit-penguin
+    type: core/const-string@v1
+    position:
+      x: -540
+      y: 290
+    inputs:
+      value: done
+connections:
+  - src:
+      node: string-array-v1-ivory-shark-guava
+      port: array
+    dst:
+      node: freeze-v1-lime-whale-ostrich
+      port: init
+    isLoop: false
+  - src:
+      node: array-add-v1-indigo-duck-camel
+      port: array
+    dst:
+      node: print-v1-dolphin-orange-orange
+      port: values[0]
+    isLoop: false
+  - src:
+      node: freeze-v1-lime-whale-ostrich
+      port: value
+    dst:
+      node: array-add-v1-indigo-duck-camel
+      port: array
+    isLoop: false
+  - src:
+      node: array-add-v1-indigo-duck-camel
+      port: array
+    dst:
+      node: freeze-v1-lime-whale-ostrich
+      port: replace
+    isLoop: true
+  - src:
+      node: string-split-v1-nectarine-chicken-fig
+      port: segments
+    dst:
+      node: for-each-loop-v1-navy-duck-cat
+      port: input
+    isLoop: false
+  - src:
+      node: for-each-loop-v1-navy-duck-cat
+      port: value
+    dst:
+      node: array-add-v1-indigo-duck-camel
+      port: item
+    isLoop: false
+  - src:
+      node: const-string-v1-parrot-passionfruit-penguin
+      port: result
+    dst:
+      node: print-v1-hippopotamus-boysenberry-peacock
+      port: values[0]
+    isLoop: false
+executions:
+  - src:
+      node: freeze-v1-lime-whale-ostrich
+      port: exec
+    dst:
+      node: for-each-loop-v1-navy-duck-cat
+      port: exec
+    isLoop: false
+  - src:
+      node: for-each-loop-v1-navy-duck-cat
+      port: exec-body
+    dst:
+      node: array-add-v1-indigo-duck-camel
+      port: exec
+    isLoop: false
+  - src:
+      node: for-each-loop-v1-navy-duck-cat
+      port: exec-completed
+    dst:
+      node: print-v1-dolphin-orange-orange
+      port: exec
+    isLoop: false
+  - src:
+      node: array-add-v1-indigo-duck-camel
+      port: exec
+    dst:
+      node: freeze-v1-lime-whale-ostrich
+      port: exec-reset
+    isLoop: true
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: for-loop-v1-persimmon-penguin-yellow
+      port: exec
+    isLoop: false
+  - src:
+      node: for-loop-v1-persimmon-penguin-yellow
+      port: exec-body
+    dst:
+      node: freeze-v1-lime-whale-ostrich
+      port: exec
+    isLoop: false
+  - src:
+      node: for-loop-v1-persimmon-penguin-yellow
+      port: exec-completed
+    dst:
+      node: print-v1-hippopotamus-boysenberry-peacock
+      port: exec
+    isLoop: false

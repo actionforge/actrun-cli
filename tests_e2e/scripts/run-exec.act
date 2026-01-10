@@ -1,0 +1,28 @@
+editor:
+  version:
+    created: v1.20.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: -240
+      y: 10
+  - id: run-exec-v1-ivory-nectarine-koala
+    type: core/run-exec@v1
+    position:
+      x: 270
+      y: -110
+    inputs:
+      args:
+        - Hello World
+      path: echo
+connections: []
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: run-exec-v1-ivory-nectarine-koala
+      port: exec

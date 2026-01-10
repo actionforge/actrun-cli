@@ -1,0 +1,47 @@
+yaml-version: 3.0
+id: core/git-stage
+name: Git Stage
+version: 1
+category: git
+icon: tablerBrandGit
+style:
+  header:
+    background: "#f1502f"
+  body:
+    background: "#652619"
+short_desc: Stages file changes in the working directory for the next commit (git add).
+addendum: |
+  This node adds file contents to the index (the staging area). You can provide specific file paths or glob patterns.
+
+  The `repo` input should be connected to the output of a `git-clone` or `git-open` node.
+
+  ### Common Patterns
+  - To stage all changes in the repository, provide a single path: `.`
+  - To stage all `.go` files in the `src` directory: `src/**/*.go`
+outputs:
+  exec-success:
+    name: Success
+    exec: true
+    desc: Executes if the files are staged successfully.
+    index: 0
+  exec-err:
+    name: Error
+    exec: true
+    desc: Executes if there is an error during staging.
+    index: 1
+inputs:
+  exec:
+    exec: true
+    index: 0
+  repo:
+    type: git-repo
+    name: Repository
+    desc: The Git repository object from a clone or open node.
+    index: 1
+    required: true
+  paths:
+    type: "[]string"
+    name: Paths
+    desc: A list of file paths or glob patterns to stage. Use '.' to stage all changes.
+    index: 2
+    hint: "E.g assets/*.jpg"

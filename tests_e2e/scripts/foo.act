@@ -1,0 +1,39 @@
+editor:
+  version:
+    created: v1.34.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 20
+      y: 10
+  - id: core-print-v1-crab-red-gold
+    type: core/print@v1
+    position:
+      x: 310
+      y: 70
+    inputs:
+      values[0]: null
+  - id: core-const-string-v1-zebra-turquoise-lime
+    type: core/const-string@v1
+    position:
+      x: 30
+      y: 210
+    inputs:
+      value: Hello Foo! 🚀
+connections:
+  - src:
+      node: core-const-string-v1-zebra-turquoise-lime
+      port: result
+    dst:
+      node: core-print-v1-crab-red-gold
+      port: values[0]
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: core-print-v1-crab-red-gold
+      port: exec

@@ -1,0 +1,69 @@
+yaml-version: 3.0
+
+id: core/filepath-location
+name: Filepath Location
+category: filesystem
+icon: tablerHome
+version: 1
+style:
+  header:
+    background: rgb(197, 147, 31)
+  body:
+    background: "rgb(164 115 29)"
+short_desc: Returns specific locations like home directory or current graph path.
+addendum: |
+  ## Locations
+
+  ### 1. Home
+  Returns the home directory of the user.
+
+  ### 2. Current Graph
+  Returns the path to the current graph.
+
+  ### 3. Temp Directory
+  Returns the system's temporary directory.
+
+  ### 4. Executable Directory
+  Returns the directory where the current executable is located.
+
+  ### 5. Root Directory
+  Returns the root directory of the filesystem.
+
+  ### 6. Working Directory
+  Returns the current working directory.
+
+  ### 7. User Config Directory
+  Returns the user's configuration directory.
+
+  ### 8. Desktop Directory
+  Returns the user's desktop directory.
+
+compact: true
+outputs:
+  result:
+    type: string
+    index: 0
+    desc: The requested path.
+inputs:
+  location:
+    type: option
+    index: 0
+    default: home
+    desc: Set of locations. Look at the addendum below for more information.
+    options:
+      - name: Home
+        value: home
+      - name: Current Graph
+        value: current_graph
+      - name: Temp Directory
+        value: temp_dir
+      - name: Executable Directory
+        value: exe_dir
+      - name: Root Directory
+        value: root_dir
+      - name: Working Directory
+        value: working_dir
+      - name: User Config Directory
+        value: user_config_dir
+      - name: Desktop Directory
+        value: desktop_dir

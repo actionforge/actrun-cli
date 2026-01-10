@@ -1,0 +1,110 @@
+editor:
+  version:
+    created: v1.34.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 20
+      y: 10
+  - id: core-print-v1-crab-red-gold
+    type: core/print@v1
+    position:
+      x: 310
+      y: 60
+    inputs:
+      values[0]: null
+      color: fg_green
+  - id: core-group-v1-boysenberry-blueberry-boysenberry
+    type: core/group@v1
+    position:
+      x: 30
+      y: 190
+    inputs:
+      tiger-dog-orange: static input value
+    graph:
+      entry: core-group-inputs-v1-zebra-octopus-orange
+      type: group
+      nodes:
+        - id: core-group-inputs-v1-zebra-octopus-orange
+          type: core/group-inputs@v1
+          position:
+            x: -340
+            y: 30
+        - id: core-group-outputs-v1-cherry-pink-beige
+          type: core/group-outputs@v1
+          position:
+            x: 400
+            y: 100
+        - id: core-string-fmt-v1-starfruit-dolphin-banana
+          type: core/string-fmt@v1
+          position:
+            x: -100
+            y: 180
+          inputs:
+            substitutes[0]: ${{ inputs.tiger-dog-orange }}
+            fmt: Hello; %v; %v!
+            substitutes[1]: ${{ inputs.wolf-kiwi-lime }}
+      connections:
+        - src:
+            node: core-string-fmt-v1-starfruit-dolphin-banana
+            port: result
+          dst:
+            node: core-group-outputs-v1-cherry-pink-beige
+            port: goat-date-apricot
+      executions: []
+      inputs:
+        tiger-dog-orange:
+          name: ''
+          type: string
+          index: 0
+        wolf-kiwi-lime:
+          name: ''
+          type: string
+          index: 1
+      outputs:
+        goat-date-apricot:
+          name: Result
+          type: string
+          index: 0
+  - id: core-const-string-v1-green-gooseberry-dog
+    type: core/const-string@v1
+    position:
+      x: -290
+      y: 340
+    inputs:
+      value: value from const node
+  - id: core-comment-v1-donkey-cranberry-crab
+    type: core/comment@v1
+    position:
+      x: 90
+      y: -170
+    dimensions:
+      width: 240
+      height: 70
+    inputs:
+      markdown: >-
+        A bunch of tests that showcase `${{ inputs.XYZ }}` accessors for a data
+        group node.
+connections:
+  - src:
+      node: core-group-v1-boysenberry-blueberry-boysenberry
+      port: goat-date-apricot
+    dst:
+      node: core-print-v1-crab-red-gold
+      port: values[0]
+  - src:
+      node: core-const-string-v1-green-gooseberry-dog
+      port: result
+    dst:
+      node: core-group-v1-boysenberry-blueberry-boysenberry
+      port: wolf-kiwi-lime
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: core-print-v1-crab-red-gold
+      port: exec

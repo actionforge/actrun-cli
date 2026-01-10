@@ -1,0 +1,83 @@
+yaml-version: 3.0
+id: core/file-compress
+name: File Compress
+version: 1
+category: filesystem
+icon: tablerFileZip
+short_desc: Compresses files and directories into a single archive.
+long_desc: 'Compresses files and directories into a data stream on-the-fly, using a minimal memory footprint regardless of
+  the size or number of files. This allows for efficient handling of large datasets without writing to temporary disk storage.
+
+
+  ### Path Handling
+
+  Paths inside the generated archive are always relative and use forward slashes (`/`) for maximum compatibility. Any drive
+  letters (e.g., `C:`) and leading slashes are removed to ensure a clean, portable archive structure.
+
+  '
+style:
+  header:
+    background: rgb(197, 147, 31)
+  body:
+    background: rgb(164 115 29)
+outputs:
+  exec-success:
+    name: Success
+    exec: true
+    index: 0
+    desc: Triggered when compression is successful.
+  exec-err:
+    name: Error
+    exec: true
+    index: 1
+    desc: Triggered if an error occurs during compression.
+  suffix:
+    name: Suffix
+    type: string
+    index: 2
+    desc: The file extension of the archive (e.g., .zip, .tar, .tar.gz).
+  data:
+    name: Data
+    type: stream
+    index: 3
+    desc: The binary data stream of the compressed archive.
+inputs:
+  exec:
+    exec: true
+    index: 0
+    desc: Starts the compression process.
+  format:
+    name: Format
+    type: option
+    index: 1
+    default: zip
+    options:
+      - name: zip
+        value: zip
+      - name: tar
+        value: tar
+      - name: tar.gz
+        value: targz
+        desc: The archive format. The `tar` format does not apply compression.
+  base_path:
+    name: Base Path
+    type: string
+    hint: Optional path to make files relative to
+    index: 2
+    desc: A common directory path to remove from the start of file paths, creating a relative structure inside the archive.
+      Relative paths are resolved from the current working directory.
+  level:
+    name: Level
+    type: number
+    index: 3
+    default: 6
+    min: 0
+    max: 9
+    step: 1
+    desc: Compression level from 0 (none) to 9 (best). Levels outside this range will be clamped. Ignored by the `tar` format.
+  paths:
+    name: Paths
+    type: "[]string"
+    index: 4
+    desc: A list of file or directory paths to include in the archive. Directories are scanned recursively. Symbolic links
+      are ignored.

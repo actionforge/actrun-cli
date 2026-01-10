@@ -1,0 +1,396 @@
+editor:
+  version:
+    created: v1.11.0
+    updated: v1.34.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: -150
+      y: -60
+  - id: group-v1-butterfly-koala-red
+    type: core/group@v1
+    position:
+      x: 260
+      y: -40
+    inputs:
+      elephant-gold-apple: actionforge-placeholder-gpt-3.5-turbo-0125
+    graph:
+      entry: group-inputs-v1-gray-orange-lion
+      type: group
+      nodes:
+        - id: group-inputs-v1-gray-orange-lion
+          type: core/group-inputs@v1
+          position:
+            x: 20
+            y: 610
+        - id: group-outputs-v1-banana-apple-snake
+          type: core/group-outputs@v1
+          position:
+            x: 3090
+            y: 50
+        - id: parser-v1-blackberry-orange-plum
+          type: core/parser@v1
+          position:
+            x: 310
+            y: 370
+          inputs:
+            input: |-
+              {
+                  "model": "",
+                  "messages": [
+                      {
+                          "role": "user",
+                          "content": ""
+                      }
+                  ]
+              }
+            format: json
+        - id: property-setter-v1-tiger-dog-butterfly
+          type: core/property-setter@v1
+          position:
+            x: 700
+            y: 310
+          inputs:
+            path: model
+        - id: property-setter-v1-plum-shark-pomegranate
+          type: core/property-setter@v1
+          position:
+            x: 1180
+            y: 320
+          inputs:
+            path: messages[0].content
+        - id: serializer-v1-banana-butterfly-kiwi
+          type: core/serializer@v1
+          position:
+            x: 1640
+            y: 270
+        - id: parser-v1-kiwi-brown-yellow
+          type: core/parser@v1
+          position:
+            x: 2350
+            y: 90
+          inputs:
+            format: json
+        - id: property-getter-v1-coconut-dolphin-lemon
+          type: core/property-getter@v1
+          position:
+            x: 2630
+            y: 10
+          inputs:
+            path: choices[0].message.content
+        - id: string-array-v1-raspberry-green-peach
+          type: core/string-array@v1
+          position:
+            x: 1210
+            y: 640
+          inputs:
+            inputs[0]: 'Content-Type: application/json'
+            inputs[1]: null
+        - id: string-fmt-v1-grape-gray-gold
+          type: core/string-fmt@v1
+          position:
+            x: 700
+            y: 660
+          inputs:
+            substitutes[0]: null
+            fmt: 'Authorization: Bearer %v'
+        - id: run-v1-monkey-rabbit-strawberry
+          type: core/run@v1
+          position:
+            x: 1900
+            y: 170
+          inputs:
+            script: |
+              import os, sys
+
+
+              if len(sys.argv) != 3:
+                  raise ValueError("Usage: ./solve.py <flag>")
+
+              flag = sys.argv[1]
+              bearer = sys.argv[2]
+
+              prompt = sys.stdin.read()
+              if "berlin" not in prompt.lower():
+                  raise ValueError("Prompt must mention berlin")
+
+              if 'Content-Type: application/json' not in flag.strip():
+                  raise ValueError(f"Unexpected header: {flag}")
+
+              if not bearer.strip().startswith("Authorization: Bearer"):
+                  raise ValueError(f"Unexpected bearer: {bearer}")
+
+              response = """{
+                "id": "chatcmpl-Bf5CjMc6NpJfH9EAt1QWLYChWdWH5",
+                "object": "chat.completion",
+                "created": 1719578481,
+                "model": "actionforge-placeholder-gpt-3.5-turbo-0125",
+                "choices": [
+                  {
+                    "index": 0,
+                    "message": {
+                      "role": "assistant",
+                      "content": "Berlin ist die Hauptstadt und zugleich größte Stadt Deutschlands."
+                    },
+                    "logprobs": null,
+                    "finish_reason": "stop"
+                  }
+                ],
+                "usage": {
+                  "prompt_tokens": 13,
+                  "completion_tokens": 132,
+                  "total_tokens": 145
+                },
+                "system_fingerprint": null
+              }"""
+
+              print(response)
+            shell: python
+        - id: print-v1-parrot-silver-yellow
+          type: core/print@v1
+          position:
+            x: 2400
+            y: 410
+          inputs:
+            values[0]: null
+            color: fg_red
+      connections:
+        - src:
+            node: parser-v1-blackberry-orange-plum
+            port: object
+          dst:
+            node: property-setter-v1-tiger-dog-butterfly
+            port: object
+        - src:
+            node: parser-v1-kiwi-brown-yellow
+            port: object
+          dst:
+            node: property-getter-v1-coconut-dolphin-lemon
+            port: object
+        - src:
+            node: string-fmt-v1-grape-gray-gold
+            port: result
+          dst:
+            node: string-array-v1-raspberry-green-peach
+            port: inputs[1]
+        - src:
+            node: property-setter-v1-tiger-dog-butterfly
+            port: object
+          dst:
+            node: property-setter-v1-plum-shark-pomegranate
+            port: object
+        - src:
+            node: property-setter-v1-plum-shark-pomegranate
+            port: object
+          dst:
+            node: serializer-v1-banana-butterfly-kiwi
+            port: object
+        - src:
+            node: property-getter-v1-coconut-dolphin-lemon
+            port: value
+          dst:
+            node: group-outputs-v1-banana-apple-snake
+            port: blackberry-parrot-koala
+        - src:
+            node: group-inputs-v1-gray-orange-lion
+            port: elephant-gold-apple
+          dst:
+            node: property-setter-v1-tiger-dog-butterfly
+            port: value
+        - src:
+            node: group-inputs-v1-gray-orange-lion
+            port: tiger-elephant-gray
+          dst:
+            node: property-setter-v1-plum-shark-pomegranate
+            port: value
+        - src:
+            node: string-array-v1-raspberry-green-peach
+            port: array
+          dst:
+            node: run-v1-monkey-rabbit-strawberry
+            port: args
+        - src:
+            node: run-v1-monkey-rabbit-strawberry
+            port: output
+          dst:
+            node: parser-v1-kiwi-brown-yellow
+            port: input
+        - src:
+            node: serializer-v1-banana-butterfly-kiwi
+            port: output
+          dst:
+            node: run-v1-monkey-rabbit-strawberry
+            port: stdin
+        - src:
+            node: run-v1-monkey-rabbit-strawberry
+            port: output
+          dst:
+            node: print-v1-parrot-silver-yellow
+            port: values[0]
+        - src:
+            node: group-inputs-v1-gray-orange-lion
+            port: snake-nectarine-rabbit
+          dst:
+            node: string-fmt-v1-grape-gray-gold
+            port: substitutes[0]
+      executions:
+        - src:
+            node: parser-v1-blackberry-orange-plum
+            port: exec-success
+          dst:
+            node: property-setter-v1-tiger-dog-butterfly
+            port: exec
+        - src:
+            node: property-setter-v1-tiger-dog-butterfly
+            port: exec-success
+          dst:
+            node: property-setter-v1-plum-shark-pomegranate
+            port: exec
+        - src:
+            node: parser-v1-kiwi-brown-yellow
+            port: exec-success
+          dst:
+            node: property-getter-v1-coconut-dolphin-lemon
+            port: exec
+        - src:
+            node: property-setter-v1-plum-shark-pomegranate
+            port: exec-success
+          dst:
+            node: serializer-v1-banana-butterfly-kiwi
+            port: exec
+        - src:
+            node: group-inputs-v1-gray-orange-lion
+            port: exec-blue-lemon-grape
+          dst:
+            node: parser-v1-blackberry-orange-plum
+            port: exec
+        - src:
+            node: property-getter-v1-coconut-dolphin-lemon
+            port: exec-success
+          dst:
+            node: group-outputs-v1-banana-apple-snake
+            port: exec-kangaroo-blueberry-dog
+        - src:
+            node: run-v1-monkey-rabbit-strawberry
+            port: exec-success
+          dst:
+            node: parser-v1-kiwi-brown-yellow
+            port: exec
+        - src:
+            node: serializer-v1-banana-butterfly-kiwi
+            port: exec-success
+          dst:
+            node: run-v1-monkey-rabbit-strawberry
+            port: exec
+        - src:
+            node: run-v1-monkey-rabbit-strawberry
+            port: exec-err
+          dst:
+            node: print-v1-parrot-silver-yellow
+            port: exec
+      inputs:
+        exec-blue-lemon-grape:
+          type: ''
+          index: 0
+          exec: true
+        tiger-elephant-gray:
+          type: string
+          multiline: true
+          index: 2
+          name: Prompt
+        elephant-gold-apple:
+          type: string
+          index: 1
+          name: ''
+        snake-nectarine-rabbit:
+          name: API Key
+          type: secret
+          index: 3
+      outputs:
+        exec-kangaroo-blueberry-dog:
+          name: Success
+          type: ''
+          index: 0
+          exec: true
+        blackberry-parrot-koala:
+          name: Response
+          type: string
+          index: 256
+      info:
+        author: ''
+        version: ''
+        contact: ''
+        description: ''
+    label: ChatGPT Offline Simulator
+  - id: print-v1-lemon-cranberry-brown
+    type: core/print@v1
+    position:
+      x: 750
+      y: -70
+    inputs:
+      values[0]: null
+      color: no_color
+      values[1]: null
+  - id: const-string-v1-silver-watermelon-raspberry
+    type: core/const-string@v1
+    position:
+      x: -140
+      y: 140
+    inputs:
+      value: sag mir etwas zu berlin
+  - id: const-string-v1-penguin-orange-squirrel
+    type: core/const-string@v1
+    position:
+      x: 330
+      y: -100
+    inputs:
+      value: DONE
+  - id: secret-v1-magenta-grapefruit-bear
+    type: core/secret@v1
+    position:
+      x: -240
+      y: 320
+    inputs:
+      secret_env: SECRET_OPENAI_API_KEY
+      name: OPENAI_API_KEY
+connections:
+  - src:
+      node: const-string-v1-silver-watermelon-raspberry
+      port: result
+    dst:
+      node: group-v1-butterfly-koala-red
+      port: tiger-elephant-gray
+  - src:
+      node: group-v1-butterfly-koala-red
+      port: blackberry-parrot-koala
+    dst:
+      node: print-v1-lemon-cranberry-brown
+      port: values[1]
+  - src:
+      node: const-string-v1-penguin-orange-squirrel
+      port: result
+    dst:
+      node: print-v1-lemon-cranberry-brown
+      port: values[0]
+  - src:
+      node: secret-v1-magenta-grapefruit-bear
+      port: secret
+    dst:
+      node: group-v1-butterfly-koala-red
+      port: snake-nectarine-rabbit
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: group-v1-butterfly-koala-red
+      port: exec-blue-lemon-grape
+  - src:
+      node: group-v1-butterfly-koala-red
+      port: exec-kangaroo-blueberry-dog
+    dst:
+      node: print-v1-lemon-cranberry-brown
+      port: exec

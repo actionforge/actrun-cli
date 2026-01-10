@@ -1,0 +1,3 @@
+secrets:
+    # come from GITHUB_ACTIONS or ~/.actconfig if run local
+    OPENAI_API_KEY: SOME_RANDOM_KEY

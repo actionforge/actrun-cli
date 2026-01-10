@@ -1,0 +1,10 @@
+build hasn't expired yet
+looking for value: 'graph_file'
+  no value (is optional) found for: 'graph_file'
+Validating '[REDACTED]/missing-exec-connection1.act'...
+
+❌ Validation failed with 1 error(s):
+
+--- Error 1 ---
+error:
+   1: src node 'core-const-string-v1-zebra-turquoise-doesnt-exist' does not exist

@@ -1,0 +1,37 @@
+yaml-version: 3.0
+
+id: core/math-multiply
+name: Math Multiply
+version: 1
+category: computation
+style:
+  header:
+    background: "#388a34"
+  body:
+    background: "#22591f"
+icon: tablerX
+short_desc: Multiplies two or more numbers.
+long_desc: |
+  This node multiplies the input numbers together.
+  
+  ## Example:
+
+  - Input: `2, 3, 4`
+  
+  Results in the multiplication of `2 * 3 * 4`.
+  
+  - Output: `24`
+label: "\u00D7"
+compact: true
+inputs:
+  inputs:
+    type: number
+    index: 0
+    array: true
+    array_initial_count: 2
+    desc: A set of numbers to multiply together.
+outputs:
+  result:
+    type: number
+    index: 0
+    desc: The result of the multiplication.

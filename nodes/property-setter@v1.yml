@@ -1,0 +1,44 @@
+yaml-version: 3.0
+
+id: core/property-setter
+name: Property Setter
+version: 1
+category: data
+icon: tablerEdit
+style:
+  header:
+    background: "#a47e5b"
+  body:
+    background: "#7c6652"
+short_desc: Set a value of the input object.
+outputs:
+  exec-success:
+    name: Success
+    exec: true
+    index: 0
+  exec-err:
+    exec: true
+    name: Error
+    index: 1
+  object:
+    type: unknown
+    name: Object
+    index: 2
+    desc: The object with the property set. It is a deep copy of the input object.
+inputs:
+  exec:
+    exec: true
+    index: 0
+  object:
+    type: unknown
+    name: Object
+    index: 1
+  path:
+    name: Property Path
+    type: string
+    index: 2
+    desc: The property path to set the value. See [Property Path](./../../../reference/property-paths.md) for more info.
+  value:
+    name: Property Value
+    type: unknown
+    index: 3

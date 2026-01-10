@@ -1,0 +1,90 @@
+editor:
+  version:
+    created: v1.28.1
+    updated: v1.34.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: -240
+      y: -10
+  - id: run-v1-snake-parrot-lime
+    type: core/run@v1
+    position:
+      x: 160
+      y: -340
+    inputs:
+      script: |-
+        echo "Hello World!"
+        echo "Καλημέρα"
+        echo "你好"
+        echo "こんにちは"
+        echo "مرحباً"
+  - id: run-v1-navy-cow-green
+    type: core/run@v1
+    position:
+      x: 1150
+      y: -360
+    inputs:
+      shell: python
+      script: "import sys\r\nimport os\r\nimport io\r\nprint(os.environ[\"PYTHONIOENCODING\"])\r\n#sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')\r\n\r\ndef print_utf8():\r\n    texts = [\r\n        \"Hello World!\",\r\n        \"Καλημέρα\",\r\n        \"你好\",\r\n        \"こんにちは\",\r\n        \"مرحباً\"\r\n    ]\r\n\r\n    for text in texts:\r\n        utf8_text = text.encode('utf-8')\r\n        f = utf8_text.decode('utf-8')\r\n        print(f)\r\n\r\ndef print_utf16():\r\n    texts = [\r\n        \"Hello World!\",\r\n        \"Καλημέρα\",\r\n        \"你好\",\r\n        \"こんにちは\",\r\n        \"مرحباً\"\r\n    ]\r\n\r\n    for text in texts:\r\n        utf16_text = text.encode('utf-16')\r\n        print(utf16_text.decode('utf-16'))\r\n\r\nprint_utf8()\r\nprint_utf16()\r\n"
+  - id: print-v1-starfruit-orange-giraffe
+    type: core/print@v1
+    position:
+      x: 770
+      y: -310
+    inputs:
+      values[0]: null
+  - id: print-v1-jellyfish-guava-orange
+    type: core/print@v1
+    position:
+      x: 1700
+      y: -390
+    inputs:
+      values[0]: null
+connections:
+  - src:
+      node: run-v1-snake-parrot-lime
+      port: output
+    dst:
+      node: print-v1-starfruit-orange-giraffe
+      port: values[0]
+    isLoop: false
+  - src:
+      node: run-v1-navy-cow-green
+      port: output
+    dst:
+      node: print-v1-jellyfish-guava-orange
+      port: values[0]
+    isLoop: false
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: run-v1-snake-parrot-lime
+      port: exec
+    isLoop: false
+  - src:
+      node: run-v1-snake-parrot-lime
+      port: exec-success
+    dst:
+      node: print-v1-starfruit-orange-giraffe
+      port: exec
+    isLoop: false
+  - src:
+      node: print-v1-starfruit-orange-giraffe
+      port: exec
+    dst:
+      node: run-v1-navy-cow-green
+      port: exec
+    isLoop: false
+  - src:
+      node: run-v1-navy-cow-green
+      port: exec-success
+    dst:
+      node: print-v1-jellyfish-guava-orange
+      port: exec
+    isLoop: false

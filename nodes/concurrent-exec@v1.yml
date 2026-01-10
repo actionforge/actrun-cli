@@ -1,0 +1,29 @@
+yaml-version: 3.0
+
+id: core/concurrent-exec
+name: Concurrent Execution
+version: 1
+icon: tablerArrowsSplit
+category: concurrency
+short_desc: Concurrent Execution
+style:
+  header:
+    background: "#7e6c9d"
+  body:
+    background: "#473567"
+outputs:
+  exec:
+    exec: true
+    array: true
+    array_initial_count: 2
+    index: 0
+  exec-completed:
+    name: Completed
+    exec: true
+    desc: Executes upon completion of the loop.
+    index: 1
+
+inputs:
+  exec:
+    exec: true
+    index: 0

@@ -1,0 +1,34 @@
+build hasn't expired yet
+looking for value: 'env_file'
+  no value (is optional) found for: 'env_file'
+looking for value: 'config_file'
+  no value (is optional) found for: 'config_file'
+looking for value: 'concurrency'
+  no value (is optional) found for: 'concurrency'
+looking for value: 'graph_file'
+  found value in: 'env (shell)'
+  evaluated to: 'run.act'
+looking for value: 'session_token'
+  no value (is optional) found for: 'session_token'
+looking for value: 'create_debug_session'
+  found value in flags
+  evaluated to: 'false'
+PushNodeVisit: start, execute: true
+🟢 Execute 'Run Script (run-v1-parrot-pear-blue)'
+PushNodeVisit: run-v1-parrot-pear-blue, execute: true
+hello from python (1)
+🟢 Execute 'Run Script (run-v1-shark-rabbit-plum)'
+PushNodeVisit: run-v1-shark-rabbit-plum, execute: true
+hello from python (2)
+🟢 Execute 'Run Script (run-v1-beige-watermelon-strawberry)'
+PushNodeVisit: run-v1-beige-watermelon-strawberry, execute: true
+hello from pwsh (1)
+🟢 Execute 'Run Script (run-v1-watermelon-whale-koala)'
+PushNodeVisit: run-v1-watermelon-whale-koala, execute: true
+hello from pwsh (2)
+🟢 Execute 'Run Script (run-v1-rhinoceros-cow-donkey)'
+PushNodeVisit: run-v1-rhinoceros-cow-donkey, execute: true
+hello from bash (1)
+🟢 Execute 'Run Script (run-v1-jackfruit-white-pear)'
+PushNodeVisit: run-v1-jackfruit-white-pear, execute: true
+hello from bash (2)

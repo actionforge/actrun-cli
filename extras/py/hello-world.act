@@ -1,0 +1,61 @@
+editor:
+  version:
+    created: v1.34.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: -150
+      y: -40
+  - id: run-python-embedded-v1-orange-ivory-kiwi
+    type: core/run-python-embedded@v1
+    position:
+      x: 330
+      y: -70
+    inputs:
+      script: |-
+        import sys
+        import platform
+
+        def main():
+            print("Hello World! 🚀")
+            print("Running within embedded Python environment.")
+            
+            # Displaying Python version and interpreter details
+            print(f"Python version: {platform.python_version()}")
+            print(f"Executable path: {sys.executable}")
+
+            return 42
+  - id: print-v1-starfruit-raspberry-lobster
+    type: core/print@v1
+    position:
+      x: 880
+      y: -110
+    inputs:
+      values[0]: null
+      color: fg_green
+connections:
+  - src:
+      node: run-python-embedded-v1-orange-ivory-kiwi
+      port: return
+    dst:
+      node: print-v1-starfruit-raspberry-lobster
+      port: values[0]
+    isLoop: false
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: run-python-embedded-v1-orange-ivory-kiwi
+      port: exec
+    isLoop: false
+  - src:
+      node: run-python-embedded-v1-orange-ivory-kiwi
+      port: exec-success
+    dst:
+      node: print-v1-starfruit-raspberry-lobster
+      port: exec
+    isLoop: false

@@ -1,0 +1,40 @@
+yaml-version: 3.0
+
+id: core/math-modulo
+name: Math Modulo
+category: computation
+style:
+  header:
+    background: "#388a34"
+  body:
+    background: "#22591f"
+icon: tablerPercentage
+version: 1
+short_desc: Calculate the modulo of two numbers.
+long_desc: |
+  This node calculates the modulo of the input numbers.
+  
+  ## Example:
+
+  - Input: `10, 3`
+
+  Results in the calculation of `10 % 3`.
+
+  - Output: `1`
+
+label: "%"
+compact: true
+inputs:
+  op1:
+    type: number
+    index: 0
+    desc: The first number.
+  op2:
+    type: number
+    index: 1
+    desc: The second number.
+outputs:
+  result:
+    type: number
+    index: 0
+    desc: The result of the modulo calculation.

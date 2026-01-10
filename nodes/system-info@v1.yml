@@ -1,0 +1,64 @@
+yaml-version: 3.0
+id: core/system-info
+name: System Info
+version: 1
+category: system
+icon: tablerInfoSquareRounded
+short_desc: Provides information about the system.
+compact: true
+style:
+  header:
+    background: "#3794ff"
+  body:
+    background: "#1f4f86"
+outputs:
+  platform_string:
+    type: string
+    name: Platform String
+    index: 0
+    desc: The platform string. Either `windows`, `macos`, or `linux`.
+  platform_index:
+    type: number
+    name: Platform Index
+    index: 1
+    desc: The platform index. `0` for Windows, `1` for MacOS, and `2` for Linux.
+  is_win:
+    type: bool
+    name: Windows (0)
+    index: 2
+    desc: "`true` if the platform is Windows."
+  is_macos:
+    type: bool
+    name: MacOS (1)
+    index: 3
+    desc: "`true` if the platform is MacOS."
+  is_linux:
+    type: bool
+    name: Linux (2)
+    index: 4
+    desc: "`true` if the platform is Linux."
+  arch_string:
+    type: string
+    name: Arch String
+    index: 5
+    desc: The architecture string. Either `x64` or `arm64`.
+  arch_index:
+    type: number
+    name: Arch Index
+    index: 6
+    desc: The architecture index. `0` for x64 and `1` for arm64.
+  is_x64:
+    type: bool
+    name: x64 (0)
+    index: 7
+    desc: "`true` if the architecture is x64."
+  is_arm64:
+    type: bool
+    name: Arm64 (1)
+    index: 8
+    desc: "`true` if the architecture is arm64."
+  cpu_count:
+    type: number
+    name: Cpu Count
+    index: 9
+    desc: Returns the number of logical CPUs usable by the current process. The set of available CPUs is checked by querying the operating system at process startup. Changes to operating system CPU allocation after process startup are not reflected.

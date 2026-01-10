@@ -1,0 +1,195 @@
+yaml-version: 3.0
+
+id: core/gh-start
+name: GitHub Actions Workflow Trigger
+version: 1
+category: github
+short_desc: A node that kicks off a GitHub Actions workflow.
+show_in_docs: false
+entry: true
+style:
+  header:
+    background: "#bc9e71"
+  body:
+    background: "#76582b"
+outputs:
+  exec-on_branch_protection_rule:
+    exec: true
+    name: On Branch Protection Rule
+    desc: Execute actions when a branch protection rule is triggered
+    index: 0
+  exec-on_check_run:
+    exec: true
+    name: On Check Run
+    desc: Execute actions when a check run is triggered
+    index: 1
+  exec-on_check_suite:
+    exec: true
+    name: On Check Suite
+    desc: Execute actions when a check suite is triggered
+    index: 2
+  exec-on_create:
+    exec: true
+    name: On Create
+    desc: Execute actions when a new resource is created
+    index: 3
+  exec-on_delete:
+    exec: true
+    name: On Delete
+    desc: Execute actions when a resource is deleted
+    index: 4
+  exec-on_deployment:
+    exec: true
+    name: On Deployment
+    desc: Execute actions when a deployment is triggered
+    index: 5
+  exec-on_deployment_status:
+    exec: true
+    name: On Deployment Status
+    desc: Execute actions when a deployment status is triggered
+    index: 6
+  exec-on_discussion:
+    exec: true
+    name: On Discussion
+    desc: Execute actions when a discussion is triggered
+    index: 7
+  exec-on_discussion_comment:
+    exec: true
+    name: On Discussion Comment
+    desc: Execute actions when a discussion comment is triggered
+    index: 8
+  exec-on_fork:
+    exec: true
+    name: On Fork
+    desc: Execute actions when a repository is forked
+    index: 9
+  exec-on_gollum:
+    exec: true
+    name: On Gollum
+    desc: Execute actions when a Gollum event is triggered
+    index: 10
+  exec-on_issue_comment:
+    exec: true
+    name: On Issue Comment
+    desc: Execute actions when an issue comment is triggered
+    index: 11
+  exec-on_issues:
+    exec: true
+    name: On Issue
+    desc: Execute actions when an issue is triggered
+    index: 12
+  exec-on_label:
+    exec: true
+    name: On Label
+    desc: Execute actions when a label is triggered
+    index: 13
+  exec-on_merge_group:
+    exec: true
+    name: On Merge Group
+    desc: Execute actions when a merge group is triggered
+    index: 14
+  exec-on_milestone:
+    exec: true
+    name: On Milestone
+    desc: Execute actions when a milestone is triggered
+    index: 15
+  exec-on_page_build:
+    exec: true
+    name: On Page Build
+    desc: Execute actions when a page build is triggered
+    index: 16
+  exec-on_project:
+    exec: true
+    name: On Project
+    desc: Execute actions when a project is triggered
+    index: 17
+  exec-on_project_card:
+    exec: true
+    name: On Project Card
+    desc: Execute actions when a project card is triggered
+    index: 18
+  exec-on_project_column:
+    exec: true
+    name: On Project Column
+    desc: Execute actions when a project column is triggered
+    index: 19
+  exec-on_public:
+    exec: true
+    name: On Public
+    desc: Execute actions when a repository is made public
+    index: 20
+  exec-on_pull_request:
+    exec: true
+    name: On Pull Request
+    desc: Execute actions when a pull request is triggered
+    index: 21
+  exec-on_pull_request_comment:
+    exec: true
+    name: On Pull Request Comment
+    desc: Execute actions when a pull request comment is triggered
+    index: 22
+  exec-on_pull_request_review:
+    exec: true
+    name: On Pull Request Review
+    desc: Execute actions when a pull request review is triggered
+    index: 23
+  exec-on_pull_request_review_comment:
+    exec: true
+    name: On Pull Request Review Comment
+    desc: Execute actions when a pull request review comment is triggered
+    index: 24
+  exec-on_pull_request_target:
+    exec: true
+    name: On Pull Request Target
+    desc: Execute actions when a pull request target is triggered
+    index: 25
+  exec-on_push:
+    exec: true
+    name: On Push
+    desc: Execute actions when a push event is triggered
+    index: 26
+  exec-on_registry_package:
+    exec: true
+    name: On Registry Package
+    desc: Execute actions when a registry package is triggered
+    index: 27
+  exec-on_release:
+    exec: true
+    name: On Release
+    desc: Execute actions when a release is triggered
+    index: 28
+  exec-on_repository_dispatch:
+    exec: true
+    name: On Repository Dispatch
+    desc: Execute actions when a repository dispatch is triggered
+    index: 29
+  exec-on_schedule:
+    exec: true
+    name: On Schedule
+    desc: Execute actions when a scheduled event is triggered
+    index: 30
+  exec-on_status:
+    exec: true
+    name: On Status
+    desc: Execute actions when a status is triggered
+    index: 31
+  exec-on_watch:
+    exec: true
+    name: On Watch
+    desc: Execute actions when a repository is watched
+    index: 32
+  exec-on_workflow_call:
+    exec: true
+    name: On Workflow Call
+    desc: Execute actions when a workflow call is triggered
+    index: 33
+  exec-on_workflow_dispatch:
+    exec: true
+    name: On Workflow Dispatch
+    desc: Execute actions when a workflow dispatch is triggered
+    index: 34
+  exec-on_workflow_run:
+    exec: true
+    name: On Workflow Run
+    desc: Execute actions when a workflow run is triggered
+    index: 35

@@ -1,0 +1,85 @@
+editor:
+  version:
+    created: v1.28.1
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: -740
+      y: 10
+  - id: select-exec-v1-magenta-shark-butterfly
+    type: core/select-exec@v1
+    position:
+      x: 410
+      y: -50
+    inputs:
+      exec[0]: null
+      exec[1]: null
+  - id: branch-v1-penguin-coconut-persimmon
+    type: core/branch@v1
+    position:
+      x: 50
+      y: 30
+    inputs:
+      condition: false
+  - id: print-v1-durian-kangaroo-silver
+    type: core/print@v1
+    position:
+      x: 730
+      y: -70
+    inputs:
+      values[0]: null
+  - id: for-loop-v1-lemon-cat-grape
+    type: core/for-loop@v1
+    position:
+      x: -390
+      y: 70
+    inputs:
+      first_index: 0
+      last_index: 1
+connections:
+  - src:
+      node: select-exec-v1-magenta-shark-butterfly
+      port: index
+    dst:
+      node: print-v1-durian-kangaroo-silver
+      port: values[0]
+  - src:
+      node: for-loop-v1-lemon-cat-grape
+      port: index
+    dst:
+      node: branch-v1-penguin-coconut-persimmon
+      port: condition
+executions:
+  - src:
+      node: branch-v1-penguin-coconut-persimmon
+      port: exec-then
+    dst:
+      node: select-exec-v1-magenta-shark-butterfly
+      port: exec[0]
+  - src:
+      node: branch-v1-penguin-coconut-persimmon
+      port: exec-otherwise
+    dst:
+      node: select-exec-v1-magenta-shark-butterfly
+      port: exec[1]
+  - src:
+      node: select-exec-v1-magenta-shark-butterfly
+      port: exec
+    dst:
+      node: print-v1-durian-kangaroo-silver
+      port: exec
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: for-loop-v1-lemon-cat-grape
+      port: exec
+  - src:
+      node: for-loop-v1-lemon-cat-grape
+      port: exec-body
+    dst:
+      node: branch-v1-penguin-coconut-persimmon
+      port: exec

@@ -1,0 +1,91 @@
+editor:
+  version:
+    created: v1.28.1
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: -620
+      y: 290
+  - id: array-add-v1-seahorse-chicken-butterfly
+    type: core/array-add@v1
+    position:
+      x: 380
+      y: 10
+  - id: string-array-v1-banana-dragonfruit-horse
+    type: core/string-array@v1
+    position:
+      x: -410
+      y: 500
+    inputs:
+      inputs[0]: foo
+      inputs[1]: bar
+      inputs[2]: bas
+  - id: print-v1-peach-whale-strawberry
+    type: core/print@v1
+    position:
+      x: 780
+      y: 130
+    inputs:
+      values[0]: null
+      values[1]: null
+  - id: for-loop-v1-orange-purple-cranberry
+    type: core/for-loop@v1
+    position:
+      x: -270
+      y: 160
+    inputs:
+      first_index: 0
+      last_index: 10
+connections:
+  - src:
+      node: string-array-v1-banana-dragonfruit-horse
+      port: array
+    dst:
+      node: array-add-v1-seahorse-chicken-butterfly
+      port: array
+  - src:
+      node: array-add-v1-seahorse-chicken-butterfly
+      port: array
+    dst:
+      node: print-v1-peach-whale-strawberry
+      port: values[0]
+  - src:
+      node: string-array-v1-banana-dragonfruit-horse
+      port: array
+    dst:
+      node: print-v1-peach-whale-strawberry
+      port: values[1]
+  - src:
+      node: for-loop-v1-orange-purple-cranberry
+      port: index
+    dst:
+      node: array-add-v1-seahorse-chicken-butterfly
+      port: item
+executions:
+  - src:
+      node: array-add-v1-seahorse-chicken-butterfly
+      port: exec
+    dst:
+      node: print-v1-peach-whale-strawberry
+      port: exec
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: for-loop-v1-orange-purple-cranberry
+      port: exec
+  - src:
+      node: for-loop-v1-orange-purple-cranberry
+      port: exec-body
+    dst:
+      node: array-add-v1-seahorse-chicken-butterfly
+      port: exec
+  - src:
+      node: for-loop-v1-orange-purple-cranberry
+      port: exec-completed
+    dst:
+      node: print-v1-peach-whale-strawberry
+      port: exec

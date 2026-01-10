@@ -1,0 +1,23 @@
+build hasn't expired yet
+looking for value: 'env_file'
+  no value (is optional) found for: 'env_file'
+looking for value: 'config_file'
+  no value (is optional) found for: 'config_file'
+looking for value: 'concurrency'
+  no value (is optional) found for: 'concurrency'
+looking for value: 'graph_file'
+  found value in: 'env (shell)'
+  evaluated to: 'if.act'
+looking for value: 'session_token'
+  no value (is optional) found for: 'session_token'
+looking for value: 'create_debug_session'
+  found value in flags
+  evaluated to: 'false'
+PushNodeVisit: start, execute: true
+🟢 Execute 'Branch (if-v1-koala-peach-gray)'
+PushNodeVisit: if-v1-koala-peach-gray, execute: true
+PushNodeVisit: string-match-v1-strawberry-orange-dog, execute: false
+PushNodeVisit: env-get-v1-kangaroo-zebra-orange, execute: false
+🟢 Execute 'Run Script (run-v1-mango-silver-silver)'
+PushNodeVisit: run-v1-mango-silver-silver, execute: true
+No

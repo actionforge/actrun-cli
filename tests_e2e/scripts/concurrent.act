@@ -1,0 +1,163 @@
+entry: gh-start
+nodes:
+  - id: gh-start
+    type: core/start@v1
+    position:
+      x: 10
+      y: 1430
+  - id: concurrent-exec-v1-orange-gray-peach
+    type: core/concurrent-exec@v1
+    position:
+      x: 290
+      y: 1260
+    outputs:
+      exec[0]: ''
+      exec[1]: ''
+      exec[2]: ''
+      exec[3]: ''
+      exec[4]: ''
+  - id: wait-for-v1-tiger-coconut-silver
+    type: core/wait-for@v1
+    position:
+      x: 1420
+      y: 1020
+    inputs:
+      after: 5
+  - id: run-v1-monkey-plum-panda
+    type: core/run@v1
+    position:
+      x: 790
+      y: 10
+    inputs:
+      shell: python
+      script: |-
+        import sys
+        sys.stdout.write("Goroutine 1\n")
+  - id: run-v1-banana-octopus-pink
+    type: core/run@v1
+    position:
+      x: 1770
+      y: 850
+    inputs:
+      shell: python
+      script: |-
+        import sys
+        sys.stdout.write("Goroutine Done\n")
+  - id: run-v1-shark-purple-brown
+    type: core/run@v1
+    position:
+      x: 780
+      y: 520
+    inputs:
+      shell: python
+      script: |-
+        import time, sys
+        sys.stdout.write("Goroutine 2\n")
+        time.sleep(0.1)
+  - id: run-v1-dog-shark-panda
+    type: core/run@v1
+    position:
+      x: 790
+      y: 1040
+    inputs:
+      shell: python
+      script: |-
+        import time, sys
+        sys.stdout.write("Goroutine 3\n")
+        time.sleep(0.2)
+  - id: run-v1-squirrel-zebra-zebra
+    type: core/run@v1
+    position:
+      x: 790
+      y: 1550
+    inputs:
+      shell: python
+      script: |-
+        import time, sys
+        sys.stdout.write("Goroutine 4\n")
+        time.sleep(0.3)
+  - id: run-v1-orange-dog-brown
+    type: core/run@v1
+    position:
+      x: 790
+      y: 2070
+    inputs:
+      shell: python
+      script: |-
+        import time, sys
+        sys.stdout.write("Goroutine 5\n")
+        time.sleep(0.4)
+connections: []
+executions:
+  - src:
+      node: gh-start
+      port: exec
+    dst:
+      node: concurrent-exec-v1-orange-gray-peach
+      port: exec
+  - src:
+      node: concurrent-exec-v1-orange-gray-peach
+      port: exec[0]
+    dst:
+      node: run-v1-monkey-plum-panda
+      port: exec
+  - src:
+      node: concurrent-exec-v1-orange-gray-peach
+      port: exec[1]
+    dst:
+      node: run-v1-shark-purple-brown
+      port: exec
+  - src:
+      node: concurrent-exec-v1-orange-gray-peach
+      port: exec[2]
+    dst:
+      node: run-v1-dog-shark-panda
+      port: exec
+  - src:
+      node: wait-for-v1-tiger-coconut-silver
+      port: exec
+    dst:
+      node: run-v1-banana-octopus-pink
+      port: exec
+  - src:
+      node: concurrent-exec-v1-orange-gray-peach
+      port: exec[3]
+    dst:
+      node: run-v1-squirrel-zebra-zebra
+      port: exec
+  - src:
+      node: concurrent-exec-v1-orange-gray-peach
+      port: exec[4]
+    dst:
+      node: run-v1-orange-dog-brown
+      port: exec
+  - src:
+      node: run-v1-shark-purple-brown
+      port: exec-success
+    dst:
+      node: wait-for-v1-tiger-coconut-silver
+      port: exec
+  - src:
+      node: run-v1-dog-shark-panda
+      port: exec-success
+    dst:
+      node: wait-for-v1-tiger-coconut-silver
+      port: exec
+  - src:
+      node: run-v1-squirrel-zebra-zebra
+      port: exec-success
+    dst:
+      node: wait-for-v1-tiger-coconut-silver
+      port: exec
+  - src:
+      node: run-v1-monkey-plum-panda
+      port: exec-success
+    dst:
+      node: wait-for-v1-tiger-coconut-silver
+      port: exec
+  - src:
+      node: run-v1-orange-dog-brown
+      port: exec-success
+    dst:
+      node: wait-for-v1-tiger-coconut-silver
+      port: exec

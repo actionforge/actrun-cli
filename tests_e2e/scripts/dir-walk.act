@@ -1,0 +1,209 @@
+editor:
+  version:
+    created: v1.26.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 60
+      y: 10
+  - id: dir-walk-v1-starfruit-wolf-raspberry
+    type: core/dir-walk@v1
+    position:
+      x: 480
+      y: 750
+    inputs:
+      recursive: true
+      dirs: true
+      files: true
+      glob: ''
+      path: ''
+  - id: print-v1-orange-sheep-dragonfruit
+    type: core/print@v1
+    position:
+      x: 1550
+      y: 220
+    inputs:
+      values[0]: null
+      values[1]: null
+      values[2]: null
+      values[3]: null
+      values[4]: null
+  - id: env-get-v1-green-teal-horse
+    type: core/env-get@v1
+    position:
+      x: 30
+      y: 210
+    inputs:
+      env: WALK_GLOB
+  - id: env-get-v1-giraffe-teal-rabbit
+    type: core/env-get@v1
+    position:
+      x: 30
+      y: 620
+    inputs:
+      env: WALK_RECURSIVE
+  - id: env-get-v1-starfish-donkey-dragonfruit
+    type: core/env-get@v1
+    position:
+      x: 30
+      y: 770
+    inputs:
+      env: WALK_DIRS
+  - id: env-get-v1-apricot-grapefruit-red
+    type: core/env-get@v1
+    position:
+      x: 30
+      y: 970
+    inputs:
+      env: WALK_FILES
+  - id: string-fmt-v1-apricot-maroon-chicken
+    type: core/string-fmt@v1
+    position:
+      x: 880
+      y: 50
+    inputs:
+      substitutes[0]: null
+      fmt: 'Walk Glob: %v'
+  - id: string-fmt-v1-goose-boysenberry-persimmon
+    type: core/string-fmt@v1
+    position:
+      x: 890
+      y: 250
+    inputs:
+      substitutes[0]: null
+      fmt: 'Walk Recursive: %v'
+  - id: string-fmt-v1-jackfruit-squirrel-starfish
+    type: core/string-fmt@v1
+    position:
+      x: 890
+      y: 450
+    inputs:
+      substitutes[0]: null
+      fmt: 'Walk Dirs: %v'
+  - id: string-fmt-v1-jellyfish-peacock-orange
+    type: core/string-fmt@v1
+    position:
+      x: 890
+      y: 650
+    inputs:
+      substitutes[0]: null
+      fmt: 'Walk Files: %v'
+  - id: env-get-v1-papaya-coconut-beige
+    type: core/env-get@v1
+    position:
+      x: 30
+      y: 430
+    inputs:
+      env: WALK_PATH
+  - id: filepath-sort-v1-cat-donkey-ivory
+    type: core/filepath-sort@v1
+    position:
+      x: 1060
+      y: 880
+connections:
+  - src:
+      node: env-get-v1-green-teal-horse
+      port: env
+    dst:
+      node: dir-walk-v1-starfruit-wolf-raspberry
+      port: glob
+  - src:
+      node: env-get-v1-giraffe-teal-rabbit
+      port: env
+    dst:
+      node: dir-walk-v1-starfruit-wolf-raspberry
+      port: recursive
+  - src:
+      node: env-get-v1-starfish-donkey-dragonfruit
+      port: env
+    dst:
+      node: dir-walk-v1-starfruit-wolf-raspberry
+      port: dirs
+  - src:
+      node: env-get-v1-apricot-grapefruit-red
+      port: env
+    dst:
+      node: dir-walk-v1-starfruit-wolf-raspberry
+      port: files
+  - src:
+      node: env-get-v1-green-teal-horse
+      port: env
+    dst:
+      node: string-fmt-v1-apricot-maroon-chicken
+      port: substitutes[0]
+  - src:
+      node: env-get-v1-giraffe-teal-rabbit
+      port: env
+    dst:
+      node: string-fmt-v1-goose-boysenberry-persimmon
+      port: substitutes[0]
+  - src:
+      node: env-get-v1-starfish-donkey-dragonfruit
+      port: env
+    dst:
+      node: string-fmt-v1-jackfruit-squirrel-starfish
+      port: substitutes[0]
+  - src:
+      node: env-get-v1-apricot-grapefruit-red
+      port: env
+    dst:
+      node: string-fmt-v1-jellyfish-peacock-orange
+      port: substitutes[0]
+  - src:
+      node: string-fmt-v1-goose-boysenberry-persimmon
+      port: result
+    dst:
+      node: print-v1-orange-sheep-dragonfruit
+      port: values[1]
+  - src:
+      node: string-fmt-v1-jackfruit-squirrel-starfish
+      port: result
+    dst:
+      node: print-v1-orange-sheep-dragonfruit
+      port: values[2]
+  - src:
+      node: string-fmt-v1-jellyfish-peacock-orange
+      port: result
+    dst:
+      node: print-v1-orange-sheep-dragonfruit
+      port: values[3]
+  - src:
+      node: env-get-v1-papaya-coconut-beige
+      port: env
+    dst:
+      node: dir-walk-v1-starfruit-wolf-raspberry
+      port: path
+  - src:
+      node: dir-walk-v1-starfruit-wolf-raspberry
+      port: items_rel
+    dst:
+      node: filepath-sort-v1-cat-donkey-ivory
+      port: paths
+  - src:
+      node: filepath-sort-v1-cat-donkey-ivory
+      port: result
+    dst:
+      node: print-v1-orange-sheep-dragonfruit
+      port: values[4]
+  - src:
+      node: string-fmt-v1-apricot-maroon-chicken
+      port: result
+    dst:
+      node: print-v1-orange-sheep-dragonfruit
+      port: values[0]
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: dir-walk-v1-starfruit-wolf-raspberry
+      port: exec
+  - src:
+      node: dir-walk-v1-starfruit-wolf-raspberry
+      port: exec-success
+    dst:
+      node: print-v1-orange-sheep-dragonfruit
+      port: exec

@@ -1,0 +1,34 @@
+build hasn't expired yet
+looking for value: 'env_file'
+  no value (is optional) found for: 'env_file'
+looking for value: 'config_file'
+  found value in: 'env (shell)'
+  evaluated to: '[REDACTED]/s3_aws.actconfig'
+looking for value: 'concurrency'
+  no value (is optional) found for: 'concurrency'
+looking for value: 'graph_file'
+  found value in: 'env (shell)'
+  evaluated to: 's3_aws.act'
+looking for value: 'session_token'
+  no value (is optional) found for: 'session_token'
+looking for value: 'create_debug_session'
+  found value in flags
+  evaluated to: 'false'
+PushNodeVisit: start, execute: true
+🟢 Execute 'Storage Upload (storage-upload-v1-butterfly-coconut-gray)'
+PushNodeVisit: storage-upload-v1-butterfly-coconut-gray, execute: true
+PushNodeVisit: const-string-v1-cherry-banana-koala, execute: false
+PushNodeVisit: storage-provider-s3-v1-zebra-apple-squirrel, execute: false
+PushNodeVisit: env-get-v1-giraffe-koala-pineapple, execute: false
+PushNodeVisit: env-get-v1-pineapple-green-gold, execute: false
+PushNodeVisit: credentials-accesskey-v1-passionfruit-monkey-cherry, execute: false
+🟢 Execute 'Storage Download (storage-download-v1-apple-brown-plum)'
+PushNodeVisit: storage-download-v1-apple-brown-plum, execute: true
+PushNodeVisit: storage-provider-s3-v1-zebra-apple-squirrel, execute: false
+PushNodeVisit: env-get-v1-giraffe-koala-pineapple, execute: false
+PushNodeVisit: env-get-v1-pineapple-green-gold, execute: false
+PushNodeVisit: credentials-accesskey-v1-passionfruit-monkey-cherry, execute: false
+🟢 Execute 'Print (print-v1-tiger-shark-zebra)'
+PushNodeVisit: print-v1-tiger-shark-zebra, execute: true
+PushNodeVisit: (cached) storage-download-v1-apple-brown-plum, execute: false
+this is a test file

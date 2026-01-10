@@ -1,0 +1,8 @@
+echo "Test Debug Session"
+
+set -o pipefail
+
+$PYTHON_EXECUTABLE -m pip install requests websockets cryptography
+
+# sort the output to make test stable
+#! test $PYTHON_EXECUTABLE $ACT_GRAPH_FILES_DIR/debug_session.py | sort

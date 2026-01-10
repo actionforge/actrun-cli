@@ -1,0 +1,13 @@
+yaml-version: 3.0
+
+id: core/group-outputs
+name: Group Output
+version: 1
+short_desc: Output of a group node
+show_in_docs: false
+entry: true
+style:
+  header:
+    background: "linear-gradient(to left, #027867, rgb(21, 69, 130))"
+  body:
+    background: "linear-gradient(to left, #02786799, rgb(21, 69, 130, 0.5))"

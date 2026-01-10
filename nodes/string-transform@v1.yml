@@ -1,0 +1,70 @@
+yaml-version: 3.0
+id: core/string-transform
+name: String Transform
+category: processing
+icon: tablerLetterCase
+version: 1
+style:
+  header:
+    background: "#6e6e6e"
+  body:
+    background: "#423f3f"
+short_desc: Transform and manipulate strings using various casing styles and trimming or reversing operations.
+addendum: |
+  ## Transformation Options
+
+  ### Casing:
+  - `lower`: Convert to lowercase
+  - `upper`: Convert to uppercase
+  - `title`: Convert to title case
+  - `camel`: Convert to camelCase
+  - `pascal`: Convert to PascalCase
+  - `snake`: Convert to snake_case
+  - `alternating`: Convert to aLtErNaTiNg CaSe
+
+  ### Other Operations:
+  - `reverse`: Reverse the string
+  - `trim`: Trim whitespace from both ends
+  - `trim_left`: Trim whitespace from the left
+  - `trim_right`: Trim whitespace from the right
+
+compact: true
+outputs:
+  result:
+    type: string
+    index: 0
+    desc: Transformed string
+inputs:
+  input:
+    name: Input
+    type: string
+    index: 0
+    desc: String to transform
+  op:
+    type: option
+    index: 1
+    default: lower
+    desc: Transformation operation to apply
+    options:
+      - name: Lowercase
+        value: lower
+      - name: Uppercase
+        value: upper
+      - name: Title Case
+        value: title
+      - name: Camel Case
+        value: camel
+      - name: Pascal Case
+        value: pascal
+      - name: Snake Case
+        value: snake
+      - name: Alternating Case
+        value: alternating
+      - name: Reverse
+        value: reverse
+      - name: Trim
+        value: trim
+      - name: Trim Left
+        value: trim_left
+      - name: Trim Right
+        value: trim_right

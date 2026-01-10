@@ -1,0 +1,731 @@
+build hasn't expired yet
+looking for value: 'env_file'
+  no value (is optional) found for: 'env_file'
+looking for value: 'config_file'
+  no value (is optional) found for: 'config_file'
+looking for value: 'concurrency'
+  no value (is optional) found for: 'concurrency'
+looking for value: 'graph_file'
+  found value in: 'env (shell)'
+  evaluated to: 'array_add_extended.act'
+looking for value: 'session_token'
+  no value (is optional) found for: 'session_token'
+looking for value: 'create_debug_session'
+  found value in flags
+  evaluated to: 'false'
+PushNodeVisit: start, execute: true
+🟢 Execute 'For Loop (for-loop-v1-orange-purple-cranberry)'
+PushNodeVisit: for-loop-v1-orange-purple-cranberry, execute: true
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: string-array-v1-banana-dragonfruit-horse, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Array Add (array-add-v1-seahorse-chicken-butterfly)'
+PushNodeVisit: array-add-v1-seahorse-chicken-butterfly, execute: true
+PushNodeVisit: select-v1-ostrich-silver-mango, execute: false
+PushNodeVisit: math-compare-op-v1-grapefruit-brown-crab, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: (cached) for-loop-v1-orange-purple-cranberry, execute: false
+🟢 Execute 'Print (print-v1-peach-whale-strawberry)'
+PushNodeVisit: print-v1-peach-whale-strawberry, execute: true
+PushNodeVisit: (cached) array-add-v1-seahorse-chicken-butterfly, execute: false
+PushNodeVisit: string-array-v1-banana-dragonfruit-horse, execute: false
+[foo bar bas 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100]
+[foo bar bas]

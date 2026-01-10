@@ -1,0 +1,41 @@
+yaml-version: 3.0
+
+id: core/file-read
+name: File Read
+version: 1
+icon: tablerFolderOpen
+category: filesystem
+short_desc: Read a file from the file system via a lstream.
+style:
+  header:
+    background: rgb(197, 147, 31)
+  body:
+    background: "rgb(164 115 29)"
+outputs:
+  exec-success:
+    name: Success
+    exec: true
+    index: 0
+  exec-err:
+    name: Error
+    exec: true
+    index: 1
+  exists:
+    name: Exists
+    type: bool
+    index: 2
+  data:
+    name: Data
+    type: stream
+    index: 3
+    desc: A data stream of the file's content.
+inputs:
+  exec:
+    exec: true
+    index: 0
+  path:
+    name: Path
+    type: string
+    index: 2
+    required: true
+    desc: The path to the file to read.

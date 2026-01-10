@@ -1,0 +1,291 @@
+editor:
+  version:
+    created: v1.34.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: -910
+      y: 390
+  - id: file-compress-v1-pink-pineapple-lime
+    type: core/file-compress@v1
+    position:
+      x: 820
+      y: 350
+  - id: print-v1-watermelon-tangerine-dog
+    type: core/print@v1
+    position:
+      x: 2550
+      y: 80
+    inputs:
+      values[0]: null
+  - id: dir-walk-v1-plum-violet-coral
+    type: core/dir-walk@v1
+    position:
+      x: 140
+      y: 250
+    inputs:
+      recursive: true
+      dirs: true
+      files: true
+      path: dir
+  - id: file-write-v1-pear-lion-dog
+    type: core/file-write@v1
+    position:
+      x: 1860
+      y: 220
+    inputs:
+      path: ''
+  - id: string-fmt-v1-peach-plum-zebra
+    type: core/string-fmt@v1
+    position:
+      x: 1290
+      y: 60
+    inputs:
+      substitutes[0]: null
+      fmt: '%v%v'
+      substitutes[1]: null
+  - id: filepath-location-v1-camel-dragonfruit-durian
+    type: core/filepath-location@v1
+    position:
+      x: -1160
+      y: 200
+    inputs:
+      location: current_graph
+  - id: filepath-op-v1-crab-guava-blueberry
+    type: core/filepath-op@v1
+    position:
+      x: -690
+      y: 180
+    inputs:
+      op: dir
+  - id: filepath-join-v1-magenta-giraffe-duck
+    type: core/filepath-join@v1
+    position:
+      x: 800
+      y: 80
+    inputs:
+      segments[0]: null
+      segments[1]: compressed
+  - id: array-get-v1-papaya-violet-lime
+    type: core/array-get@v1
+    position:
+      x: 30
+      y: 810
+    inputs:
+      bound_check: true
+  - id: filepath-join-v1-elephant-gooseberry-shark
+    type: core/filepath-join@v1
+    position:
+      x: -330
+      y: 300
+    inputs:
+      segments[0]: null
+      segments[1]: compress_me
+  - id: string-fmt-v1-turquoise-rabbit-starfish
+    type: core/string-fmt@v1
+    position:
+      x: 2010
+      y: 480
+    inputs:
+      substitutes[0]: null
+      fmt: created %v
+  - id: filepath-op-v1-monkey-fox-peach
+    type: core/filepath-op@v1
+    position:
+      x: 1730
+      y: 590
+    inputs:
+      op: base
+  - id: string-array-v1-strawberry-mulberry-whale
+    type: core/string-array@v1
+    position:
+      x: 230
+      y: 680
+    inputs:
+      inputs[0]: c
+  - id: array-append-v1-green-maroon-silver
+    type: core/array-append@v1
+    position:
+      x: 540
+      y: 360
+  - id: filepath-join-v1-brown-cranberry-squirrel
+    type: core/filepath-join@v1
+    position:
+      x: -330
+      y: 510
+    inputs:
+      segments[0]: null
+      segments[1]: compress_me2
+connections:
+  - src:
+      node: file-compress-v1-pink-pineapple-lime
+      port: data
+    dst:
+      node: file-write-v1-pear-lion-dog
+      port: data
+    isLoop: false
+  - src:
+      node: string-fmt-v1-peach-plum-zebra
+      port: result
+    dst:
+      node: file-write-v1-pear-lion-dog
+      port: path
+    isLoop: false
+  - src:
+      node: filepath-location-v1-camel-dragonfruit-durian
+      port: result
+    dst:
+      node: filepath-op-v1-crab-guava-blueberry
+      port: path
+    isLoop: false
+  - src:
+      node: filepath-op-v1-crab-guava-blueberry
+      port: result
+    dst:
+      node: filepath-join-v1-magenta-giraffe-duck
+      port: segments[0]
+    isLoop: false
+  - src:
+      node: filepath-join-v1-magenta-giraffe-duck
+      port: result
+    dst:
+      node: string-fmt-v1-peach-plum-zebra
+      port: substitutes[0]
+    isLoop: false
+  - src:
+      node: file-compress-v1-pink-pineapple-lime
+      port: suffix
+    dst:
+      node: string-fmt-v1-peach-plum-zebra
+      port: substitutes[1]
+    isLoop: false
+  - src:
+      node: start
+      port: args
+    dst:
+      node: array-get-v1-papaya-violet-lime
+      port: array
+    isLoop: false
+  - src:
+      node: array-get-v1-papaya-violet-lime
+      port: result
+    dst:
+      node: file-compress-v1-pink-pineapple-lime
+      port: format
+    isLoop: false
+  - src:
+      node: filepath-op-v1-crab-guava-blueberry
+      port: result
+    dst:
+      node: filepath-join-v1-elephant-gooseberry-shark
+      port: segments[0]
+    isLoop: false
+  - src:
+      node: filepath-join-v1-elephant-gooseberry-shark
+      port: result
+    dst:
+      node: dir-walk-v1-plum-violet-coral
+      port: path
+    isLoop: false
+  - src:
+      node: string-fmt-v1-turquoise-rabbit-starfish
+      port: result
+    dst:
+      node: print-v1-watermelon-tangerine-dog
+      port: values[0]
+    isLoop: false
+  - src:
+      node: filepath-op-v1-monkey-fox-peach
+      port: result
+    dst:
+      node: string-fmt-v1-turquoise-rabbit-starfish
+      port: substitutes[0]
+    isLoop: false
+  - src:
+      node: dir-walk-v1-plum-violet-coral
+      port: items_abs
+    dst:
+      node: array-append-v1-green-maroon-silver
+      port: array1
+    isLoop: false
+  - src:
+      node: filepath-op-v1-crab-guava-blueberry
+      port: result
+    dst:
+      node: filepath-join-v1-brown-cranberry-squirrel
+      port: segments[0]
+    isLoop: false
+  - src:
+      node: filepath-join-v1-brown-cranberry-squirrel
+      port: result
+    dst:
+      node: string-array-v1-strawberry-mulberry-whale
+      port: inputs[0]
+    isLoop: false
+  - src:
+      node: string-array-v1-strawberry-mulberry-whale
+      port: array
+    dst:
+      node: array-append-v1-green-maroon-silver
+      port: array2
+    isLoop: false
+  - src:
+      node: array-append-v1-green-maroon-silver
+      port: array
+    dst:
+      node: file-compress-v1-pink-pineapple-lime
+      port: paths
+    isLoop: false
+  - src:
+      node: string-fmt-v1-peach-plum-zebra
+      port: result
+    dst:
+      node: filepath-op-v1-monkey-fox-peach
+      port: path
+    isLoop: false
+  - src:
+      node: filepath-op-v1-crab-guava-blueberry
+      port: result
+    dst:
+      node: file-compress-v1-pink-pineapple-lime
+      port: base_path
+    isLoop: false
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: dir-walk-v1-plum-violet-coral
+      port: exec
+    isLoop: false
+  - src:
+      node: file-compress-v1-pink-pineapple-lime
+      port: exec-success
+    dst:
+      node: file-write-v1-pear-lion-dog
+      port: exec
+    isLoop: false
+  - src:
+      node: file-write-v1-pear-lion-dog
+      port: exec-success
+    dst:
+      node: print-v1-watermelon-tangerine-dog
+      port: exec
+    isLoop: false
+  - src:
+      node: dir-walk-v1-plum-violet-coral
+      port: exec-success
+    dst:
+      node: array-append-v1-green-maroon-silver
+      port: exec
+    isLoop: false
+  - src:
+      node: array-append-v1-green-maroon-silver
+      port: exec
+    dst:
+      node: file-compress-v1-pink-pineapple-lime
+      port: exec
+    isLoop: false

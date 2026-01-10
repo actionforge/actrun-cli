@@ -1,0 +1,67 @@
+editor:
+  version:
+    created: v1.28.1
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: -320
+      y: -100
+  - id: print-v1-gooseberry-rabbit-kiwano
+    type: core/print@v1
+    position:
+      x: 530
+      y: -60
+    inputs:
+      values[0]: null
+      values[1]: null
+      values[2]: null
+  - id: string-split-v1-elephant-orange-nectarine
+    type: core/string-split@v1
+    position:
+      x: -300
+      y: 190
+    inputs:
+      string: ''
+      delimiter: ;
+  - id: const-string-v1-pear-goose-coconut
+    type: core/const-string@v1
+    position:
+      x: -710
+      y: 310
+    inputs:
+      value: foo;bar;test
+connections:
+  - src:
+      node: const-string-v1-pear-goose-coconut
+      port: result
+    dst:
+      node: string-split-v1-elephant-orange-nectarine
+      port: string
+  - src:
+      node: string-split-v1-elephant-orange-nectarine
+      port: segments
+    dst:
+      node: print-v1-gooseberry-rabbit-kiwano
+      port: values[0]
+  - src:
+      node: string-split-v1-elephant-orange-nectarine
+      port: segments
+    dst:
+      node: print-v1-gooseberry-rabbit-kiwano
+      port: values[1]
+  - src:
+      node: string-split-v1-elephant-orange-nectarine
+      port: segments
+    dst:
+      node: print-v1-gooseberry-rabbit-kiwano
+      port: values[2]
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: print-v1-gooseberry-rabbit-kiwano
+      port: exec

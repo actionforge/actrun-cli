@@ -1,0 +1,58 @@
+yaml-version: 3.0
+
+id: core/storage-walk
+name: Storage Walk
+version: 1
+category: network
+icon: tablerWalk
+short_desc: Node to list objects on a remote storage.
+long_desc: In order to avoid unnecessary outbound calls, this node has no recursive option and only lists items at the specified location.
+style:
+  header:
+    background: "#c45d0c"
+  body:
+    background: rgb(142 82 35)
+outputs:
+  exec-success:
+    name: Success
+    exec: true
+    index: 0
+  exec-err:
+    name: Error
+    exec: true
+    index: 1
+    desc: Triggered if an error occured while listing objects. Also fails if an invalid glob pattern is set.
+  dirs:
+    name: Directories
+    type: "[]string"
+    index: 2
+    desc: The list of directories at the specified location.
+  objects:
+    name: Object Paths
+    type: "[]string"
+    index: 3
+    desc: The list of object items at the specified location.
+  provider:
+    type: storage-provider
+    index: 4
+inputs:
+  exec:
+    exec: true
+    index:
+  dir:
+    name: Dir Path
+    hint: "E.g. my-folder/"
+    type: string
+    index: 1
+    desc: The directory prefix for the remote storage. Must **not** start with a slash. If left empty, it will list all objects at the root level. When a directory path is specified, only the first level of that directory will be listed. For subdirectories, use only forward slashes in the path.
+  glob:
+    type: string
+    name: Glob
+    desc: The glob to match. It is applied on both, files and directories.  The remote directory is walked in full, and the glob filter is then applied locally. See [Glob Pattern](./../../../reference/glob-pattern.md).
+    index: 2
+    hint: "E.g. *.txt"
+  provider:
+    name: Provider
+    type: storage-provider
+    index: 3
+    required: true

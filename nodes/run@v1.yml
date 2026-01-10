@@ -1,0 +1,171 @@
+yaml-version: 3.0
+
+id: core/run
+name: Run Script
+version: 1
+category: system
+icon: octTerminal
+style:
+  header:
+    background: "#3794ff"
+  body:
+    background: "#1f4f86"
+short_desc: Run a script using various shells.
+long_desc: Spawns a child process of the shell and executes the script in it.
+addendum: |
+  
+  ### Python
+
+  <img src="/icons/python.svg" width="128" height="128">
+
+  **Python** is a high-level, interpreted programming language that is widely used for general-purpose programming. It is available by default on most systems. Python scripts can be run using the `python` command.
+
+  In order to determine which Python installation is used, `actrun` will first look for an executable named `python3` and then `python`. Any subsequent node run with this shell will use the same Python interpreter, no matter if the `PATH` environment variable changes after the first Run node is executed. If no Python installation is found, the node will fail with an error message.
+
+  In order to use a specific Python version, it is recommended to use the [Run Executable](./../run-exec/v1.md) node with the full path to the Python executable.
+
+  If you need to install a specific Python version, check out the [Python Downloads](https://www.python.org/downloads/) page.
+
+  ```python title="How to print a hello world"
+  print("Hello, World!")
+  ```
+  ### Bash
+
+  <img src="/icons/bash.svg" width="128" height="128">
+
+  **Bash** s available by default on **Linux** and **macOS** systems. Bash  (`bash.exe`) isn't included by default on **Windows**. 
+
+  === ":fontawesome-brands-windows: Bash for Windows"
+
+      There are multiple ways to install Bash on Windows. Once you install one of the packages below, `actrun` can use it to run scripts.
+      
+      :information: After the installation of a package below, you might need to restart your terminal or process in order for actrun picking up the new location of the Bash shell.
+
+      - :star: [MinGW](https://sourceforge.net/projects/mingw/): A native Windows port of the GNU Compiler Collection. It includes a Bash shell.
+
+      - [Msys2](https://www.msys2.org/): A collection of tools and libraries providing a Unix-like environment on Windows. It includes a Bash shell.
+
+      - [Git for Windows](https://git-scm.com/downloads/win) While we don't need really Git for `actrun`, it comes with a Bash shell that we can use.
+
+      - [Cygwin](https://www.cygwin.com/install.html): An extensive collection of tools from the Unix world, including a Bash shell, that can be run on Windows. Should only be used if you need more than just a Bash shell.
+
+      !!! note
+
+          For the experts amongst you, there is also [Windows Subsystem for Linux (WSL)](https://learn.microsoft.com/en-us/windows/wsl/install). But this node doesn't support the WSL Bash, even if it's the only one available. Starting up an inactive WSL Linux just to use the Bash can slow down your action graph too much. If you really want to use WSL, it's better to run `wsl.exe` yourself via the [Run Executable](./../run-exec/v1.md) node.
+
+      ```bash title="How to print a hello world"
+      echo "Hello, World!"
+      ```
+
+  <a name="pwsh"></a>
+  ### Powershell Core (aka pwsh)
+
+  <img src="/icons/pwsh.svg" width="128" height="128">
+
+  Powershell is a shell originally developed by Microsoft for task automation and configuration management. The first 5 versions were simply called **Windows PowerShell** `powershell.exe` and the latest one is available by default on Windows systems.
+  
+  The newer version v6 and higher is called **PowerShell Core** (`pwsh.exe`) and needs to be installed manually, on Linux, macOS and for some reason even on Windows 🤷‍♂️.
+
+  === ":fontawesome-brands-windows: Pwsh for Windows"
+
+      To use *PowerShell Core* on Windows, you can download it from [:star: GitHub Releases](https://github.com/PowerShell/PowerShell/releases/) or via the unnecessarily complicated installation procedure on [Microsoft.com](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.4#install-powershell-using-winget-recommended).
+
+      Alternatively just execute the two commands below in your terminal and you're good to go.
+
+      ```shell
+      winget search Microsoft.PowerShell
+      winget install --id Microsoft.PowerShell --source winget
+      ```
+
+      ```powershell title="How to print a hello world"
+      Write-Host "Hello, World!"
+      ```
+
+  === ":fontawesome-brands-windows: Pwsh for macOS"
+
+      To use *PowerShell Core* on Windows, you can download it from [:star: GitHub Releases](https://github.com/PowerShell/PowerShell/releases/) or via the unnecessarily complicated installation procedure on [Microsoft.com](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.4#install-powershell-using-winget-recommended).
+
+  === ":fontawesome-brands-windows: Pwsh for Linux"
+
+      To use *PowerShell Core* on Linux, you can install via [GitHub Releases](https://github.com/powershell/powershell/releases) or via the official installation manual [here](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-linux?view=powershell-7.4).
+
+      :star: The easiest way is to install it via **snap**:
+
+      ```
+      sudo snap install powershell --classic
+      ```
+
+      ```powershell title="How to print a hello world"
+      Write-Host "Hello, World!"
+      ```
+outputs:
+  exec-success:
+    name: Success
+    exec: true
+    index: 0
+  exec-err:
+    name: Error
+    exec: true
+    index: 1
+  output:
+    type: string
+    name: Output
+    index: 2
+  exit_code:
+    name: Exit Code
+    type: number
+    index: 3
+inputs:
+  exec:
+    exec: true
+    index: 0
+  shell:
+    name: Shell
+    type: option
+    desc: The shell to use to run the script. Check the [addendum](#addendum) below for more information.
+    index: 1
+    default: bash
+    options:
+      - name: Bash
+        value: bash
+      - name: Python
+        value: python
+      - name: Pwsh
+        value: pwsh
+      - name: Windows CMD
+        value: cmd
+  script:
+    type: string
+    name: Script
+    index: 2
+    multiline: true
+    desc: The script to run.
+  args:
+    name: Args
+    type: "[]string"
+    desc: Arguments to pass to the script.
+    index: 3
+  stdin:
+    type: stream
+    name: Stdin
+    desc: Stream to pass to the scripts stdin.
+    index: 4
+  print:
+    name: Print
+    type: option
+    desc: Option to capture the print to the stdout, to the output of the node or both.
+    index: 5
+    default: both
+    options:
+      - name: Output
+        value: output
+      - name: Stdout
+        value: stdout
+      - name: Both
+        value: both
+  env:
+    name: Environment Vars
+    type: "[]string"
+    index: 6
+    hint: "MY_VAR=VALUE"
+    desc: Environment variables to pass to the script.

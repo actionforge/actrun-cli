@@ -1,0 +1,68 @@
+editor:
+  version:
+    created: v1.28.1
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: -960
+      y: 110
+  - id: print-v1-lychee-apple-starfruit
+    type: core/print@v1
+    position:
+      x: 140
+      y: -110
+    inputs:
+      values[0]: null
+  - id: random-number-v1-maroon-wolf-yellow
+    type: core/random-number@v1
+    position:
+      x: -600
+      y: 360
+    inputs:
+      min: 0
+      max: 100
+      seed: 1234
+  - id: print-v1-duck-passionfruit-crab
+    type: core/print@v1
+    position:
+      x: 130
+      y: 170
+    inputs:
+      values[0]: null
+  - id: for-loop-v1-orange-persimmon-sheep
+    type: core/for-loop@v1
+    position:
+      x: -550
+      y: -60
+    inputs:
+      first_index: 0
+      last_index: 10
+connections:
+  - src:
+      node: random-number-v1-maroon-wolf-yellow
+      port: number
+    dst:
+      node: print-v1-lychee-apple-starfruit
+      port: values[0]
+  - src:
+      node: random-number-v1-maroon-wolf-yellow
+      port: number
+    dst:
+      node: print-v1-duck-passionfruit-crab
+      port: values[0]
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: for-loop-v1-orange-persimmon-sheep
+      port: exec
+  - src:
+      node: for-loop-v1-orange-persimmon-sheep
+      port: exec-body
+    dst:
+      node: print-v1-lychee-apple-starfruit
+      port: exec

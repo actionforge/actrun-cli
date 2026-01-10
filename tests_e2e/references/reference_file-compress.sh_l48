@@ -1,0 +1,8 @@
+extracted_tar/compress_me/file1.txt 12
+extracted_tar/compress_me/subdir/bar/bar.txt 15
+extracted_tar/compress_me/subdir/foo1.txt 13
+extracted_tar/compress_me/subdir/foo2.txt 14
+extracted_tar/compress_me/subdir/foo3.txt 15
+extracted_tar/compress_me2/a.txt 3
+extracted_tar/compress_me2/subdir/b.txt 4
+extracted_tar/compress_me2/subdir/c.txt 5

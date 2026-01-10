@@ -1,0 +1,20 @@
+🟢 Execute 'Run Python Embedded (run-python-embedded-v1-lion-banana-guava)'
+hello from python:  6.48074069840786
+🟢 Execute 'Print (print-v1-giraffe-orange-jackfruit)'
+
+🟢 Execute 'Run Python Embedded (run-python-embedded-v1-lion-banana-guava)'
+hello from python:  6.48074069840786
+🟢 Execute 'Print (print-v1-giraffe-orange-jackfruit)'
+hello from the return value of python: 6.48074069840786
+🟢 Execute 'Run Python Embedded (run-python-embedded-v1-lion-banana-guava)'
+hello from python:  6.48074069840786
+error:
+   1: execute 'Start' (start)
+   2: execute 'Run Python Embedded' (run-python-embedded-v1-lion-banana-guava)
+      error during execution
+       ↳ unsupported return type: <class 'dict'>
+
+
+
+hint:
+  only 'bool', 'float', 'int' and 'str' can be returned

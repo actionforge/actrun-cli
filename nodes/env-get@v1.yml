@@ -1,0 +1,32 @@
+yaml-version: 3.0
+id: core/env-get
+version: 1
+name: Get Environment Variable
+icon: tablerVariable
+category: system
+short_desc: Gets the value of an environment variable by its name.
+long_desc: 'This node retrieves the value of a specified environment variable from the execution state.
+
+
+  If the environment variable does not exist, the node will output an empty string instead of failing.
+
+  '
+style:
+  header:
+    background: "#3794ff"
+  body:
+    background: "#1f4f86"
+inputs:
+  env:
+    name: Name
+    type: string
+    desc: The name of the environment variable to get.
+    default: ""
+    hint: MY_VAR
+    index: 0
+outputs:
+  env:
+    name: Value
+    type: string
+    desc: The value of the environment variable. Returns an empty string if not found.
+    index: 1

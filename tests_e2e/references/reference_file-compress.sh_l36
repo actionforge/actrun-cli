@@ -1,0 +1,8 @@
+compress_me/file1.txt
+compress_me/subdir/bar/bar.txt
+compress_me/subdir/foo1.txt
+compress_me/subdir/foo2.txt
+compress_me/subdir/foo3.txt
+compress_me2/a.txt
+compress_me2/subdir/b.txt
+compress_me2/subdir/c.txt

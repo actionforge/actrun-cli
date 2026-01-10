@@ -1,0 +1,148 @@
+build hasn't expired yet
+looking for value: 'env_file'
+  no value (is optional) found for: 'env_file'
+looking for value: 'config_file'
+  no value (is optional) found for: 'config_file'
+looking for value: 'concurrency'
+  no value (is optional) found for: 'concurrency'
+looking for value: 'graph_file'
+  found value in: 'env (shell)'
+  evaluated to: 'hash.act'
+looking for value: 'session_token'
+  no value (is optional) found for: 'session_token'
+looking for value: 'create_debug_session'
+  found value in flags
+  evaluated to: 'false'
+PushNodeVisit: start, execute: true
+🟢 Execute 'For Loop (for-loop-v1-monkey-elephant-pineapple)'
+PushNodeVisit: for-loop-v1-monkey-elephant-pineapple, execute: true
+🟢 Execute 'Hash (hash-v1-blue-zebra-strawberry)'
+PushNodeVisit: hash-v1-blue-zebra-strawberry, execute: true
+PushNodeVisit: const-string-v1-purple-green-parrot, execute: false
+PushNodeVisit: (cached) for-loop-v1-monkey-elephant-pineapple, execute: false
+🟢 Execute 'Print (print-v1-monkey-pomegranate-lion)'
+PushNodeVisit: print-v1-monkey-pomegranate-lion, execute: true
+PushNodeVisit: (cached) for-loop-v1-monkey-elephant-pineapple, execute: false
+PushNodeVisit: (cached) hash-v1-blue-zebra-strawberry, execute: false
+0
+2aae6c35c94fcfb415dbe95f408b9ce91ee846ed
+🟢 Execute 'Hash (hash-v1-blue-zebra-strawberry)'
+PushNodeVisit: hash-v1-blue-zebra-strawberry, execute: true
+PushNodeVisit: const-string-v1-purple-green-parrot, execute: false
+PushNodeVisit: (cached) for-loop-v1-monkey-elephant-pineapple, execute: false
+🟢 Execute 'Print (print-v1-monkey-pomegranate-lion)'
+PushNodeVisit: print-v1-monkey-pomegranate-lion, execute: true
+PushNodeVisit: (cached) for-loop-v1-monkey-elephant-pineapple, execute: false
+PushNodeVisit: (cached) hash-v1-blue-zebra-strawberry, execute: false
+1
+2f05477fc24bb4faefd86517156dafdecec45b8ad3cf2522a563582b
+🟢 Execute 'Hash (hash-v1-blue-zebra-strawberry)'
+PushNodeVisit: hash-v1-blue-zebra-strawberry, execute: true
+PushNodeVisit: const-string-v1-purple-green-parrot, execute: false
+PushNodeVisit: (cached) for-loop-v1-monkey-elephant-pineapple, execute: false
+🟢 Execute 'Print (print-v1-monkey-pomegranate-lion)'
+PushNodeVisit: print-v1-monkey-pomegranate-lion, execute: true
+PushNodeVisit: (cached) for-loop-v1-monkey-elephant-pineapple, execute: false
+PushNodeVisit: (cached) hash-v1-blue-zebra-strawberry, execute: false
+2
+b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9
+🟢 Execute 'Hash (hash-v1-blue-zebra-strawberry)'
+PushNodeVisit: hash-v1-blue-zebra-strawberry, execute: true
+PushNodeVisit: const-string-v1-purple-green-parrot, execute: false
+PushNodeVisit: (cached) for-loop-v1-monkey-elephant-pineapple, execute: false
+🟢 Execute 'Print (print-v1-monkey-pomegranate-lion)'
+PushNodeVisit: print-v1-monkey-pomegranate-lion, execute: true
+PushNodeVisit: (cached) for-loop-v1-monkey-elephant-pineapple, execute: false
+PushNodeVisit: (cached) hash-v1-blue-zebra-strawberry, execute: false
+3
+fdbd8e75a67f29f701a4e040385e2e23986303ea10239211af907fcbb83578b3e417cb71ce646efd0819dd8c088de1bd
+🟢 Execute 'Hash (hash-v1-blue-zebra-strawberry)'
+PushNodeVisit: hash-v1-blue-zebra-strawberry, execute: true
+PushNodeVisit: const-string-v1-purple-green-parrot, execute: false
+PushNodeVisit: (cached) for-loop-v1-monkey-elephant-pineapple, execute: false
+🟢 Execute 'Print (print-v1-monkey-pomegranate-lion)'
+PushNodeVisit: print-v1-monkey-pomegranate-lion, execute: true
+PushNodeVisit: (cached) for-loop-v1-monkey-elephant-pineapple, execute: false
+PushNodeVisit: (cached) hash-v1-blue-zebra-strawberry, execute: false
+4
+309ecc489c12d6eb4cc40f50c902f2b4d0ed77ee511a7c7a9bcd3ca86d4cd86f989dd35bc5ff499670da34255b45b0cfd830e81f605dcf7dc5542e93ae9cd76f
+🟢 Execute 'Hash (hash-v1-blue-zebra-strawberry)'
+PushNodeVisit: hash-v1-blue-zebra-strawberry, execute: true
+PushNodeVisit: const-string-v1-purple-green-parrot, execute: false
+PushNodeVisit: (cached) for-loop-v1-monkey-elephant-pineapple, execute: false
+🟢 Execute 'Print (print-v1-monkey-pomegranate-lion)'
+PushNodeVisit: print-v1-monkey-pomegranate-lion, execute: true
+PushNodeVisit: (cached) for-loop-v1-monkey-elephant-pineapple, execute: false
+PushNodeVisit: (cached) hash-v1-blue-zebra-strawberry, execute: false
+5
+644bcc7e564373040999aac89e7622f3ca71fba1d972fd94a31c3bfbf24e3938
+🟢 Execute 'Hash (hash-v1-blue-zebra-strawberry)'
+PushNodeVisit: hash-v1-blue-zebra-strawberry, execute: true
+PushNodeVisit: const-string-v1-purple-green-parrot, execute: false
+PushNodeVisit: (cached) for-loop-v1-monkey-elephant-pineapple, execute: false
+🟢 Execute 'Print (print-v1-monkey-pomegranate-lion)'
+PushNodeVisit: print-v1-monkey-pomegranate-lion, execute: true
+PushNodeVisit: (cached) for-loop-v1-monkey-elephant-pineapple, execute: false
+PushNodeVisit: (cached) hash-v1-blue-zebra-strawberry, execute: false
+6
+83bff28dde1b1bf5810071c6643c08e5b05bdb836effd70b403ea8ea0a634dc4997eb1053aa3593f590f9c63630dd90b
+🟢 Execute 'Hash (hash-v1-blue-zebra-strawberry)'
+PushNodeVisit: hash-v1-blue-zebra-strawberry, execute: true
+PushNodeVisit: const-string-v1-purple-green-parrot, execute: false
+PushNodeVisit: (cached) for-loop-v1-monkey-elephant-pineapple, execute: false
+🟢 Execute 'Print (print-v1-monkey-pomegranate-lion)'
+PushNodeVisit: print-v1-monkey-pomegranate-lion, execute: true
+PushNodeVisit: (cached) for-loop-v1-monkey-elephant-pineapple, execute: false
+PushNodeVisit: (cached) hash-v1-blue-zebra-strawberry, execute: false
+7
+840006653e9ac9e95117a15c915caab81662918e925de9e004f774ff82d7079a40d4d27b1b372657c61d46d470304c88c788b3a4527ad074d1dccbee5dbaa99a
+🟢 Execute 'Hash (hash-v1-blue-zebra-strawberry)'
+PushNodeVisit: hash-v1-blue-zebra-strawberry, execute: true
+PushNodeVisit: const-string-v1-purple-green-parrot, execute: false
+PushNodeVisit: (cached) for-loop-v1-monkey-elephant-pineapple, execute: false
+🟢 Execute 'Print (print-v1-monkey-pomegranate-lion)'
+PushNodeVisit: print-v1-monkey-pomegranate-lion, execute: true
+PushNodeVisit: (cached) for-loop-v1-monkey-elephant-pineapple, execute: false
+PushNodeVisit: (cached) hash-v1-blue-zebra-strawberry, execute: false
+8
+5eb63bbbe01eeed093cb22bb8f5acdc3
+🟢 Execute 'Hash (hash-v1-blue-zebra-strawberry)'
+PushNodeVisit: hash-v1-blue-zebra-strawberry, execute: true
+PushNodeVisit: const-string-v1-purple-green-parrot, execute: false
+PushNodeVisit: (cached) for-loop-v1-monkey-elephant-pineapple, execute: false
+🟢 Execute 'Print (print-v1-monkey-pomegranate-lion)'
+PushNodeVisit: print-v1-monkey-pomegranate-lion, execute: true
+PushNodeVisit: (cached) for-loop-v1-monkey-elephant-pineapple, execute: false
+PushNodeVisit: (cached) hash-v1-blue-zebra-strawberry, execute: false
+9
+0d4a1185
+🟢 Execute 'Hash (hash-v1-blue-zebra-strawberry)'
+PushNodeVisit: hash-v1-blue-zebra-strawberry, execute: true
+PushNodeVisit: const-string-v1-purple-green-parrot, execute: false
+PushNodeVisit: (cached) for-loop-v1-monkey-elephant-pineapple, execute: false
+🟢 Execute 'Print (print-v1-monkey-pomegranate-lion)'
+PushNodeVisit: print-v1-monkey-pomegranate-lion, execute: true
+PushNodeVisit: (cached) for-loop-v1-monkey-elephant-pineapple, execute: false
+PushNodeVisit: (cached) hash-v1-blue-zebra-strawberry, execute: false
+10
+256c83b297114d201b30179f3f0ef0cace9783622da5974326b436178aeef610
+🟢 Execute 'Hash (hash-v1-blue-zebra-strawberry)'
+PushNodeVisit: hash-v1-blue-zebra-strawberry, execute: true
+PushNodeVisit: const-string-v1-purple-green-parrot, execute: false
+PushNodeVisit: (cached) for-loop-v1-monkey-elephant-pineapple, execute: false
+🟢 Execute 'Print (print-v1-monkey-pomegranate-lion)'
+PushNodeVisit: print-v1-monkey-pomegranate-lion, execute: true
+PushNodeVisit: (cached) for-loop-v1-monkey-elephant-pineapple, execute: false
+PushNodeVisit: (cached) hash-v1-blue-zebra-strawberry, execute: false
+11
+8c653f8c9c9aa2177fb6f8cf5bb914828faa032d7b486c8150663d3f6524b086784f8e62693171ac51fc80b7d2cbb12b
+🟢 Execute 'Hash (hash-v1-blue-zebra-strawberry)'
+PushNodeVisit: hash-v1-blue-zebra-strawberry, execute: true
+PushNodeVisit: const-string-v1-purple-green-parrot, execute: false
+PushNodeVisit: (cached) for-loop-v1-monkey-elephant-pineapple, execute: false
+🟢 Execute 'Print (print-v1-monkey-pomegranate-lion)'
+PushNodeVisit: print-v1-monkey-pomegranate-lion, execute: true
+PushNodeVisit: (cached) for-loop-v1-monkey-elephant-pineapple, execute: false
+PushNodeVisit: (cached) hash-v1-blue-zebra-strawberry, execute: false
+12
+021ced8799296ceca557832ab941a50b4a11f83478cf141f51f933f653ab9fbcc05a037cddbed06e309bf334942c4e58cdf1a46e237911ccd7fcf9787cbc7fd0

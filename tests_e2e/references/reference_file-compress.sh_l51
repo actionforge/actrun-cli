@@ -1,0 +1,53 @@
+build hasn't expired yet
+looking for value: 'env_file'
+  no value (is optional) found for: 'env_file'
+looking for value: 'config_file'
+  no value (is optional) found for: 'config_file'
+looking for value: 'concurrency'
+  no value (is optional) found for: 'concurrency'
+looking for value: 'graph_file'
+  found value in: 'env (shell)'
+  evaluated to: 'file-compress.act'
+looking for value: 'session_token'
+  no value (is optional) found for: 'session_token'
+looking for value: 'create_debug_session'
+  found value in flags
+  evaluated to: 'false'
+PushNodeVisit: start, execute: true
+🟢 Execute 'Directory Walk (dir-walk-v1-plum-violet-coral)'
+PushNodeVisit: dir-walk-v1-plum-violet-coral, execute: true
+PushNodeVisit: filepath-join-v1-elephant-gooseberry-shark, execute: false
+PushNodeVisit: filepath-op-v1-crab-guava-blueberry, execute: false
+PushNodeVisit: filepath-location-v1-camel-dragonfruit-durian, execute: false
+🟢 Execute 'Array Append (array-append-v1-green-maroon-silver)'
+PushNodeVisit: array-append-v1-green-maroon-silver, execute: true
+PushNodeVisit: (cached) dir-walk-v1-plum-violet-coral, execute: false
+PushNodeVisit: string-array-v1-strawberry-mulberry-whale, execute: false
+PushNodeVisit: filepath-join-v1-brown-cranberry-squirrel, execute: false
+PushNodeVisit: filepath-op-v1-crab-guava-blueberry, execute: false
+PushNodeVisit: filepath-location-v1-camel-dragonfruit-durian, execute: false
+🟢 Execute 'File Compress (file-compress-v1-pink-pineapple-lime)'
+PushNodeVisit: file-compress-v1-pink-pineapple-lime, execute: true
+PushNodeVisit: (cached) array-append-v1-green-maroon-silver, execute: false
+PushNodeVisit: filepath-op-v1-crab-guava-blueberry, execute: false
+PushNodeVisit: filepath-location-v1-camel-dragonfruit-durian, execute: false
+PushNodeVisit: array-get-v1-papaya-violet-lime, execute: false
+PushNodeVisit: (cached) start, execute: false
+🟢 Execute 'File Write (file-write-v1-pear-lion-dog)'
+PushNodeVisit: file-write-v1-pear-lion-dog, execute: true
+PushNodeVisit: (cached) file-compress-v1-pink-pineapple-lime, execute: false
+PushNodeVisit: string-fmt-v1-peach-plum-zebra, execute: false
+PushNodeVisit: filepath-join-v1-magenta-giraffe-duck, execute: false
+PushNodeVisit: filepath-op-v1-crab-guava-blueberry, execute: false
+PushNodeVisit: filepath-location-v1-camel-dragonfruit-durian, execute: false
+PushNodeVisit: (cached) file-compress-v1-pink-pineapple-lime, execute: false
+🟢 Execute 'Print (print-v1-watermelon-tangerine-dog)'
+PushNodeVisit: print-v1-watermelon-tangerine-dog, execute: true
+PushNodeVisit: string-fmt-v1-turquoise-rabbit-starfish, execute: false
+PushNodeVisit: filepath-op-v1-monkey-fox-peach, execute: false
+PushNodeVisit: string-fmt-v1-peach-plum-zebra, execute: false
+PushNodeVisit: filepath-join-v1-magenta-giraffe-duck, execute: false
+PushNodeVisit: filepath-op-v1-crab-guava-blueberry, execute: false
+PushNodeVisit: filepath-location-v1-camel-dragonfruit-durian, execute: false
+PushNodeVisit: (cached) file-compress-v1-pink-pineapple-lime, execute: false
+created compressed.tar.gz

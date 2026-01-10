@@ -1,0 +1,56 @@
+yaml-version: 3.0
+
+id: core/for-loop
+name: For Loop
+version: 1
+category: flow
+style:
+  header:
+    background: "#50858d"
+  body:
+    background: "#2f5054"
+icon: tablerArrowIteration
+short_desc: Iteratively executes contained nodes.
+outputs:
+  exec-body:
+    name: Body
+    exec: true
+    index: 0
+    desc: Executes on each iteration.
+  index:
+    name: Index
+    type: number
+    index: 1
+    desc: Current iteration index.
+  exec-completed:
+    name: Completed
+    exec: true
+    index: 2
+    desc: Executes upon completion of the loop.
+
+inputs:
+  exec:
+    name: Execute
+    exec: true
+    index: 0
+    desc: Executes the loop.
+    required: true
+  exec-break:
+    exec: true
+    name: Break
+    index: 1
+    desc: Breaks the loop.
+  first_index:
+    name: First Index
+    type: number
+    desc: Starting point of the loop.
+    index: 2
+    initial: 0
+    step: 1
+  last_index:
+    name: Last Index
+    type: number
+    desc: Ending point of the loop. Note, this value is inclusive. If the first index is 0 and the last index is 0, the node will iterate **once**. If you need to iterate zero times, the last index must be smaller than the first index.
+    index: 3
+    initial: 10
+    step: 1

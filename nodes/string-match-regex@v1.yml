@@ -1,0 +1,32 @@
+yaml-version: 3.0
+
+id: core/string-match-regex
+version: 1
+name: String Match Regex
+icon: featherSearch
+category: processing
+short_desc: Matches a string against a regex pattern and returns the captured groups.
+style:
+  header:
+    background: "#6e6e6e"
+  body:
+    background: "#423f3f"
+outputs:
+  groups:
+    name: Groups
+    type: string
+    array: true
+    desc: Captured groups from the regex match
+    index: 0
+inputs:
+  input:
+    name: Input
+    type: string
+    desc: The string to match against the regex pattern
+    index: 0
+  pattern:
+    name: Regex
+    type: string
+    hint: "E.g: (\\d+)"
+    desc: The regex pattern to match
+    index: 1

@@ -1,0 +1,4 @@
+env:
+    FOO: this_is_foo_value
+inputs:
+  GRAPH_INPUT: graph_input_value

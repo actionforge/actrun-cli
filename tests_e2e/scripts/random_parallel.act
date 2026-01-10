@@ -1,0 +1,116 @@
+editor:
+  version:
+    created: v1.28.1
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: -960
+      y: 110
+  - id: print-v1-lychee-apple-starfruit
+    type: core/print@v1
+    position:
+      x: 690
+      y: 0
+    inputs:
+      values[0]: null
+      values[1]: null
+  - id: random-number-v1-maroon-wolf-yellow
+    type: core/random-number@v1
+    position:
+      x: -600
+      y: 400
+    inputs:
+      min: 0
+      max: 100
+      seed: 1234
+  - id: concurrent-for-loop-v1-starfish-squirrel-pear
+    type: core/concurrent-for-loop@v1
+    position:
+      x: -590
+      y: -30
+    inputs:
+      first_index: 0
+      last_index: 10
+      worker_count: 4
+  - id: print-v1-duck-passionfruit-crab
+    type: core/print@v1
+    position:
+      x: 600
+      y: 440
+    inputs:
+      values[0]: null
+  - id: sleep-v1-kangaroo-dragonfruit-orange
+    type: core/sleep@v1
+    position:
+      x: 240
+      y: -90
+    inputs:
+      duration: 100
+      unit: milliseconds
+  - id: math-multiply-v1-indigo-purple-lemon
+    type: core/math-multiply@v1
+    position:
+      x: -140
+      y: 140
+    inputs:
+      inputs[0]: null
+      inputs[1]: 1
+connections:
+  - src:
+      node: random-number-v1-maroon-wolf-yellow
+      port: number
+    dst:
+      node: print-v1-lychee-apple-starfruit
+      port: values[0]
+  - src:
+      node: random-number-v1-maroon-wolf-yellow
+      port: number
+    dst:
+      node: print-v1-duck-passionfruit-crab
+      port: values[0]
+  - src:
+      node: random-number-v1-maroon-wolf-yellow
+      port: number
+    dst:
+      node: print-v1-lychee-apple-starfruit
+      port: values[1]
+  - src:
+      node: concurrent-for-loop-v1-starfish-squirrel-pear
+      port: index
+    dst:
+      node: math-multiply-v1-indigo-purple-lemon
+      port: inputs[0]
+  - src:
+      node: math-multiply-v1-indigo-purple-lemon
+      port: result
+    dst:
+      node: sleep-v1-kangaroo-dragonfruit-orange
+      port: duration
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: concurrent-for-loop-v1-starfish-squirrel-pear
+      port: exec
+  - src:
+      node: concurrent-for-loop-v1-starfish-squirrel-pear
+      port: exec-completed
+    dst:
+      node: print-v1-duck-passionfruit-crab
+      port: exec
+  - src:
+      node: concurrent-for-loop-v1-starfish-squirrel-pear
+      port: exec-body
+    dst:
+      node: sleep-v1-kangaroo-dragonfruit-orange
+      port: exec
+  - src:
+      node: sleep-v1-kangaroo-dragonfruit-orange
+      port: exec
+    dst:
+      node: print-v1-lychee-apple-starfruit
+      port: exec

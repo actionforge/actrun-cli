@@ -1,0 +1,336 @@
+entry: start
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 1140
+      y: 600
+  - id: run-v1-giraffe-dolphin-pink
+    type: core/run@v1
+    position:
+      x: 1420
+      y: 430
+    inputs:
+      shell: python
+      script: |-
+        import os
+        print("AND", os.environ["AND"])
+        print("OR", os.environ["OR"])
+        print("XOR", os.environ["XOR"])
+        print("XAND", os.environ["XAND"])
+  - id: string-fmt-v1-tiger-watermelon-raspberry
+    type: core/string-fmt@v1
+    position:
+      x: 400
+      y: 180
+    inputs:
+      substitutes[0]: null
+      fmt: AND=0&&0=%v 1&&0=%v 0&&1=%v 1&&1=%v
+      substitutes[1]: null
+      substitutes[2]: null
+      substitutes[3]: null
+  - id: env-array-v1-purple-zebra-cherry
+    type: core/env-array@v1
+    position:
+      x: 1030
+      y: 800
+    inputs:
+      env[0]: ''
+      env[1]: ''
+      env[2]: ''
+      env[3]: ''
+  - id: bool-and-v1-gray-elephant-elephant
+    type: core/bool-and@v1
+    position:
+      x: 50
+      y: 20
+    inputs:
+      inputs[0]: false
+      inputs[1]: null
+  - id: bool-and-v1-blueberry-penguin-parrot
+    type: core/bool-and@v1
+    position:
+      x: 50
+      y: 160
+    inputs:
+      inputs[0]: true
+      inputs[1]: null
+  - id: bool-and-v1-monkey-orange-dog
+    type: core/bool-and@v1
+    position:
+      x: 50
+      y: 440
+    inputs:
+      inputs[0]: true
+      inputs[1]: true
+  - id: bool-and-v1-blue-tiger-pomegranate
+    type: core/bool-and@v1
+    position:
+      x: 50
+      y: 300
+    inputs:
+      inputs[0]: null
+      inputs[1]: true
+  - id: string-fmt-v1-monkey-brown-coconut
+    type: core/string-fmt@v1
+    position:
+      x: 400
+      y: 740
+    inputs:
+      substitutes[0]: null
+      substitutes[1]: null
+      substitutes[2]: null
+      substitutes[3]: null
+      fmt: OR=0&&0=%v 1&&0=%v 0&&1=%v 1&&1=%v
+  - id: bool-or-v1-parrot-gray-raspberry
+    type: core/bool-or@v1
+    position:
+      x: 60
+      y: 580
+    inputs:
+      inputs[0]: null
+      inputs[1]: null
+  - id: bool-or-v1-lemon-snake-rabbit
+    type: core/bool-or@v1
+    position:
+      x: 60
+      y: 720
+    inputs:
+      inputs[0]: true
+      inputs[1]: null
+  - id: bool-or-v1-silver-penguin-blackberry
+    type: core/bool-or@v1
+    position:
+      x: 60
+      y: 860
+    inputs:
+      inputs[0]: null
+      inputs[1]: true
+  - id: bool-or-v1-kiwi-orange-cranberry
+    type: core/bool-or@v1
+    position:
+      x: 60
+      y: 1000
+    inputs:
+      inputs[0]: true
+      inputs[1]: true
+  - id: string-fmt-v1-octopus-pomegranate-blueberry
+    type: core/string-fmt@v1
+    position:
+      x: 400
+      y: 1300
+    inputs:
+      fmt: XOR=0&&0=%v 1&&0=%v 0&&1=%v 1&&1=%v
+      substitutes[0]: null
+      substitutes[1]: null
+      substitutes[2]: null
+      substitutes[3]: null
+  - id: bool-xor-v1-watermelon-coconut-zebra
+    type: core/bool-xor@v1
+    position:
+      x: 50
+      y: 1560
+    inputs:
+      inputs[0]: true
+      inputs[1]: true
+  - id: bool-xor-v1-pear-pineapple-shark
+    type: core/bool-xor@v1
+    position:
+      x: 50
+      y: 1420
+    inputs:
+      inputs[0]: null
+      inputs[1]: true
+  - id: bool-xor-v1-cat-zebra-pineapple
+    type: core/bool-xor@v1
+    position:
+      x: 50
+      y: 1280
+    inputs:
+      inputs[0]: true
+      inputs[1]: null
+  - id: bool-xor-v1-penguin-brown-red
+    type: core/bool-xor@v1
+    position:
+      x: 50
+      y: 1140
+    inputs:
+      inputs[0]: null
+      inputs[1]: null
+  - id: string-fmt-v1-strawberry-brown-strawberry
+    type: core/string-fmt@v1
+    position:
+      x: 400
+      y: 1860
+    inputs:
+      substitutes[0]: null
+      fmt: XAND=0&&0=%v 1&&0=%v 0&&1=%v 1&&1=%v
+      substitutes[1]: null
+      substitutes[2]: null
+      substitutes[3]: null
+  - id: bool-xand-v1-kangaroo-lion-squirrel
+    type: core/bool-xand@v1
+    position:
+      x: 30
+      y: 1700
+    inputs:
+      inputs[0]: null
+      inputs[1]: null
+  - id: bool-xand-v1-kiwi-blackberry-gold
+    type: core/bool-xand@v1
+    position:
+      x: 30
+      y: 2120
+    inputs:
+      inputs[0]: true
+      inputs[1]: true
+  - id: bool-xand-v1-butterfly-cat-zebra
+    type: core/bool-xand@v1
+    position:
+      x: 30
+      y: 1980
+    inputs:
+      inputs[0]: null
+      inputs[1]: true
+  - id: bool-xand-v1-pear-pineapple-coconut
+    type: core/bool-xand@v1
+    position:
+      x: 30
+      y: 1840
+    inputs:
+      inputs[0]: true
+      inputs[1]: null
+connections:
+  - src:
+      node: string-fmt-v1-tiger-watermelon-raspberry
+      port: result
+    dst:
+      node: env-array-v1-purple-zebra-cherry
+      port: env[0]
+  - src:
+      node: env-array-v1-purple-zebra-cherry
+      port: env
+    dst:
+      node: run-v1-giraffe-dolphin-pink
+      port: env
+  - src:
+      node: bool-and-v1-gray-elephant-elephant
+      port: result
+    dst:
+      node: string-fmt-v1-tiger-watermelon-raspberry
+      port: substitutes[0]
+  - src:
+      node: bool-and-v1-blueberry-penguin-parrot
+      port: result
+    dst:
+      node: string-fmt-v1-tiger-watermelon-raspberry
+      port: substitutes[1]
+  - src:
+      node: bool-and-v1-blue-tiger-pomegranate
+      port: result
+    dst:
+      node: string-fmt-v1-tiger-watermelon-raspberry
+      port: substitutes[2]
+  - src:
+      node: bool-and-v1-monkey-orange-dog
+      port: result
+    dst:
+      node: string-fmt-v1-tiger-watermelon-raspberry
+      port: substitutes[3]
+  - src:
+      node: bool-or-v1-kiwi-orange-cranberry
+      port: result
+    dst:
+      node: string-fmt-v1-monkey-brown-coconut
+      port: substitutes[3]
+  - src:
+      node: bool-or-v1-silver-penguin-blackberry
+      port: result
+    dst:
+      node: string-fmt-v1-monkey-brown-coconut
+      port: substitutes[2]
+  - src:
+      node: bool-or-v1-lemon-snake-rabbit
+      port: result
+    dst:
+      node: string-fmt-v1-monkey-brown-coconut
+      port: substitutes[1]
+  - src:
+      node: bool-or-v1-parrot-gray-raspberry
+      port: result
+    dst:
+      node: string-fmt-v1-monkey-brown-coconut
+      port: substitutes[0]
+  - src:
+      node: string-fmt-v1-monkey-brown-coconut
+      port: result
+    dst:
+      node: env-array-v1-purple-zebra-cherry
+      port: env[1]
+  - src:
+      node: string-fmt-v1-octopus-pomegranate-blueberry
+      port: result
+    dst:
+      node: env-array-v1-purple-zebra-cherry
+      port: env[2]
+  - src:
+      node: string-fmt-v1-strawberry-brown-strawberry
+      port: result
+    dst:
+      node: env-array-v1-purple-zebra-cherry
+      port: env[3]
+  - src:
+      node: bool-xor-v1-watermelon-coconut-zebra
+      port: result
+    dst:
+      node: string-fmt-v1-octopus-pomegranate-blueberry
+      port: substitutes[3]
+  - src:
+      node: bool-xor-v1-pear-pineapple-shark
+      port: result
+    dst:
+      node: string-fmt-v1-octopus-pomegranate-blueberry
+      port: substitutes[2]
+  - src:
+      node: bool-xor-v1-cat-zebra-pineapple
+      port: result
+    dst:
+      node: string-fmt-v1-octopus-pomegranate-blueberry
+      port: substitutes[1]
+  - src:
+      node: bool-xor-v1-penguin-brown-red
+      port: result
+    dst:
+      node: string-fmt-v1-octopus-pomegranate-blueberry
+      port: substitutes[0]
+  - src:
+      node: bool-xand-v1-kangaroo-lion-squirrel
+      port: result
+    dst:
+      node: string-fmt-v1-strawberry-brown-strawberry
+      port: substitutes[0]
+  - src:
+      node: bool-xand-v1-pear-pineapple-coconut
+      port: result
+    dst:
+      node: string-fmt-v1-strawberry-brown-strawberry
+      port: substitutes[1]
+  - src:
+      node: bool-xand-v1-butterfly-cat-zebra
+      port: result
+    dst:
+      node: string-fmt-v1-strawberry-brown-strawberry
+      port: substitutes[2]
+  - src:
+      node: bool-xand-v1-kiwi-blackberry-gold
+      port: result
+    dst:
+      node: string-fmt-v1-strawberry-brown-strawberry
+      port: substitutes[3]
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: run-v1-giraffe-dolphin-pink
+      port: exec

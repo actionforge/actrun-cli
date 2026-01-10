@@ -1,0 +1,38 @@
+yaml-version: 3.0
+
+id: core/random-number
+name: Random Number
+version: 1
+category: data
+icon: ionDice
+style:
+  header:
+    background: "#a47e5b"
+  body:
+    background: "#7c6652"
+short_desc: Generates a random number based on user-defined range and seed. Can be used as well for boolean values by setting the minimum and maximum values to 0 and 1 respectively.
+outputs:
+  number:
+    type: number
+    name: Random Number
+    desc: The generated random number
+    index: 0
+inputs:
+  min:
+    type: number
+    name: Minimum Value
+    desc: The minimum value of the random number
+    index: 0
+    initial: 0.0
+  max:
+    type: number
+    name: Maximum Value
+    desc: The maximum value of the random number
+    index: 1
+    initial: 1.0
+  seed:
+    type: number
+    name: Seed
+    desc: The seed for the random number generator (-1 for true randomness)
+    index: 2
+    initial: -1

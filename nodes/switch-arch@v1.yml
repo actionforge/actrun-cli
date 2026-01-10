@@ -1,0 +1,31 @@
+yaml-version: 3.0
+id: core/switch-arch
+name: Architecture Switch
+version: 1
+category: flow
+style:
+  header:
+    background: "#50858d"
+  body:
+    background: "#2f5054"
+icon: ionHardwareChip
+short_desc: The Architecture Switch node allows to change the execution flow based on the architecture of the system.
+compact: true
+
+outputs:
+  exec-x64:
+    exec: true
+    name: x64
+    desc: "Executes the x64 architecture branch."
+    index: 0
+  exec-arm64:
+    exec: true
+    name: arm64
+    desc: "Executes the arm64 architecture branch."
+    index: 1
+
+inputs:
+  exec:
+    exec: true
+    desc:
+    index: 0

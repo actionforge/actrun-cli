@@ -1,0 +1,46 @@
+yaml-version: 3.0
+
+id: core/filepath-rel
+name: Filepath Relative
+category: filesystem
+icon: tablerScissors
+version: 1
+style:
+  header:
+    background: rgb(197, 147, 31)
+  body:
+    background: "rgb(164 115 29)"
+short_desc: Finds a relative path from a base path to a target path.
+addendum: |
+  ## Operation
+
+  Calculates a relative path from `basepath` to `targpath`. The relative path is the path that, when joined to `basepath`, leads to `targpath`.
+
+  An error is returned if `targpath` cannot be made relative to `basepath` (e.g., they are on different volumes on Windows) or if the computation fails.
+
+  | Path Style   | Base Path               | Target Path             | Output         |
+  |--------------|-------------------------|-------------------------|----------------|
+  | POSIX-style  | `/a/b/c`                | `/a/b/c/d/e`            | `d/e`          |
+  | POSIX-style  | `/a/b/c`                | `/a/b/d/e`              | `../d/e`       |
+  | POSIX-style  | `/a/b`                  | `/c/d`                  | `../../c/d`    |
+  | Windows-style| `C:\a\b\c`              | `C:\a\b\c\d\e`          | `d\e`          |
+  | Windows-style| `C:\a\b\c`              | `C:\a\b\d\e`            | `..\d\e`       |
+  | Windows-style| `C:\a\b`                | `D:\c\d`                | (error)        |
+
+compact: true
+outputs:
+  result:
+    type: string
+    index: 0
+    desc: The relative path from basepath to targpath.
+inputs:
+  basepath:
+    name: Base Path
+    type: string
+    index: 0
+    desc: The base path to measure from.
+  targpath:
+    name: Target Path
+    type: string
+    index: 1
+    desc: The target path to measure to.

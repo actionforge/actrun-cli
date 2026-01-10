@@ -1,0 +1,107 @@
+yaml-version: 3.0
+
+id: core/wait-for
+name: Wait For
+version: 1
+category: concurrency
+icon: tablerArrowMerge
+short_desc: Acts as an execution barrier, requiring a specified number of incoming executions before continuing.
+style:
+  header:
+    background: "#7e6c9d"
+  body:
+    background: "#473567"
+addendum: |
+  In the example below the `Wait For` node is used to wait for the two incoming executions before continuing. It is important to keep an eye on the `Execute After` input to ensure that the node is not waiting indefinitely, or triggering too soon.
+
+  {{graph_editor_graph('''
+  editor:
+  version:
+    created: v1.11.0
+  type: generic
+  entry: ''
+  nodes:
+    - id: wait-for-v1-mango-cranberry-gray
+      type: core/wait-for@v1
+      position:
+        x: -360
+        y: -380
+      inputs:
+        after: 2
+    - id: concurrent-exec-v1-strawberry-red-parrot
+      type: core/concurrent-exec@v1
+      position:
+        x: -1320
+        y: -300
+      inputs:
+        script: echo "Do something"
+      outputs:
+        exec[0]: null
+        exec[1]: null
+    - id: run-v1-kangaroo-giraffe-blackberry
+      type: core/run@v1
+      position:
+        x: -960
+        y: -180
+      inputs:
+        script: echo "Do something else"
+    - id: run-v1-orange-coconut-cherry
+      type: core/run@v1
+      position:
+        x: -960
+        y: -690
+      inputs:
+        script: echo "Do something"
+  connections: []
+  executions:
+    - src:
+        node: concurrent-exec-v1-strawberry-red-parrot
+        port: exec[1]
+      dst:
+        node: run-v1-kangaroo-giraffe-blackberry
+        port: exec
+    - src:
+        node: run-v1-kangaroo-giraffe-blackberry
+        port: exec-success
+      dst:
+        node: wait-for-v1-mango-cranberry-gray
+        port: exec
+    - src:
+        node: concurrent-exec-v1-strawberry-red-parrot
+        port: exec[0]
+      dst:
+        node: run-v1-orange-coconut-cherry
+        port: exec
+    - src:
+        node: run-v1-orange-coconut-cherry
+        port: exec-success
+      dst:
+        node: wait-for-v1-mango-cranberry-gray
+        port: exec''', docs=true, permission='readonly', header=false, toolbar=false, translate=false, autofit=true, classes='h-72' )}}
+
+  !!! info "Scope in GitHub Actions workflows"
+
+      In GitHub Actions workflows, this node combines all environment variables from incoming executions and makes them available to subsequent nodes. If environment variables share the same name, the environment variables from the latest incoming context will overwrite the previous values.
+outputs:
+  exec:
+    exec: true
+inputs:
+  exec:
+    exec: true
+    index: 0
+    name: Execute
+    required: true
+  exec-reset:
+    exec: true
+    index: 1
+    name: Reset
+  after:
+    type: number
+    name: Execute After
+    index: 2
+    initial: 1
+  loop:
+    type: bool
+    name: Loop
+    default: false
+    index: 3

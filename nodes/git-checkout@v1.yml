@@ -1,0 +1,58 @@
+yaml-version: 3.0
+id: core/git-checkout
+name: Git Checkout
+version: 1
+category: git
+icon: tablerBrandGit
+style:
+  header:
+    background: "#f1502f"
+  body:
+    background: "#652619"
+short_desc: Switches branches or restores working tree files.
+addendum: |
+  This node checks out a specific branch, tag, or commit, updating the files in the working directory to match that version.
+
+  It can also be used to create a new branch from the current HEAD.
+outputs:
+  exec-success:
+    name: Success
+    exec: true
+    desc: Executes if the checkout operation is successful.
+    index: 0
+  exec-err:
+    name: Error
+    exec: true
+    desc: Executes if there is an error during checkout.
+    index: 1
+inputs:
+  exec:
+    exec: true
+    index: 0
+  repo:
+    type: git-repo
+    name: Repository
+    desc: The Git repository object from a clone or open node.
+    index: 1
+    required: true
+  reference:
+    type: string
+    name: Reference
+    hint: "main"
+    desc: The name of the branch, tag, or the commit hash to check out.
+    index: 2
+    required: true
+  create:
+    type: bool
+    name: Create Branch
+    desc: If true, creates a new branch named after the 'Reference' input.
+    index: 3
+    optional: true
+    default: false
+  force:
+    type: bool
+    name: Force
+    desc: If true, forces the checkout, discarding any local changes in the working directory. Use with caution.
+    index: 4
+    optional: true
+    default: false

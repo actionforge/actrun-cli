@@ -1,0 +1,43 @@
+yaml-version: 3.0
+
+id: core/freeze
+name: Freeze
+category: system
+version: 1
+icon: tablerClipboardText
+short_desc: Freeze a value until a new value is provided.
+long_desc: |
+  This is useful when you want to provide a value to other nodes until it is replaced. This is for example useful with the [Array Add](./../array-add/v1.md) node. Check out this node for an example.
+style:
+  header:
+    background: "#3794ff"
+  body:
+    background: "#1f4f86"
+outputs:
+  exec:
+    exec: true
+    index: 0
+  value:
+    type: unknown
+    index: 1
+    desc: The value that is frozen.
+inputs:
+  exec:
+    exec: true
+    index: 0
+    required: true
+  init:
+    type: unknown
+    index: 1
+    name: Init
+    desc: The initial value to provide.
+  replace:
+    type: unknown
+    name: Replace
+    index: 2
+    desc: The value to replace the current value with.
+  exec-reset:
+    exec: true
+    index: 3
+    name: Replace
+    desc: Trigger this to replace the current value with the value provided in the `Replace` input.

@@ -1,0 +1,68 @@
+yaml-version: 3.0
+
+id: core/dir-walk
+name: Directory Walk
+version: 1
+category: filesystem
+style:
+  header:
+    background: rgb(197, 147, 31)
+  body:
+    background: "rgb(164 115 29)"
+icon: tablerWalk
+short_desc: Walks through a directory and executes a body for each file
+outputs:
+  exec-success:
+    name: Success
+    exec: true
+    index: 0
+  exec-err:
+    name: Error
+    exec: true
+    index: 1
+    desc: Triggered if the input path is not a directory or if there is an error walking the directory. Also fails if an invalid glob pattern is set.
+  items_abs:
+    type: "[]string"
+    name: Absolute Paths
+    desc: The items that were walked with their absolute paths. The order is unspecified and determined by the underlying filesystem, but equal to the relative paths.
+    index: 2
+  items_rel:
+    type: "[]string"
+    name: Relative Paths
+    desc: The items that were walked with their relative paths. The order is unspecified and determined by the underlying filesystem, but equal to the absolute paths.
+    index: 3
+inputs:
+  exec:
+    exec: true
+    index: 0
+  path:
+    type: string
+    name: Dir Path
+    desc: The directory to walk. use a single dot (`.`) for the current directory.
+    required: true
+    hint: "E.g: C:\\Users\\user1"
+    index: 1
+  glob:
+    type: string
+    name: Glob
+    desc: The glob to match. It is applied on both, files and directories. See [Glob Pattern](./../../../reference/glob-pattern.md).
+    index: 2
+    hint: "E.g: *.txt"
+  recursive:
+    type: bool
+    name: Recursive
+    default: true
+    desc: Whether to walk recursively
+    index: 3
+  dirs:
+    type: bool
+    name: Dirs
+    default: true
+    desc: Whether to include directories
+    index: 4
+  files:
+    type: bool
+    name: Files
+    default: true
+    desc: Whether to include files
+    index: 5

@@ -1,0 +1,217 @@
+entry: start
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 10
+      y: 1360
+  - id: gh-actionforge-test-action-node-main-lemon-penguin-yellow
+    type: >-
+      github.com/actionforge/test-action-node@22db00979573158856d37b2a91c05deccde3b41b
+    position:
+      x: 290
+      y: 1220
+    inputs:
+      input1: lorem
+      input2: ipsum
+      environment: 'false'
+  - id: string-fmt-v1-pineapple-banana-green
+    type: core/string-fmt@v1
+    position:
+      x: 750
+      y: 1260
+    inputs:
+      substitutes[0]: null
+      fmt: OUTPUT1=%v
+  - id: run-v1-yellow-gray-pear
+    type: core/run@v1
+    position:
+      x: 1600
+      y: 910
+    inputs:
+      script: |
+        if [ "$OUTPUT1" == "this output1 is set by test-action-node" ]; then
+          echo "output2 correctly set"
+        else
+          echo "output2 is not correctly set"
+           exit 1
+        fi
+  - id: env-array-v1-cherry-blackberry-grape
+    type: core/env-array@v1
+    position:
+      x: 1210
+      y: 1210
+    inputs:
+      env[0]: ''
+  - id: gh-actionforge-test-action-registry-main-cat-purple-watermelon
+    type: >-
+      github.com/actionforge/test-action-registry@6075e108fe3a7edd08d11178b02d96f5eef3e835
+    position:
+      x: 1980
+      y: 710
+    inputs:
+      input1: ipsum
+      input2: lorem
+      env:
+        - CUSTOM_ENV=lorem
+  - id: env-array-v1-orange-blueberry-penguin
+    type: core/env-array@v1
+    position:
+      x: 3100
+      y: 750
+    inputs:
+      env[0]: ''
+  - id: string-fmt-v1-banana-parrot-raspberry
+    type: core/string-fmt@v1
+    position:
+      x: 2640
+      y: 810
+    inputs:
+      substitutes[0]: null
+      fmt: OUTPUT1=%v
+  - id: run-v1-snake-cranberry-pineapple
+    type: core/run@v1
+    position:
+      x: 3500
+      y: 450
+    inputs:
+      script: |
+        if [ "$OUTPUT1" == "this output1 is set by test-action-registry" ]; then
+          echo "output2 correctly set"
+        else
+          echo "output2 is not correctly set"
+          exit 1
+        fi
+  - id: gh-actionforge-test-action-dockerfile-main-purple-pear-kangaroo
+    type: >-
+      github.com/actionforge/test-action-dockerfile@c3bd2754b38ec3500b786a3cca9279322d6ee5dd
+    position:
+      x: 3880
+      y: 250
+    inputs:
+      input1: dolor
+      input2: ipsum
+      environment: 'false'
+      env:
+        - CUSTOM_ENV=ipsum
+  - id: string-fmt-v1-lemon-kiwi-peach
+    type: core/string-fmt@v1
+    position:
+      x: 4530
+      y: 370
+    inputs:
+      substitutes[0]: null
+      fmt: OUTPUT2=%v
+  - id: env-array-v1-gold-gold-blackberry
+    type: core/env-array@v1
+    position:
+      x: 4990
+      y: 310
+    inputs:
+      env[0]: ''
+  - id: run-v1-watermelon-green-shark
+    type: core/run@v1
+    position:
+      x: 5390
+      y: 10
+    inputs:
+      script: >
+        if [ "$OUTPUT2" == "this output2 is set by test-action-dockerfile" ];
+        then
+            echo "output2 correctly set"
+        else
+            echo "output2 is not correctly set"
+            exit 1
+        fi
+connections:
+  - src:
+      node: env-array-v1-cherry-blackberry-grape
+      port: env
+    dst:
+      node: run-v1-yellow-gray-pear
+      port: env
+  - src:
+      node: string-fmt-v1-pineapple-banana-green
+      port: result
+    dst:
+      node: env-array-v1-cherry-blackberry-grape
+      port: env[0]
+  - src:
+      node: string-fmt-v1-banana-parrot-raspberry
+      port: result
+    dst:
+      node: env-array-v1-orange-blueberry-penguin
+      port: env[0]
+  - src:
+      node: gh-actionforge-test-action-registry-main-cat-purple-watermelon
+      port: output1
+    dst:
+      node: string-fmt-v1-banana-parrot-raspberry
+      port: substitutes[0]
+  - src:
+      node: env-array-v1-orange-blueberry-penguin
+      port: env
+    dst:
+      node: run-v1-snake-cranberry-pineapple
+      port: env
+  - src:
+      node: string-fmt-v1-lemon-kiwi-peach
+      port: result
+    dst:
+      node: env-array-v1-gold-gold-blackberry
+      port: env[0]
+  - src:
+      node: env-array-v1-gold-gold-blackberry
+      port: env
+    dst:
+      node: run-v1-watermelon-green-shark
+      port: env
+  - src:
+      node: gh-actionforge-test-action-node-main-lemon-penguin-yellow
+      port: output1
+    dst:
+      node: string-fmt-v1-pineapple-banana-green
+      port: substitutes[0]
+  - src:
+      node: gh-actionforge-test-action-dockerfile-main-purple-pear-kangaroo
+      port: output2
+    dst:
+      node: string-fmt-v1-lemon-kiwi-peach
+      port: substitutes[0]
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: gh-actionforge-test-action-node-main-lemon-penguin-yellow
+      port: exec
+  - src:
+      node: gh-actionforge-test-action-node-main-lemon-penguin-yellow
+      port: exec-success
+    dst:
+      node: run-v1-yellow-gray-pear
+      port: exec
+  - src:
+      node: run-v1-yellow-gray-pear
+      port: exec-success
+    dst:
+      node: gh-actionforge-test-action-registry-main-cat-purple-watermelon
+      port: exec
+  - src:
+      node: run-v1-snake-cranberry-pineapple
+      port: exec-success
+    dst:
+      node: gh-actionforge-test-action-dockerfile-main-purple-pear-kangaroo
+      port: exec
+  - src:
+      node: gh-actionforge-test-action-registry-main-cat-purple-watermelon
+      port: exec-success
+    dst:
+      node: run-v1-snake-cranberry-pineapple
+      port: exec
+  - src:
+      node: gh-actionforge-test-action-dockerfile-main-purple-pear-kangaroo
+      port: exec-success
+    dst:
+      node: run-v1-watermelon-green-shark
+      port: exec

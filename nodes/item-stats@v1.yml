@@ -1,0 +1,61 @@
+yaml-version: 3.0
+
+id: core/item-stats
+name: Item Stats
+version: 1
+category: filesystem
+icon: tablerFileSearch
+style:
+  header:
+    background: rgb(197, 147, 31)
+  body:
+    background: "rgb(164 115 29)"
+short_desc: Provides statistics about local files or directories.
+outputs:
+  exec-exists:
+    name: Exists
+    exec: true
+    index: 0
+    desc: Executed if the file or directory exists.
+  exec-noexists:
+    name: Not Exists
+    exec: true
+    index: 1
+    desc: Executed if the file or directory does not exist.
+  exists:
+    name: Exists
+    type: bool
+    index: 2
+    desc: Boolean indicating if the file or directory exists.
+  isdir:
+    name: Is Directory
+    type: bool
+    index: 3
+    desc: Boolean indicating if the path is a directory.
+  isfile:
+    name: Is File
+    type: bool
+    index: 4
+    desc: Boolean indicating if the path is a file.
+  size:
+    name: Size
+    type: number
+    index: 5
+    desc: The size of the file or directory in bytes.
+  permissions:
+    name: Permissions
+    type: number
+    index: 6
+    desc: The permissions of the file or directory.
+
+inputs:
+  exec:
+    exec: true
+    index: 0
+    desc: Execution trigger for the node.
+  path:
+    name: Path
+    type: string
+    index: 1
+    required: true
+    desc: Path to the file or directory to be examined.

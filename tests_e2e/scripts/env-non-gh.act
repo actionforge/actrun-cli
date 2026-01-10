@@ -1,0 +1,88 @@
+editor:
+  version:
+    created: v1.34.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: -930
+      y: -730
+  - id: run-v1-raspberry-raspberry-gooseberry
+    type: core/run@v1
+    position:
+      x: -140
+      y: -150
+    inputs:
+      script: |
+        if [ -n "${GITHUB_ENV}" ]; then
+            echo "🚨 Check failed, 'GITHUB_ENV' is defined but shouldn't"
+            exit 1
+        else
+            echo "👍 Check successful, 'GITHUB_ENV' is not defined"
+        fi
+
+        if [ -n "${FOO}" ]; then
+            echo "👍 Check successful, 'FOO' is defined with value: '$FOO'"
+        else
+            echo "🚨 Check failed, 'FOO' is not defined but should"
+            exit 1
+        fi
+  - id: run-v1-guava-apple-mango
+    type: core/run@v1
+    position:
+      x: 530
+      y: -180
+    inputs:
+      script: |
+        if [ -n "${GITHUB_ENV}" ]; then
+            echo "🚨 Check failed, 'GITHUB_ENV' is defined but shouldn't"
+            exit 1
+        else
+            echo "👍 Check successful, 'GITHUB_ENV' is not defined"
+        fi
+
+        if [ -n "${FOO}" ]; then
+            echo "🚨 Check failed, 'FOO' is defined with '$FOO' but shouldn't"
+            exit 1
+        else
+            echo "👍 Check successful, 'FOO' isn't defined"
+        fi
+
+        if [ -n "${MY_VAR}" ]; then
+            echo "🚨 Check failed, 'MY_VAR' is defined with '$MY_VAR' but shouldn't"
+            exit 1
+        else
+            echo "👍 Check successful, 'MY_VAR' isn't defined"
+        fi
+  - id: env-array-v1-mango-strawberry-pear
+    type: core/env-array@v1
+    position:
+      x: -730
+      y: 490
+    inputs:
+      env[0]: FOO=1234
+connections:
+  - src:
+      node: env-array-v1-mango-strawberry-pear
+      port: env
+    dst:
+      node: run-v1-raspberry-raspberry-gooseberry
+      port: env
+    isLoop: false
+executions:
+  - src:
+      node: run-v1-raspberry-raspberry-gooseberry
+      port: exec-success
+    dst:
+      node: run-v1-guava-apple-mango
+      port: exec
+    isLoop: false
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: run-v1-raspberry-raspberry-gooseberry
+      port: exec
+    isLoop: false

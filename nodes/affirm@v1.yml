@@ -1,0 +1,49 @@
+yaml-version: 3.0
+id: core/affirm
+name: Affirm
+label: ✓
+version: 1
+icon: featherCheck
+category: computation
+style:
+  header:
+    background: "#388a34"
+  body:
+    background: "#22591f"
+short_desc: Evaluates the 'truthiness' of an input value, returning `true` or `false`.
+compact: true
+inputs:
+  input:
+    type: any
+    index: 1
+    desc: The value to be evaluated.
+outputs:
+  result:
+    type: bool
+    index: 0
+    desc: The boolean result.
+addendum: 'The node converts different data types to a boolean based on the following ''truthiness'' rules:
+
+
+  | Data Type            | Example Value  | Boolean Result |
+
+  |----------------------|----------------|----------------|
+
+  | {{ port("[]number") }}  | `[1, 2, 3]`    | `true`         |
+
+  | {{ port("string") }} | `"hello"`      | `true`         |
+
+  | {{ port("number") }} | `42`           | `true`         |
+
+  | {{ port("bool") }}   | `true`         | `true`         |
+
+  | {{ port("[]string") }}  | `[]`           | `false`        |
+
+  | {{ port("string") }} | `""`           | `false`        |
+
+  | {{ port("number") }} | `0`            | `false`        |
+
+  | {{ port("bool") }}   | `false`        | `false`        |
+
+
+  Any `null` or otherwise empty input is considered `false`.'
