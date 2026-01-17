@@ -1,0 +1,25 @@
+build hasn't expired yet
+looking for value: 'env_file'
+  no value (is optional) found for: 'env_file'
+looking for value: 'config_file'
+  no value (is optional) found for: 'config_file'
+looking for value: 'concurrency'
+  no value (is optional) found for: 'concurrency'
+looking for value: 'graph_file'
+  found value in: 'env (shell)'
+  evaluated to: 'length.act'
+looking for value: 'session_token'
+  no value (is optional) found for: 'session_token'
+looking for value: 'create_debug_session'
+  found value in flags
+  evaluated to: 'false'
+PushNodeVisit: start, execute: true
+🟢 Execute 'File Read (core-file-read-v1-banana-gold-fox)'
+PushNodeVisit: core-file-read-v1-banana-gold-fox, execute: true
+🟢 Execute 'Print (core-print-v1-apricot-teal-purple)'
+PushNodeVisit: core-print-v1-apricot-teal-purple, execute: true
+PushNodeVisit: (cached) core-file-read-v1-banana-gold-fox, execute: false
+PushNodeVisit: core-length-v1-grape-lobster-camel, execute: false
+PushNodeVisit: (cached) core-file-read-v1-banana-gold-fox, execute: false
+hello world
+11

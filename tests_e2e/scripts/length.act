@@ -1,0 +1,63 @@
+editor:
+  version:
+    created: v1.34.0
+entry: start
+type: standard
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: -520
+      y: -110
+  - id: core-file-read-v1-banana-gold-fox
+    type: core/file-read@v1
+    position:
+      x: -170
+      y: -190
+    inputs:
+      path: length.txt
+  - id: core-print-v1-apricot-teal-purple
+    type: core/print@v1
+    position:
+      x: 620
+      y: -220
+    inputs:
+      values[0]: null
+      values[1]: null
+  - id: core-length-v1-grape-lobster-camel
+    type: core/length@v1
+    position:
+      x: 270
+      y: 40
+connections:
+  - src:
+      node: core-file-read-v1-banana-gold-fox
+      port: data
+    dst:
+      node: core-length-v1-grape-lobster-camel
+      port: input
+  - src:
+      node: core-length-v1-grape-lobster-camel
+      port: result
+    dst:
+      node: core-print-v1-apricot-teal-purple
+      port: values[1]
+  - src:
+      node: core-file-read-v1-banana-gold-fox
+      port: data
+    dst:
+      node: core-print-v1-apricot-teal-purple
+      port: values[0]
+executions:
+  - src:
+      node: core-file-read-v1-banana-gold-fox
+      port: exec-success
+    dst:
+      node: core-print-v1-apricot-teal-purple
+      port: exec
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: core-file-read-v1-banana-gold-fox
+      port: exec
