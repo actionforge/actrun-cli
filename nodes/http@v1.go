@@ -118,6 +118,7 @@ func (n *HttpNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, pre
 	var statusCode int
 	if resp != nil {
 		dsf.Reader = resp.Body
+		dsf.Length = resp.ContentLength
 		statusCode = resp.StatusCode
 	}
 

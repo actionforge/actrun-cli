@@ -72,6 +72,7 @@ func (n *FileZipNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, 
 
 	dsf := core.DataStreamFactory{
 		Reader: reader,
+		Length: core.GetReaderLength(reader),
 	}
 
 	err = n.Outputs.SetOutputValue(c, ni.Core_file_compress_v1_Output_data, dsf, core.SetOutputValueOpts{})

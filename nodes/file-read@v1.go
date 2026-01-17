@@ -30,12 +30,12 @@ func (n *FileReadNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId,
 		return core.CreateErr(c, err)
 	}
 
-	defer fp.Close()
-
 	dsf := core.DataStreamFactory{
 		SourcePath: path,
 		Reader:     fp,
+		Length:     core.GetReaderLength(fp),
 	}
+	defer dsf.CloseStreamAndIgnoreError()
 
 	err = n.Outputs.SetOutputValue(c, ni.Core_file_read_v1_Output_data, dsf, core.SetOutputValueOpts{})
 	if err != nil {

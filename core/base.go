@@ -1,6 +1,7 @@
 package core
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"io"
@@ -83,6 +84,7 @@ type DataStreamFactory struct {
 	SourcePath     string
 	SourceProvider any
 	Reader         io.Reader
+	Length         int64
 }
 
 func (dsf *DataStreamFactory) CloseStream() error {
@@ -91,6 +93,25 @@ func (dsf *DataStreamFactory) CloseStream() error {
 
 func (dsf *DataStreamFactory) CloseStreamAndIgnoreError() {
 	_ = dsf.CloseStream()
+}
+
+func GetReaderLength(r io.Reader) int64 {
+	switch v := r.(type) {
+	case *bytes.Buffer:
+		return int64(v.Len())
+	case *bytes.Reader:
+		return int64(v.Len())
+	case *strings.Reader:
+		return int64(v.Len())
+	case *os.File:
+		stat, err := v.Stat()
+		if err != nil {
+			return 0
+		}
+		return stat.Size()
+	default:
+		return -1
+	}
 }
 
 var (
@@ -130,9 +151,11 @@ type NodeBaseInterface interface {
 	SetId(id string)
 	GetNodeTypeId() string
 	GetName() string
+	GetLabel() string
 	GetId() string
 	GetCacheId() string
 	SetName(name string)
+	SetLabel(label string)
 	GetGraph() *ActionGraph
 
 	// Instead of checking for 'HasExecutionInterface',
@@ -151,6 +174,7 @@ type NodeBaseInterface interface {
 // The node that implements this component has outgoing connections.
 type NodeBaseComponent struct {
 	Name            string // Human readable name of the node
+	Label           string // Label of the node shown in the graph editor
 	Id              string // Unique identifier for the node
 	FullPath        string // Full path of the node within the graph hierarchy
 	CacheId         string // Unique identifier for the cache
@@ -221,8 +245,16 @@ func (n *NodeBaseComponent) GetName() string {
 	return n.Name
 }
 
+func (n *NodeBaseComponent) GetLabel() string {
+	return n.Label
+}
+
 func (n *NodeBaseComponent) SetName(name string) {
 	n.Name = name
+}
+
+func (n *NodeBaseComponent) SetLabel(label string) {
+	n.Label = label
 }
 
 func IsValidIndexPortId(id string) (string, int, bool) {

@@ -122,6 +122,7 @@ func (n *RandomStreamNode) OutputValueById(c *core.ExecutionState, outputId core
 	reader := NewRandomStringReader(length, includeNumbers, includeCharacters, includeUppercase, includeSpecial, seed)
 	return core.DataStreamFactory{
 		Reader: reader,
+		Length: core.GetReaderLength(reader),
 	}, nil
 }
 

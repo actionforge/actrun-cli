@@ -603,7 +603,7 @@ func ConvertValue(c *ExecutionState, v reflect.Value, requestedType reflect.Type
 			if err != nil {
 				return nil, err
 			}
-			return DataStreamFactory{Reader: reader}, nil
+			return DataStreamFactory{Reader: reader, Length: GetReaderLength(reader)}, nil
 		case reflectValueType:
 			// It is common to request a value with the type `any`.
 			// ... core.InputValueById[any](...)
