@@ -121,6 +121,12 @@ executions:
       port: exec
   - src:
       node: gh-start
+      port: exec-on_pull_request
+    dst:
+      node: gh-actions-checkout-gray-butterfly-apple
+      port: exec
+  - src:
+      node: gh-start
       port: exec-on_workflow_dispatch
     dst:
       node: gh-actions-checkout-gray-butterfly-apple
