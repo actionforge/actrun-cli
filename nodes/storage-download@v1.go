@@ -38,6 +38,7 @@ func (n *StorageDownloadNode) ExecuteImpl(c *core.ExecutionState, inputId core.I
 		SourcePath:     path,
 		SourceProvider: provider,
 		Reader:         reader,
+		Length:         core.GetReaderLength(reader),
 	}
 
 	err = n.Outputs.SetOutputValue(c, ni.Core_storage_download_v1_Output_provider, provider, core.SetOutputValueOpts{})

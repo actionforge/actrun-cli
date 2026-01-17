@@ -6274,6 +6274,12 @@ executions:
       port: exec-lion-beige-dragonfruit
   - src:
       node: gh-start
+      port: exec-on_pull_request
+    dst:
+      node: group-v1-orange-tiger-grapefruit
+      port: exec-lion-beige-dragonfruit
+  - src:
+      node: gh-start
       port: exec-on_workflow_dispatch
     dst:
       node: group-v1-orange-tiger-grapefruit

@@ -2,6 +2,7 @@ package nodes
 
 import (
 	_ "embed"
+	"io"
 	"reflect"
 
 	"github.com/actionforge/actrun-cli/core"
@@ -23,8 +24,15 @@ func (n *LengthNode) OutputValueById(c *core.ExecutionState, outputId core.Outpu
 		return nil, err
 	}
 
-	v := reflect.ValueOf(inputs)
+	if dsf, ok := inputs.(core.DataStreamFactory); ok {
+		if dsf.Length != -1 {
+			return dsf.Length, nil
+		}
+	} else if r, ok := inputs.(io.Reader); ok {
+		return core.GetReaderLength(r), nil
+	}
 
+	v := reflect.ValueOf(inputs)
 	switch v.Kind() {
 	case reflect.Array, reflect.Map, reflect.Slice, reflect.String:
 		return v.Len(), nil

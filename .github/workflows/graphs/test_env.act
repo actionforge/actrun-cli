@@ -268,6 +268,12 @@ executions:
       port: exec
   - src:
       node: gh-start
+      port: exec-on_pull_request
+    dst:
+      node: run-v1-apple-silver-lion
+      port: exec
+  - src:
+      node: gh-start
       port: exec-on_workflow_dispatch
     dst:
       node: run-v1-apple-silver-lion
