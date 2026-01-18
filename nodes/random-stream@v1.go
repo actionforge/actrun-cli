@@ -18,6 +18,7 @@ var randomStreamNodeDefinition string
 
 type RandomStreamNode struct {
 	core.NodeBaseComponent
+	core.Executions
 	core.Inputs
 	core.Outputs
 }
@@ -93,37 +94,44 @@ func (r *RandomStreamReader) Read(p []byte) (n int, err error) {
 	return len(p), nil
 }
 
-func (n *RandomStreamNode) OutputValueById(c *core.ExecutionState, outputId core.OutputId) (any, error) {
+func (n *RandomStreamNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, prevError error) error {
 	length, err := core.InputValueById[int](c, n, ni.Core_random_stream_v1_Input_length)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	includeNumbers, err := core.InputValueById[bool](c, n, ni.Core_random_stream_v1_Input_include_numbers)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	includeCharacters, err := core.InputValueById[bool](c, n, ni.Core_random_stream_v1_Input_include_characters)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	includeUppercase, err := core.InputValueById[bool](c, n, ni.Core_random_stream_v1_Input_include_uppercase)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	includeSpecial, err := core.InputValueById[bool](c, n, ni.Core_random_stream_v1_Input_include_special)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	seed, err := core.InputValueById[int64](c, n, ni.Core_random_stream_v1_Input_seed)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	reader := NewRandomStringReader(length, includeNumbers, includeCharacters, includeUppercase, includeSpecial, seed)
-	return core.DataStreamFactory{
+	outputStream := core.DataStreamFactory{
 		Reader: reader,
 		Length: core.GetReaderLength(reader),
-	}, nil
+	}
+
+	err = n.SetOutputValue(c, ni.Core_random_stream_v1_Output_stream, outputStream, core.SetOutputValueOpts{})
+	if err != nil {
+		return err
+	}
+
+	return n.Execute(ni.Core_random_stream_v1_Output_exec_success, c, nil)
 }
 
 func init() {

@@ -6,6 +6,8 @@ import "github.com/actionforge/actrun-cli/core" // Generates a random number bas
 
 // ==> (o) Inputs
 
+// Triggers the generation of the random number.
+const Core_random_number_v1_Input_exec core.InputId = "exec"
 // The maximum value of the random number
 const Core_random_number_v1_Input_max core.InputId = "max"
 // The minimum value of the random number
@@ -15,5 +17,7 @@ const Core_random_number_v1_Input_seed core.InputId = "seed"
 
 // Outputs (o) ==> 
 
+// Triggered when the random number is successfully generated.
+const Core_random_number_v1_Output_exec_success core.OutputId = "exec-success"
 // The generated random number
 const Core_random_number_v1_Output_number core.OutputId = "number"

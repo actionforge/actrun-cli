@@ -6,6 +6,8 @@ import "github.com/actionforge/actrun-cli/core" // Creates a random stream based
 
 // ==> (o) Inputs
 
+// Triggers the generation of the stream.
+const Core_random_stream_v1_Input_exec core.InputId = "exec"
 // Include lower-case characters (a-z) in the stream.
 const Core_random_stream_v1_Input_include_characters core.InputId = "include_characters"
 // Include numbers (0-9) in the stream.
@@ -21,5 +23,7 @@ const Core_random_stream_v1_Input_seed core.InputId = "seed"
 
 // Outputs (o) ==> 
 
+// Triggered when the stream is successfully created.
+const Core_random_stream_v1_Output_exec_success core.OutputId = "exec-success"
 // The generated random stream
 const Core_random_stream_v1_Output_stream core.OutputId = "stream"
