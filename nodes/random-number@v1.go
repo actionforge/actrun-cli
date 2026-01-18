@@ -14,6 +14,7 @@ var randomNumberNodeDefinition string
 
 type RandomNumberNode struct {
 	core.NodeBaseComponent
+	core.Executions
 	core.Inputs
 	core.Outputs
 
@@ -21,18 +22,18 @@ type RandomNumberNode struct {
 	randGen     *rand.Rand
 }
 
-func (n *RandomNumberNode) OutputValueById(c *core.ExecutionState, outputId core.OutputId) (any, error) {
+func (n *RandomNumberNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, prevError error) error {
 	min, err := core.InputValueById[float64](c, n, ni.Core_random_number_v1_Input_min)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	max, err := core.InputValueById[float64](c, n, ni.Core_random_number_v1_Input_max)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	seed, err := core.InputValueById[int64](c, n, ni.Core_random_number_v1_Input_seed)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	if seed == -1 {
@@ -48,7 +49,13 @@ func (n *RandomNumberNode) OutputValueById(c *core.ExecutionState, outputId core
 	n.randGenLock.Unlock()
 
 	randomNumber := min + f*(max-min)
-	return randomNumber, nil
+
+	err = n.SetOutputValue(c, ni.Core_random_number_v1_Output_number, randomNumber, core.SetOutputValueOpts{})
+	if err != nil {
+		return err
+	}
+
+	return n.Execute(ni.Core_random_number_v1_Output_exec_success, c, nil)
 }
 
 func init() {

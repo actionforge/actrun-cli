@@ -16,47 +16,113 @@ looking for value: 'create_debug_session'
 PushNodeVisit: start, execute: true
 🟢 Execute 'For Loop (for-loop-v1-orange-persimmon-sheep)'
 PushNodeVisit: for-loop-v1-orange-persimmon-sheep, execute: true
+🟢 Execute 'Random Number (random-number-v1-maroon-wolf-yellow)'
+PushNodeVisit: random-number-v1-maroon-wolf-yellow, execute: true
 🟢 Execute 'Print (print-v1-lychee-apple-starfruit)'
 PushNodeVisit: print-v1-lychee-apple-starfruit, execute: true
-PushNodeVisit: random-number-v1-maroon-wolf-yellow, execute: false
+PushNodeVisit: (cached) random-number-v1-maroon-wolf-yellow, execute: false
 22.129699699755932
+🟢 Execute 'Print (print-v1-duck-passionfruit-crab)'
+PushNodeVisit: print-v1-duck-passionfruit-crab, execute: true
+PushNodeVisit: (cached) random-number-v1-maroon-wolf-yellow, execute: false
+22.129699699755932
+🟢 Execute 'Random Number (random-number-v1-maroon-wolf-yellow)'
+PushNodeVisit: random-number-v1-maroon-wolf-yellow, execute: true
 🟢 Execute 'Print (print-v1-lychee-apple-starfruit)'
 PushNodeVisit: print-v1-lychee-apple-starfruit, execute: true
-PushNodeVisit: random-number-v1-maroon-wolf-yellow, execute: false
+PushNodeVisit: (cached) random-number-v1-maroon-wolf-yellow, execute: false
 68.0544560538562
+🟢 Execute 'Print (print-v1-duck-passionfruit-crab)'
+PushNodeVisit: print-v1-duck-passionfruit-crab, execute: true
+PushNodeVisit: (cached) random-number-v1-maroon-wolf-yellow, execute: false
+68.0544560538562
+🟢 Execute 'Random Number (random-number-v1-maroon-wolf-yellow)'
+PushNodeVisit: random-number-v1-maroon-wolf-yellow, execute: true
 🟢 Execute 'Print (print-v1-lychee-apple-starfruit)'
 PushNodeVisit: print-v1-lychee-apple-starfruit, execute: true
-PushNodeVisit: random-number-v1-maroon-wolf-yellow, execute: false
+PushNodeVisit: (cached) random-number-v1-maroon-wolf-yellow, execute: false
 65.11888420060171
+🟢 Execute 'Print (print-v1-duck-passionfruit-crab)'
+PushNodeVisit: print-v1-duck-passionfruit-crab, execute: true
+PushNodeVisit: (cached) random-number-v1-maroon-wolf-yellow, execute: false
+65.11888420060171
+🟢 Execute 'Random Number (random-number-v1-maroon-wolf-yellow)'
+PushNodeVisit: random-number-v1-maroon-wolf-yellow, execute: true
 🟢 Execute 'Print (print-v1-lychee-apple-starfruit)'
 PushNodeVisit: print-v1-lychee-apple-starfruit, execute: true
-PushNodeVisit: random-number-v1-maroon-wolf-yellow, execute: false
+PushNodeVisit: (cached) random-number-v1-maroon-wolf-yellow, execute: false
 89.89115230327292
+🟢 Execute 'Print (print-v1-duck-passionfruit-crab)'
+PushNodeVisit: print-v1-duck-passionfruit-crab, execute: true
+PushNodeVisit: (cached) random-number-v1-maroon-wolf-yellow, execute: false
+89.89115230327292
+🟢 Execute 'Random Number (random-number-v1-maroon-wolf-yellow)'
+PushNodeVisit: random-number-v1-maroon-wolf-yellow, execute: true
 🟢 Execute 'Print (print-v1-lychee-apple-starfruit)'
 PushNodeVisit: print-v1-lychee-apple-starfruit, execute: true
-PushNodeVisit: random-number-v1-maroon-wolf-yellow, execute: false
+PushNodeVisit: (cached) random-number-v1-maroon-wolf-yellow, execute: false
 60.87185537746531
+🟢 Execute 'Print (print-v1-duck-passionfruit-crab)'
+PushNodeVisit: print-v1-duck-passionfruit-crab, execute: true
+PushNodeVisit: (cached) random-number-v1-maroon-wolf-yellow, execute: false
+60.87185537746531
+🟢 Execute 'Random Number (random-number-v1-maroon-wolf-yellow)'
+PushNodeVisit: random-number-v1-maroon-wolf-yellow, execute: true
 🟢 Execute 'Print (print-v1-lychee-apple-starfruit)'
 PushNodeVisit: print-v1-lychee-apple-starfruit, execute: true
-PushNodeVisit: random-number-v1-maroon-wolf-yellow, execute: false
+PushNodeVisit: (cached) random-number-v1-maroon-wolf-yellow, execute: false
 30.23554328904116
+🟢 Execute 'Print (print-v1-duck-passionfruit-crab)'
+PushNodeVisit: print-v1-duck-passionfruit-crab, execute: true
+PushNodeVisit: (cached) random-number-v1-maroon-wolf-yellow, execute: false
+30.23554328904116
+🟢 Execute 'Random Number (random-number-v1-maroon-wolf-yellow)'
+PushNodeVisit: random-number-v1-maroon-wolf-yellow, execute: true
 🟢 Execute 'Print (print-v1-lychee-apple-starfruit)'
 PushNodeVisit: print-v1-lychee-apple-starfruit, execute: true
-PushNodeVisit: random-number-v1-maroon-wolf-yellow, execute: false
+PushNodeVisit: (cached) random-number-v1-maroon-wolf-yellow, execute: false
 98.59533033329157
+🟢 Execute 'Print (print-v1-duck-passionfruit-crab)'
+PushNodeVisit: print-v1-duck-passionfruit-crab, execute: true
+PushNodeVisit: (cached) random-number-v1-maroon-wolf-yellow, execute: false
+98.59533033329157
+🟢 Execute 'Random Number (random-number-v1-maroon-wolf-yellow)'
+PushNodeVisit: random-number-v1-maroon-wolf-yellow, execute: true
 🟢 Execute 'Print (print-v1-lychee-apple-starfruit)'
 PushNodeVisit: print-v1-lychee-apple-starfruit, execute: true
-PushNodeVisit: random-number-v1-maroon-wolf-yellow, execute: false
+PushNodeVisit: (cached) random-number-v1-maroon-wolf-yellow, execute: false
 64.78664145510746
+🟢 Execute 'Print (print-v1-duck-passionfruit-crab)'
+PushNodeVisit: print-v1-duck-passionfruit-crab, execute: true
+PushNodeVisit: (cached) random-number-v1-maroon-wolf-yellow, execute: false
+64.78664145510746
+🟢 Execute 'Random Number (random-number-v1-maroon-wolf-yellow)'
+PushNodeVisit: random-number-v1-maroon-wolf-yellow, execute: true
 🟢 Execute 'Print (print-v1-lychee-apple-starfruit)'
 PushNodeVisit: print-v1-lychee-apple-starfruit, execute: true
-PushNodeVisit: random-number-v1-maroon-wolf-yellow, execute: false
+PushNodeVisit: (cached) random-number-v1-maroon-wolf-yellow, execute: false
 4.97252299832735
+🟢 Execute 'Print (print-v1-duck-passionfruit-crab)'
+PushNodeVisit: print-v1-duck-passionfruit-crab, execute: true
+PushNodeVisit: (cached) random-number-v1-maroon-wolf-yellow, execute: false
+4.97252299832735
+🟢 Execute 'Random Number (random-number-v1-maroon-wolf-yellow)'
+PushNodeVisit: random-number-v1-maroon-wolf-yellow, execute: true
 🟢 Execute 'Print (print-v1-lychee-apple-starfruit)'
 PushNodeVisit: print-v1-lychee-apple-starfruit, execute: true
-PushNodeVisit: random-number-v1-maroon-wolf-yellow, execute: false
+PushNodeVisit: (cached) random-number-v1-maroon-wolf-yellow, execute: false
 12.569191603431026
+🟢 Execute 'Print (print-v1-duck-passionfruit-crab)'
+PushNodeVisit: print-v1-duck-passionfruit-crab, execute: true
+PushNodeVisit: (cached) random-number-v1-maroon-wolf-yellow, execute: false
+12.569191603431026
+🟢 Execute 'Random Number (random-number-v1-maroon-wolf-yellow)'
+PushNodeVisit: random-number-v1-maroon-wolf-yellow, execute: true
 🟢 Execute 'Print (print-v1-lychee-apple-starfruit)'
 PushNodeVisit: print-v1-lychee-apple-starfruit, execute: true
-PushNodeVisit: random-number-v1-maroon-wolf-yellow, execute: false
+PushNodeVisit: (cached) random-number-v1-maroon-wolf-yellow, execute: false
+78.0932737380755
+🟢 Execute 'Print (print-v1-duck-passionfruit-crab)'
+PushNodeVisit: print-v1-duck-passionfruit-crab, execute: true
+PushNodeVisit: (cached) random-number-v1-maroon-wolf-yellow, execute: false
 78.0932737380755

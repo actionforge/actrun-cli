@@ -6,10 +6,12 @@ import "github.com/actionforge/actrun-cli/core" // Cache a stream and output it 
 
 // ==> (o) Inputs
 
+const Core_stream_cache_v1_Input_exec core.InputId = "exec"
 // The input stream to be cached.
 const Core_stream_cache_v1_Input_stream core.InputId = "stream"
 
 // Outputs (o) ==> 
 
+const Core_stream_cache_v1_Output_exec_success core.OutputId = "exec-success"
 // The cached stream as a string.
 const Core_stream_cache_v1_Output_result core.OutputId = "result"

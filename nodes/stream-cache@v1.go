@@ -14,23 +14,34 @@ var streamCacheNodeDefinition string
 
 type StreamCacheNode struct {
 	core.NodeBaseComponent
+	core.Executions
 	core.Inputs
 	core.Outputs
 }
 
-func (n *StreamCacheNode) OutputValueById(c *core.ExecutionState, outputId core.OutputId) (any, error) {
+func (n *StreamCacheNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, prevError error) error {
 	inputStream, err := core.InputValueById[io.Reader](c, n, ni.Core_stream_cache_v1_Input_stream)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	buffer := new(bytes.Buffer)
 	_, err = io.Copy(buffer, inputStream)
 	if err != nil {
-		return nil, core.CreateErr(c, err, "failed to read input stream")
+		return core.CreateErr(c, err, "failed to read input stream")
 	}
 
-	return buffer.String(), nil
+	err = n.SetOutputValue(c, ni.Core_stream_cache_v1_Output_result, buffer.String(), core.SetOutputValueOpts{})
+	if err != nil {
+		return err
+	}
+
+	err = n.Execute(ni.Core_stream_cache_v1_Output_exec_success, c, nil)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func init() {

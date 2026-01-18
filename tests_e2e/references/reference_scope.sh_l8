@@ -18,35 +18,136 @@ PushNodeVisit: start, execute: true
 PushNodeVisit: group-v1-brown-turkey-donkey, execute: true
 🟢 Execute 'Group Inputs (group-inputs-v1-starfish-navy-orange)'
 PushNodeVisit: group-inputs-v1-starfish-navy-orange, execute: true
+🟢 Execute 'Random Number (random-number-v1-pear-magenta-wolf)'
+PushNodeVisit: random-number-v1-pear-magenta-wolf, execute: true
 🟢 Execute 'Group Output (group-outputs-v1-wolf-cow-seahorse)'
 PushNodeVisit: group-outputs-v1-wolf-cow-seahorse, execute: true
 🟢 Execute 'Group (group-v1-brown-turkey-donkey)'
 PushNodeVisit: group-v1-brown-turkey-donkey, execute: true
-🟢 Execute 'Group (group-v1-white-seahorse-peacock)'
-PushNodeVisit: group-v1-white-seahorse-peacock, execute: true
+🟢 Execute 'Group (core-group-v1-panda-yellow-squirrel)'
+PushNodeVisit: core-group-v1-panda-yellow-squirrel, execute: true
 🟢 Execute 'Group Inputs (group-inputs-v1-starfish-navy-orange)'
 PushNodeVisit: group-inputs-v1-starfish-navy-orange, execute: true
+🟢 Execute 'Random Number (random-number-v1-pear-magenta-wolf)'
+PushNodeVisit: random-number-v1-pear-magenta-wolf, execute: true
 🟢 Execute 'Group Output (group-outputs-v1-wolf-cow-seahorse)'
 PushNodeVisit: group-outputs-v1-wolf-cow-seahorse, execute: true
-🟢 Execute 'Group (group-v1-white-seahorse-peacock)'
-PushNodeVisit: group-v1-white-seahorse-peacock, execute: true
+🟢 Execute 'Group (core-group-v1-panda-yellow-squirrel)'
+PushNodeVisit: core-group-v1-panda-yellow-squirrel, execute: true
 🟢 Execute 'Run Script (run-v1-lychee-grape-tangerine)'
 PushNodeVisit: run-v1-lychee-grape-tangerine, execute: true
 PushNodeVisit: env-array-v1-pink-date-pomegranate, execute: false
 PushNodeVisit: string-fmt-v1-snake-fox-seahorse, execute: false
-PushNodeVisit: group-v1-white-seahorse-peacock, execute: false
+PushNodeVisit: core-group-v1-panda-yellow-squirrel, execute: false
 PushNodeVisit: group-outputs-v1-wolf-cow-seahorse, execute: false
-PushNodeVisit: random-number-v1-pear-magenta-wolf, execute: false
+PushNodeVisit: (cached) random-number-v1-pear-magenta-wolf, execute: false
 PushNodeVisit: string-fmt-v1-lion-seahorse-white, execute: false
 PushNodeVisit: group-v1-brown-turkey-donkey, execute: false
 PushNodeVisit: group-outputs-v1-wolf-cow-seahorse, execute: false
-PushNodeVisit: random-number-v1-pear-magenta-wolf, execute: false
+PushNodeVisit: (cached) random-number-v1-pear-magenta-wolf, execute: false
 PushNodeVisit: string-fmt-v1-kangaroo-peacock-bear, execute: false
-PushNodeVisit: group-v1-blueberry-indigo-squirrel, execute: false
+PushNodeVisit: group-v1-brown-turkey-donkey, execute: false
 PushNodeVisit: group-outputs-v1-wolf-cow-seahorse, execute: false
-PushNodeVisit: random-number-v1-pear-magenta-wolf, execute: false
+PushNodeVisit: (cached) random-number-v1-pear-magenta-wolf, execute: false
 PushNodeVisit: string-fmt-v1-sheep-donkey-penguin, execute: false
-PushNodeVisit: group-v1-violet-teal-beige, execute: false
+PushNodeVisit: group-v1-brown-turkey-donkey, execute: false
 PushNodeVisit: group-outputs-v1-wolf-cow-seahorse, execute: false
-PushNodeVisit: random-number-v1-pear-magenta-wolf, execute: false
-good, all random numbers are different
+PushNodeVisit: (cached) random-number-v1-pear-magenta-wolf, execute: false
+error, some strings are the same! 0.9666203808495691 0.05759205459865479 0.05759205459865479 0.05759205459865479
+actrun: scope.act
+
+error:
+   1: execute 'Start' (start)
+   2: execute 'Group' (group-v1-brown-turkey-donkey)
+   3: execute 'Group Inputs' (group-inputs-v1-starfish-navy-orange)
+   4: execute 'Random Number' (random-number-v1-pear-magenta-wolf)
+   5: execute 'Group Output' (group-outputs-v1-wolf-cow-seahorse)
+   6: execute 'Group' (group-v1-brown-turkey-donkey)
+   7: execute 'Group' (core-group-v1-panda-yellow-squirrel)
+   8: execute 'Group Inputs' (group-inputs-v1-starfish-navy-orange)
+   9: execute 'Random Number' (random-number-v1-pear-magenta-wolf)
+  10: execute 'Group Output' (group-outputs-v1-wolf-cow-seahorse)
+  11: execute 'Group' (core-group-v1-panda-yellow-squirrel)
+  12: execute 'Run Script' (run-v1-lychee-grape-tangerine)
+      error during execution
+       ↳ failed to run command
+        ↳ exit status 1
+
+
+
+stack trace:
+github.com/actionforge/actrun-cli/nodes.runAndCaptureOutput
+	run@v1.go:384
+github.com/actionforge/actrun-cli/nodes.runCommand
+	run@v1.go:260
+github.com/actionforge/actrun-cli/nodes.(*RunNode).ExecuteImpl
+	run@v1.go:112
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*GroupNode).ExecuteImpl
+	group@v1.go:75
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*GroupOutputsNode).ExecuteImpl
+	group-outputs@v1.go:30
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*RandomNumberNode).ExecuteImpl
+	random-number@v1.go:58
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*GroupInputsNode).ExecuteImpl
+	group-inputs@v1.go:39
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*GroupNode).ExecuteImpl
+	group@v1.go:75
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*GroupNode).ExecuteImpl
+	group@v1.go:75
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*GroupOutputsNode).ExecuteImpl
+	group-outputs@v1.go:30
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*RandomNumberNode).ExecuteImpl
+	random-number@v1.go:58
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*GroupInputsNode).ExecuteImpl
+	group-inputs@v1.go:39
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*GroupNode).ExecuteImpl
+	group@v1.go:75
+github.com/actionforge/actrun-cli/core.(*Executions).Execute
+	executions.go:56
+github.com/actionforge/actrun-cli/nodes.(*StartNode).ExecuteImpl
+	start@v1.go:49
+github.com/actionforge/actrun-cli/nodes.(*StartNode).ExecuteEntry
+	start@v1.go:44
+github.com/actionforge/actrun-cli/core.RunGraph
+	graph.go:426
+github.com/actionforge/actrun-cli/core.RunGraphFromString
+	graph.go:1013
+github.com/actionforge/actrun-cli/core.RunGraphFromFile
+	graph.go:1031
+github.com/actionforge/actrun-cli/cmd.cmdRootRun
+	cmd_root.go:175
+github.com/spf13/cobra.(*Command).execute
+	command.go:-1
+github.com/spf13/cobra.(*Command).ExecuteC
+	command.go:-1
+github.com/spf13/cobra.(*Command).Execute
+	command.go:-1
+github.com/actionforge/actrun-cli/cmd.Execute
+	cmd_root.go:190
+main.main
+	main.go:26
+runtime.main
+	proc.go:-1
+runtime.goexit
+	asm_{..}.s:-1
+

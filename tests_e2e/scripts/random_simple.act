@@ -1,6 +1,7 @@
 editor:
   version:
     created: v1.28.1
+    updated: v1.34.0
 entry: start
 type: generic
 nodes:
@@ -12,15 +13,15 @@ nodes:
   - id: print-v1-lychee-apple-starfruit
     type: core/print@v1
     position:
-      x: 140
-      y: -110
+      x: 200
+      y: -200
     inputs:
       values[0]: null
   - id: random-number-v1-maroon-wolf-yellow
     type: core/random-number@v1
     position:
-      x: -600
-      y: 360
+      x: -180
+      y: -60
     inputs:
       min: 0
       max: 100
@@ -28,8 +29,8 @@ nodes:
   - id: print-v1-duck-passionfruit-crab
     type: core/print@v1
     position:
-      x: 130
-      y: 170
+      x: 590
+      y: 110
     inputs:
       values[0]: null
   - id: for-loop-v1-orange-persimmon-sheep
@@ -64,5 +65,17 @@ executions:
       node: for-loop-v1-orange-persimmon-sheep
       port: exec-body
     dst:
+      node: random-number-v1-maroon-wolf-yellow
+      port: exec
+  - src:
+      node: random-number-v1-maroon-wolf-yellow
+      port: exec-success
+    dst:
       node: print-v1-lychee-apple-starfruit
+      port: exec
+  - src:
+      node: print-v1-lychee-apple-starfruit
+      port: exec
+    dst:
+      node: print-v1-duck-passionfruit-crab
       port: exec
