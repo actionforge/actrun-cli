@@ -68,7 +68,7 @@ func (e *LeafError) Error() string {
 func (e *LeafError) ErrorWithCauses() string {
 	var lines []string
 
-	// 1. Top level error (no prefix)
+	// top level error (no prefix)
 	// iterate backwards for high-level first
 	for i := len(e.ErrorStack) - 1; i >= 0; i-- {
 		prefix := ""
