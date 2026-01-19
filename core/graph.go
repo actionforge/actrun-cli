@@ -580,6 +580,8 @@ func LoadNode(parent NodeBaseInterface, parentId string, nodeData any, validate 
 		return nil, "", nil
 	}
 
+	nodeLabel, _ := utils.GetTypedPropertyByPath[string](nodeI, "label")
+
 	var (
 		n           NodeBaseInterface
 		factoryErrs []error
@@ -613,6 +615,9 @@ func LoadNode(parent NodeBaseInterface, parentId string, nodeData any, validate 
 	}
 
 	if idErr == nil {
+		if nodeLabel != "" {
+			n.SetLabel(nodeLabel)
+		}
 		n.SetId(id)
 		if parentId != "" {
 			n.SetFullPath(parentId + "/" + id)
