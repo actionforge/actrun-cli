@@ -58,6 +58,8 @@ func Test_InputValueById_Casting(t *testing.T) {
 
 	SAME_AS_OUTPUT := core.OutputId("")
 
+	var constReader io.Reader = strings.NewReader("hello")
+
 	tests := []struct {
 		output any // the value for the output port
 
@@ -93,7 +95,8 @@ func Test_InputValueById_Casting(t *testing.T) {
 
 		// test stream ports
 		{core.DataStreamFactory{
-			Reader: strings.NewReader("hello"),
+			Reader: constReader,
+			Length: core.GetReaderLength(constReader),
 		}, ni.Core_test_v1_Output_output_stream_foo123, SAME_AS_OUTPUT, ni.Core_test_v1_Input_input_stream_foo123, core.DataStreamFactory{}, expectError{}},
 		{"hello", ni.Core_test_v1_Output_output_string_foo123, SAME_AS_OUTPUT, ni.Core_test_v1_Input_input_stream_foo123, strings.NewReader(""), expectError{}},
 		{"hello", ni.Core_test_v1_Output_output_string_foo123, SAME_AS_OUTPUT, ni.Core_test_v1_Input_input_stream_foo123, core.DataStreamFactory{}, expectError{}},
