@@ -945,7 +945,7 @@ func runGraphFromConn(ctx context.Context, graphData string, opts core.RunOpts, 
 		// send final error, even if error lines were already streamed
 		sendEncryptedJSON(ws, map[string]string{
 			"type":  MsgTypeJobError,
-			"error": fmt.Sprintf("Graph execution failed: %v", runErr),
+			"error": fmt.Sprintf("%#v", runErr),
 		}, sharedKey)
 		return // Exit, the deferred lock release will still run
 	}

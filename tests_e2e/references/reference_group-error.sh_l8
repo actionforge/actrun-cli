@@ -246,11 +246,11 @@ github.com/actionforge/actrun-cli/nodes.(*GroupNode).ExecuteImpl
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
 	executions.go:56
 github.com/actionforge/actrun-cli/nodes.(*StartNode).ExecuteImpl
-	start@v1.go:49
+	start@v1.go:50
 github.com/actionforge/actrun-cli/nodes.(*StartNode).ExecuteEntry
-	start@v1.go:44
+	start@v1.go:45
 github.com/actionforge/actrun-cli/core.RunGraph
 	graph.go:426
 github.com/actionforge/actrun-cli/core.RunGraphFromString
-	graph.go:1013
+	graph.go:1016
 
