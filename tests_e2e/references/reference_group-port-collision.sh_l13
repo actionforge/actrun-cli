@@ -23,7 +23,7 @@ stack trace:
 github.com/actionforge/actrun-cli/nodes.init.39.func1
 	group@v1.go:128
 github.com/actionforge/actrun-cli/core.NewNodeInstance
-	base.go:615
+	base.go:610
 github.com/actionforge/actrun-cli/core.LoadNode
 	graph.go:599
 github.com/actionforge/actrun-cli/core.LoadNodes

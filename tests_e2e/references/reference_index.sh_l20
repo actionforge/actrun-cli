@@ -54,6 +54,7 @@ error:
    4: execute 'Print' (print-v1-indigo-guava-elephant)
    5: execute 'Print' (print-v1-indigo-guava-elephant)
    6: execute 'Print' (print-v1-indigo-guava-elephant)
+   7: request input from 'Array Get' (array-get-v1-goose-chicken-nectarine)
       error when requesting input from 'Print' (print-v1-indigo-guava-elephant) values at **first** input port
        ↳ index out of bounds: 3
 
@@ -65,11 +66,11 @@ github.com/actionforge/actrun-cli/nodes.(*ArrayGet).OutputValueById
 github.com/actionforge/actrun-cli/core.(*Inputs).InputValueById
 	inputs.go:364
 github.com/actionforge/actrun-cli/core.inputValueById[...]
-	inputs.go:471
+	inputs.go:472
 github.com/actionforge/actrun-cli/core.InputValueFromSubInputs[...]
-	inputs.go:466
+	inputs.go:467
 github.com/actionforge/actrun-cli/core.InputArrayValueById[...]
-	inputs.go:548
+	inputs.go:549
 github.com/actionforge/actrun-cli/nodes.(*PrintNode).ExecuteImpl
 	print@v1.go:27
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
