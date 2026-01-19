@@ -353,6 +353,7 @@ type NodeTypeDefinitionBasic struct {
 	Label       string     `yaml:"label,omitempty" json:"label,omitempty" bson:"label,omitempty"`
 	Compact     bool       `yaml:"compact,omitempty" json:"compact,omitempty" bson:"compact,omitempty"`
 	GhMeta      GhMetadata `yaml:"gh_meta" json:"gh_meta" bson:"gh_meta"`
+	Aliases     []string   `yaml:"aliases,omitempty" json:"aliases,omitempty" bson:"aliases,omitempty"`
 
 	// Used by the gateway to indicate errors when being retreived
 	Error string `yaml:"error,omitempty" json:"error,omitempty" bson:"error,omitempty"`
@@ -560,6 +561,17 @@ func RegisterNodeFactory(nodeDefStr string, fn nodeFactoryFunc) error {
 
 	nodeDef.FactoryFn = fn
 	registries[id] = nodeDef
+
+	for _, alias := range nodeDef.Aliases {
+		if strings.Contains(alias, "_") {
+			return CreateErr(nil, nil, "alias '%v' must not contain underscores", alias)
+		}
+		aliasId := fmt.Sprintf("%v@v%v", alias, nodeDef.Version)
+		if _, exists := registries[aliasId]; exists {
+			return CreateErr(nil, nil, "alias '%v' already registered", aliasId)
+		}
+		registries[aliasId] = nodeDef
+	}
 
 	return nil
 }
