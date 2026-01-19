@@ -324,6 +324,7 @@ func (n *Inputs) GetInputValues() map[InputId]any {
 
 func (n *Inputs) InputValueById(ec *ExecutionState, host NodeWithInputs, inputId InputId, inputArrayPortId *InputId) (value any, err error) {
 	var finalValue any
+	var valueFound bool
 	var inputDef InputDefinition
 	var inputDefExists bool
 
@@ -343,12 +344,11 @@ func (n *Inputs) InputValueById(ec *ExecutionState, host NodeWithInputs, inputId
 		dstIsGroupInputsNode := strings.HasPrefix(dataSource.DstNode.GetNodeTypeId(), "core/group-inputs@")
 		regardCache := !srcIsGroupNode && !srcIsGroupInputsNode && !srcIsGroupOutputsNode && !dstIsGroupInputsNode
 
-		var ok bool
 		if regardCache {
-			finalValue, ok = ec.GetDataFromOutputCache(dataSource.SrcNode.GetCacheId(), outputCacheIdForCache, cacheType)
+			finalValue, valueFound = ec.GetDataFromOutputCache(dataSource.SrcNode.GetCacheId(), outputCacheIdForCache, cacheType)
 		}
 
-		if ok {
+		if valueFound {
 			if utils.GetLogLevel() == utils.LogLevelDebug {
 				utils.LogOut.Debugf("PushNodeVisit: (cached) %s, execute: %t\n", dataSource.SrcNode.GetId(), false)
 			}
@@ -385,6 +385,7 @@ func (n *Inputs) InputValueById(ec *ExecutionState, host NodeWithInputs, inputId
 				}
 			}
 			finalValue = v
+			valueFound = true
 
 			if regardCache {
 				ec.CacheDataOutput(dataSource.SrcNode.GetCacheId(), outputCacheIdForCache, finalValue, cacheType)
@@ -400,10 +401,12 @@ func (n *Inputs) InputValueById(ec *ExecutionState, host NodeWithInputs, inputId
 			inputDef, inputDefExists = n.inputDefs[inputId]
 		}
 
-		if userExists && inputValue != nil {
+		if userExists {
 			finalValue = inputValue
+			valueFound = true
 		} else if inputDefExists && inputDef.Default != nil {
 			finalValue = inputDef.Default
+			valueFound = true
 		} else if inputDefExists && inputDef.Required {
 			return nil, CreateErr(ec, &ErrNoInputValue{}, "no value for input '%v' (%s)", inputDef.Name, inputId)
 		} else if inputDefExists {
@@ -414,7 +417,7 @@ func (n *Inputs) InputValueById(ec *ExecutionState, host NodeWithInputs, inputId
 		}
 	}
 
-	if finalValue == nil {
+	if !valueFound {
 		if inputDefExists {
 			return nil, CreateErr(ec, &ErrNoInputValue{}, "no value for input '%v' (%s)", inputDef.Name, inputId)
 		}

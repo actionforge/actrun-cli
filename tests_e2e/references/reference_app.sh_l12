@@ -23,7 +23,7 @@ hint:
 
 stack trace:
 github.com/actionforge/actrun-cli/core.RunGraphFromFile
-	graph.go:1028
+	graph.go:1031
 github.com/actionforge/actrun-cli/cmd.cmdRootRun
 	cmd_root.go:175
 github.com/spf13/cobra.(*Command).execute

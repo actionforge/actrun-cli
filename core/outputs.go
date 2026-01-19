@@ -164,16 +164,18 @@ func (n *Outputs) SetOutputValue(ec *ExecutionState, outputId OutputId, value an
 }
 
 func isValueValidForOutput(value any, expectedType string) bool {
+
+	if expectedType == "any" || expectedType == "unknown" {
+		return true
+	}
+
+	// if its not unknown or any but nil then the value is not compatible
 	if value == nil {
 		return false
 	}
 
 	valueType := reflect.TypeOf(value)
 	kind := valueType.Kind()
-
-	if expectedType == "any" || expectedType == "unknown" {
-		return true
-	}
 
 	_, mappingExists := validKindsForExpectedType[expectedType]
 	if mappingExists {

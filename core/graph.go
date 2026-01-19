@@ -561,7 +561,6 @@ func LoadNode(parent NodeBaseInterface, parentId string, nodeData any, validate 
 		return nil, "", nil
 	}
 
-	// 1. Check ID
 	// We attempt to get the ID. If it fails, we record the error but CONTINUE
 	// processing (if validating) to check Type, Inputs, and Outputs.
 	id, idErr := utils.GetTypedPropertyByPath[string](nodeI, "id")
@@ -571,7 +570,6 @@ func LoadNode(parent NodeBaseInterface, parentId string, nodeData any, validate 
 		}
 	}
 
-	// 2. Check Type
 	// If Type is missing, loading "makes no sense" as we cannot select a factory.
 	// We must early out here.
 	nodeType, typeErr := utils.GetTypedPropertyByPath[string](nodeI, "type")
@@ -581,6 +579,8 @@ func LoadNode(parent NodeBaseInterface, parentId string, nodeData any, validate 
 		}
 		return nil, "", nil
 	}
+
+	nodeLabel, _ := utils.GetTypedPropertyByPath[string](nodeI, "label")
 
 	var (
 		n           NodeBaseInterface
@@ -615,6 +615,9 @@ func LoadNode(parent NodeBaseInterface, parentId string, nodeData any, validate 
 	}
 
 	if idErr == nil {
+		if nodeLabel != "" {
+			n.SetLabel(nodeLabel)
+		}
 		n.SetId(id)
 		if parentId != "" {
 			n.SetFullPath(parentId + "/" + id)

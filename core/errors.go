@@ -3,6 +3,7 @@ package core
 import (
 	"bytes"
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net"
@@ -176,9 +177,107 @@ func indentString(input string, indentSpaces int, numbering bool) string {
 	return strings.Join(lines, "\n")
 }
 
+const (
+	// web-safe hex equivalents for the frontend
+	WebColorRed     = "#FF5555" // for color.FgRed
+	WebColorYellow  = "#FFFF55" // for color.FgYellow
+	WebColorCyan    = "#8BE9FD" // for color.FgCyan
+	WebColorMagenta = "#FF79C6" // for color.FgMagenta
+)
+
+type CtxMsg struct {
+	Message  string `json:"msg"`
+	Depth    int    `json:"level"`
+	FullPath string `json:"fullPath"`
+}
+
+type WebErrorPayload struct {
+	IsLeafError bool     `json:"isLeafError"`
+	Context     []CtxMsg `json:"context,omitempty"`
+
+	Error      string `json:"error"`
+	ErrorColor string `json:"errorColor"`
+
+	Hint      string `json:"hint,omitempty"`
+	HintColor string `json:"hintColor,omitempty"`
+
+	StackTrace []string `json:"stackTrace,omitempty"`
+}
+
 func (e *LeafError) Format(f fmt.State, c rune) {
 	switch c {
 	case 'v':
+
+		// Below is the JSON output formatting for the web editor console
+		if f.Flag('#') {
+			payload := WebErrorPayload{
+				IsLeafError: true,
+				Error:       e.ErrorWithCauses(),
+				ErrorColor:  "#FF5555",
+			}
+
+			if e.Context != nil && len(e.Context.Visited) > 0 {
+				var previousNode NodeBaseInterface
+				for _, item := range e.Context.Visited {
+					currentNode := item.Node
+
+					// TODO: (Seb) improve this
+					// In the logs, group nodes appear twice, once when entered, and once
+					// when the group-outputs node comes back and executes the group node again.
+					// While this is expected for the execution flow, we don't want to have that
+					// in the logs, it looks very confusing.
+					if previousNode != nil &&
+						strings.HasPrefix(previousNode.GetNodeTypeId(), "core/group-outputs@") &&
+						strings.HasPrefix(currentNode.GetNodeTypeId(), "core/group@") {
+
+						previousNode = currentNode
+						continue
+					}
+
+					nodeNameOrLabel := currentNode.GetLabel()
+					if nodeNameOrLabel == "" {
+						nodeNameOrLabel = currentNode.GetName()
+					}
+
+					var msg string
+					if item.Execute {
+						msg = fmt.Sprintf("execute '%s'", nodeNameOrLabel)
+					} else {
+						msg = fmt.Sprintf("request input from '%s'", nodeNameOrLabel)
+					}
+
+					payload.Context = append(payload.Context, CtxMsg{
+						Message:  msg,
+						Depth:    strings.Count(currentNode.GetFullPath(), "/") + 1,
+						FullPath: currentNode.GetFullPath(),
+					})
+
+					previousNode = item.Node
+				}
+			}
+
+			payload.Hint = getErrorHint(e)
+			if payload.Hint != "" {
+				payload.HintColor = "#FFFF55"
+			}
+
+			if f.Flag('+') {
+				rawStack := e.StackTrace()
+				payload.StackTrace = strings.Split(rawStack, "\n")
+			}
+
+			jsonBytes, err := json.Marshal(payload)
+			if err != nil {
+				// Fallback in case of JSON error
+				fmt.Fprint(f, e.Error())
+				return
+			}
+
+			fmt.Fprint(f, string(jsonBytes))
+			return
+		}
+
+		// This below is the regular terminal output formatting
 
 		var (
 			tmpErrEmoji   string
@@ -245,6 +344,7 @@ func (e *LeafError) Format(f fmt.State, c rune) {
 
 		fmt.Fprint(f, output)
 		return
+
 	case 's':
 		fmt.Fprint(f, e.Error())
 	}
