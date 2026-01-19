@@ -362,10 +362,11 @@ func (n *Inputs) InputValueById(ec *ExecutionState, host NodeWithInputs, inputId
 
 			ec.PushNodeVisit(dataSource.SrcNode, false)
 			v, err := dataSource.SrcNodeOutputs.OutputValueById(ec, OutputId(outputCacheId))
-			ec.PopNodeVisit()
 			if err != nil {
 				return nil, err
 			}
+
+			ec.PopNodeVisit()
 
 			// handle slice indexing
 			if dataSource.SrcIndexOutputInfo != nil {
