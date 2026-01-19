@@ -105,14 +105,6 @@ func (n *HttpNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, pre
 		defer resp.Body.Close()
 	}
 
-	// Ensure the input reader is closed in all cases.
-	// If closing the reader fails without a prior error,
-	// treat it as an error which is part of the connection op.
-	err = utils.SafeCloseReader(reader)
-	if err != nil && connErr == nil {
-		connErr = err
-	}
-
 	var dsf core.DataStreamFactory
 
 	var statusCode int
