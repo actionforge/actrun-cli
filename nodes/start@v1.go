@@ -24,6 +24,7 @@ func (n *StartNode) ExecuteEntry(c *core.ExecutionState, outputValues map[core.O
 
 	dsf := core.DataStreamFactory{
 		Reader: os.Stdin,
+		Length: -1,
 	}
 
 	err := n.Outputs.SetOutputValue(c, ni.Core_start_v1_Output_stdin, dsf, core.SetOutputValueOpts{})
