@@ -17,7 +17,7 @@ const Core_random_number_v1_Input_seed core.InputId = "seed"
 
 // Outputs (o) ==> 
 
-// Triggered when the random number is successfully generated.
+// Triggered when the random number is generated.
 const Core_random_number_v1_Output_exec_success core.OutputId = "exec-success"
 // The generated random number
 const Core_random_number_v1_Output_number core.OutputId = "number"

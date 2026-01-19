@@ -657,28 +657,28 @@ nodes:
     inputs:
       value: actrun-notarization-macos.zip
   - id: secret-v1-red-pineapple-guava
-    type: core/secret@v1
+    type: core/secret-get@v1
     position:
       x: 3620
       y: 2680
     inputs:
       name: APPLE_ID
   - id: secret-v1-monkey-silver-boysenberry
-    type: core/secret@v1
+    type: core/secret-get@v1
     position:
       x: 3620
       y: 2790
     inputs:
       name: APPLE_ID_PASSWORD
   - id: secret-v1-kiwano-pineapple-bear
-    type: core/secret@v1
+    type: core/secret-get@v1
     position:
       x: 2220
       y: 2190
     inputs:
       name: APPLE_TEAM_IDENTITY
   - id: secret-v1-cherry-pear-cranberry
-    type: core/secret@v1
+    type: core/secret-get@v1
     position:
       x: 3620
       y: 2570
@@ -1281,7 +1281,7 @@ nodes:
       substitutes[0]: null
       fmt: '%s.pkg'
   - id: secret-v1-giraffe-snake-tiger
-    type: core/secret@v1
+    type: core/secret-get@v1
     position:
       x: 10050
       y: 3000
@@ -1928,7 +1928,7 @@ nodes:
         description: ''
     label: MacOS CodeSign
   - id: secret-v1-cranberry-watermelon-starfruit
-    type: core/secret@v1
+    type: core/secret-get@v1
     position:
       x: 11090
       y: 2200
@@ -2139,21 +2139,21 @@ nodes:
         description: ''
     label: MacOS Notarization
   - id: secret-v1-persimmon-jackfruit-gold
-    type: core/secret@v1
+    type: core/secret-get@v1
     position:
       x: 11570
       y: 2680
     inputs:
       name: APPLE_ID
   - id: secret-v1-date-cow-shark
-    type: core/secret@v1
+    type: core/secret-get@v1
     position:
       x: 11570
       y: 2790
     inputs:
       name: APPLE_ID_PASSWORD
   - id: secret-v1-watermelon-gray-pineapple
-    type: core/secret@v1
+    type: core/secret-get@v1
     position:
       x: 11570
       y: 2570
@@ -5058,7 +5058,7 @@ nodes:
       x: 13840
       y: 1090
   - id: secret-v1-raspberry-apple-giraffe
-    type: core/secret@v1
+    type: core/secret-get@v1
     position:
       x: 13670
       y: 2340
