@@ -113,10 +113,13 @@ nodes:
         float(S3)
         float(S4)
 
-        if all_strings_different(S1, S2, S3, S4):
-            print("good, all random numbers are different")
+        if S1 == S2:
+            print("error, first and second random number must be different since they come from different nodes")
+            sys.exit(1)
+        elif S2 == S3 or S2 == S4:
+            print("good, random number S1 is different to the others, and S2, S3 and S4 are the same")
         else:
-            print("error, some strings are the same!", S1, S2, S3, S4)
+            print("error, these randpm numbers should have been the same", "S2", S2, "S3", S3, "S4", S4)
             sys.exit(1)
       shell: python
   - id: env-array-v1-pink-date-pomegranate
