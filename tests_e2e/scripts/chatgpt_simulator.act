@@ -349,7 +349,7 @@ nodes:
     inputs:
       value: DONE
   - id: secret-v1-magenta-grapefruit-bear
-    type: core/secret@v1
+    type: core/secret-get@v1
     position:
       x: -240
       y: 320

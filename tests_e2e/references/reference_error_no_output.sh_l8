@@ -22,13 +22,14 @@ actrun: error_no_output.act
 error:
    1: execute 'Start' (start)
    2: execute 'Print' (print-v1-panda-orange-peacock)
+   3: request input from 'Run Executable' (run-exec-v1-wolf-guava-gray)
       error when requesting input from 'Print' (print-v1-panda-orange-peacock) values at **first** input port
        ↳ output port 'output' has no value
 
 
 
 hint:
-  No output value provided. Check the settings of 'Print' (print-v1-panda-orange-peacock) node
+  No output value provided. Check the settings of 'Run Executable' (run-exec-v1-wolf-guava-gray) node
 
 stack trace:
 github.com/actionforge/actrun-cli/core.(*Outputs).OutputValueById
@@ -36,11 +37,11 @@ github.com/actionforge/actrun-cli/core.(*Outputs).OutputValueById
 github.com/actionforge/actrun-cli/core.(*Inputs).InputValueById
 	inputs.go:364
 github.com/actionforge/actrun-cli/core.inputValueById[...]
-	inputs.go:471
+	inputs.go:472
 github.com/actionforge/actrun-cli/core.InputValueFromSubInputs[...]
-	inputs.go:466
+	inputs.go:467
 github.com/actionforge/actrun-cli/core.InputArrayValueById[...]
-	inputs.go:548
+	inputs.go:549
 github.com/actionforge/actrun-cli/nodes.(*PrintNode).ExecuteImpl
 	print@v1.go:27
 github.com/actionforge/actrun-cli/core.(*Executions).Execute

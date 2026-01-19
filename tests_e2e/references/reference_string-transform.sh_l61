@@ -25,6 +25,7 @@ actrun: string-transform.act
 error:
    1: execute 'Start' (start)
    2: execute 'Print' (print-v1-coral-banana-goat)
+   3: request input from 'String Transform' (string-transform-v1-blue-horse-turquoise)
       error when requesting input from 'Print' (print-v1-coral-banana-goat) values at **1st** input port
        ↳ unknown operation 'op_doesnt_exist'
 
@@ -36,11 +37,11 @@ github.com/actionforge/actrun-cli/nodes.(*StringTransform).OutputValueById
 github.com/actionforge/actrun-cli/core.(*Inputs).InputValueById
 	inputs.go:364
 github.com/actionforge/actrun-cli/core.inputValueById[...]
-	inputs.go:471
+	inputs.go:472
 github.com/actionforge/actrun-cli/core.InputValueFromSubInputs[...]
-	inputs.go:466
+	inputs.go:467
 github.com/actionforge/actrun-cli/core.InputArrayValueById[...]
-	inputs.go:548
+	inputs.go:549
 github.com/actionforge/actrun-cli/nodes.(*PrintNode).ExecuteImpl
 	print@v1.go:27
 github.com/actionforge/actrun-cli/core.(*Executions).Execute

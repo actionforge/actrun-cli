@@ -61,6 +61,7 @@ error:
    6: execute 'Print' (print-v1-gold-gold-panda)
    7: execute 'Print' (print-v1-gold-gold-panda)
    8: execute 'Print' (print-v1-gold-gold-panda)
+   9: request input from 'Select Data' (select-v1-grape-peach-snake)
       error when requesting input from 'Print' (print-v1-gold-gold-panda) values at **first** input port
        ↳ index out of range: 5, expected 0-4
 
@@ -72,11 +73,11 @@ github.com/actionforge/actrun-cli/nodes.(*SelectDataNode).OutputValueById
 github.com/actionforge/actrun-cli/core.(*Inputs).InputValueById
 	inputs.go:364
 github.com/actionforge/actrun-cli/core.inputValueById[...]
-	inputs.go:471
+	inputs.go:472
 github.com/actionforge/actrun-cli/core.InputValueFromSubInputs[...]
-	inputs.go:466
+	inputs.go:467
 github.com/actionforge/actrun-cli/core.InputArrayValueById[...]
-	inputs.go:548
+	inputs.go:549
 github.com/actionforge/actrun-cli/nodes.(*PrintNode).ExecuteImpl
 	print@v1.go:27
 github.com/actionforge/actrun-cli/core.(*Executions).Execute

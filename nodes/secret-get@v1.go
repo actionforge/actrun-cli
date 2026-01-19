@@ -8,7 +8,7 @@ import (
 	ni "github.com/actionforge/actrun-cli/node_interfaces"
 )
 
-//go:embed secret@v1.yml
+//go:embed secret-get@v1.yml
 var secretDefinition string
 
 type SecretNode struct {
@@ -18,12 +18,12 @@ type SecretNode struct {
 }
 
 func (n *SecretNode) OutputValueById(c *core.ExecutionState, outputId core.OutputId) (any, error) {
-	secretName, err := core.InputValueById[string](c, n, ni.Core_secret_v1_Input_name)
+	secretName, err := core.InputValueById[string](c, n, ni.Core_secret_get_v1_Input_name)
 	if err != nil {
 		return nil, err
 	}
 
-	prefix, err := core.InputValueById[string](c, n, ni.Core_secret_v1_Input_prefix)
+	prefix, err := core.InputValueById[string](c, n, ni.Core_secret_get_v1_Input_prefix)
 	if err != nil {
 		return nil, err
 	}
