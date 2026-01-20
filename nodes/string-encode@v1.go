@@ -5,6 +5,10 @@ import (
 	"encoding/base32"
 	"encoding/base64"
 	"encoding/hex"
+	"fmt"
+	"html"
+	"net/url"
+	"strings"
 
 	"github.com/actionforge/actrun-cli/core"
 	ni "github.com/actionforge/actrun-cli/node_interfaces"
@@ -76,11 +80,72 @@ func (n *StringEncode) OutputValueById(c *core.ExecutionState, outputId core.Out
 			return nil, core.CreateErr(c, err, "failed to encode utf32be")
 		}
 		result = string(utf32Bytes) // Return raw bytes as a string
+
+	case "html":
+		result = html.EscapeString(input)
+	case "url":
+		result = url.QueryEscape(input)
+	case "urlpath":
+		result = url.PathEscape(input)
+	case "json":
+		result = escapeJSON(input)
+	case "xml":
+		result = escapeXML(input)
 	default:
 		return nil, core.CreateErr(c, nil, "unknown operation '%s'", op)
 	}
 
 	return result, nil
+}
+
+func escapeJSON(s string) string {
+	var b strings.Builder
+	for _, r := range s {
+		switch r {
+		case '"':
+			b.WriteString(`\"`)
+		case '\\':
+			b.WriteString(`\\`)
+		case '\b':
+			b.WriteString(`\b`)
+		case '\f':
+			b.WriteString(`\f`)
+		case '\n':
+			b.WriteString(`\n`)
+		case '\r':
+			b.WriteString(`\r`)
+		case '\t':
+			b.WriteString(`\t`)
+		default:
+			if r < 0x20 {
+				b.WriteString(fmt.Sprintf(`\u%04x`, r))
+			} else {
+				b.WriteRune(r)
+			}
+		}
+	}
+	return b.String()
+}
+
+func escapeXML(s string) string {
+	var b strings.Builder
+	for _, r := range s {
+		switch r {
+		case '<':
+			b.WriteString("&lt;")
+		case '>':
+			b.WriteString("&gt;")
+		case '&':
+			b.WriteString("&amp;")
+		case '\'':
+			b.WriteString("&apos;")
+		case '"':
+			b.WriteString("&quot;")
+		default:
+			b.WriteRune(r)
+		}
+	}
+	return b.String()
 }
 
 func init() {
