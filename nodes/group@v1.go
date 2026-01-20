@@ -20,9 +20,36 @@ type GroupNode struct {
 }
 
 func (n *GroupNode) OutputValueById(c *core.ExecutionState, outputId core.OutputId) (any, error) {
-	v, err := n.InputValueById(c, n, core.InputId(outputId), nil)
-	if err != nil {
-		return nil, err
+
+	var (
+		err error
+		v   any
+	)
+
+	// Nodes are responsible for resolving secrets, so is the group node if the secret input name
+	// is coming from the group node itself. Like the other nodes, secrets are empty if not found.
+	_, connected := n.GetDataSource(core.InputId(outputId))
+	if !connected {
+		inputDef, _, inputDefExists := n.Inputs.InputDefByPortId(string(outputId))
+		if inputDefExists && inputDef.Type == "secret" {
+			v, err = core.InputValueById[core.SecretValue](c, n, core.InputId(outputId))
+			if err != nil {
+				if strings.HasPrefix(err.Error(), "no secret found for") {
+					// empty secrets are ignored, similar to the core/secret-get node
+					// since the caller is responsible for checking the value
+					v = ""
+				} else {
+					return nil, err
+				}
+			}
+		}
+	}
+
+	if v == nil {
+		v, err = n.InputValueById(c, n, core.InputId(outputId), nil)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return v, nil
