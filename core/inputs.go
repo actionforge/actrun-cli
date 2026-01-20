@@ -435,16 +435,19 @@ func (n *Inputs) InputValueById(ec *ExecutionState, host NodeWithInputs, inputId
 	if !inputDefExists {
 		inputDef, inputDefExists = n.inputDefs[inputId]
 	}
-	if inputDefExists && inputDef.Type == "option" {
-		switch c := finalValue.(type) {
-		case string:
-			finalValue = strings.Trim(c, " \n\r")
-		case int8, int16, int32, int64, int, uint8, uint16, uint32, uint64, uint:
-			nv := reflect.ValueOf(c).Int()
-			if len(inputDef.Options) > 0 && int(nv) >= len(inputDef.Options) {
-				return nil, CreateErr(ec, nil, "option value out of range: %v", nv)
+	if inputDefExists {
+		switch inputDef.Type {
+		case "option":
+			switch c := finalValue.(type) {
+			case string:
+				finalValue = strings.Trim(c, " \n\r")
+			case int8, int16, int32, int64, int, uint8, uint16, uint32, uint64, uint:
+				nv := reflect.ValueOf(c).Int()
+				if len(inputDef.Options) > 0 && int(nv) >= len(inputDef.Options) {
+					return nil, CreateErr(ec, nil, "option value out of range: %v", nv)
+				}
+				finalValue = inputDef.Options[nv].Value
 			}
-			finalValue = inputDef.Options[nv].Value
 		}
 	}
 
