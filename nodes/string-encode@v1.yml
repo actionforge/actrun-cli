@@ -9,7 +9,7 @@ style:
     background: "#6e6e6e"
   body:
     background: "#423f3f"
-short_desc: Encode a UTF-8 string into various string-based formats like Base64, Hex, UTF-16, and UTF-32.
+short_desc: Encode a UTF-8 string into various string-based formats like Base64, Hex, UTF-16, UTF-32, or apply escape sequences for HTML, URL, JSON, and XML.
 addendum: |
   ## Encoding Operations
 
@@ -22,7 +22,10 @@ addendum: |
     These operations produce a string object containing the raw encoded bytes.
     **This output will not be human-readable** and is intended to be used
     with the `String Decode` node.
-compact: true
+
+  - **Escape Formats (HTML, URL, JSON, XML):**
+    These operations escape special characters in the input string to make
+    them safe for use in the respective context.
 outputs:
   result:
     type: string
@@ -41,19 +44,29 @@ inputs:
     default: base64
     desc: The encoding operation to apply.
     options:
-      - name: Base16 (Hex)
+      - name: To Base16 (Hex)
         value: hex
-      - name: Base32
+      - name: To Base32
         value: base32
-      - name: Base64
+      - name: To Base64
         value: base64
-      - name: Base64 (URL Safe)
+      - name: To Base64 (URL Safe)
         value: base64url
-      - name: UTF-16 LE
+      - name: To UTF-16 LE
         value: utf16le
-      - name: UTF-16 BE
+      - name: To UTF-16 BE
         value: utf16be
-      - name: UTF-32 LE
+      - name: To UTF-32 LE
         value: utf32le
-      - name: UTF-32 BE
+      - name: To UTF-32 BE
         value: utf32be
+      - name: To HTML Escape
+        value: html
+      - name: To URL Encode (Query)
+        value: url
+      - name: To URL Encode (Path)
+        value: urlpath
+      - name: To JSON Escape
+        value: json
+      - name: To XML Escape
+        value: xml

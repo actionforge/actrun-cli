@@ -2,7 +2,7 @@
 
 package node_interfaces
 
-import "github.com/actionforge/actrun-cli/core" // Encode a UTF-8 string into various string-based formats like Base64, Hex, UTF-16, and UTF-32.
+import "github.com/actionforge/actrun-cli/core" // Encode a UTF-8 string into various string-based formats like Base64, Hex, UTF-16, UTF-32, or apply escape sequences for HTML, URL, JSON, and XML.
 
 // ==> (o) Inputs
 
