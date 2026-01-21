@@ -37,7 +37,9 @@ func (n *SecretNode) OutputValueById(c *core.ExecutionState, outputId core.Outpu
 		return "", nil
 	}
 
-	return fmt.Sprintf("%s%s", prefix, secretValue), nil
+	return core.SecretValue{
+		Secret: fmt.Sprintf("%s%s", prefix, secretValue),
+	}, nil
 }
 
 func init() {

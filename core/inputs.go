@@ -703,23 +703,27 @@ func ConvertToString(c *ExecutionState, elem reflect.Value) (string, error) {
 		}
 		return str.String(), nil
 	case reflect.Struct:
-		dsf, ok := elem.Interface().(DataStreamFactory)
-		if !ok {
-			return "", CreateErr(c, nil, "cannot convert '%s' to string", elem.Kind())
-		}
 
-		bytes, err := io.ReadAll(dsf.Reader)
-		if err != nil {
-			dsf.CloseStreamAndIgnoreError()
-			return "", CreateErr(c, nil, "error reading from io.Reader: %s", err)
-		}
+		switch t := elem.Interface().(type) {
+		case DataStreamFactory:
+			bytes, err := io.ReadAll(t.Reader)
+			if err != nil {
+				t.CloseStreamAndIgnoreError()
+				return "", CreateErr(c, nil, "error reading from io.Reader: %s", err)
+			}
 
-		err = dsf.CloseStream()
-		if err != nil {
-			return "", CreateErr(c, nil, "error closing reader: %s", err)
-		}
+			err = t.CloseStream()
+			if err != nil {
+				return "", CreateErr(c, nil, "error closing reader: %s", err)
+			}
 
-		return string(bytes), nil
+			return string(bytes), nil
+		case SecretValue:
+			return t.Secret, nil
+		default:
+			// fallthrough to error handler
+			break
+		}
 	}
 
 	if elem.IsValid() {
