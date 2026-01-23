@@ -2186,7 +2186,7 @@ nodes:
         - id: group-outputs-v1-goose-pineapple-jackfruit
           type: core/group-outputs@v1
           position:
-            x: 4400
+            x: 4470
             y: 440
         - id: filepath-join-v1-parrot-butterfly-red
           type: core/filepath-join@v1
@@ -2413,8 +2413,8 @@ nodes:
               - id: group-inputs-v1-koala-guava-fig
                 type: core/group-inputs@v1
                 position:
-                  x: -120
-                  y: 110
+                  x: -370
+                  y: 120
               - id: group-outputs-v1-tiger-pomegranate-passionfruit
                 type: core/group-outputs@v1
                 position:
@@ -2474,8 +2474,8 @@ nodes:
               - id: random-stream-v1-rabbit-parrot-watermelon
                 type: core/random-stream@v1
                 position:
-                  x: -130
-                  y: 750
+                  x: 20
+                  y: 110
                 inputs:
                   length: 10
                   include_characters: true
@@ -2607,16 +2607,22 @@ nodes:
                   node: group-outputs-v1-tiger-pomegranate-passionfruit
                   port: exec-watermelon-turkey-turquoise
               - src:
-                  node: group-inputs-v1-koala-guava-fig
-                  port: exec-beige-chicken-octopus
-                dst:
-                  node: freeze-v1-gold-rhinoceros-blueberry
-                  port: exec
-              - src:
                   node: freeze-v1-gold-rhinoceros-blueberry
                   port: exec
                 dst:
                   node: run-v1-blue-elephant-lime
+                  port: exec
+              - src:
+                  node: group-inputs-v1-koala-guava-fig
+                  port: exec-beige-chicken-octopus
+                dst:
+                  node: random-stream-v1-rabbit-parrot-watermelon
+                  port: exec
+              - src:
+                  node: random-stream-v1-rabbit-parrot-watermelon
+                  port: exec-success
+                dst:
+                  node: freeze-v1-gold-rhinoceros-blueberry
                   port: exec
             inputs:
               exec-beige-chicken-octopus:
@@ -2686,8 +2692,8 @@ nodes:
               - id: group-inputs-v1-giraffe-lemon-peacock
                 type: core/group-inputs@v1
                 position:
-                  x: -260
-                  y: -50
+                  x: -760
+                  y: -40
               - id: group-outputs-v1-rabbit-monkey-peacock
                 type: core/group-outputs@v1
                 position:
@@ -2696,8 +2702,8 @@ nodes:
               - id: random-stream-v1-lime-orange-starfruit
                 type: core/random-stream@v1
                 position:
-                  x: -390
-                  y: 510
+                  x: -320
+                  y: -70
                 inputs:
                   length: 10
                   include_characters: true
@@ -2919,16 +2925,22 @@ nodes:
                   node: group-outputs-v1-rabbit-monkey-peacock
                   port: exec-lemon-tangerine-horse
               - src:
-                  node: group-inputs-v1-giraffe-lemon-peacock
-                  port: exec-passionfruit-starfruit-dragonfruit
-                dst:
-                  node: freeze-v1-horse-shark-kiwano
-                  port: exec
-              - src:
                   node: freeze-v1-horse-shark-kiwano
                   port: exec
                 dst:
                   node: branch-v1-grape-kiwi-elephant
+                  port: exec
+              - src:
+                  node: group-inputs-v1-giraffe-lemon-peacock
+                  port: exec-passionfruit-starfruit-dragonfruit
+                dst:
+                  node: random-stream-v1-lime-orange-starfruit
+                  port: exec
+              - src:
+                  node: random-stream-v1-lime-orange-starfruit
+                  port: exec-success
+                dst:
+                  node: freeze-v1-horse-shark-kiwano
                   port: exec
             inputs:
               exec-passionfruit-starfruit-dragonfruit:
@@ -3280,8 +3292,8 @@ nodes:
               - id: group-inputs-v1-giraffe-lemon-peacock
                 type: core/group-inputs@v1
                 position:
-                  x: -260
-                  y: -50
+                  x: -540
+                  y: -30
               - id: group-outputs-v1-rabbit-monkey-peacock
                 type: core/group-outputs@v1
                 position:
@@ -3290,8 +3302,8 @@ nodes:
               - id: random-stream-v1-lime-orange-starfruit
                 type: core/random-stream@v1
                 position:
-                  x: -390
-                  y: 510
+                  x: -80
+                  y: -110
                 inputs:
                   length: 10
                   include_characters: true
@@ -3428,8 +3440,8 @@ nodes:
               - id: string-join-v1-bear-bear-butterfly
                 type: core/string-join@v1
                 position:
-                  x: 150
-                  y: 330
+                  x: 280
+                  y: 350
                 inputs:
                   segments[0]: null
                   segments[1]: null
@@ -3513,16 +3525,22 @@ nodes:
                   node: group-outputs-v1-rabbit-monkey-peacock
                   port: exec-lemon-tangerine-horse
               - src:
-                  node: group-inputs-v1-giraffe-lemon-peacock
-                  port: exec-passionfruit-starfruit-dragonfruit
-                dst:
-                  node: freeze-v1-horse-shark-kiwano
-                  port: exec
-              - src:
                   node: freeze-v1-horse-shark-kiwano
                   port: exec
                 dst:
                   node: branch-v1-grape-kiwi-elephant
+                  port: exec
+              - src:
+                  node: group-inputs-v1-giraffe-lemon-peacock
+                  port: exec-passionfruit-starfruit-dragonfruit
+                dst:
+                  node: random-stream-v1-lime-orange-starfruit
+                  port: exec
+              - src:
+                  node: random-stream-v1-lime-orange-starfruit
+                  port: exec-success
+                dst:
+                  node: freeze-v1-horse-shark-kiwano
                   port: exec
             inputs:
               exec-passionfruit-starfruit-dragonfruit:
@@ -6269,12 +6287,6 @@ executions:
   - src:
       node: gh-start
       port: exec-on_push
-    dst:
-      node: group-v1-orange-tiger-grapefruit
-      port: exec-lion-beige-dragonfruit
-  - src:
-      node: gh-start
-      port: exec-on_pull_request
     dst:
       node: group-v1-orange-tiger-grapefruit
       port: exec-lion-beige-dragonfruit

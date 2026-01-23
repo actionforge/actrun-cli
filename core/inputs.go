@@ -952,6 +952,8 @@ func convertToReader(c *ExecutionState, value reflect.Value) (io.Reader, error) 
 		return strings.NewReader(v), nil
 	case []byte:
 		return bytes.NewReader(v), nil
+	case SecretValue:
+		return strings.NewReader(v.Secret), nil
 	default:
 		return nil, CreateErr(c, nil, "unsupported type '%s'", GetTypeNameSafe(value.Type()))
 	}
