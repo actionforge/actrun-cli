@@ -1,0 +1,40 @@
+yaml-version: 3.0
+
+id: core/dir-create
+name: Dir Create
+version: 1
+icon: tablerFolderPlus
+category: filesystem
+short_desc: Create a directory on the file system.
+style:
+  header:
+    background: rgb(197, 147, 31)
+  body:
+    background: "rgb(164 115 29)"
+inputs:
+  exec:
+    exec: true
+    index: 0
+  path:
+    name: Path
+    type: string
+    index: 1
+    required: true
+    desc: The path of the directory to create.
+  create_parents:
+    name: Create Parents
+    type: bool
+    index: 2
+    default: true
+    desc: If true, creates all parent directories as needed (like mkdir -p). If false, only creates the final directory and fails if parent directories don't exist.
+outputs:
+  exec-success:
+    name: Success
+    exec: true
+    index: 0
+    desc: Executes if the directory creation is successful.
+  exec-err:
+    name: Error
+    exec: true
+    index: 1
+    desc: Executes if the directory creation fails.
