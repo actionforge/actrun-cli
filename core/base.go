@@ -39,6 +39,10 @@ func getIndexPortRegex() *regexp.Regexp {
 	return indexPortRegex
 }
 
+type PortValidationOpts struct {
+	IsGroupNode bool
+}
+
 type CredentialType int
 
 const (
@@ -402,7 +406,7 @@ func (n *NodeTypeDefinitionFull) IsValid() error {
 	return nil
 }
 
-func PortDefValidation(portId string, portDef PortDefinition) error {
+func PortDefValidation(portId string, portDef PortDefinition, opts PortValidationOpts) error {
 	if portId == "" {
 		return errors.New("port id is missing")
 	}
@@ -417,14 +421,14 @@ func PortDefValidation(portId string, portDef PortDefinition) error {
 			// [0]: "exec"
 			// [1]: ""
 			// [2]: ""
-			if strings.Contains(m[2], "-") {
+			if strings.Contains(m[2], "-") && !opts.IsGroupNode {
 				return CreateErr(nil, nil, "execution port '%v' must not contain hyphens", portId)
 			}
 		}
 	} else if !portDef.Exec {
 		if m != nil {
 			return CreateErr(nil, nil, "port '%v' starts with 'exec-' but is not flagged as exec", portId)
-		} else if strings.Contains(portId, "-") {
+		} else if strings.Contains(portId, "-") && !opts.IsGroupNode {
 			return CreateErr(nil, nil, "port '%v' must not contain hyphens", portId)
 		}
 	}
@@ -491,7 +495,9 @@ func RegisterNodeFactory(nodeDefStr string, fn nodeFactoryFunc) error {
 		}
 
 		if nodeDef.Id != "core/test" {
-			err = PortDefValidation(string(inputId), inputDef.PortDefinition)
+			err = PortDefValidation(string(inputId), inputDef.PortDefinition, PortValidationOpts{
+				IsGroupNode: strings.HasPrefix(nodeDef.Id, "core/group@"),
+			})
 			if err != nil {
 				return CreateErr(nil, err, "input '%v' is invalid", inputId)
 			}
@@ -537,7 +543,10 @@ func RegisterNodeFactory(nodeDefStr string, fn nodeFactoryFunc) error {
 		outputIndexes[outputDef.Index] = string(outputId)
 
 		if nodeDef.Id != "core/test" {
-			err = PortDefValidation(string(outputId), outputDef.PortDefinition)
+			err = PortDefValidation(string(outputId), outputDef.PortDefinition, PortValidationOpts{
+				IsGroupNode: strings.HasPrefix(nodeDef.Id, "core/group@"),
+			})
+
 			if err != nil {
 				return CreateErr(nil, err, "input '%v' is invalid", outputId)
 			}
