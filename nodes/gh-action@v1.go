@@ -19,6 +19,9 @@ import (
 	u "github.com/actionforge/actrun-cli/utils"
 
 	"github.com/Masterminds/semver/v3"
+	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
+	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/google/uuid"
 	"go.yaml.in/yaml/v4"
 )
@@ -398,34 +401,78 @@ func init() {
 				return nil, []error{core.CreateErr(nil, nil, "INPUT_TOKEN not set")}
 			}
 
-			cloneUrl := fmt.Sprintf("https://%s@github.com/%s/%s", ghToken, owner, repo)
+			cloneUrl := fmt.Sprintf("https://github.com/%s/%s", owner, repo)
 
 			if err := os.MkdirAll(filepath.Dir(repoRoot), 0755); err != nil {
 				return nil, []error{core.CreateErr(nil, err, "unable to create action directory")}
 			}
 
-			c := exec.Command("git", "clone", "--quiet", "--no-checkout", cloneUrl, repoRoot)
-			c.Stderr = os.Stderr
-			err = c.Run()
-			if err != nil {
-				return nil, []error{err}
+			cloneOpts := &git.CloneOptions{
+				URL:        cloneUrl,
+				NoCheckout: true,
 			}
 
-			c = exec.Command("git", "checkout", u.If(ref == "", "HEAD", ref))
-			c.Stderr = os.Stderr
-			c.Dir = repoRoot
-			err = c.Run()
+			// TODO: (Seb) Find alternative for running in
+			// debug mode if user has SSH keys set up instead of a token.
+			cloneOpts.Auth = &http.BasicAuth{
+				Username: "x-access-token",
+				Password: ghToken,
+			}
+
+			clonedRepo, err := git.PlainClone(repoRoot, false, cloneOpts)
 			if err != nil {
-				return nil, []error{err}
+				return nil, []error{core.CreateErr(nil, err, "failed to clone repository")}
+			}
+
+			// checkout the specified ref (or HEAD if empty)
+			worktree, err := clonedRepo.Worktree()
+			if err != nil {
+				return nil, []error{core.CreateErr(nil, err, "failed to get worktree")}
+			}
+
+			checkoutOpts := &git.CheckoutOptions{}
+			if ref != "" {
+				// resolve as a revision (commit hash, tag, or branch)
+				hash, err := clonedRepo.ResolveRevision(plumbing.Revision(ref))
+				if err != nil {
+					// if not a hash, try as a branch name
+					checkoutOpts.Branch = plumbing.NewBranchReferenceName(ref)
+				} else {
+					checkoutOpts.Hash = *hash
+				}
+			}
+
+			err = worktree.Checkout(checkoutOpts)
+			if err != nil {
+				return nil, []error{core.CreateErr(nil, err, "failed to checkout ref '%s'", ref)}
 			}
 		} else {
-			// reset in case something or someone tampered with the cached gh actions
-			c := exec.Command("git", "reset", "--quiet", "--hard", u.If(ref == "", "HEAD", ref))
-			c.Stderr = os.Stderr
-			c.Dir = repoRoot
-			err = c.Run()
+			// reset in just case something tampered with the cached gh actions
+			existingRepo, err := git.PlainOpen(repoRoot)
 			if err != nil {
-				return nil, []error{err}
+				return nil, []error{core.CreateErr(nil, err, "failed to open cached repository")}
+			}
+
+			worktree, err := existingRepo.Worktree()
+			if err != nil {
+				return nil, []error{core.CreateErr(nil, err, "failed to get worktree")}
+			}
+
+			checkoutOpts := &git.CheckoutOptions{
+				Force: true,
+			}
+			if ref != "" {
+				hash, err := existingRepo.ResolveRevision(plumbing.Revision(ref))
+				if err != nil {
+					checkoutOpts.Branch = plumbing.NewBranchReferenceName(ref)
+				} else {
+					checkoutOpts.Hash = *hash
+				}
+			}
+
+			err = worktree.Checkout(checkoutOpts)
+			if err != nil {
+				return nil, []error{core.CreateErr(nil, err, "failed to reset to ref '%s'", ref)}
 			}
 		}
 
