@@ -1,7 +1,7 @@
 build hasn't expired yet
 Error: unable to load env file: doesnt_exist
 Usage:
-  actrun [filename] [flags]
+  actrun [filename|url] [flags]
   actrun [command]
 
 Available Commands:

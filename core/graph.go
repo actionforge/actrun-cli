@@ -5,8 +5,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
 	"sync"
@@ -1037,4 +1041,69 @@ func RunGraphFromFile(ctx context.Context, graphFile string, opts RunOpts, debug
 	}
 
 	return nil
+}
+
+// Matches URLs like https://app.actionforge.dev/shared/<id>.act
+var sharedURLPattern = regexp.MustCompile(`^https://app\.actionforge\.dev/shared/([a-zA-Z0-9_-]+\.act)$`)
+
+const shareAPIURL = "https://app.actionforge.dev/api/v2/share/graph/read"
+
+func IsSharedGraphURL(graphURL string) bool {
+	return sharedURLPattern.MatchString(graphURL)
+}
+
+func ParseSharedGraphURL(graphURL string) (string, bool) {
+	matches := sharedURLPattern.FindStringSubmatch(graphURL)
+	if len(matches) != 2 {
+		return "", false
+	}
+	return matches[1], true
+}
+
+// RunGraphFromURL fetches and runs a graph from a shared URL.
+// Only urls from app.actionforge.dev are accepted
+func RunGraphFromURL(ctx context.Context, graphURL string, opts RunOpts, debugCb DebugCallback) error {
+	parsedURL, err := url.Parse(graphURL)
+	if err != nil {
+		return CreateErr(nil, err, "invalid URL format")
+	}
+
+	if parsedURL.Host != "app.actionforge.dev" {
+		return CreateErr(nil, nil, "invalid shared graph URL: only URLs from app.actionforge.dev are accepted, got '%s'", parsedURL.Host).
+			SetHint("Double-check the URL - shared graphs must be hosted on app.actionforge.dev")
+	}
+
+	shareID, ok := ParseSharedGraphURL(graphURL)
+	if !ok {
+		return CreateErr(nil, nil, "invalid shared graph URL: expected format https://app.actionforge.dev/shared/<id>.act")
+	}
+
+	apiURL := fmt.Sprintf("%s?id=%s", shareAPIURL, url.QueryEscape(shareID))
+
+	utils.LogOut.Debugf("fetching shared graph from: %s\n", apiURL)
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, apiURL, nil)
+	if err != nil {
+		return CreateErr(nil, err, "failed to create request for shared graph")
+	}
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return CreateErr(nil, err, "failed to fetch shared graph")
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return CreateErr(nil, nil, "failed to fetch shared graph: server returned status %d", resp.StatusCode)
+	}
+
+	graphContent, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return CreateErr(nil, err, "failed to read shared graph content")
+	}
+
+	graphName := shareID
+
+	return RunGraphFromString(ctx, graphName, string(graphContent), opts, debugCb)
 }
