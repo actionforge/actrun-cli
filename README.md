@@ -22,7 +22,7 @@ It handles the traversal, concurrency, and data flow of visual graphs created in
 Requires **Go 1.25+**.
 
 ```bash
-git clone [https://github.com/actionforge/actrun-cli](https://github.com/actionforge/actrun-cli)
+git clone git@github.com:actionforge/actrun-cli.git
 cd actrun-cli
 go mod tidy
 go run . # to run without building
@@ -36,7 +36,7 @@ While `actrun` handles execution, visit [app.actionforge.dev](https://app.action
 
 ## 🚀 Usage
 
-The basic syntax is `actrun [filename] [flags]`.
+The basic syntax is `actrun [filename|url] [flags]`.
 
 ### ▶️ 1. Execute a Graph
 
