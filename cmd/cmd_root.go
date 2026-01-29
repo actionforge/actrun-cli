@@ -172,12 +172,20 @@ func cmdRootRun(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	err := core.RunGraphFromFile(context.Background(), finalGraphFile, core.RunOpts{
+	var err error
+	opts := core.RunOpts{
 		ConfigFile:      finalConfigFile,
 		OverrideSecrets: nil,
 		OverrideInputs:  nil,
 		Args:            finalGraphArgs,
-	}, nil)
+	}
+
+	if core.IsSharedGraphURL(finalGraphFile) {
+		err = core.RunGraphFromURL(context.Background(), finalGraphFile, opts, nil)
+	} else {
+		err = core.RunGraphFromFile(context.Background(), finalGraphFile, opts, nil)
+	}
+
 	if err != nil {
 		core.PrintError(finalGraphFile, err)
 		os.Exit(1)
