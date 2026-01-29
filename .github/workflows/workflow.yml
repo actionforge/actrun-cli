@@ -25,7 +25,9 @@ permissions:
   id-token: write
   attestations: write
   artifact-metadata: write
-  contents: read
+  # TODO: (Seb) Use fine-grained permissions as
+  # we only need this for Anchore SBOM Action
+  contents: write
 
 jobs:
   build-quick:

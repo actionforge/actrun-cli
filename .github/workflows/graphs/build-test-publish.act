@@ -854,10 +854,14 @@ nodes:
       x: -60
       y: 2740
     inputs:
-      env[0]: ACT_INPUT_SECRET_TESTE2E_DO_S3_ACCESS_KEY=${{secrets.TESTE2E_DO_S3_ACCESS_KEY}}
-      env[1]: ACT_INPUT_SECRET_TESTE2E_DO_S3_SECRET_KEY=${{secrets.TESTE2E_DO_S3_SECRET_KEY}}
-      env[2]: ACT_INPUT_SECRET_TESTE2E_AWS_S3_ACCESS_KEY=${{secrets.TESTE2E_AWS_S3_ACCESS_KEY}}
-      env[3]: ACT_INPUT_SECRET_TESTE2E_AWS_S3_SECRET_KEY=${{secrets.TESTE2E_AWS_S3_SECRET_KEY}}
+      env[0]: >-
+        ACT_INPUT_SECRET_TESTE2E_DO_S3_ACCESS_KEY=${{secrets.TESTE2E_DO_S3_ACCESS_KEY}}
+      env[1]: >-
+        ACT_INPUT_SECRET_TESTE2E_DO_S3_SECRET_KEY=${{secrets.TESTE2E_DO_S3_SECRET_KEY}}
+      env[2]: >-
+        ACT_INPUT_SECRET_TESTE2E_AWS_S3_ACCESS_KEY=${{secrets.TESTE2E_AWS_S3_ACCESS_KEY}}
+      env[3]: >-
+        ACT_INPUT_SECRET_TESTE2E_AWS_S3_SECRET_KEY=${{secrets.TESTE2E_AWS_S3_SECRET_KEY}}
   - id: env-array-v1-red-nectarine-rhinoceros
     type: core/env-array@v1
     position:
@@ -870,8 +874,8 @@ nodes:
   - id: gh-noelware-s3-action-bear-lobster-banana
     type: github.com/noelware/s3-action@0a3b5a7bdadc7a8649e29a5e441297020fa8c751
     position:
-      x: 13580
-      y: 1030
+      x: 15090
+      y: 1160
     inputs:
       endpoint: ${{ env.PUBLISH_S3_ENDPOINT }}
       object-acl: private
@@ -1745,8 +1749,8 @@ nodes:
   - id: select-data-v1-red-blueberry-kiwano
     type: core/select-data@v1
     position:
-      x: 12490
-      y: 1720
+      x: 12310
+      y: 1700
     inputs:
       choices[0]: null
       choices[1]: null
@@ -4662,8 +4666,8 @@ nodes:
   - id: group-v1-seahorse-dragonfruit-panda
     type: core/group@v1
     position:
-      x: 14920
-      y: 1590
+      x: 16390
+      y: 1660
     inputs:
       beige-pomegranate-black: us-east-1
       duck-jellyfish-grapefruit: free
@@ -5088,37 +5092,37 @@ nodes:
   - id: hash-v1-pear-lime-lobster
     type: core/hash@v1
     position:
-      x: 14260
-      y: 1580
+      x: 15730
+      y: 1650
   - id: filepath-op-v1-apricot-apple-gold
     type: core/filepath-op@v1
     position:
-      x: 14360
-      y: 1960
+      x: 15830
+      y: 2030
   - id: system-info-v1-octopus-bear-green
     type: core/system-info@v1
     position:
-      x: 14440
-      y: 1090
+      x: 15910
+      y: 1160
   - id: secret-v1-raspberry-apple-giraffe
     type: core/secret-get@v1
     position:
-      x: 14270
-      y: 2340
+      x: 15740
+      y: 2410
     inputs:
       name: PUBLISH_SECRET
   - id: env-get-v1-durian-koala-peacock
     type: core/env-get@v1
     position:
-      x: 14380
-      y: 2220
+      x: 15850
+      y: 2290
     inputs:
       env: PUBLISH_URL
   - id: env-get-v1-starfruit-blue-orange
     type: core/env-get@v1
     position:
-      x: 14370
-      y: 2100
+      x: 15840
+      y: 2170
     inputs:
       env: PUBLISH_S3_ENDPOINT
   - id: bool-and-v1-turkey-lime-black
@@ -5513,8 +5517,8 @@ nodes:
       gh-actions-attest-build-provenance-62fc1d596301d0ab9914e1fec14dc5c8d93f65cd-cat-horse-dog
     type: core/group@v1
     position:
-      x: 12950
-      y: 1020
+      x: 13950
+      y: 650
     inputs:
       subject-checksums: ''
       subject-name: ''
@@ -5790,6 +5794,254 @@ nodes:
         description: ''
     label: Attest Build Provenance
     comment: attest zip/dmg
+  - id: >-
+      gh-actions-attest-sbom-21f269c03431211cf2de4a1b5d90001746539dc9-gold-pomegranate-dolphin
+    type: core/group@v1
+    position:
+      x: 14550
+      y: 1020
+    graph:
+      entry: core-group-inputs-v1-start
+      type: group
+      nodes:
+        - id: core-group-inputs-v1-start
+          type: core/group-inputs@v1
+          position:
+            x: 10
+            y: 100
+        - id: generate-sbom-predicate
+          type: >-
+            github.com/actions/attest-sbom/predicate@534423496eab34674190bc45fdacbb8b1198e07f
+          position:
+            x: 300
+            y: -90
+        - id: attest
+          type: github.com/actions/attest@67422f5511b7ff725f4dbd6fb9bd2cd925c65a8d
+          position:
+            x: 600
+            y: 20
+        - id: core-group-outputs-v1-end
+          type: core/group-outputs@v1
+          position:
+            x: 1030
+            y: 50
+      connections:
+        - src:
+            node: core-group-inputs-v1-start
+            port: sbom-path
+          dst:
+            node: generate-sbom-predicate
+            port: sbom-path
+        - src:
+            node: core-group-inputs-v1-start
+            port: env
+          dst:
+            node: generate-sbom-predicate
+            port: env
+        - src:
+            node: core-group-inputs-v1-start
+            port: subject-name
+          dst:
+            node: attest
+            port: subject-name
+        - src:
+            node: generate-sbom-predicate
+            port: predicate-type
+          dst:
+            node: attest
+            port: predicate-type
+        - src:
+            node: generate-sbom-predicate
+            port: predicate-path
+          dst:
+            node: attest
+            port: predicate-path
+        - src:
+            node: core-group-inputs-v1-start
+            port: push-to-registry
+          dst:
+            node: attest
+            port: push-to-registry
+        - src:
+            node: core-group-inputs-v1-start
+            port: show-summary
+          dst:
+            node: attest
+            port: show-summary
+        - src:
+            node: core-group-inputs-v1-start
+            port: github-token
+          dst:
+            node: attest
+            port: github-token
+        - src:
+            node: core-group-inputs-v1-start
+            port: subject-path
+          dst:
+            node: attest
+            port: subject-path
+        - src:
+            node: core-group-inputs-v1-start
+            port: subject-digest
+          dst:
+            node: attest
+            port: subject-digest
+        - src:
+            node: core-group-inputs-v1-start
+            port: env
+          dst:
+            node: attest
+            port: env
+        - src:
+            node: attest
+            port: bundle-path
+          dst:
+            node: core-group-outputs-v1-end
+            port: bundle-path
+      executions:
+        - src:
+            node: core-group-inputs-v1-start
+            port: exec
+          dst:
+            node: generate-sbom-predicate
+            port: exec
+        - src:
+            node: generate-sbom-predicate
+            port: exec-err
+          dst:
+            node: core-group-outputs-v1-end
+            port: exec-err
+        - src:
+            node: generate-sbom-predicate
+            port: exec-success
+          dst:
+            node: attest
+            port: exec
+        - src:
+            node: attest
+            port: exec-err
+          dst:
+            node: core-group-outputs-v1-end
+            port: exec-err
+        - src:
+            node: attest
+            port: exec-success
+          dst:
+            node: core-group-outputs-v1-end
+            port: exec-success
+      inputs:
+        env:
+          name: Environment Vars
+          type: '[]string'
+          index: 8
+          hint: MY_ENV=1234
+        exec:
+          name: ''
+          type: ''
+          index: 0
+          exec: true
+        github-token:
+          name: github-token
+          type: string
+          desc: |
+            The GitHub token used to make authenticated API requests.
+          index: 1
+          default: ${{ github.token }}
+        push-to-registry:
+          name: push-to-registry
+          type: string
+          desc: >
+            Whether to push the provenance statement to the image registry.
+            Requires that the "subject-name" parameter specify the
+            fully-qualified image name and that the "subject-digest" parameter
+            be specified. Defaults to false.
+          index: 2
+          default: false
+        sbom-path:
+          name: sbom-path
+          type: string
+          desc: >
+            Path to the JSON-formatted SBOM file to attest. File size cannot
+            exceed 16MB.
+          index: 3
+        show-summary:
+          name: show-summary
+          type: string
+          desc: >
+            Whether to attach a list of generated attestations to the workflow
+            run summary page. Defaults to true.
+          index: 4
+          default: true
+        subject-digest:
+          name: subject-digest
+          type: string
+          desc: >
+            SHA256 digest of the subject for the attestation. Must be in the
+            form "sha256:hex_digest" (e.g. "sha256:abc123..."). Must specify
+            exactly one of "subject-path" or "subject-digest".
+          index: 5
+        subject-name:
+          name: subject-name
+          type: string
+          desc: >
+            Subject name as it should appear in the attestation. Required unless
+            "subject-path" is specified, in which case it will be inferred from
+            the path.
+          index: 6
+        subject-path:
+          name: subject-path
+          type: string
+          desc: >
+            Path to the artifact serving as the subject of the attestation. Must
+            specify exactly one of "subject-path" or "subject-digest". May
+            contain a glob pattern or list of paths (total subject count cannot
+            exceed 2500).
+          index: 7
+      outputs:
+        bundle-path:
+          name: bundle-path
+          type: string
+          desc: The path to the file containing the attestation bundle(s).
+          index: 2
+        exec-err:
+          name: Error
+          type: ''
+          index: 1
+          exec: true
+        exec-success:
+          name: Success
+          type: ''
+          index: 0
+          exec: true
+    label: Attest SBOM
+  - id: >-
+      gh-anchore-sbom-action-deef08a0db64bfad603422135db61477b16cef56-orange-banana-pear
+    type: github.com/anchore/sbom-action@deef08a0db64bfad603422135db61477b16cef56
+    position:
+      x: 13320
+      y: 620
+    inputs:
+      dependency-snapshot: 'true'
+  - id: core-string-fmt-v1-lychee-coconut-gray
+    type: core/string-fmt@v1
+    position:
+      x: 12810
+      y: 1340
+    inputs:
+      substitutes[0]: null
+      fmt: '%v.json'
+    label: ''
+    comment: Outputs eg actrun-v0.0.2-sbom.cli-x64-windows.json
+  - id: core-string-fmt-v1-rabbit-mulberry-turkey
+    type: core/string-fmt@v1
+    position:
+      x: 12360
+      y: 1250
+    inputs:
+      substitutes[0]: null
+      fmt: '%v-sbom'
+    label: ''
+    comment: Outputs eg actrun-v0.0.2-sbom.cli-x64-windows-sbom
 connections:
   - src:
       node: const-string-v1-horse-lime-seahorse
@@ -6351,6 +6603,53 @@ connections:
       node: >-
         gh-actions-attest-build-provenance-62fc1d596301d0ab9914e1fec14dc5c8d93f65cd-cat-horse-dog
       port: subject-path
+  - src:
+      node: core-string-fmt-v1-lychee-coconut-gray
+      port: result
+    dst:
+      node: >-
+        gh-anchore-sbom-action-deef08a0db64bfad603422135db61477b16cef56-orange-banana-pear
+      port: output-file
+  - src:
+      node: select-data-v1-red-blueberry-kiwano
+      port: value
+    dst:
+      node: >-
+        gh-actions-attest-sbom-21f269c03431211cf2de4a1b5d90001746539dc9-gold-pomegranate-dolphin
+      port: subject-path
+  - src:
+      node: core-string-fmt-v1-lychee-coconut-gray
+      port: result
+    dst:
+      node: >-
+        gh-actions-attest-sbom-21f269c03431211cf2de4a1b5d90001746539dc9-gold-pomegranate-dolphin
+      port: sbom-path
+  - src:
+      node: core-string-fmt-v1-rabbit-mulberry-turkey
+      port: result
+    dst:
+      node: >-
+        gh-actions-attest-sbom-21f269c03431211cf2de4a1b5d90001746539dc9-gold-pomegranate-dolphin
+      port: subject-name
+  - src:
+      node: string-fmt-v1-orange-mulberry-octopus
+      port: result
+    dst:
+      node: core-string-fmt-v1-rabbit-mulberry-turkey
+      port: substitutes[0]
+  - src:
+      node: core-string-fmt-v1-rabbit-mulberry-turkey
+      port: result
+    dst:
+      node: core-string-fmt-v1-lychee-coconut-gray
+      port: substitutes[0]
+  - src:
+      node: core-string-fmt-v1-rabbit-mulberry-turkey
+      port: result
+    dst:
+      node: >-
+        gh-anchore-sbom-action-deef08a0db64bfad603422135db61477b16cef56-orange-banana-pear
+      port: artifact-name
 executions:
   - src:
       node: run-v1-donkey-magenta-raspberry
@@ -6575,12 +6874,6 @@ executions:
       node: group-v1-hippopotamus-penguin-goose
       port: exec-gray-pear-dolphin
   - src:
-      node: gh-noelware-s3-action-bear-lobster-banana
-      port: exec-success
-    dst:
-      node: hash-v1-pear-lime-lobster
-      port: exec
-  - src:
       node: hash-v1-pear-lime-lobster
       port: exec-success
     dst:
@@ -6629,23 +6922,45 @@ executions:
       node: switch-platform-v1-blackberry-grape-ivory
       port: exec
   - src:
-      node: file-write-v1-guava-purple-blackberry
-      port: exec-success
-    dst:
-      node: >-
-        gh-actions-attest-build-provenance-62fc1d596301d0ab9914e1fec14dc5c8d93f65cd-cat-horse-dog
-      port: exec
-  - src:
       node: group-v1-purple-penguin-maroon
       port: exec-peach-lime-turquoise
     dst:
       node: >-
+        gh-anchore-sbom-action-deef08a0db64bfad603422135db61477b16cef56-orange-banana-pear
+      port: exec
+  - src:
+      node: file-write-v1-guava-purple-blackberry
+      port: exec-success
+    dst:
+      node: >-
+        gh-anchore-sbom-action-deef08a0db64bfad603422135db61477b16cef56-orange-banana-pear
+      port: exec
+  - src:
+      node: >-
+        gh-anchore-sbom-action-deef08a0db64bfad603422135db61477b16cef56-orange-banana-pear
+      port: exec-success
+    dst:
+      node: >-
         gh-actions-attest-build-provenance-62fc1d596301d0ab9914e1fec14dc5c8d93f65cd-cat-horse-dog
+      port: exec
+  - src:
+      node: gh-noelware-s3-action-bear-lobster-banana
+      port: exec-success
+    dst:
+      node: hash-v1-pear-lime-lobster
+      port: exec
+  - src:
+      node: >-
+        gh-actions-attest-sbom-21f269c03431211cf2de4a1b5d90001746539dc9-gold-pomegranate-dolphin
+      port: exec-success
+    dst:
+      node: gh-noelware-s3-action-bear-lobster-banana
       port: exec
   - src:
       node: >-
         gh-actions-attest-build-provenance-62fc1d596301d0ab9914e1fec14dc5c8d93f65cd-cat-horse-dog
       port: exec-success
     dst:
-      node: gh-noelware-s3-action-bear-lobster-banana
+      node: >-
+        gh-actions-attest-sbom-21f269c03431211cf2de4a1b5d90001746539dc9-gold-pomegranate-dolphin
       port: exec
