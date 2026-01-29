@@ -336,7 +336,7 @@ func SetupGitHubActionsEnv(finalEnv map[string]string) error {
 	remote, err := repo.Remote("origin")
 	if err != nil {
 		return CreateErr(nil, err, "remote \"origin\" not found in git repository").
-			SetHint("Add an origin remote with: git remote add origin <url>")
+			SetHint("Your repository must have a GitHub remote named \"origin\".")
 	}
 
 	remoteURLs := remote.Config().URLs
