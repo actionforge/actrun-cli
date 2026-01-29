@@ -399,6 +399,38 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 		printExplicit(envTracker, false)
 	}
 
+	if isGitHubWorkflow {
+		err = SetupGitHubActionsEnv(finalEnv)
+		if err != nil {
+			return CreateErr(nil, err, "failed to setup GitHub Actions environment")
+		}
+	}
+
+	// set cwd for current process. `ACT_CWD` is used for non GitHub workflows
+	if cwd := finalEnv["GITHUB_WORKSPACE"]; cwd != "" {
+		originalCwd, err := os.Getwd()
+		if err != nil {
+			return CreateErr(nil, err, "failed to get current working directory")
+		}
+		if err := os.Chdir(cwd); err != nil {
+			return CreateErr(nil, err, "failed to change working directory to GITHUB_WORKSPACE")
+		}
+		defer func() {
+			_ = os.Chdir(originalCwd)
+		}()
+	} else if cwd := finalEnv["ACT_CWD"]; cwd != "" {
+		originalCwd, err := os.Getwd()
+		if err != nil {
+			return CreateErr(nil, err, "failed to get current working directory")
+		}
+		if err := os.Chdir(cwd); err != nil {
+			return CreateErr(nil, err, "failed to change working directory to ACT_CWD")
+		}
+		defer func() {
+			_ = os.Chdir(originalCwd)
+		}()
+	}
+
 	// construct the `github` context
 	var ghContext map[string]any
 	var errGh error

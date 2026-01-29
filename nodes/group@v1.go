@@ -149,28 +149,36 @@ func init() {
 		}
 
 		// Check for name collisions
-		if graphInputs != nil && graphOutputs != nil {
-			for inputId := range graphInputs {
-				if _, ok := graphOutputs[core.OutputId(inputId)]; ok {
-					err := core.CreateErr(nil, nil, "group node has an input and output with the same name '%s'", inputId)
-					if !validate {
-						return nil, []error{err}
-					}
+		for inputId := range graphInputs {
+			if _, ok := graphOutputs[core.OutputId(inputId)]; ok {
+				err := core.CreateErr(nil, nil, "group node has an input and output with the same name '%s'", inputId)
+				if !validate {
+					return nil, []error{err}
+				}
+				collectedErrors = append(collectedErrors, err)
+			}
+		}
+
+		// validate each port definition
+		if validate {
+			for inputId, inputDef := range graphInputs {
+				if err := core.PortDefValidation(string(inputId), inputDef.PortDefinition, core.PortValidationOpts{
+					IsGroupNode: true,
+				}); err != nil {
+					err = core.CreateErr(nil, err, "input '%v' is invalid", inputId)
 					collectedErrors = append(collectedErrors, err)
 				}
 			}
-			for outputId := range graphOutputs {
-				if _, ok := graphInputs[core.InputId(outputId)]; ok {
-					err := core.CreateErr(nil, nil, "group node has an input and output with the same name '%s'", outputId)
-					if !validate {
-						return nil, []error{err}
-					}
+			for outputId, outputDef := range graphOutputs {
+				if err := core.PortDefValidation(string(outputId), outputDef.PortDefinition, core.PortValidationOpts{
+					IsGroupNode: true,
+				}); err != nil {
+					err = core.CreateErr(nil, err, "output '%v' is invalid", outputId)
 					collectedErrors = append(collectedErrors, err)
 				}
 			}
 		}
 
-		// Pass 'validate' to LoadGraph to collect internal graph errors
 		ag, errs := core.LoadGraph(subGraph, group, parentId, validate)
 		if len(errs) > 0 {
 			if !validate {
@@ -181,7 +189,7 @@ func init() {
 
 		group.NodeBaseComponent.Graph = &ag
 
-		// Connect the group node with the group input node
+		// connect the group node with the group input node
 		if graphInputs != nil {
 			n, ok := ag.FindNode(ag.Entry)
 			if !ok || n == nil {

@@ -7,9 +7,12 @@ import (
 	"maps"
 	"os"
 	"os/exec"
+	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/actionforge/actrun-cli/utils"
+	"github.com/go-git/go-git/v5"
 	"github.com/google/shlex"
 )
 
@@ -248,4 +251,202 @@ func decodeJsonFromEnvValue[T any](envValue string) (map[string]T, error) {
 		maps.Copy(envMap, tmp)
 	}
 	return envMap, nil
+}
+
+func getRunnerOS() string {
+	switch runtime.GOOS {
+	case "darwin":
+		return "macOS"
+	case "linux":
+		return "Linux"
+	case "windows":
+		return "Windows"
+	default:
+		return runtime.GOOS
+	}
+}
+
+func getRunnerArch() string {
+	switch runtime.GOARCH {
+	case "arm64", "aarch64":
+		return "ARM64"
+	case "amd64":
+		return "X64"
+	default:
+		return runtime.GOARCH
+	}
+}
+
+// Extracts owner/repo from a git remote URL. Supports http and ssh formats.
+func parseRepoFromRemoteURL(remoteURL string) (string, error) {
+	remoteURL = strings.TrimSpace(remoteURL)
+
+	// handle ssh format
+	if strings.HasPrefix(remoteURL, "git@") {
+		// git@github.com:user/repo.git -> user/repo
+		colonIdx := strings.Index(remoteURL, ":")
+		if colonIdx == -1 {
+			return "", fmt.Errorf("invalid SSH remote URL format: %s", remoteURL)
+		}
+		path := remoteURL[colonIdx+1:]
+		path = strings.TrimSuffix(path, ".git")
+		return path, nil
+	}
+
+	// handle https format
+	if strings.HasPrefix(remoteURL, "https://") || strings.HasPrefix(remoteURL, "http://") {
+		path := remoteURL
+		path = strings.TrimPrefix(path, "https://")
+		path = strings.TrimPrefix(path, "http://")
+
+		// remove the host, eg github.com
+		slashIdx := strings.Index(path, "/")
+		if slashIdx == -1 {
+			return "", fmt.Errorf("invalid HTTPS remote URL format: %s", remoteURL)
+		}
+		path = path[slashIdx+1:]
+		path = strings.TrimSuffix(path, ".git")
+		return path, nil
+	}
+
+	return "", fmt.Errorf("unsupported remote URL format: %s", remoteURL)
+}
+
+func SetupGitHubActionsEnv(finalEnv map[string]string) error {
+	sourceWorkspace := finalEnv["GITHUB_WORKSPACE"]
+	if sourceWorkspace == "" {
+		return CreateErr(nil, nil, "GITHUB_WORKSPACE environment variable is required").
+			SetHint("Set GITHUB_WORKSPACE to the path of a git repository.")
+	}
+
+	eventName := finalEnv["GITHUB_EVENT_NAME"]
+	if eventName == "" {
+		return CreateErr(nil, nil, "GITHUB_EVENT_NAME environment variable is required").
+			SetHint("Set GITHUB_EVENT_NAME to the event that triggered the workflow (e.g., push, pull_request).")
+	}
+
+	repo, err := git.PlainOpenWithOptions(sourceWorkspace, &git.PlainOpenOptions{
+		DetectDotGit: true,
+	})
+	if err != nil {
+		return CreateErr(nil, err, "unable to open git repository at GITHUB_WORKSPACE").
+			SetHint("Ensure GITHUB_WORKSPACE points to a valid git repository.")
+	}
+
+	remote, err := repo.Remote("origin")
+	if err != nil {
+		return CreateErr(nil, err, "remote \"origin\" not found in git repository").
+			SetHint("Your repository must have a GitHub remote named \"origin\".")
+	}
+
+	remoteURLs := remote.Config().URLs
+	if len(remoteURLs) == 0 {
+		return CreateErr(nil, nil, "remote \"origin\" has no URLs configured").
+			SetHint("Set the origin URL with: git remote set-url origin <url>")
+	}
+
+	repoName, err := parseRepoFromRemoteURL(remoteURLs[0])
+	if err != nil {
+		return CreateErr(nil, err, "unable to parse repository from remote URL").
+			SetHint("Ensure the origin remote URL is a valid GitHub repository URL.")
+	}
+
+	head, err := repo.Head()
+	if err != nil {
+		return CreateErr(nil, err, "failed to get git HEAD").
+			SetHint("Ensure you have at least one commit in the repository.")
+	}
+
+	// here we default to main if we are not in a branch
+	branch := "main"
+	if head.Name().IsBranch() {
+		branch = head.Name().Short()
+	}
+
+	sha := head.Hash().String()
+
+	// create RUNNER_WORKSPACE with an empty directory for the actual GITHUB_WORKSPACE
+	runnerWorkspace, err := os.MkdirTemp("", "actrun-runner-")
+	if err != nil {
+		return CreateErr(nil, err, "failed to create runner workspace directory").
+			SetHint("Check that you have write permissions to the system temp directory.")
+	}
+
+	// extract repo name for the workspace dir name
+	repoParts := strings.Split(repoName, "/")
+	repoBaseName := repoParts[len(repoParts)-1]
+
+	// here create the actual GITHUB_WORKSPACE inside the runner workspace
+	githubWorkspace := filepath.Join(runnerWorkspace, repoBaseName)
+	if err := os.MkdirAll(githubWorkspace, 0755); err != nil {
+		return CreateErr(nil, err, "failed to create github workspace directory").
+			SetHint("Check that you have write permissions to the system temp directory.")
+	}
+
+	// create temp dir for runner files
+	tempDir, err := os.MkdirTemp("", "actrun-")
+	if err != nil {
+		return CreateErr(nil, err, "failed to create temp directory").
+			SetHint("Check that you have write permissions to the system temp directory.")
+	}
+
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return CreateErr(nil, err, "failed to get home directory").
+			SetHint("Ensure the HOME environment variable is set correctly.")
+	}
+	toolCacheDir := filepath.Join(homeDir, ".actrun", "tool-cache")
+
+	setIfNotSet := func(key, value string) {
+		if finalEnv[key] == "" {
+			finalEnv[key] = value
+		}
+	}
+
+	setIfNotSet("CI", "true")
+	setIfNotSet("GITHUB_ACTIONS", "true")
+	setIfNotSet("GITHUB_REPOSITORY", repoName)
+	setIfNotSet("GITHUB_REF", "refs/heads/"+branch)
+	setIfNotSet("GITHUB_REF_NAME", branch)
+	setIfNotSet("GITHUB_SHA", sha)
+	setIfNotSet("RUNNER_OS", getRunnerOS())
+	setIfNotSet("RUNNER_ARCH", getRunnerArch())
+	setIfNotSet("RUNNER_TOOL_CACHE", toolCacheDir)
+	setIfNotSet("GITHUB_OUTPUT", filepath.Join(tempDir, "output"))
+	setIfNotSet("GITHUB_ENV", filepath.Join(tempDir, "env"))
+	setIfNotSet("GITHUB_PATH", filepath.Join(tempDir, "path"))
+	setIfNotSet("GITHUB_STATE", filepath.Join(tempDir, "state"))
+	setIfNotSet("GITHUB_STEP_SUMMARY", filepath.Join(tempDir, "summary"))
+	setIfNotSet("RUNNER_TEMP", tempDir)
+
+	// override a few envs here no matter if they were set or not
+	finalEnv["GITHUB_WORKSPACE"] = githubWorkspace
+	finalEnv["RUNNER_WORKSPACE"] = runnerWorkspace
+
+	err = os.MkdirAll(toolCacheDir, 0755)
+	if err != nil {
+		return CreateErr(nil, err, "failed to create tool cache directory").
+			SetHint("Check that you have write permissions to %s.", toolCacheDir)
+	}
+
+	fileCommandFiles := []string{
+		finalEnv["GITHUB_OUTPUT"],
+		finalEnv["GITHUB_ENV"],
+		finalEnv["GITHUB_PATH"],
+		finalEnv["GITHUB_STATE"],
+		finalEnv["GITHUB_STEP_SUMMARY"],
+	}
+
+	for _, filePath := range fileCommandFiles {
+		if filePath != "" {
+			f, err := os.Create(filePath)
+			if err != nil {
+				return CreateErr(nil, err, "failed to create file command file %s", filePath).
+					SetHint("Check that you have write permissions to the runner temp directory.")
+			}
+			f.Close()
+		}
+	}
+
+	return nil
 }

@@ -43,7 +43,9 @@ func TestPortValidation(t *testing.T) {
 	// Run each test case
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			err := core.PortDefValidation(tc.portId, tc.portDef)
+			err := core.PortDefValidation(tc.portId, tc.portDef, core.PortValidationOpts{
+				IsGroupNode: false,
+			})
 			if (err != nil) != tc.shouldErr {
 				t.Errorf("unexpected error: %v, expected error: %v", err, tc.shouldErr)
 			}
