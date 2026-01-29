@@ -40,7 +40,7 @@ var (
 )
 
 var cmdRoot = &cobra.Command{
-	Use:     "actrun [filename] [flags]",
+	Use:     "actrun [filename|url] [flags]",
 	Short:   "actrun is a tool for running action graphs.",
 	Version: build.GetFulllVersionInfo(),
 	Args:    cobra.ArbitraryArgs,
