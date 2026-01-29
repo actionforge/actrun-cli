@@ -250,7 +250,7 @@ github.com/actionforge/actrun-cli/nodes.(*StartNode).ExecuteImpl
 github.com/actionforge/actrun-cli/nodes.(*StartNode).ExecuteEntry
 	start@v1.go:45
 github.com/actionforge/actrun-cli/core.RunGraph
-	graph.go:430
+	graph.go:462
 github.com/actionforge/actrun-cli/core.RunGraphFromString
-	graph.go:1020
+	graph.go:1052
 

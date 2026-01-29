@@ -27,19 +27,19 @@ stack trace:
 github.com/actionforge/actrun-cli/nodes.init.51.func1
 	nrun-python-embedded@v1.go:16
 github.com/actionforge/actrun-cli/core.NewNodeInstance
-	base.go:610
+	base.go:619
 github.com/actionforge/actrun-cli/core.LoadNode
-	graph.go:603
+	graph.go:635
 github.com/actionforge/actrun-cli/core.LoadNodes
-	graph.go:543
+	graph.go:575
 github.com/actionforge/actrun-cli/core.LoadGraph
-	graph.go:458
+	graph.go:490
 github.com/actionforge/actrun-cli/core.RunGraph
 	graph.go:279
 github.com/actionforge/actrun-cli/core.RunGraphFromString
-	graph.go:1020
+	graph.go:1052
 github.com/actionforge/actrun-cli/core.RunGraphFromFile
-	graph.go:1038
+	graph.go:1070
 github.com/actionforge/actrun-cli/cmd.cmdRootRun
 	cmd_root.go:186
 github.com/spf13/cobra.(*Command).execute
