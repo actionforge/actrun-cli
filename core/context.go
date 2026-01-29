@@ -150,6 +150,10 @@ func (c *ExecutionState) PushNewExecutionState(parentNode NodeBaseInterface) *Ex
 		Inputs:  c.Inputs,
 		Secrets: c.Secrets,
 
+		GhContext: c.GhContext,
+		GhNeeds:   c.GhNeeds,
+		GhMatrix:  c.GhMatrix,
+
 		OutputCacheLock:      &sync.RWMutex{},
 		DataOutputCache:      make(map[string]any),
 		ExecutionOutputCache: make(map[string]any),
