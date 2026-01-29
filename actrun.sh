@@ -61,7 +61,7 @@ if [ -x "$CACHED_BINARY" ]; then
     echo "✅ Using cached actrun $VERSION"
 
     # Process shared URL if first argument matches the pattern
-    if [ $# -gt 0 ] && [[ "$1" =~ ^https://app\.actionforge\.dev/shared/(.+\.act)$ ]]; then
+    if [ $# -gt 0 ] && [[ "$1" =~ ^https://app\.actionforge\.dev/shared/([a-zA-Z0-9_-]+\.act)$ ]]; then
         share_id="${BASH_REMATCH[1]}"
         echo "🔗 Fetching shared graph: $share_id"
 
@@ -134,7 +134,7 @@ chmod +x "$CACHED_BINARY"
 echo "✅ Unpacked actrun $VERSION"
 
 # Process shared URL if first argument matches the pattern
-if [ $# -gt 0 ] && [[ "$1" =~ ^https://app\.actionforge\.dev/shared/(.+\.act)$ ]]; then
+if [ $# -gt 0 ] && [[ "$1" =~ ^https://app\.actionforge\.dev/shared/([a-zA-Z0-9_-]+\.act)$ ]]; then
     share_id="${BASH_REMATCH[1]}"
     echo "🔗 Fetching shared graph: $share_id"
 

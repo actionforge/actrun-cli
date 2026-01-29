@@ -1049,7 +1049,7 @@ var sharedURLPattern = regexp.MustCompile(`^https://app\.actionforge\.dev/shared
 const shareAPIURL = "https://app.actionforge.dev/api/v2/share/graph/read"
 
 func IsSharedGraphURL(graphURL string) bool {
-	return strings.HasPrefix(graphURL, "https://")
+	return sharedURLPattern.MatchString(graphURL)
 }
 
 func ParseSharedGraphURL(graphURL string) (string, bool) {
