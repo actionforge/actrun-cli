@@ -40,13 +40,13 @@ github.com/actionforge/actrun-cli/nodes.(*StartNode).ExecuteImpl
 github.com/actionforge/actrun-cli/nodes.(*StartNode).ExecuteEntry
 	start@v1.go:45
 github.com/actionforge/actrun-cli/core.RunGraph
-	graph.go:426
+	graph.go:430
 github.com/actionforge/actrun-cli/core.RunGraphFromString
-	graph.go:1016
+	graph.go:1020
 github.com/actionforge/actrun-cli/core.RunGraphFromFile
-	graph.go:1034
+	graph.go:1038
 github.com/actionforge/actrun-cli/cmd.cmdRootRun
-	cmd_root.go:175
+	cmd_root.go:186
 github.com/spf13/cobra.(*Command).execute
 	command.go:-1
 github.com/spf13/cobra.(*Command).ExecuteC
@@ -54,7 +54,7 @@ github.com/spf13/cobra.(*Command).ExecuteC
 github.com/spf13/cobra.(*Command).Execute
 	command.go:-1
 github.com/actionforge/actrun-cli/cmd.Execute
-	cmd_root.go:190
+	cmd_root.go:198
 main.main
 	main.go:26
 runtime.main

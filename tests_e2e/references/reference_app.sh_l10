@@ -1,7 +1,7 @@
 build hasn't expired yet
 Error: unknown flag: --flag_doesnt_exist
 Usage:
-  actrun [filename] [flags]
+  actrun [filename|url] [flags]
   actrun [command]
 
 Available Commands:

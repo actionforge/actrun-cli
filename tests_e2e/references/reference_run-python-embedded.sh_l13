@@ -24,24 +24,24 @@ hint:
   	https:[REDACTED]/#not-available
 
 stack trace:
-github.com/actionforge/actrun-cli/nodes.init.50.func1
+github.com/actionforge/actrun-cli/nodes.init.51.func1
 	nrun-python-embedded@v1.go:16
 github.com/actionforge/actrun-cli/core.NewNodeInstance
 	base.go:610
 github.com/actionforge/actrun-cli/core.LoadNode
-	graph.go:599
+	graph.go:603
 github.com/actionforge/actrun-cli/core.LoadNodes
-	graph.go:539
+	graph.go:543
 github.com/actionforge/actrun-cli/core.LoadGraph
-	graph.go:454
+	graph.go:458
 github.com/actionforge/actrun-cli/core.RunGraph
-	graph.go:275
+	graph.go:279
 github.com/actionforge/actrun-cli/core.RunGraphFromString
-	graph.go:1016
+	graph.go:1020
 github.com/actionforge/actrun-cli/core.RunGraphFromFile
-	graph.go:1034
+	graph.go:1038
 github.com/actionforge/actrun-cli/cmd.cmdRootRun
-	cmd_root.go:175
+	cmd_root.go:186
 github.com/spf13/cobra.(*Command).execute
 	command.go:-1
 github.com/spf13/cobra.(*Command).ExecuteC
@@ -49,7 +49,7 @@ github.com/spf13/cobra.(*Command).ExecuteC
 github.com/spf13/cobra.(*Command).Execute
 	command.go:-1
 github.com/actionforge/actrun-cli/cmd.Execute
-	cmd_root.go:190
+	cmd_root.go:198
 main.main
 	main.go:26
 runtime.main
