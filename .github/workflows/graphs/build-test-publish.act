@@ -870,7 +870,7 @@ nodes:
   - id: gh-noelware-s3-action-bear-lobster-banana
     type: github.com/noelware/s3-action@0a3b5a7bdadc7a8649e29a5e441297020fa8c751
     position:
-      x: 12980
+      x: 13580
       y: 1030
     inputs:
       endpoint: ${{ env.PUBLISH_S3_ENDPOINT }}
@@ -891,8 +891,8 @@ nodes:
   - id: file-write-v1-guava-purple-blackberry
     type: core/file-write@v1
     position:
-      x: 11860
-      y: 1300
+      x: 11800
+      y: 1280
   - id: switch-platform-v1-dragonfruit-lemon-gooseberry
     type: core/switch-platform@v1
     position:
@@ -4662,7 +4662,7 @@ nodes:
   - id: group-v1-seahorse-dragonfruit-panda
     type: core/group@v1
     position:
-      x: 14320
+      x: 14920
       y: 1590
     inputs:
       beige-pomegranate-black: us-east-1
@@ -4719,6 +4719,7 @@ nodes:
             env[9]: ''
             env[10]: ''
             env[11]: ''
+            env[12]: ''
         - id: string-fmt-v1-donkey-purple-nectarine
           type: core/string-fmt@v1
           position:
@@ -4807,6 +4808,14 @@ nodes:
           inputs:
             substitutes[0]: null
             fmt: PUBLISH_SECRET=%s
+        - id: core-string-fmt-v1-starfish-pear-rabbit
+          type: core/string-fmt@v1
+          position:
+            x: -690
+            y: 2510
+          inputs:
+            substitutes[0]: null
+            fmt: ATTESTATION_URL=%s
       connections:
         - src:
             node: group-inputs-v1-snake-kiwi-coconut
@@ -4958,6 +4967,18 @@ nodes:
           dst:
             node: run-exec-v1-elephant-tiger-red
             port: env
+        - src:
+            node: core-string-fmt-v1-starfish-pear-rabbit
+            port: result
+          dst:
+            node: env-array-v1-plum-dog-parrot
+            port: env[12]
+        - src:
+            node: group-inputs-v1-snake-kiwi-coconut
+            port: jellyfish-snake-cherry
+          dst:
+            node: core-string-fmt-v1-starfish-pear-rabbit
+            port: substitutes[0]
       executions:
         - src:
             node: group-inputs-v1-snake-kiwi-coconut
@@ -5040,6 +5061,10 @@ nodes:
           type: secret
           desc: ''
           index: 12
+        jellyfish-snake-cherry:
+          name: Attestation Url
+          type: string
+          index: 13
       outputs:
         exec-grapefruit-nectarine-dolphin:
           name: Success
@@ -5063,36 +5088,36 @@ nodes:
   - id: hash-v1-pear-lime-lobster
     type: core/hash@v1
     position:
-      x: 13660
+      x: 14260
       y: 1580
   - id: filepath-op-v1-apricot-apple-gold
     type: core/filepath-op@v1
     position:
-      x: 13760
+      x: 14360
       y: 1960
   - id: system-info-v1-octopus-bear-green
     type: core/system-info@v1
     position:
-      x: 13840
+      x: 14440
       y: 1090
   - id: secret-v1-raspberry-apple-giraffe
     type: core/secret-get@v1
     position:
-      x: 13670
+      x: 14270
       y: 2340
     inputs:
       name: PUBLISH_SECRET
   - id: env-get-v1-durian-koala-peacock
     type: core/env-get@v1
     position:
-      x: 13780
+      x: 14380
       y: 2220
     inputs:
       env: PUBLISH_URL
   - id: env-get-v1-starfruit-blue-orange
     type: core/env-get@v1
     position:
-      x: 13770
+      x: 14370
       y: 2100
     inputs:
       env: PUBLISH_S3_ENDPOINT
@@ -5484,6 +5509,287 @@ nodes:
     position:
       x: -930
       y: 3640
+  - id: >-
+      gh-actions-attest-build-provenance-62fc1d596301d0ab9914e1fec14dc5c8d93f65cd-cat-horse-dog
+    type: core/group@v1
+    position:
+      x: 12950
+      y: 1020
+    inputs:
+      subject-checksums: ''
+      subject-name: ''
+      subject-path: ''
+      github-token: ${{ github.token }}
+    graph:
+      entry: core-group-inputs-v1-start
+      type: group
+      nodes:
+        - id: core-group-inputs-v1-start
+          type: core/group-inputs@v1
+          position:
+            x: 10
+            y: 200
+        - id: generate-build-provenance-predicate
+          type: >-
+            github.com/actions/attest-build-provenance/predicate@864457a58d4733d7f1574bd8821fa24e02cf7538
+          position:
+            x: 370
+            y: 110
+        - id: array-attest-env
+          type: core/string-array@v1
+          position:
+            x: 390
+            y: 610
+          inputs:
+            inputs[0]: NODE_OPTIONS=--max-http-header-size=32768
+        - id: attest
+          type: github.com/actions/attest@e59cbc1ad1ac2d59339667419eb8cdde6eb61e3d
+          position:
+            x: 750
+            y: 20
+        - id: core-group-outputs-v1-end
+          type: core/group-outputs@v1
+          position:
+            x: 1140
+            y: 30
+      connections:
+        - src:
+            node: core-group-inputs-v1-start
+            port: env
+          dst:
+            node: generate-build-provenance-predicate
+            port: env
+        - src:
+            node: array-attest-env
+            port: array
+          dst:
+            node: attest
+            port: env
+        - src:
+            node: core-group-inputs-v1-start
+            port: subject-path
+          dst:
+            node: attest
+            port: subject-path
+        - src:
+            node: core-group-inputs-v1-start
+            port: subject-digest
+          dst:
+            node: attest
+            port: subject-digest
+        - src:
+            node: core-group-inputs-v1-start
+            port: subject-name
+          dst:
+            node: attest
+            port: subject-name
+        - src:
+            node: core-group-inputs-v1-start
+            port: subject-checksums
+          dst:
+            node: attest
+            port: subject-checksums
+        - src:
+            node: generate-build-provenance-predicate
+            port: predicate-type
+          dst:
+            node: attest
+            port: predicate-type
+        - src:
+            node: generate-build-provenance-predicate
+            port: predicate
+          dst:
+            node: attest
+            port: predicate
+        - src:
+            node: core-group-inputs-v1-start
+            port: github-token
+          dst:
+            node: attest
+            port: github-token
+        - src:
+            node: core-group-inputs-v1-start
+            port: push-to-registry
+          dst:
+            node: attest
+            port: push-to-registry
+        - src:
+            node: core-group-inputs-v1-start
+            port: create-storage-record
+          dst:
+            node: attest
+            port: create-storage-record
+        - src:
+            node: core-group-inputs-v1-start
+            port: show-summary
+          dst:
+            node: attest
+            port: show-summary
+        - src:
+            node: core-group-inputs-v1-start
+            port: env
+          dst:
+            node: attest
+            port: env
+        - src:
+            node: attest
+            port: bundle-path
+          dst:
+            node: core-group-outputs-v1-end
+            port: bundle-path
+        - src:
+            node: attest
+            port: attestation-id
+          dst:
+            node: core-group-outputs-v1-end
+            port: attestation-id
+        - src:
+            node: attest
+            port: attestation-url
+          dst:
+            node: core-group-outputs-v1-end
+            port: attestation-url
+      executions:
+        - src:
+            node: core-group-inputs-v1-start
+            port: exec
+          dst:
+            node: generate-build-provenance-predicate
+            port: exec
+        - src:
+            node: generate-build-provenance-predicate
+            port: exec-err
+          dst:
+            node: core-group-outputs-v1-end
+            port: exec-err
+        - src:
+            node: generate-build-provenance-predicate
+            port: exec-success
+          dst:
+            node: attest
+            port: exec
+        - src:
+            node: attest
+            port: exec-err
+          dst:
+            node: core-group-outputs-v1-end
+            port: exec-err
+        - src:
+            node: attest
+            port: exec-success
+          dst:
+            node: core-group-outputs-v1-end
+            port: exec-success
+      inputs:
+        create-storage-record:
+          name: create-storage-record
+          type: string
+          desc: >
+            Whether to create a storage record for the artifact. Requires that
+            push-to-registry is set to true. Defaults to true.
+          index: 1
+          default: true
+        env:
+          name: Environment Vars
+          type: '[]string'
+          index: 9
+          hint: MY_ENV=1234
+        exec:
+          name: ''
+          type: ''
+          index: 0
+          exec: true
+        github-token:
+          name: github-token
+          type: string
+          desc: |
+            The GitHub token used to make authenticated API requests.
+          index: 2
+          default: ${{ github.token }}
+        push-to-registry:
+          name: push-to-registry
+          type: string
+          desc: >
+            Whether to push the provenance statement to the image registry.
+            Requires that the "subject-name" parameter specify the
+            fully-qualified image name and that the "subject-digest" parameter
+            be specified. Defaults to false.
+          index: 3
+          default: false
+        show-summary:
+          name: show-summary
+          type: string
+          desc: >
+            Whether to attach a list of generated attestations to the workflow
+            run summary page. Defaults to true.
+          index: 4
+          default: true
+        subject-checksums:
+          name: subject-checksums
+          type: string
+          desc: >
+            Path to checksums file containing digest and name of subjects for
+            attestation. Must specify exactly one of "subject-path",
+            "subject-digest", or "subject-checksums".
+          index: 5
+        subject-digest:
+          name: subject-digest
+          type: string
+          desc: >
+            Digest of the subject for which provenance will be generated. Must
+            be in the form "algorithm:hex_digest" (e.g. "sha256:abc123...").
+            Must specify exactly one of "subject-path", "subject-digest", or
+            "subject-checksums".
+          index: 6
+        subject-name:
+          name: subject-name
+          type: string
+          desc: >
+            Subject name as it should appear in the attestation. Required when
+            identifying the subject with the "subject-digest" input.
+          index: 7
+        subject-path:
+          name: subject-path
+          type: string
+          desc: >
+            Path to the artifact serving as the subject of the attestation. Must
+            specify exactly one of "subject-path", "subject-digest", or
+            "subject-checksums". May contain a glob pattern or list of paths
+            (total subject count cannot exceed 1024).
+          index: 8
+      outputs:
+        attestation-id:
+          name: attestation-id
+          type: string
+          desc: The ID of the attestation.
+          index: 2
+        attestation-url:
+          name: attestation-url
+          type: string
+          desc: The URL for the attestation summary.
+          index: 3
+        bundle-path:
+          name: bundle-path
+          type: string
+          desc: The path to the file containing the attestation bundle.
+          index: 4
+        exec-err:
+          name: Error
+          type: ''
+          index: 1
+          exec: true
+        exec-success:
+          name: Success
+          type: ''
+          index: 0
+          exec: true
+      info:
+        author: ''
+        version: ''
+        contact: ''
+        description: ''
+    label: Attest Build Provenance
+    comment: attest zip/dmg
 connections:
   - src:
       node: const-string-v1-horse-lime-seahorse
@@ -6031,6 +6337,20 @@ connections:
     dst:
       node: env-array-v1-red-nectarine-rhinoceros
       port: env[2]
+  - src:
+      node: >-
+        gh-actions-attest-build-provenance-62fc1d596301d0ab9914e1fec14dc5c8d93f65cd-cat-horse-dog
+      port: attestation-url
+    dst:
+      node: group-v1-seahorse-dragonfruit-panda
+      port: jellyfish-snake-cherry
+  - src:
+      node: select-data-v1-red-blueberry-kiwano
+      port: value
+    dst:
+      node: >-
+        gh-actions-attest-build-provenance-62fc1d596301d0ab9914e1fec14dc5c8d93f65cd-cat-horse-dog
+      port: subject-path
 executions:
   - src:
       node: run-v1-donkey-magenta-raspberry
@@ -6225,12 +6545,6 @@ executions:
       node: file-write-v1-guava-purple-blackberry
       port: exec
   - src:
-      node: file-write-v1-guava-purple-blackberry
-      port: exec-success
-    dst:
-      node: gh-noelware-s3-action-bear-lobster-banana
-      port: exec
-  - src:
       node: for-each-loop-v1-starfruit-strawberry-raspberry
       port: exec-body
     dst:
@@ -6279,12 +6593,6 @@ executions:
       node: group-v1-purple-penguin-maroon
       port: exec-teal-gold-rhinoceros
   - src:
-      node: group-v1-purple-penguin-maroon
-      port: exec-peach-lime-turquoise
-    dst:
-      node: gh-noelware-s3-action-bear-lobster-banana
-      port: exec
-  - src:
       node: gh-start
       port: exec-on_push
     dst:
@@ -6319,4 +6627,25 @@ executions:
       port: exec[1]
     dst:
       node: switch-platform-v1-blackberry-grape-ivory
+      port: exec
+  - src:
+      node: file-write-v1-guava-purple-blackberry
+      port: exec-success
+    dst:
+      node: >-
+        gh-actions-attest-build-provenance-62fc1d596301d0ab9914e1fec14dc5c8d93f65cd-cat-horse-dog
+      port: exec
+  - src:
+      node: group-v1-purple-penguin-maroon
+      port: exec-peach-lime-turquoise
+    dst:
+      node: >-
+        gh-actions-attest-build-provenance-62fc1d596301d0ab9914e1fec14dc5c8d93f65cd-cat-horse-dog
+      port: exec
+  - src:
+      node: >-
+        gh-actions-attest-build-provenance-62fc1d596301d0ab9914e1fec14dc5c8d93f65cd-cat-horse-dog
+      port: exec-success
+    dst:
+      node: gh-noelware-s3-action-bear-lobster-banana
       port: exec

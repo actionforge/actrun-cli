@@ -287,7 +287,8 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 	}
 
 	entryNode, isBaseNode := entry.(NodeBaseInterface)
-	isGitHubWorkflow := os.Getenv("GITHUB_ACTIONS") == "true" || (isBaseNode && entryNode.GetNodeTypeId() == "core/gh-start@v1")
+	isGitHubAction := os.Getenv("GITHUB_ACTIONS") == "true"
+	isGitHubWorkflow := isBaseNode && entryNode.GetNodeTypeId() == "core/gh-start@v1"
 
 	// Initialize trackers with their respective categories
 	envTracker := newValueMap[string]("env")
@@ -399,26 +400,7 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 		printExplicit(envTracker, false)
 	}
 
-	if isGitHubWorkflow {
-		err = SetupGitHubActionsEnv(finalEnv)
-		if err != nil {
-			return CreateErr(nil, err, "failed to setup GitHub Actions environment")
-		}
-	}
-
-	// set cwd for current process. `ACT_CWD` is used for non GitHub workflows
-	if cwd := finalEnv["GITHUB_WORKSPACE"]; cwd != "" {
-		originalCwd, err := os.Getwd()
-		if err != nil {
-			return CreateErr(nil, err, "failed to get current working directory")
-		}
-		if err := os.Chdir(cwd); err != nil {
-			return CreateErr(nil, err, "failed to change working directory to GITHUB_WORKSPACE")
-		}
-		defer func() {
-			_ = os.Chdir(originalCwd)
-		}()
-	} else if cwd := finalEnv["ACT_CWD"]; cwd != "" {
+	if cwd := finalEnv["ACT_CWD"]; cwd != "" {
 		originalCwd, err := os.Getwd()
 		if err != nil {
 			return CreateErr(nil, err, "failed to get current working directory")
@@ -429,6 +411,29 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 		defer func() {
 			_ = os.Chdir(originalCwd)
 		}()
+	}
+
+	if !isGitHubAction && isGitHubWorkflow {
+		// If we are running a github actions workflow, then mimic a GitHub Actions environment
+		// But only do is if we are NOT already in GitHub Actions
+		err = SetupGitHubActionsEnv(finalEnv)
+		if err != nil {
+			return CreateErr(nil, err, "failed to setup GitHub Actions environment")
+		}
+
+		// set cwd for current process. `ACT_CWD` above is used for non GitHub workflows
+		if cwd := finalEnv["GITHUB_WORKSPACE"]; cwd != "" {
+			originalCwd, err := os.Getwd()
+			if err != nil {
+				return CreateErr(nil, err, "failed to get current working directory")
+			}
+			if err := os.Chdir(cwd); err != nil {
+				return CreateErr(nil, err, "failed to change working directory to GITHUB_WORKSPACE")
+			}
+			defer func() {
+				_ = os.Chdir(originalCwd)
+			}()
+		}
 	}
 
 	// construct the `github` context

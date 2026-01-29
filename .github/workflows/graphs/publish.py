@@ -20,6 +20,7 @@ def main():
     sha256 = get_env_variable('SHA256')
     typ = get_env_variable('TYPE')
     version = get_env_variable('VERSION')
+    attestation_url = get_env_variable('ATTESTATION_URL')
     key = get_env_variable('S3_KEY')
     region = get_env_variable('PUBLISH_S3_REGION')
     bucket = get_env_variable('PUBLISH_S3_BUCKET')
@@ -41,6 +42,7 @@ def main():
             "key": key,
             "endpoint": endpoint
         },
+        "attestation_url": attestation_url,
         "sha256": sha256,
         "type": typ
     }]
