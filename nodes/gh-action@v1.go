@@ -360,7 +360,7 @@ func (n *GhActionNode) ExecuteDocker(c *core.ExecutionState, workingDirectory st
 }
 
 func init() {
-	err := core.RegisterNodeFactory(ghActionNodeDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(ghActionNodeDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 
 		nodeType := ctx.(string)
 
@@ -374,36 +374,47 @@ func init() {
 			return nil, []error{core.CreateErr(nil, err, "unable to get user home directory")}
 		}
 
-		// repoRoot is where the git repository is stored locall
+		// actionRepoRoot is where the git repository is stored locall
 		// ~/work/_actions/{owner}/{repo}/{ref}
-		repoRoot := filepath.Join(home, "work", "_actions", owner, repo, ref)
+		actionRepoRoot := filepath.Join(home, "work", "_actions", owner, repo, ref)
 
 		// actionDir is where the action.yml lives of the action which is not always the repo root it seems
 		// If the action is in the root, path is empty
 		// If the action is in a subdir like "github.com/owner/repo/sub/path", path is just "sub/path"
-		actionDir := filepath.Join(repoRoot, path)
+		actionDir := filepath.Join(actionRepoRoot, path)
 
-		_, ok := os.LookupEnv("GITHUB_ACTIONS")
-		if !ok {
-			return nil, []error{core.CreateErr(nil, nil, "environment not configured yet to run GitHub Actions.").SetHint(
-				"In order to run GitHub Actions, please follow the instructions at https://docs.actionforge.dev/reference/github-actions/#configure"),
+		isGitHubAction := opts.OverrideEnv["GITHUB_ACTIONS"] == "true" || os.Getenv("GITHUB_ACTIONS") == "true"
+		if !isGitHubAction {
+			return nil, []error{core.CreateErr(nil, nil, "node representing GitHub Action '%v' can only be used in a GitHub Actions workflow.", nodeType)}
+		}
+
+		// Reminder:
+		// `INPUT_TOKEN` comes from the GitHub Action actionforge/action.
+		// `GITHUB_TOKEN` is manually provided, eg through the web app and has a higher precedence.
+		// GITHUB_TOKEN should always be set via secrets, but just in case the user provides it via env, check also there
+		ghToken := opts.OverrideSecrets["GITHUB_TOKEN"]
+		if ghToken == "" {
+			ghToken = opts.OverrideEnv["GITHUB_TOKEN"]
+			if ghToken == "" {
+				ghToken = os.Getenv("GITHUB_TOKEN")
+				if ghToken == "" {
+					// Note that `INPUT_*` env vars are only prefixed for the graph execution, not here
+					ghToken = os.Getenv("INPUT_TOKEN")
+				}
 			}
 		}
 
-		// Reminder that INPUT_* env vars are only prefixed for the graph execution, not here
-		ghToken := os.Getenv("INPUT_TOKEN")
-
 		// TODO: (Seb) for the validation process we only need the action.yml, not the entire repo
 		// so check if we are in validate mode and only download the action.yml file
-		_, err = os.Stat(repoRoot)
+		_, err = os.Stat(actionRepoRoot)
 		if errors.Is(err, os.ErrNotExist) {
 			if ghToken == "" {
-				return nil, []error{core.CreateErr(nil, nil, "INPUT_TOKEN not set")}
+				return nil, []error{core.CreateErr(nil, nil, "neither GITHUB_TOKEN nor INPUT_TOKEN are set")}
 			}
 
 			cloneUrl := fmt.Sprintf("https://github.com/%s/%s", owner, repo)
 
-			if err := os.MkdirAll(filepath.Dir(repoRoot), 0755); err != nil {
+			if err := os.MkdirAll(filepath.Dir(actionRepoRoot), 0755); err != nil {
 				return nil, []error{core.CreateErr(nil, err, "unable to create action directory")}
 			}
 
@@ -419,7 +430,7 @@ func init() {
 				Password: ghToken,
 			}
 
-			clonedRepo, err := git.PlainClone(repoRoot, false, cloneOpts)
+			clonedRepo, err := git.PlainClone(actionRepoRoot, false, cloneOpts)
 			if err != nil {
 				return nil, []error{core.CreateErr(nil, err, "failed to clone repository")}
 			}
@@ -448,7 +459,7 @@ func init() {
 			}
 		} else {
 			// reset in just case something tampered with the cached gh actions
-			existingRepo, err := git.PlainOpen(repoRoot)
+			existingRepo, err := git.PlainOpen(actionRepoRoot)
 			if err != nil {
 				return nil, []error{core.CreateErr(nil, err, "failed to open cached repository")}
 			}
@@ -501,7 +512,10 @@ func init() {
 
 		switch action.Runs.Using {
 		case "docker":
-			sysWorkspaceDir := os.Getenv("GITHUB_WORKSPACE")
+			sysWorkspaceDir := opts.OverrideEnv["GITHUB_WORKSPACE"]
+			if sysWorkspaceDir == "" {
+				sysWorkspaceDir = os.Getenv("GITHUB_WORKSPACE")
+			}
 			if sysWorkspaceDir == "" {
 				return nil, []error{core.CreateErr(nil, nil, "GITHUB_WORKSPACE not set")}
 			}
