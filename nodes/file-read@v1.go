@@ -70,7 +70,7 @@ func (n *FileReadNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId,
 }
 
 func init() {
-	err := core.RegisterNodeFactory(fileReadDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(fileReadDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &FileReadNode{}, nil
 	})
 	if err != nil {

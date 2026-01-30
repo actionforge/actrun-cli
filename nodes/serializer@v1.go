@@ -114,7 +114,7 @@ func (n *SerializerNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputI
 }
 
 func init() {
-	err := core.RegisterNodeFactory(serializeDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(serializeDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &SerializerNode{}, nil
 	})
 	if err != nil {

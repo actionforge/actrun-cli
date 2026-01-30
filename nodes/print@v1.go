@@ -109,7 +109,7 @@ func (n *PrintNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, pr
 }
 
 func init() {
-	err := core.RegisterNodeFactory(printDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(printDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &PrintNode{}, nil
 	})
 	if err != nil {

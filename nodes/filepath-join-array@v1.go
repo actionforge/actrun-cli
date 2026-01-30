@@ -28,7 +28,7 @@ func (n *FilepathJoinFromArrayNode) OutputValueById(c *core.ExecutionState, outp
 }
 
 func init() {
-	err := core.RegisterNodeFactory(filepathJoinFromArrayNodeDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(filepathJoinFromArrayNodeDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &FilepathJoinFromArrayNode{}, nil
 	})
 	if err != nil {

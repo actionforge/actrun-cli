@@ -43,7 +43,7 @@ func (n *SecretNode) OutputValueById(c *core.ExecutionState, outputId core.Outpu
 }
 
 func init() {
-	err := core.RegisterNodeFactory(secretDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(secretDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &SecretNode{}, nil
 	})
 	if err != nil {

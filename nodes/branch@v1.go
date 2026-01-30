@@ -38,7 +38,7 @@ func (n *BranchNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, p
 }
 
 func init() {
-	err := core.RegisterNodeFactory(ifDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(ifDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &BranchNode{}, nil
 	})
 	if err != nil {

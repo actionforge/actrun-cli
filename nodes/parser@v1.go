@@ -146,7 +146,7 @@ func init() {
 	gob.Register([]any{})
 	gob.Register(map[string]any{})
 
-	err := core.RegisterNodeFactory(parseDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(parseDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &ParserNode{}, nil
 	})
 	if err != nil {

@@ -24,7 +24,7 @@ func (n *TestNode) OutputValueById(c *core.ExecutionState, outputId core.OutputI
 }
 
 func init() {
-	err := core.RegisterNodeFactory(testNodeDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(testNodeDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &TestNode{}, nil
 	})
 	if err != nil {

@@ -120,7 +120,7 @@ func (n *GitCloneNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId,
 }
 
 func init() {
-	err := core.RegisterNodeFactory(gitCloneDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(gitCloneDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &GitCloneNode{}, nil
 	})
 	if err != nil {

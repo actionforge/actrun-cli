@@ -33,7 +33,7 @@ func (n *StringJoinNode) OutputValueById(c *core.ExecutionState, outputId core.O
 }
 
 func init() {
-	err := core.RegisterNodeFactory(stringJoinNodeDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(stringJoinNodeDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &StringJoinNode{}, nil
 	})
 	if err != nil {

@@ -38,7 +38,7 @@ func (n *SelectDataNode) OutputValueById(c *core.ExecutionState, outputId core.O
 }
 
 func init() {
-	err := core.RegisterNodeFactory(selectDataNodeDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(selectDataNodeDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &SelectDataNode{}, nil
 	})
 	if err != nil {

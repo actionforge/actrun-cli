@@ -79,7 +79,7 @@ func (n *ConcurrentExecNode) ExecuteImpl(c *core.ExecutionState, inputId core.In
 }
 
 func init() {
-	err := core.RegisterNodeFactory(concurrentExecDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(concurrentExecDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &ConcurrentExecNode{}, nil
 	})
 	if err != nil {

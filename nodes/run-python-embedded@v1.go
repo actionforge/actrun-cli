@@ -53,7 +53,7 @@ func (n *RunPythonEmbedded) ExecuteImpl(c *core.ExecutionState, inputId core.Inp
 }
 
 func init() {
-	err := core.RegisterNodeFactory(runExecPython, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(runExecPython, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &RunPythonEmbedded{}, nil
 	})
 	if err != nil {

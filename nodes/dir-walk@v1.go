@@ -177,7 +177,7 @@ func walk(root string, opts walkOpts, pattern []string, items map[string]os.File
 }
 
 func init() {
-	err := core.RegisterNodeFactory(walkDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(walkDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &WalkNode{}, nil
 	})
 	if err != nil {

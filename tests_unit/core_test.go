@@ -55,7 +55,7 @@ func TestPortValidation(t *testing.T) {
 
 // Run a simple script/program and check that the output is correct.
 func Test_NewNodeInstance(t *testing.T) {
-	n, err := core.NewNodeInstance("core/run@v1", nil, "", nil, false)
+	n, err := core.NewNodeInstance("core/run@v1", nil, "", nil, false, core.RunOpts{})
 	if err != nil {
 		t.Fatal(err)
 	}

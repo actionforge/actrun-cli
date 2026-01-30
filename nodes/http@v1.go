@@ -148,7 +148,7 @@ func (n *HttpNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, pre
 }
 
 func init() {
-	err := core.RegisterNodeFactory(httpDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(httpDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &HttpNode{}, nil
 	})
 	if err != nil {

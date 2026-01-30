@@ -139,7 +139,7 @@ func (n *ConcurrentLoopNode) ExecuteImpl(c *core.ExecutionState, inputId core.In
 }
 
 func init() {
-	err := core.RegisterNodeFactory(concurrentForLoopDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(concurrentForLoopDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &ConcurrentLoopNode{}, nil
 	})
 	if err != nil {

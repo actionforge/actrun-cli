@@ -73,7 +73,7 @@ func (n *SshCredentialNode) OutputValueById(c *core.ExecutionState, outputId cor
 }
 
 func init() {
-	err := core.RegisterNodeFactory(sshCredentialDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(sshCredentialDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &SshCredentialNode{}, nil
 	})
 	if err != nil {

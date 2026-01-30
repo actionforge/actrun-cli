@@ -72,7 +72,7 @@ func (n *GitCheckoutNode) ExecuteImpl(c *core.ExecutionState, inputId core.Input
 }
 
 func init() {
-	err := core.RegisterNodeFactory(gitCheckoutDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(gitCheckoutDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &GitCheckoutNode{}, nil
 	})
 	if err != nil {

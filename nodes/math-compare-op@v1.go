@@ -106,7 +106,7 @@ func init() {
 	}
 
 	for _, op := range ops {
-		err := core.RegisterNodeFactory(op.definition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+		err := core.RegisterNodeFactory(op.definition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 			return &MathCompareOpNode{
 				op: op.op,
 			}, nil

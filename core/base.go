@@ -287,7 +287,7 @@ func LogDebugInfoForGh(t GetNameIdInterface) {
 	)
 }
 
-type nodeFactoryFunc func(ctx any, parent NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (NodeBaseInterface, []error)
+type nodeFactoryFunc func(ctx any, parent NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts RunOpts) (NodeBaseInterface, []error)
 
 var registries = make(map[string]NodeTypeDefinitionFull)
 
@@ -585,13 +585,13 @@ func RegisterNodeFactory(nodeDefStr string, fn nodeFactoryFunc) error {
 	return nil
 }
 
-func NewGhActionNode(nodeType string, parent NodeBaseInterface, parentId string, validate bool) (NodeBaseInterface, []error) {
+func NewGhActionNode(nodeType string, parent NodeBaseInterface, parentId string, validate bool, opts RunOpts) (NodeBaseInterface, []error) {
 	factoryEntry, exists := registries["core/gh-action@v1"]
 	if !exists {
 		return nil, []error{CreateErr(nil, nil, "node type '%v' not registered", nodeType)}
 	}
 
-	node, errs := factoryEntry.FactoryFn(nodeType, parent, parentId, nil, validate)
+	node, errs := factoryEntry.FactoryFn(nodeType, parent, parentId, nil, validate, opts)
 	if len(errs) > 0 {
 		return nil, errs
 	}
@@ -601,7 +601,7 @@ func NewGhActionNode(nodeType string, parent NodeBaseInterface, parentId string,
 	return node, nil
 }
 
-func NewNodeInstance(nodeType string, parent NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (NodeBaseInterface, []error) {
+func NewNodeInstance(nodeType string, parent NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts RunOpts) (NodeBaseInterface, []error) {
 	var (
 		node NodeBaseInterface
 		errs []error
@@ -616,7 +616,7 @@ func NewNodeInstance(nodeType string, parent NodeBaseInterface, parentId string,
 	factoryEntry, exists := registries[nodeType]
 	if exists {
 		// Pass 'validate' to the factory function
-		node, errs = factoryEntry.FactoryFn(nil, parent, parentId, nodeDef, validate)
+		node, errs = factoryEntry.FactoryFn(nil, parent, parentId, nodeDef, validate, opts)
 		if len(errs) > 0 {
 			// If the factory failed to produce a node (or found errors), return them.
 			return nil, errs

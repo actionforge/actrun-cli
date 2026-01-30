@@ -49,7 +49,7 @@ func (n *StringFmt) OutputValueById(c *core.ExecutionState, outputId core.Output
 }
 
 func init() {
-	err := core.RegisterNodeFactory(stringFmtDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(stringFmtDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		// this definition ensures that the number of format verbs in the format string
 		// matches the number of substitution inputs. This can be done if the format string
 		// is already predefined and not dynamic (in that case, there is another check above in OutputValueById).

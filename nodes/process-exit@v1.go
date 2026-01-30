@@ -29,7 +29,7 @@ func (n *ExitNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, pre
 }
 
 func init() {
-	err := core.RegisterNodeFactory(exitDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(exitDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &ExitNode{}, nil
 	})
 	if err != nil {

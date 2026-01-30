@@ -135,7 +135,7 @@ func (n *RandomStreamNode) ExecuteImpl(c *core.ExecutionState, inputId core.Inpu
 }
 
 func init() {
-	err := core.RegisterNodeFactory(randomStreamNodeDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(randomStreamNodeDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &RandomStreamNode{}, nil
 	})
 	if err != nil {

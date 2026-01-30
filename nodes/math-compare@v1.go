@@ -55,7 +55,7 @@ func (n *CompareNode) OutputValueById(c *core.ExecutionState, outputId core.Outp
 }
 
 func init() {
-	err := core.RegisterNodeFactory(mathCompareDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(mathCompareDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &CompareNode{}, nil
 	})
 	if err != nil {

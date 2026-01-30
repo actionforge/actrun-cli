@@ -58,7 +58,7 @@ func (n *PropertyGetterDefinition) ExecuteImpl(c *core.ExecutionState, inputId c
 }
 
 func init() {
-	err := core.RegisterNodeFactory(propertyGetterDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(propertyGetterDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &PropertyGetterDefinition{}, nil
 	})
 	if err != nil {

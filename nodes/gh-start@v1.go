@@ -176,7 +176,7 @@ func (n *GhActionStartNode) GetStartOutput(c *core.ExecutionState) (core.OutputI
 }
 
 func init() {
-	err := core.RegisterNodeFactory(GithubActionStartNodeDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(GithubActionStartNodeDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &GhActionStartNode{}, nil
 	})
 	if err != nil {

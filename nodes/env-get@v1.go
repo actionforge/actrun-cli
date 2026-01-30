@@ -29,7 +29,7 @@ func (n *EnvGetNode) OutputValueById(c *core.ExecutionState, outputId core.Outpu
 }
 
 func init() {
-	err := core.RegisterNodeFactory(envGetDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(envGetDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &EnvGetNode{}, nil
 	})
 	if err != nil {

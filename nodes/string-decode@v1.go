@@ -195,7 +195,7 @@ func unescapeXML(s string) string {
 }
 
 func init() {
-	err := core.RegisterNodeFactory(stringDecodeDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(stringDecodeDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &StringDecode{}, nil
 	})
 	if err != nil {

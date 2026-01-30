@@ -54,7 +54,7 @@ func validateGraph(filePath string) error {
 		return err
 	}
 
-	_, errs := core.LoadGraph(graphYaml, nil, "", true)
+	_, errs := core.LoadGraph(graphYaml, nil, "", true, core.RunOpts{})
 
 	if len(errs) > 0 {
 		fmt.Printf("\n❌ Validation failed with %d error(s):\n", len(errs))

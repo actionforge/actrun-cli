@@ -40,7 +40,7 @@ func (n *UserPassCredentialsNode) OutputValueById(c *core.ExecutionState, output
 }
 
 func init() {
-	err := core.RegisterNodeFactory(userPassCredentialDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(userPassCredentialDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &UserPassCredentialsNode{}, nil
 	})
 	if err != nil {
