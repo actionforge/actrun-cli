@@ -108,7 +108,7 @@ func (n *GroupNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, pr
 
 func init() {
 	// Factory function now accepts 'validate' and returns []error
-	err := core.RegisterNodeFactory(subgraphDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(subgraphDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		var collectedErrors []error
 
 		subGraph, ok := nodeDef["graph"].(map[string]any)
@@ -179,7 +179,7 @@ func init() {
 			}
 		}
 
-		ag, errs := core.LoadGraph(subGraph, group, parentId, validate)
+		ag, errs := core.LoadGraph(subGraph, group, parentId, validate, opts)
 		if len(errs) > 0 {
 			if !validate {
 				return nil, errs

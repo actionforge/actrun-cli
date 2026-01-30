@@ -20,7 +20,7 @@ func (n *MathOpNode) OutputValueById(c *core.ExecutionState, outputId core.Outpu
 }
 
 func init() {
-	err := core.RegisterNodeFactory(mathOpDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(mathOpDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &MathOpNode{}, nil
 	})
 	if err != nil {

@@ -276,7 +276,7 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 		return CreateErr(nil, err, "failed to load yaml")
 	}
 
-	ag, errs := LoadGraph(graphYaml, nil, "", false)
+	ag, errs := LoadGraph(graphYaml, nil, "", false, opts)
 	if len(errs) > 0 {
 		return CreateErr(nil, errs[0], "failed to load graph")
 	}
@@ -287,8 +287,23 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 	}
 
 	entryNode, isBaseNode := entry.(NodeBaseInterface)
-	isGitHubAction := os.Getenv("GITHUB_ACTIONS") == "true"
-	isGitHubWorkflow := isBaseNode && entryNode.GetNodeTypeId() == "core/gh-start@v1"
+
+	// isGitHubActions: Determines if this run should behave as a GitHub Action.
+	// True when either running on actual GitHub Actions (system env), or an external
+	// caller (e.g., web app) explicitly requests GitHub Actions behavior via OverrideEnv.
+	// This affects input variable handling, context loading, and other GitHub-specific behavior.
+	//
+	// **Important** we haven't loaded the config file yet, so we can only look at overriden envs,
+	// .env (already set in os.GetEnv) or shell.
+	isGitHubActions := opts.OverrideEnv["GITHUB_ACTIONS"] == "true" || os.Getenv("GITHUB_ACTIONS") == "true" || entryNode.GetNodeTypeId() == "core/gh-start@v1"
+
+	// mimickGitHubEnv: Determines if we need to set up a simulated GitHub environment. The easiest
+	// approach for now is to just check a bunch of env vars. The user may have set one or the other
+	// (through .env or shell) but unlikely all of them but they are by a real GitHub Actions runner.
+	mimickGitHubEnv := isGitHubActions && os.Getenv("GITHUB_RUN_ID") == "" &&
+		os.Getenv("RUNNER_TEMP") == "" &&
+		os.Getenv("GITHUB_API_URL") == "" &&
+		os.Getenv("GITHUB_RETENTION_DAYS") == ""
 
 	// Initialize trackers with their respective categories
 	envTracker := newValueMap[string]("env")
@@ -301,19 +316,21 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 	if opts.ConfigFile != "" {
 		if _, err := os.Stat(opts.ConfigFile); err == nil {
 			localConfig, err := utils.LoadConfig(opts.ConfigFile)
-			if err == nil {
-				configName := filepath.Base(opts.ConfigFile)
-				envTracker.set(localConfig.Env, configName, true, false)
-				inputTracker.set(localConfig.Inputs, configName, true, false)
-				secretTracker.set(localConfig.Secrets, configName, true, true)
+			if err != nil {
+				return CreateErr(nil, err, "failed to load config file")
 			}
+
+			configName := filepath.Base(opts.ConfigFile)
+			envTracker.set(localConfig.Env, configName, true, false)
+			inputTracker.set(localConfig.Inputs, configName, true, false)
+			secretTracker.set(localConfig.Secrets, configName, true, true)
 		}
 	}
 
 	rawEnv := utils.GetAllEnvMapCopy()
 
 	// normalize all inputs/secrets with ACT_* iif we're in GitHub
-	if isGitHubWorkflow {
+	if isGitHubActions {
 		prefixedRawEnv := make(map[string]utils.EnvKV)
 		for k, v := range rawEnv {
 			prefixedKey := k
@@ -366,15 +383,15 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 			secretTracker.setSingle(key, v.Value, fmt.Sprintf("%s (%s)", source, k), true, true)
 
 		// GitHub specifics
-		case isGitHubWorkflow && k == "ACT_INPUT_MATRIX":
+		case isGitHubActions && k == "ACT_INPUT_MATRIX":
 			if m, err := decodeJsonFromEnvValue[any](v.Value); err == nil {
 				matrixTracker.set(m, source, true, true)
 			}
-		case isGitHubWorkflow && k == "ACT_INPUT_NEEDS":
+		case isGitHubActions && k == "ACT_INPUT_NEEDS":
 			if m, err := decodeJsonFromEnvValue[any](v.Value); err == nil {
 				needsTracker.set(m, source, true, true)
 			}
-		case isGitHubWorkflow && k == "ACT_INPUT_TOKEN":
+		case isGitHubActions && k == "ACT_INPUT_TOKEN":
 			secretTracker.setSingle("GITHUB_TOKEN", v.Value, source, true, true)
 
 		default:
@@ -413,7 +430,7 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 		}()
 	}
 
-	if !isGitHubAction && isGitHubWorkflow {
+	if mimickGitHubEnv {
 		// If we are running a github actions workflow, then mimic a GitHub Actions environment
 		// But only do is if we are NOT already in GitHub Actions
 		err = SetupGitHubActionsEnv(finalEnv)
@@ -439,7 +456,7 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 	// construct the `github` context
 	var ghContext map[string]any
 	var errGh error
-	if isGitHubWorkflow {
+	if isGitHubActions {
 		ghContext, errGh = LoadGitHubContext(finalEnv, finalInputs, finalSecrets)
 		if errGh != nil {
 			return CreateErr(nil, errGh, "failed to load github context")
@@ -450,7 +467,7 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 		ctx,
 		&ag,
 		graphName,
-		isGitHubWorkflow,
+		isGitHubActions,
 		debugCb,
 		finalEnv,
 		finalInputs,
@@ -467,7 +484,7 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 	return entry.ExecuteEntry(c, nil, opts.Args)
 }
 
-func LoadGraph(graphYaml map[string]any, parent NodeBaseInterface, parentId string, validate bool) (ActionGraph, []error) {
+func LoadGraph(graphYaml map[string]any, parent NodeBaseInterface, parentId string, validate bool, opts RunOpts) (ActionGraph, []error) {
 
 	var (
 		collectedErrors []error
@@ -492,7 +509,7 @@ func LoadGraph(graphYaml map[string]any, parent NodeBaseInterface, parentId stri
 		collectedErrors = append(collectedErrors, err)
 	}
 
-	err = LoadNodes(&ag, parent, parentId, graphYaml, validate, &collectedErrors)
+	err = LoadNodes(&ag, parent, parentId, graphYaml, validate, &collectedErrors, opts)
 	if err != nil && !validate {
 		return ActionGraph{}, []error{err}
 	}
@@ -570,14 +587,14 @@ func anyToPortDefinition[T any](o any) (T, error) {
 	return ret, err
 }
 
-func LoadNodes(ag *ActionGraph, parent NodeBaseInterface, parentId string, nodesYaml map[string]any, validate bool, errs *[]error) error {
+func LoadNodes(ag *ActionGraph, parent NodeBaseInterface, parentId string, nodesYaml map[string]any, validate bool, errs *[]error, opts RunOpts) error {
 	nodesList, err := utils.GetTypedPropertyByPath[[]any](nodesYaml, "nodes")
 	if err != nil {
 		return collectOrReturn(err, validate, errs)
 	}
 
 	for _, nodeData := range nodesList {
-		n, id, err := LoadNode(parent, parentId, nodeData, validate, errs)
+		n, id, err := LoadNode(parent, parentId, nodeData, validate, errs, opts)
 		if err != nil {
 			return err
 		}
@@ -592,7 +609,7 @@ func LoadNodes(ag *ActionGraph, parent NodeBaseInterface, parentId string, nodes
 	return nil
 }
 
-func LoadNode(parent NodeBaseInterface, parentId string, nodeData any, validate bool, errs *[]error) (NodeBaseInterface, string, error) {
+func LoadNode(parent NodeBaseInterface, parentId string, nodeData any, validate bool, errs *[]error, opts RunOpts) (NodeBaseInterface, string, error) {
 	nodeI, ok := nodeData.(map[string]any)
 	if !ok {
 		err := CreateErr(nil, nil, "node is not a map")
@@ -635,9 +652,9 @@ func LoadNode(parent NodeBaseInterface, parentId string, nodeData any, validate 
 		fullPath = parentId + "/" + id
 	}
 	if strings.HasPrefix(nodeType, "github.com/") {
-		n, factoryErrs = NewGhActionNode(nodeType, parent, fullPath, validate)
+		n, factoryErrs = NewGhActionNode(nodeType, parent, fullPath, validate, opts)
 	} else {
-		n, factoryErrs = NewNodeInstance(nodeType, parent, fullPath, nodeI, validate)
+		n, factoryErrs = NewNodeInstance(nodeType, parent, fullPath, nodeI, validate, opts)
 	}
 
 	if len(factoryErrs) > 0 {

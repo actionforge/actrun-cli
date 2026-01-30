@@ -46,7 +46,7 @@ func (n *StringMatchRegexNode) OutputValueById(c *core.ExecutionState, outputId 
 }
 
 func init() {
-	err := core.RegisterNodeFactory(stringMatchRegexDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(stringMatchRegexDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &StringMatchRegexNode{}, nil
 	})
 	if err != nil {

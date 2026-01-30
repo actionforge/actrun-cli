@@ -24,7 +24,7 @@ import (
 
 // Test that the node type exists.
 func Test_NewNodeInstance_Exists(t *testing.T) {
-	n, err := core.NewNodeInstance("core/run@v1", nil, "", nil, false)
+	n, err := core.NewNodeInstance("core/run@v1", nil, "", nil, false, core.RunOpts{})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -36,7 +36,7 @@ func Test_NewNodeInstance_Exists(t *testing.T) {
 
 // Test that the node type doesn't exist
 func Test_NewNodeInstance_NotExists(t *testing.T) {
-	_, err := core.NewNodeInstance("abc@v2", nil, "", nil, false)
+	_, err := core.NewNodeInstance("abc@v2", nil, "", nil, false, core.RunOpts{})
 	if err == nil {
 		t.Error("expected error")
 		return
@@ -356,7 +356,7 @@ executions: []
 		return nil, nil, nil, nil, err
 	}
 
-	ag, errs := core.LoadGraph(graphYaml, nil, "", false)
+	ag, errs := core.LoadGraph(graphYaml, nil, "", false, core.RunOpts{})
 	if errs != nil {
 		return nil, nil, nil, nil, errs[0]
 	}

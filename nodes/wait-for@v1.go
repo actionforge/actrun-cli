@@ -84,7 +84,7 @@ func (n *WaitForNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, 
 }
 
 func init() {
-	err := core.RegisterNodeFactory(waitForDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(waitForDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &WaitForNode{
 			Lock:           sync.Mutex{},
 			CurrentCounter: -1,

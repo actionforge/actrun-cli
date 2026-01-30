@@ -202,7 +202,7 @@ func defaultTemperature(model string) float64 {
 }
 
 func init() {
-	err := core.RegisterNodeFactory(llmGenerateDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(llmGenerateDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &LlmGenerateNode{}, nil
 	})
 	if err != nil {

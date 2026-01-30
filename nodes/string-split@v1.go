@@ -57,7 +57,7 @@ func splitString(str, delimiter string, maxSegments int) []string {
 }
 
 func init() {
-	err := core.RegisterNodeFactory(splitDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(splitDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &SplitNode{}, nil
 	})
 	if err != nil {

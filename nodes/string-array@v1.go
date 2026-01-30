@@ -26,7 +26,7 @@ func (n *StringArrayNode) OutputValueById(c *core.ExecutionState, outputId core.
 }
 
 func init() {
-	err := core.RegisterNodeFactory(stringArrayDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(stringArrayDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &StringArrayNode{}, nil
 	})
 	if err != nil {

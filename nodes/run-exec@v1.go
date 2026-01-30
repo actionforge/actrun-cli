@@ -122,7 +122,7 @@ func (n *RunExecNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, 
 }
 
 func init() {
-	err := core.RegisterNodeFactory(runExecDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(runExecDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &RunExecNode{}, nil
 	})
 	if err != nil {

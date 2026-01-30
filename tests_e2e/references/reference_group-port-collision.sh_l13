@@ -25,17 +25,17 @@ github.com/actionforge/actrun-cli/nodes.init.40.func1
 github.com/actionforge/actrun-cli/core.NewNodeInstance
 	base.go:619
 github.com/actionforge/actrun-cli/core.LoadNode
-	graph.go:640
+	graph.go:657
 github.com/actionforge/actrun-cli/core.LoadNodes
-	graph.go:580
+	graph.go:597
 github.com/actionforge/actrun-cli/core.LoadGraph
-	graph.go:495
+	graph.go:512
 github.com/actionforge/actrun-cli/core.RunGraph
 	graph.go:279
 github.com/actionforge/actrun-cli/core.RunGraphFromString
-	graph.go:1057
+	graph.go:1074
 github.com/actionforge/actrun-cli/core.RunGraphFromFile
-	graph.go:1075
+	graph.go:1092
 github.com/actionforge/actrun-cli/cmd.cmdRootRun
 	cmd_root.go:186
 github.com/spf13/cobra.(*Command).execute

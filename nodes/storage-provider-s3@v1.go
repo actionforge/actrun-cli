@@ -103,7 +103,7 @@ func createS3Config(accessKey, secretKey, region, endpoint string) (aws.Config, 
 }
 
 func init() {
-	err := core.RegisterNodeFactory(storageProviderS3Definition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(storageProviderS3Definition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &StorageProviderS3{}, nil
 	})
 	if err != nil {

@@ -67,7 +67,7 @@ func (n *LoopNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, pre
 }
 
 func init() {
-	err := core.RegisterNodeFactory(loopDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(loopDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &LoopNode{}, nil
 	})
 	if err != nil {

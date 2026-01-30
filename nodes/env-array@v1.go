@@ -50,7 +50,7 @@ func (n *EnvArrayNode) OutputValueById(c *core.ExecutionState, outputId core.Out
 }
 
 func init() {
-	err := core.RegisterNodeFactory(envArrayDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(envArrayDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &EnvArrayNode{}, nil
 	})
 	if err != nil {

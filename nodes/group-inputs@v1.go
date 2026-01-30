@@ -45,7 +45,7 @@ func (n *GroupInputsNode) ExecuteImpl(c *core.ExecutionState, inputId core.Input
 }
 
 func init() {
-	err := core.RegisterNodeFactory(groupInputsDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(groupInputsDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &GroupInputsNode{}, nil
 	})
 	if err != nil {

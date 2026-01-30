@@ -60,7 +60,7 @@ func (n *StorageDownloadNode) ExecuteImpl(c *core.ExecutionState, inputId core.I
 }
 
 func init() {
-	err := core.RegisterNodeFactory(storageDownloadDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(storageDownloadDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &StorageDownloadNode{}, nil
 	})
 	if err != nil {

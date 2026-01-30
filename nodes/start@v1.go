@@ -56,7 +56,7 @@ func (n *StartNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, pr
 }
 
 func init() {
-	err := core.RegisterNodeFactory(startNodeDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(startNodeDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &StartNode{}, nil
 	})
 	if err != nil {

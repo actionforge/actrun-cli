@@ -53,7 +53,7 @@ func (n *StringMatchNode) OutputValueById(c *core.ExecutionState, outputId core.
 }
 
 func init() {
-	err := core.RegisterNodeFactory(stringMatchDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(stringMatchDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &StringMatchNode{}, nil
 	})
 	if err != nil {

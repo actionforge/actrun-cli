@@ -72,7 +72,7 @@ func (n *PropertySetterNode) ExecuteImpl(c *core.ExecutionState, inputId core.In
 }
 
 func init() {
-	err := core.RegisterNodeFactory(propertySetterDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(propertySetterDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &PropertySetterNode{}, nil
 	})
 	if err != nil {

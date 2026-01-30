@@ -54,7 +54,7 @@ func (n *StringReplaceNode) OutputValueById(c *core.ExecutionState, outputId cor
 }
 
 func init() {
-	err := core.RegisterNodeFactory(stringReplaceDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(stringReplaceDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &StringReplaceNode{}, nil
 	})
 	if err != nil {

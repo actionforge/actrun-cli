@@ -388,7 +388,7 @@ func runAndCaptureOutput(c *core.ExecutionState, cmd *exec.Cmd, print string, co
 }
 
 func init() {
-	err := core.RegisterNodeFactory(runDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(runDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &RunNode{}, nil
 	})
 	if err != nil {

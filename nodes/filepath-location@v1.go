@@ -80,7 +80,7 @@ func (n *FilepathLocation) OutputValueById(c *core.ExecutionState, outputId core
 }
 
 func init() {
-	err := core.RegisterNodeFactory(filepathLocationDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(filepathLocationDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &FilepathLocation{}, nil
 	})
 	if err != nil {

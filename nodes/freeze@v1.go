@@ -59,7 +59,7 @@ func (n *FreezeNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, p
 }
 
 func init() {
-	err := core.RegisterNodeFactory(freezeNodeDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(freezeNodeDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &FreezeNode{}, nil
 	})
 	if err != nil {

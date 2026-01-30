@@ -149,7 +149,7 @@ func escapeXML(s string) string {
 }
 
 func init() {
-	err := core.RegisterNodeFactory(stringEncodeDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(stringEncodeDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &StringEncode{}, nil
 	})
 	if err != nil {

@@ -36,7 +36,7 @@ func (n *GroupOutputsNode) ExecuteImpl(c *core.ExecutionState, inputId core.Inpu
 }
 
 func init() {
-	err := core.RegisterNodeFactory(groupOutputsDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(groupOutputsDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &GroupOutputsNode{}, nil
 	})
 	if err != nil {

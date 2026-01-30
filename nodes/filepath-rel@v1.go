@@ -32,7 +32,7 @@ func (n *FilepathRelative) OutputValueById(c *core.ExecutionState, outputId core
 }
 
 func init() {
-	err := core.RegisterNodeFactory(filepathRelativeDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(filepathRelativeDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &FilepathRelative{}, nil
 	})
 	if err != nil {

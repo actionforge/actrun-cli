@@ -116,7 +116,7 @@ func (n *StorageListNode) ExecuteImpl(c *core.ExecutionState, inputId core.Input
 }
 
 func init() {
-	err := core.RegisterNodeFactory(s3ListDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(s3ListDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &StorageListNode{}, nil
 	})
 	if err != nil {

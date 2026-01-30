@@ -41,7 +41,7 @@ func (n *PlatformSwitchNode) ExecuteImpl(c *core.ExecutionState, inputId core.In
 }
 
 func init() {
-	err := core.RegisterNodeFactory(platformSwitchDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(platformSwitchDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &PlatformSwitchNode{}, nil
 	})
 	if err != nil {

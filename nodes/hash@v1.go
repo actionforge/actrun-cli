@@ -116,7 +116,7 @@ func (n *HashNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, pre
 }
 
 func init() {
-	err := core.RegisterNodeFactory(hashDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(hashDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &HashNode{}, nil
 	})
 	if err != nil {

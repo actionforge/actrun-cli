@@ -33,7 +33,7 @@ func (n *ConstNode[T]) OutputValueById(c *core.ExecutionState, outputId core.Out
 }
 
 func init() {
-	err := core.RegisterNodeFactory(constStringDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(constStringDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &ConstNode[string]{
 			portValue: ni.Core_const_string_v1_Input_value,
 		}, nil
@@ -42,7 +42,7 @@ func init() {
 		panic(err)
 	}
 
-	err = core.RegisterNodeFactory(constNumberDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err = core.RegisterNodeFactory(constNumberDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &ConstNode[int64]{
 			portValue: ni.Core_const_number_v1_Input_value,
 		}, nil
@@ -51,7 +51,7 @@ func init() {
 		panic(err)
 	}
 
-	err = core.RegisterNodeFactory(constBoolDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err = core.RegisterNodeFactory(constBoolDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &ConstNode[bool]{
 			portValue: ni.Core_const_bool_v1_Input_value,
 		}, nil

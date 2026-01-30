@@ -67,7 +67,7 @@ func (n *FileWriteNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId
 }
 
 func init() {
-	err := core.RegisterNodeFactory(fileWriteDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool) (core.NodeBaseInterface, []error) {
+	err := core.RegisterNodeFactory(fileWriteDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 		return &FileWriteNode{}, nil
 	})
 	if err != nil {
