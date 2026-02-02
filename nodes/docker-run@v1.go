@@ -74,29 +74,18 @@ func (n *DockerNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, p
 		return err
 	}
 
-	// build env map from context and input env vars.
-	// In contrary to Docker, env vars in GitHub are automatically included, see code.
-	// See: github.com/actions/runner/blob/main/src/Runner.Worker/Handlers/ContainerActionHandler.cs
-	// I just take this behaviour for the entire system.
-	// TODO: (Seb) Add an option to override this
-	currentEnvMap := c.GetContextEnvironMapCopy()
-
-	// filter out env variables that would break Linux containers when running on Windows:
-	// 1. Empty keys or keys starting with '=' - Windows per-drive CWD tracking variables
-	//    (eg =C:=, =D:=, =::=) are parsed by strings.Cut as empty-key entries
-	// 2. PATH - Windows PATH contains Windows paths that break Linux container commands
-	for key := range currentEnvMap {
-		if key == "" || strings.HasPrefix(key, "=") || key == "PATH" {
-			delete(currentEnvMap, key)
-		}
-	}
-	for _, env := range envs {
-		if idx := strings.Index(env, "="); idx > 0 {
-			currentEnvMap[env[:idx]] = env[idx+1:]
-		}
-		// KEY without `=` is a Docker feature, but here a no-op since
-		// we pass the full env to Docker anyway
-	}
+	// Build container environment following GitHub Actions approach:
+	// Don't inherit host OS environment wholesale. Instead, build explicitly from:
+	// 1. Allowlisted GITHUB_* variables (when in GitHub workflow mode)
+	// 2. Hardcoded CI=true, GITHUB_ACTIONS=true
+	// 3. User-defined env vars from node inputs
+	// 4. Proxy variables (HTTP_PROXY, HTTPS_PROXY, NO_PROXY)
+	//
+	// References:
+	// - GitHubContext.cs allowlist: https://github.com/actions/runner/blob/main/src/Runner.Worker/GitHubContext.cs#L106-L146
+	// - DockerCommandManager.cs CI/GITHUB_ACTIONS: https://github.com/actions/runner/blob/main/src/Runner.Worker/Container/DockerCommandManager.cs#L329-L336
+	// - ContainerActionHandler.cs HOME: https://github.com/actions/runner/blob/main/src/Runner.Worker/Handlers/ContainerActionHandler.cs#L176
+	currentEnvMap := buildDockerEnvironment(c, envs)
 
 	// parse image reference. docker:// prefix means registry, otherwise Dockerfile
 	isRegistry, imageRef := parseImageReference(image)
@@ -408,6 +397,81 @@ func parseVolume(vol string) (core.Volume, error) {
 	}
 
 	return v, nil
+}
+
+// githubContextAllowlist defines the GitHub context keys that are exposed as GITHUB_* env vars.
+// This matches the allowlist in the GitHub Actions runner:
+// https://github.com/actions/runner/blob/main/src/Runner.Worker/GitHubContext.cs#L106-L146
+var githubContextAllowlist = map[string]bool{
+	"action": true, "action_path": true, "action_ref": true, "action_repository": true,
+	"actor": true, "actor_id": true, "api_url": true, "base_ref": true,
+	"env": true, "event_name": true, "event_path": true, "graphql_url": true,
+	"head_ref": true, "job": true, "output": true, "path": true,
+	"ref": true, "ref_name": true, "ref_protected": true, "ref_type": true,
+	"repository": true, "repository_id": true, "repository_owner": true, "repository_owner_id": true,
+	"retention_days": true, "run_attempt": true, "run_id": true, "run_number": true,
+	"server_url": true, "sha": true, "state": true, "step_summary": true,
+	"triggering_actor": true, "workflow": true, "workflow_ref": true, "workflow_sha": true,
+	"workspace": true,
+}
+
+// buildDockerEnvironment builds the container environment based on the GitHub Actions impl
+// so I just borrow tha, *partially* even for non-gh graphs. See also here:
+// - GitHubContext.cs: https://github.com/actions/runner/blob/main/src/Runner.Worker/GitHubContext.cs#L106-L146
+// - DockerCommandManager.cs: https://github.com/actions/runner/blob/main/src/Runner.Worker/Container/DockerCommandManager.cs#L329-L336
+// - ContainerActionHandler.cs: https://github.com/actions/runner/blob/main/src/Runner.Worker/Handlers/ContainerActionHandler.cs#L176
+func buildDockerEnvironment(c *core.ExecutionState, userEnvs []string) map[string]string {
+	env := make(map[string]string)
+	contextEnv := c.GetContextEnvironMapCopy()
+
+	// Add allowlisted GITHUB_* vars from context
+	// https://github.com/actions/runner/blob/main/src/Runner.Worker/GitHubContext.cs#L148-L160
+	if c.IsGitHubWorkflow {
+		for key := range githubContextAllowlist {
+			envKey := "GITHUB_" + strings.ToUpper(key)
+			if val, ok := contextEnv[envKey]; ok {
+				env[envKey] = val
+			}
+		}
+
+		// also add RUNNER_* vars if present
+		for key, val := range contextEnv {
+			if strings.HasPrefix(key, "RUNNER_") {
+				env[key] = val
+			}
+		}
+	}
+
+	// add hardcoded variables (always set for Docker containers)
+	// https://github.com/actions/runner/blob/main/src/Runner.Worker/Container/DockerCommandManager.cs#L329-L336
+	env["GITHUB_ACTIONS"] = "true"
+	if _, exists := env["CI"]; !exists {
+		env["CI"] = "true"
+	}
+
+	// set HOME to container path (GitHub Actions sets this to /github/home)
+	// https://github.com/actions/runner/blob/main/src/Runner.Worker/Handlers/ContainerActionHandler.cs#L176
+	if c.IsGitHubWorkflow {
+		env["HOME"] = "/github/home"
+	}
+
+	// 4. add proxy variables if set in host environment
+	// https://github.com/actions/runner/blob/main/src/Runner.Worker/Container/ContainerInfo.cs#L105-L130
+	proxyVars := []string{"HTTP_PROXY", "http_proxy", "HTTPS_PROXY", "https_proxy", "NO_PROXY", "no_proxy"}
+	for _, proxyVar := range proxyVars {
+		if val, ok := contextEnv[proxyVar]; ok && val != "" {
+			env[proxyVar] = val
+		}
+	}
+
+	// 5. add user-defined env vars from node inputs. Highest prio, can override above
+	for _, e := range userEnvs {
+		if idx := strings.Index(e, "="); idx > 0 {
+			env[e[:idx]] = e[idx+1:]
+		}
+	}
+
+	return env
 }
 
 func init() {
