@@ -267,6 +267,7 @@ func NewExecutionState(
 
 		DataOutputCache:      make(map[string]any),
 		ExecutionOutputCache: make(map[string]any),
+		StepCache:            NewStepCache(nil),
 	}
 }
 
@@ -288,19 +289,29 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 
 	entryNode, isBaseNode := entry.(NodeBaseInterface)
 
-	// isGitHubActions: Determines if this run should behave as a GitHub Action.
+	// isGitHubWorkflow: Determines if this run should behave as a GitHub Action.
 	// True when either running on actual GitHub Actions (system env), or an external
 	// caller (e.g., web app) explicitly requests GitHub Actions behavior via OverrideEnv.
 	// This affects input variable handling, context loading, and other GitHub-specific behavior.
 	//
 	// **Important** we haven't loaded the config file yet, so we can only look at overriden envs,
 	// .env (already set in os.GetEnv) or shell.
-	isGitHubActions := opts.OverrideEnv["GITHUB_ACTIONS"] == "true" || os.Getenv("GITHUB_ACTIONS") == "true" || entryNode.GetNodeTypeId() == "core/gh-start@v1"
+	isGitHubWorkflow := false
+	if opts.OverrideEnv["GITHUB_ACTIONS"] == "true" {
+		isGitHubWorkflow = true
+		utils.LogOut.Infof("GitHub workflow detected via OverrideEnv")
+	} else if os.Getenv("GITHUB_ACTIONS") == "true" {
+		isGitHubWorkflow = true
+		utils.LogOut.Infof("GitHub workflow detected via GITHUB_ACTIONS environment variable (.env or shell)")
+	} else if entryNode.GetNodeTypeId() == "core/gh-start@v1" {
+		isGitHubWorkflow = true
+		utils.LogOut.Infof("GitHub workflow detected via entry node type: core/gh-start@v1")
+	}
 
 	// mimickGitHubEnv: Determines if we need to set up a simulated GitHub environment. The easiest
 	// approach for now is to just check a bunch of env vars. The user may have set one or the other
 	// (through .env or shell) but unlikely all of them but they are by a real GitHub Actions runner.
-	mimickGitHubEnv := isGitHubActions && os.Getenv("GITHUB_RUN_ID") == "" &&
+	mimickGitHubEnv := isGitHubWorkflow && os.Getenv("GITHUB_RUN_ID") == "" &&
 		os.Getenv("RUNNER_TEMP") == "" &&
 		os.Getenv("GITHUB_API_URL") == "" &&
 		os.Getenv("GITHUB_RETENTION_DAYS") == ""
@@ -330,7 +341,7 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 	rawEnv := utils.GetAllEnvMapCopy()
 
 	// normalize all inputs/secrets with ACT_* iif we're in GitHub
-	if isGitHubActions {
+	if isGitHubWorkflow {
 		prefixedRawEnv := make(map[string]utils.EnvKV)
 		for k, v := range rawEnv {
 			prefixedKey := k
@@ -383,15 +394,15 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 			secretTracker.setSingle(key, v.Value, fmt.Sprintf("%s (%s)", source, k), true, true)
 
 		// GitHub specifics
-		case isGitHubActions && k == "ACT_INPUT_MATRIX":
+		case isGitHubWorkflow && k == "ACT_INPUT_MATRIX":
 			if m, err := decodeJsonFromEnvValue[any](v.Value); err == nil {
 				matrixTracker.set(m, source, true, true)
 			}
-		case isGitHubActions && k == "ACT_INPUT_NEEDS":
+		case isGitHubWorkflow && k == "ACT_INPUT_NEEDS":
 			if m, err := decodeJsonFromEnvValue[any](v.Value); err == nil {
 				needsTracker.set(m, source, true, true)
 			}
-		case isGitHubActions && k == "ACT_INPUT_TOKEN":
+		case isGitHubWorkflow && k == "ACT_INPUT_TOKEN":
 			secretTracker.setSingle("GITHUB_TOKEN", v.Value, source, true, true)
 
 		default:
@@ -417,46 +428,57 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 		printExplicit(envTracker, false)
 	}
 
-	if cwd := finalEnv["ACT_CWD"]; cwd != "" {
-		originalCwd, err := os.Getwd()
-		if err != nil {
-			return CreateErr(nil, err, "failed to get current working directory")
-		}
-		if err := os.Chdir(cwd); err != nil {
-			return CreateErr(nil, err, "failed to change working directory to ACT_CWD")
-		}
-		defer func() {
-			_ = os.Chdir(originalCwd)
-		}()
+	var newCwd string
+
+	if cwd, ok := finalEnv["ACT_CWD"]; ok {
+		newCwd = cwd
+		utils.LogOut.Debugf("changing working directory to ACT_CWD: %s\n", newCwd)
 	}
 
 	if mimickGitHubEnv {
+		if cwd, ok := finalEnv["GITHUB_WORKSPACE"]; ok {
+			newCwd = cwd
+			utils.LogOut.Debugf("changing working directory to GITHUB_WORKSPACE: %s\n", newCwd)
+		}
+
 		// If we are running a github actions workflow, then mimic a GitHub Actions environment
 		// But only do is if we are NOT already in GitHub Actions
 		err = SetupGitHubActionsEnv(finalEnv)
 		if err != nil {
 			return CreateErr(nil, err, "failed to setup GitHub Actions environment")
 		}
-
-		// set cwd for current process. `ACT_CWD` above is used for non GitHub workflows
-		if cwd := finalEnv["GITHUB_WORKSPACE"]; cwd != "" {
-			originalCwd, err := os.Getwd()
-			if err != nil {
-				return CreateErr(nil, err, "failed to get current working directory")
-			}
-			if err := os.Chdir(cwd); err != nil {
-				return CreateErr(nil, err, "failed to change working directory to GITHUB_WORKSPACE")
-			}
-			defer func() {
-				_ = os.Chdir(originalCwd)
-			}()
+	} else if debugCb != nil && newCwd == "" {
+		// for debug sessions, always create a temp working directory if none is set
+		tmpDir, tmpErr := os.MkdirTemp("", "actrun-debug-*")
+		if tmpErr != nil {
+			return CreateErr(nil, tmpErr, "failed to create temp working directory for debug session")
 		}
+
+		newCwd = tmpDir
+		utils.LogOut.Infof("created temp working directory for debug session: %s\n", newCwd)
+
+		defer func() {
+			_ = os.RemoveAll(tmpDir)
+		}()
+	}
+
+	if newCwd != "" {
+		originalCwd, err := os.Getwd()
+		if err != nil {
+			return CreateErr(nil, err, "failed to get current working directory")
+		}
+		if err := os.Chdir(newCwd); err != nil {
+			return CreateErr(nil, err, "failed to change working directory to ACT_CWD/GITHUB_WORKSPACE")
+		}
+		defer func() {
+			_ = os.Chdir(originalCwd)
+		}()
 	}
 
 	// construct the `github` context
 	var ghContext map[string]any
 	var errGh error
-	if isGitHubActions {
+	if isGitHubWorkflow {
 		ghContext, errGh = LoadGitHubContext(finalEnv, finalInputs, finalSecrets)
 		if errGh != nil {
 			return CreateErr(nil, errGh, "failed to load github context")
@@ -467,7 +489,7 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 		ctx,
 		&ag,
 		graphName,
-		isGitHubActions,
+		isGitHubWorkflow,
 		debugCb,
 		finalEnv,
 		finalInputs,
