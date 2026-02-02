@@ -20,7 +20,7 @@ error:
        ↳ group node has an input and output with the same name 'foo'
 
 stack trace:
-github.com/actionforge/actrun-cli/nodes.init.40.func1
+github.com/actionforge/actrun-cli/nodes.init.41.func1
 	group@v1.go:154
 github.com/actionforge/actrun-cli/core.NewNodeInstance
 	base.go:619

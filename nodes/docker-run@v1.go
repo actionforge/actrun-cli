@@ -80,6 +80,16 @@ func (n *DockerNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, p
 	// I just take this behaviour for the entire system.
 	// TODO: (Seb) Add an option to override this
 	currentEnvMap := c.GetContextEnvironMapCopy()
+
+	// filter out env variables that would break Linux containers when running on Windows:
+	// 1. Empty keys or keys starting with '=' - Windows per-drive CWD tracking variables
+	//    (eg =C:=, =D:=, =::=) are parsed by strings.Cut as empty-key entries
+	// 2. PATH - Windows PATH contains Windows paths that break Linux container commands
+	for key := range currentEnvMap {
+		if key == "" || strings.HasPrefix(key, "=") || key == "PATH" {
+			delete(currentEnvMap, key)
+		}
+	}
 	for _, env := range envs {
 		if idx := strings.Index(env, "="); idx > 0 {
 			currentEnvMap[env[:idx]] = env[idx+1:]
@@ -139,7 +149,14 @@ func (n *DockerNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, p
 			return core.CreateErr(c, nil, "Dockerfile not found: %s", dockerfilePath)
 		}
 
-		buildTag := fmt.Sprintf("actrun-docker-%s", uuid.New().String()[:8])
+		var containerIdSuffix string
+		if core.IsTestE2eRunning() {
+			containerIdSuffix = "e2e"
+		} else {
+			containerIdSuffix = uuid.New().String()[:8]
+		}
+
+		buildTag := fmt.Sprintf("actrun-docker-%s", containerIdSuffix)
 		buildContext := filepath.Dir(dockerfilePath)
 
 		err = dockerClient.BuildImage(c.Ctx, dockerfilePath, buildContext, buildTag)

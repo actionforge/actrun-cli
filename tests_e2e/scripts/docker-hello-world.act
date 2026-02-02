@@ -1,0 +1,24 @@
+entry: start
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 0
+      y: 0
+  - id: docker-hello-world
+    type: core/docker-run@v1
+    position:
+      x: 300
+      y: 0
+    inputs:
+      image: docker://hello-world:latest
+      pull: missing
+      docker_socket: true
+connections: []
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: docker-hello-world
+      port: exec
