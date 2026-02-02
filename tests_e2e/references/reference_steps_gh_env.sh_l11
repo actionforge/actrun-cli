@@ -1,0 +1,27 @@
+build hasn't expired yet
+looking for value: 'env_file'
+  no value (is optional) found for: 'env_file'
+looking for value: 'config_file'
+  no value (is optional) found for: 'config_file'
+looking for value: 'concurrency'
+  no value (is optional) found for: 'concurrency'
+looking for value: 'graph_file'
+  found value in: 'env (shell)'
+  evaluated to: 'steps_gh_env.act'
+looking for value: 'session_token'
+  no value (is optional) found for: 'session_token'
+looking for value: 'create_debug_session'
+  found value in flags
+  evaluated to: 'false'
+GitHub workflow detected via GITHUB_ACTIONS environment variable (.env or shell)changing working directory to GITHUB_WORKSPACE: [REDACTED]/scripts
+PushNodeVisit: start, execute: true
+🟢 Execute 'Run Script (step-set-env)'
+PushNodeVisit: step-set-env, execute: true
+Setting MY_VAR via GITHUB_ENV
+🟢 Execute 'Run Script (step-read-env)'
+PushNodeVisit: step-read-env, execute: true
+Reading MY_VAR: hello_from_env
+🟢 Execute 'Print (final-print)'
+PushNodeVisit: final-print, execute: true
+PushNodeVisit: print-value, execute: false
+Read from step output: hello_from_env

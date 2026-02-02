@@ -1,0 +1,26 @@
+build hasn't expired yet
+looking for value: 'env_file'
+  no value (is optional) found for: 'env_file'
+looking for value: 'config_file'
+  no value (is optional) found for: 'config_file'
+looking for value: 'concurrency'
+  no value (is optional) found for: 'concurrency'
+looking for value: 'graph_file'
+  found value in: 'env (shell)'
+  evaluated to: 'steps.act'
+looking for value: 'session_token'
+  no value (is optional) found for: 'session_token'
+looking for value: 'create_debug_session'
+  found value in flags
+  evaluated to: 'false'
+PushNodeVisit: start, execute: true
+🟢 Execute 'Run Script (step1)'
+PushNodeVisit: step1, execute: true
+step1 executed
+🟢 Execute 'Run Script (step2)'
+PushNodeVisit: step2, execute: true
+step2 executed
+🟢 Execute 'Print (final-print)'
+PushNodeVisit: final-print, execute: true
+PushNodeVisit: print-conclusions, execute: false
+step1.conclusion: success, step2.conclusion: success

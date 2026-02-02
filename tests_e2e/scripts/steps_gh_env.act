@@ -1,0 +1,71 @@
+editor:
+  version:
+    created: v1.34.0
+entry: start
+type: standard
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 0
+      y: 0
+  - id: step-set-env
+    type: core/run@v1
+    position:
+      x: 200
+      y: 0
+    inputs:
+      script: |
+        echo "Setting MY_VAR via GITHUB_ENV"
+        echo "MY_VAR=hello_from_env" >> $GITHUB_ENV
+      shell: bash
+  - id: step-read-env
+    type: core/run@v1
+    position:
+      x: 400
+      y: 0
+    inputs:
+      script: |
+        echo "Reading MY_VAR: ${MY_VAR}"
+        echo "READ_VALUE=${MY_VAR}" >> $GITHUB_OUTPUT
+      shell: bash
+  - id: print-value
+    type: core/const-string@v1
+    position:
+      x: 600
+      y: 100
+    inputs:
+      value: "Read from step output: ${{ steps.step-read-env.outputs.READ_VALUE }}"
+  - id: final-print
+    type: core/print@v1
+    position:
+      x: 800
+      y: 0
+    inputs:
+      values[0]: null
+connections:
+  - src:
+      node: print-value
+      port: result
+    dst:
+      node: final-print
+      port: values[0]
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: step-set-env
+      port: exec
+  - src:
+      node: step-set-env
+      port: exec-success
+    dst:
+      node: step-read-env
+      port: exec
+  - src:
+      node: step-read-env
+      port: exec-success
+    dst:
+      node: final-print
+      port: exec

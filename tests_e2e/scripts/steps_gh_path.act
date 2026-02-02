@@ -1,0 +1,76 @@
+editor:
+  version:
+    created: v1.34.0
+entry: start
+type: standard
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 0
+      y: 0
+  - id: step-add-path
+    type: core/run@v1
+    position:
+      x: 200
+      y: 0
+    inputs:
+      script: |
+        echo "Adding /custom/bin to PATH via GITHUB_PATH"
+        echo "/custom/bin" >> $GITHUB_PATH
+      shell: bash
+  - id: step-check-path
+    type: core/run@v1
+    position:
+      x: 400
+      y: 0
+    inputs:
+      script: |
+        if [[ "$PATH" == *"/custom/bin"* ]]; then
+          echo "SUCCESS: PATH contains /custom/bin"
+          echo "RESULT=path_modified" >> $GITHUB_OUTPUT
+        else
+          echo "FAIL: PATH does not contain /custom/bin"
+          echo "RESULT=path_not_modified" >> $GITHUB_OUTPUT
+        fi
+      shell: bash
+  - id: print-result
+    type: core/const-string@v1
+    position:
+      x: 600
+      y: 100
+    inputs:
+      value: "Path modification result: ${{ steps.step-check-path.outputs.RESULT }}"
+  - id: final-print
+    type: core/print@v1
+    position:
+      x: 800
+      y: 0
+    inputs:
+      values[0]: null
+connections:
+  - src:
+      node: print-result
+      port: result
+    dst:
+      node: final-print
+      port: values[0]
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: step-add-path
+      port: exec
+  - src:
+      node: step-add-path
+      port: exec-success
+    dst:
+      node: step-check-path
+      port: exec
+  - src:
+      node: step-check-path
+      port: exec-success
+    dst:
+      node: final-print
+      port: exec

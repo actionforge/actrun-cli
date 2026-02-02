@@ -1,0 +1,117 @@
+editor:
+  version:
+    created: v1.34.0
+entry: start
+type: standard
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 0
+      y: 0
+  - id: init-step
+    type: core/run@v1
+    position:
+      x: 200
+      y: 0
+    inputs:
+      script: |
+        echo "Setting INIT_VALUE"
+        echo "INIT_VALUE=initialized" >> $GITHUB_OUTPUT
+      shell: bash
+  - id: for-loop
+    type: core/for-loop@v1
+    position:
+      x: 400
+      y: 0
+    inputs:
+      last_index: 3
+  - id: index-to-array
+    type: core/string-array@v1
+    position:
+      x: 600
+      y: 100
+    inputs:
+      inputs[0]: null
+  - id: loop-step
+    type: core/run@v1
+    position:
+      x: 700
+      y: 0
+    inputs:
+      script: |
+        echo "Loop iteration $1"
+        echo "LOOP_OUTPUT=iteration_$1" >> $GITHUB_OUTPUT
+      shell: bash
+  - id: print-init
+    type: core/const-string@v1
+    position:
+      x: 900
+      y: 100
+    inputs:
+      value: "init-step.INIT_VALUE: ${{ steps.init-step.outputs.INIT_VALUE }}"
+  - id: print-loop
+    type: core/const-string@v1
+    position:
+      x: 900
+      y: 200
+    inputs:
+      value: "loop-step.LOOP_OUTPUT: ${{ steps.loop-step.outputs.LOOP_OUTPUT }}"
+  - id: loop-print
+    type: core/print@v1
+    position:
+      x: 1100
+      y: 0
+    inputs:
+      values[0]: null
+      values[1]: null
+connections:
+  - src:
+      node: for-loop
+      port: index
+    dst:
+      node: index-to-array
+      port: inputs[0]
+  - src:
+      node: index-to-array
+      port: array
+    dst:
+      node: loop-step
+      port: args
+  - src:
+      node: print-init
+      port: result
+    dst:
+      node: loop-print
+      port: values[0]
+  - src:
+      node: print-loop
+      port: result
+    dst:
+      node: loop-print
+      port: values[1]
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: init-step
+      port: exec
+  - src:
+      node: init-step
+      port: exec-success
+    dst:
+      node: for-loop
+      port: exec
+  - src:
+      node: for-loop
+      port: exec-body
+    dst:
+      node: loop-step
+      port: exec
+  - src:
+      node: loop-step
+      port: exec-success
+    dst:
+      node: loop-print
+      port: exec
