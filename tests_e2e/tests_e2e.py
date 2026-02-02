@@ -63,6 +63,27 @@ print_env_vars_redacted(GLOBAL_ENVS)
 
 IS_WINDOWS = sys.platform == "win32"
 
+PLATFORM_MAP = {
+    "linux": "linux",
+    "darwin": "darwin",
+    "win32": "windows",
+}
+CURRENT_PLATFORM = PLATFORM_MAP.get(sys.platform, sys.platform)
+ALL_PLATFORMS = ["linux", "darwin", "windows"]
+
+def get_script_platform(script_path: str) -> str | None:
+    name = Path(script_path).stem  # removes .sh
+    for plat in ALL_PLATFORMS:
+        if name.endswith(f"_{plat}"):
+            return plat
+    return None
+
+def should_run_on_current_platform(script_path: str) -> bool:
+    script_platform = get_script_platform(script_path)
+    if script_platform is None:
+        return True  # No suffix means run everywhere
+    return script_platform == CURRENT_PLATFORM
+
 # --- Helper Classes ---
 
 class Style:
@@ -116,7 +137,15 @@ def to_posix_path(path_str: str) -> str:
     return "/" + cleaned.lstrip("/")
 
 def collect_shell_scripts(directory: str) -> list[str]:
-    return [str(p) for p in Path(directory).rglob("*.sh")]
+    all_scripts = [str(p) for p in Path(directory).rglob("*.sh")]
+    filtered = []
+    for script in all_scripts:
+        if should_run_on_current_platform(script):
+            filtered.append(script)
+        else:
+            script_platform = get_script_platform(script)
+            print(f"Skipping {os.path.basename(script)} (platform: {script_platform}, current: {CURRENT_PLATFORM})")
+    return filtered
 
 def create_temp_script() -> str:
     fd, path = tempfile.mkstemp(suffix=".sh")
@@ -313,10 +342,23 @@ def main():
     
     os.makedirs(cov_dir, exist_ok=True)
 
-    # delete all refs if running full suite
+    # delete refs if running full suite, but preserve refs from other platforms
     if target_test is None:
-        shutil.rmtree(ref_dir, ignore_errors=True)
-        os.makedirs(ref_dir, exist_ok=True)
+        if os.path.exists(ref_dir):
+            for ref_file in os.listdir(ref_dir):
+                # Check if this reference file belongs to another platform
+                # Reference files are named: reference_{script_name}_l{lineno}
+                # For platform-specific: reference_docker-alpine_linux.sh_l11
+                is_other_platform = False
+                for plat in ALL_PLATFORMS:
+                    if plat != CURRENT_PLATFORM and f"_{plat}.sh_" in ref_file:
+                        is_other_platform = True
+                        break
+
+                if not is_other_platform:
+                    os.remove(os.path.join(ref_dir, ref_file))
+        else:
+            os.makedirs(ref_dir, exist_ok=True)
 
     compile_binaries(is_gh_actions)
     
@@ -330,11 +372,20 @@ def main():
         full_path = os.path.join(scripts_dir, target_test)
         process_and_run_test(base_cwd, full_path, ref_dir, cov_dir)
 
-    # check if there are any diffs between generated refs and committed/staged refs
+    # check if there are any diffs between generated refs and committed/staged refs.
+    # excludes reference files from other platforms (e.g., _linux files when running on darwin)
     try:
-        git_cmd = ['git', '-c', 'core.autocrlf=input', '-c', 'core.safecrlf=false', 
-                   '--no-pager', 'diff', ref_dir]
-        
+        git_cmd = ['git', '-c', 'core.autocrlf=input', '-c', 'core.safecrlf=false',
+                   '--no-pager', 'diff', ref_dir, '--']
+
+        for plat in ALL_PLATFORMS:
+            if plat != CURRENT_PLATFORM:
+                # exclude reference files from scripts with platform suffix
+                # reference files are named like reference_{script_name}_l{lineno}
+                # For platform-specific scripts reference_docker-alpine_linux.sh_l11
+                git_cmd.append(f':!*_{plat}.sh_*')
+
+        print(f"Running git diff (excluding other platforms): {' '.join(git_cmd)}")
         res = subprocess.run(git_cmd, text=True, encoding='utf-8', capture_output=True, check=False)
 
         print(res.stdout)

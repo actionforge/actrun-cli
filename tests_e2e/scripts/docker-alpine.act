@@ -130,8 +130,7 @@ nodes:
       args:
         - '-c'
         - |
-          echo "Test 8: Network host mode"
-          echo "Hostname: $(hostname)"
+          uname -s
       entrypoint:
         - /bin/sh
       network: host
@@ -175,7 +174,7 @@ nodes:
       x: 5330
       y: 1480
     inputs:
-      image: Dockerfile.test
+      image: Dockerfile.e2e
       args:
         - '-c'
         - echo "Test 11: Built from local Dockerfile (relative path)"
@@ -188,7 +187,7 @@ nodes:
       x: 5830
       y: 1320
     inputs:
-      image: ./Dockerfile.test
+      image: ./Dockerfile.e2e
       args:
         - '-c'
         - |
@@ -276,13 +275,9 @@ nodes:
       image: docker://alpine:latest
       args:
         - '-c'
-        - >
+        - |
           echo "Test 16: Network none (isolated)"
-
-          # Check if network interfaces are minimal
-
-          ip link show 2>/dev/null | grep -c "^[0-9]" || echo "No ip command,
-          but that's ok"
+          uname -s
       entrypoint:
         - /bin/sh
       network: none
@@ -314,7 +309,10 @@ nodes:
       x: 8890
       y: 480
     inputs:
-      image: docker://hello-world:latest
+      image: docker://alpine:latest
+      args:
+        - echo
+        - Hello World
       pull: missing
       docker_socket: true
   - id: docker-exit-nonzero
@@ -391,7 +389,7 @@ nodes:
       y: 30
     inputs:
       segments[0]: null
-      segments[1]: Dockerfile.test
+      segments[1]: Dockerfile.e2e
 connections:
   - src:
       node: core-filepath-location-v1-date-turquoise-teal

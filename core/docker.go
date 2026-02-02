@@ -97,8 +97,12 @@ func (d *DockerClient) ImageExists(ctx context.Context, imageRef string) (bool, 
 }
 
 func (d *DockerClient) PullImage(ctx context.Context, imageRef string) error {
-	utils.LogOut.Infof("%sPulling image '%s'\n", utils.LogGhStartGroup, imageRef)
-	defer utils.LogOut.Infof(utils.LogGhEndGroup)
+	verbose := !IsTestE2eRunning()
+
+	if verbose {
+		utils.LogOut.Infof("%sPulling image '%s'\n", utils.LogGhStartGroup, imageRef)
+		defer utils.LogOut.Infof(utils.LogGhEndGroup)
+	}
 
 	reader, err := d.cli.ImagePull(ctx, imageRef, image.PullOptions{})
 	if err != nil {
@@ -116,11 +120,13 @@ func (d *DockerClient) PullImage(ctx context.Context, imageRef string) error {
 			return err
 		}
 
-		if status, ok := event["status"].(string); ok {
-			if progress, ok := event["progress"].(string); ok {
-				utils.LogOut.Infof("  %s %s\n", status, progress)
-			} else {
-				utils.LogOut.Infof("  %s\n", status)
+		if verbose {
+			if status, ok := event["status"].(string); ok {
+				if progress, ok := event["progress"].(string); ok {
+					utils.LogOut.Infof("  %s %s\n", status, progress)
+				} else {
+					utils.LogOut.Infof("  %s\n", status)
+				}
 			}
 		}
 	}
@@ -129,8 +135,12 @@ func (d *DockerClient) PullImage(ctx context.Context, imageRef string) error {
 }
 
 func (d *DockerClient) BuildImage(ctx context.Context, dockerfilePath, contextPath, tag string) error {
-	utils.LogOut.Infof("%sBuilding image '%s' from %s\n", utils.LogGhStartGroup, tag, dockerfilePath)
-	defer utils.LogOut.Infof(utils.LogGhEndGroup)
+	verbose := !IsTestE2eRunning()
+
+	if verbose {
+		utils.LogOut.Infof("%sBuilding image '%s' from %s\n", utils.LogGhStartGroup, tag, dockerfilePath)
+		defer utils.LogOut.Infof(utils.LogGhEndGroup)
+	}
 
 	// Create a tar archive of the build context
 	buildContext, err := createBuildContext(contextPath)
@@ -165,8 +175,10 @@ func (d *DockerClient) BuildImage(ctx context.Context, dockerfilePath, contextPa
 			return err
 		}
 
-		if stream, ok := event["stream"].(string); ok {
-			utils.LogOut.Infof("%s", stream)
+		if verbose {
+			if stream, ok := event["stream"].(string); ok {
+				utils.LogOut.Infof("%s", stream)
+			}
 		}
 		if errMsg, ok := event["error"].(string); ok {
 			return fmt.Errorf("build error: %s", errMsg)

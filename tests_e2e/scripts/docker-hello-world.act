@@ -11,7 +11,10 @@ nodes:
       x: 300
       y: 0
     inputs:
-      image: docker://hello-world:latest
+      image: docker://alpine:latest
+      args:
+        - echo
+        - Hello World
       pull: missing
       docker_socket: true
 connections: []

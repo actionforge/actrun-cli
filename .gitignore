@@ -29,7 +29,6 @@ __pycache__/
 # Temp files
 .DS_Store
 
-*.test
 tests_e2e/coverage
 
 # Output of the go coverage tool, specifically when used with LiteIDE
