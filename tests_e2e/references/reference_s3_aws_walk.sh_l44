@@ -38,17 +38,17 @@ stack trace:
 github.com/actionforge/actrun-cli/nodes.(*StorageListNode).ExecuteImpl
 	storage-walk@v1.go:45
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
-	executions.go:56
+	executions.go:68
 github.com/actionforge/actrun-cli/nodes.(*StartNode).ExecuteImpl
 	start@v1.go:50
 github.com/actionforge/actrun-cli/nodes.(*StartNode).ExecuteEntry
 	start@v1.go:45
 github.com/actionforge/actrun-cli/core.RunGraph
-	graph.go:484
+	graph.go:506
 github.com/actionforge/actrun-cli/core.RunGraphFromString
-	graph.go:1074
+	graph.go:1096
 github.com/actionforge/actrun-cli/core.RunGraphFromFile
-	graph.go:1092
+	graph.go:1114
 github.com/actionforge/actrun-cli/cmd.cmdRootRun
 	cmd_root.go:186
 github.com/spf13/cobra.(*Command).execute

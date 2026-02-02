@@ -245,7 +245,7 @@ func (n *DockerNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, p
 	// Handle GITHUB_ENV and GITHUB_OUTPUT for GitHub workflows
 	if c.IsGitHubWorkflow {
 		ghContextParser := GhContextParser{}
-		ghEnvs, err := ghContextParser.Parse(c, currentEnvMap)
+		ghEnvs, ghOutputs, err := ghContextParser.Parse(c, currentEnvMap)
 		if err != nil {
 			return err
 		}
@@ -254,28 +254,15 @@ func (n *DockerNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, p
 		maps.Copy(nextEnvMap, ghEnvs)
 		c.SetContextEnvironMap(nextEnvMap)
 
-		// Parse GITHUB_OUTPUT file if it exists
-		githubOutput := currentEnvMap["GITHUB_OUTPUT"]
-		if githubOutput != "" {
-			b, err := os.ReadFile(githubOutput)
-			if err != nil {
-				return core.CreateErr(c, err, "unable to read github output file")
-			}
-
-			outputs, err := parseOutputFile(string(b))
+		for key, value := range ghOutputs {
+			err = n.SetOutputValue(c, core.OutputId(key), value, core.SetOutputValueOpts{
+				NotExistsIsNoError: true,
+				ForceSet:           true,
+				StringTypeHint:     true,
+			})
 			if err != nil {
 				return err
 			}
-			for key, value := range outputs {
-				err = n.SetOutputValue(c, core.OutputId(key), strings.TrimRight(value, "\t\n"), core.SetOutputValueOpts{
-					NotExistsIsNoError: true,
-				})
-				if err != nil {
-					return err
-				}
-			}
-
-			_ = os.Remove(githubOutput)
 		}
 	}
 
