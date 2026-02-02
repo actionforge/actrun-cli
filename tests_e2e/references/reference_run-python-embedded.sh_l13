@@ -24,7 +24,7 @@ hint:
   	https:[REDACTED]/#not-available
 
 stack trace:
-github.com/actionforge/actrun-cli/nodes.init.51.func1
+github.com/actionforge/actrun-cli/nodes.init.52.func1
 	nrun-python-embedded@v1.go:16
 github.com/actionforge/actrun-cli/core.NewNodeInstance
 	base.go:619

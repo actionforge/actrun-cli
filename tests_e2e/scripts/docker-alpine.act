@@ -1,0 +1,538 @@
+entry: start
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 10
+      y: 3000
+  - id: docker-basic
+    type: core/docker-run@v1
+    position:
+      x: 290
+      y: 2850
+    inputs:
+      image: docker://alpine:latest
+      args:
+        - '-c'
+        - echo "Test 1: Basic echo with env vars - MY_VAR=$MY_VAR"
+      entrypoint:
+        - /bin/sh
+      env:
+        - MY_VAR=hello_world
+      pull: missing
+      docker_socket: true
+  - id: docker-no-socket
+    type: core/docker-run@v1
+    position:
+      x: 830
+      y: 2720
+    inputs:
+      image: docker://alpine:latest
+      args:
+        - '-c'
+        - echo "Test 2: No docker socket, pull=never"
+      entrypoint:
+        - /bin/sh
+      pull: never
+      docker_socket: false
+  - id: docker-workdir
+    type: core/docker-run@v1
+    position:
+      x: 1330
+      y: 2600
+    inputs:
+      image: docker://alpine:latest
+      args:
+        - '-c'
+        - echo "Test 3: Working dir is $(pwd)"
+      entrypoint:
+        - /bin/sh
+      workdir: /tmp
+      pull: missing
+      docker_socket: true
+  - id: docker-multi-env
+    type: core/docker-run@v1
+    position:
+      x: 1820
+      y: 2380
+    inputs:
+      image: docker://alpine:latest
+      args:
+        - '-c'
+        - echo "Test 4: VAR1=$VAR1 VAR2=$VAR2 VAR3=$VAR3"
+      entrypoint:
+        - /bin/sh
+      env:
+        - VAR1=first
+        - VAR2=second
+        - VAR3=third
+      pull: missing
+      docker_socket: true
+  - id: docker-busybox
+    type: core/docker-run@v1
+    position:
+      x: 2360
+      y: 2260
+    inputs:
+      image: docker://busybox:latest
+      args:
+        - '-c'
+        - echo "Test 5: Running in busybox!"
+      entrypoint:
+        - /bin/sh
+      pull: missing
+      docker_socket: true
+  - id: docker-multiline
+    type: core/docker-run@v1
+    position:
+      x: 2860
+      y: 2130
+    inputs:
+      image: docker://alpine:latest
+      args:
+        - '-c'
+        - |
+          echo "Test 6: Multi-line script"
+          echo "Line 1: Hello"
+          echo "Line 2: World"
+          echo "Line 3: Done"
+      entrypoint:
+        - /bin/sh
+      pull: missing
+      docker_socket: true
+  - id: docker-volume
+    type: core/docker-run@v1
+    position:
+      x: 3350
+      y: 1980
+    inputs:
+      image: docker://alpine:latest
+      args:
+        - '-c'
+        - |
+          echo "Test 7: Volume mount test"
+          echo "Creating file in mounted volume..."
+          echo "test-content-1234" > /mnt/host-tmp/docker-test-file.txt
+          cat /mnt/host-tmp/docker-test-file.txt
+      entrypoint:
+        - /bin/sh
+      volumes:
+        - /tmp:/mnt/host-tmp
+      pull: missing
+      docker_socket: true
+  - id: docker-network
+    type: core/docker-run@v1
+    position:
+      x: 3850
+      y: 1850
+    inputs:
+      image: docker://alpine:latest
+      args:
+        - '-c'
+        - |
+          uname -s
+      entrypoint:
+        - /bin/sh
+      network: host
+      pull: missing
+      docker_socket: true
+  - id: docker-pull-always
+    type: core/docker-run@v1
+    position:
+      x: 4340
+      y: 1730
+    inputs:
+      image: docker://alpine:latest
+      args:
+        - '-c'
+        - echo "Test 9: Pull always policy"
+      entrypoint:
+        - /bin/sh
+      pull: always
+      docker_socket: true
+  - id: docker-special-chars
+    type: core/docker-run@v1
+    position:
+      x: 4840
+      y: 1600
+    inputs:
+      image: docker://alpine:latest
+      args:
+        - '-c'
+        - |
+          echo "Test 10: Special chars test"
+          echo "Quotes: 'single' and \"double\""
+          echo "Dollar: \$HOME"
+          echo "Backtick: \`date\`"
+      entrypoint:
+        - /bin/sh
+      pull: missing
+      docker_socket: true
+  - id: docker-dockerfile-relative
+    type: core/docker-run@v1
+    position:
+      x: 5330
+      y: 1480
+    inputs:
+      image: Dockerfile.e2e
+      args:
+        - '-c'
+        - echo "Test 11: Built from local Dockerfile (relative path)"
+      entrypoint:
+        - /bin/sh
+      docker_socket: true
+  - id: docker-dockerfile-custom
+    type: core/docker-run@v1
+    position:
+      x: 5830
+      y: 1320
+    inputs:
+      image: ./Dockerfile.e2e
+      args:
+        - '-c'
+        - |
+          echo "Test 12: Dockerfile with env and workdir"
+          echo "MY_BUILD_VAR=$MY_BUILD_VAR"
+          echo "Working dir: $(pwd)"
+      entrypoint:
+        - /bin/sh
+      env:
+        - MY_BUILD_VAR=from_dockerfile_build
+      workdir: /opt
+      docker_socket: true
+  - id: docker-volume-readonly
+    type: core/docker-run@v1
+    position:
+      x: 6370
+      y: 1170
+    inputs:
+      image: docker://alpine:latest
+      args:
+        - '-c'
+        - >
+          echo "Test 13: Read-only volume mount"
+
+          cat /mnt/readonly/docker-test-file.txt 2>/dev/null || echo "File
+          exists check passed"
+
+          # Try to write (should fail)
+
+          if touch /mnt/readonly/test-write.txt 2>/dev/null; then
+            echo "ERROR: Write succeeded on read-only mount!"
+          else
+            echo "Correctly rejected write on read-only mount"
+          fi
+      entrypoint:
+        - /bin/sh
+      volumes:
+        - /tmp:/mnt/readonly:ro
+      pull: missing
+      docker_socket: true
+  - id: docker-multi-volumes
+    type: core/docker-run@v1
+    position:
+      x: 6870
+      y: 950
+    inputs:
+      image: docker://alpine:latest
+      args:
+        - '-c'
+        - |
+          echo "Test 14: Multiple volumes"
+          echo "Vol1 exists: $(ls -d /vol1 2>/dev/null && echo yes || echo no)"
+          echo "Vol2 exists: $(ls -d /vol2 2>/dev/null && echo yes || echo no)"
+          echo "Vol3 exists: $(ls -d /vol3 2>/dev/null && echo yes || echo no)"
+      entrypoint:
+        - /bin/sh
+      volumes:
+        - /tmp:/vol1
+        - /var:/vol2:ro
+        - /etc:/vol3:ro
+      pull: missing
+      docker_socket: true
+  - id: docker-pipes
+    type: core/docker-run@v1
+    position:
+      x: 7360
+      y: 820
+    inputs:
+      image: docker://alpine:latest
+      args:
+        - '-c'
+        - |
+          echo "Test 15: Command with pipes"
+          echo -e "banana\napple\ncherry" | sort | head -2
+      entrypoint:
+        - /bin/sh
+      pull: missing
+      docker_socket: true
+  - id: docker-network-none
+    type: core/docker-run@v1
+    position:
+      x: 7860
+      y: 700
+    inputs:
+      image: docker://alpine:latest
+      args:
+        - '-c'
+        - |
+          echo "Test 16: Network none (isolated)"
+          uname -s
+      entrypoint:
+        - /bin/sh
+      network: none
+      pull: missing
+      docker_socket: true
+  - id: docker-env-special
+    type: core/docker-run@v1
+    position:
+      x: 8350
+      y: 510
+    inputs:
+      image: docker://alpine:latest
+      args:
+        - '-c'
+        - |
+          echo "Test 17: Env vars with spaces/special chars"
+          echo "SPACE_VAR=$SPACE_VAR"
+          echo "SPECIAL_VAR=$SPECIAL_VAR"
+      entrypoint:
+        - /bin/sh
+      env:
+        - SPACE_VAR=hello world with spaces
+        - SPECIAL_VAR=a=b&c=d!@#
+      pull: missing
+      docker_socket: true
+  - id: docker-default-cmd
+    type: core/docker-run@v1
+    position:
+      x: 8890
+      y: 480
+    inputs:
+      image: docker://alpine:latest
+      args:
+        - echo
+        - Hello World
+      pull: missing
+      docker_socket: true
+  - id: docker-exit-nonzero
+    type: core/docker-run@v1
+    position:
+      x: 9310
+      y: 350
+    inputs:
+      image: docker://alpine:latest
+      args:
+        - '-c'
+        - |
+          echo "Test 19: Non-zero exit code"
+          exit 42
+      entrypoint:
+        - /bin/sh
+      pull: missing
+      docker_socket: true
+  - id: docker-error-handler
+    type: core/docker-run@v1
+    position:
+      x: 9800
+      y: 260
+    inputs:
+      image: docker://alpine:latest
+      args:
+        - '-c'
+        - echo "Test 19b: Error handler caught the failure, continuing..."
+      entrypoint:
+        - /bin/sh
+      pull: missing
+      docker_socket: true
+  - id: docker-long-args
+    type: core/docker-run@v1
+    position:
+      x: 10300
+      y: 140
+    inputs:
+      image: docker://alpine:latest
+      args:
+        - '-c'
+        - |
+          echo "Test 20: Long args list"
+          for i in 1 2 3 4 5; do
+            echo "Iteration $i"
+          done
+      entrypoint:
+        - /bin/sh
+      pull: missing
+      docker_socket: true
+  - id: docker-dockerfile-absolute
+    type: core/docker-run@v1
+    position:
+      x: 10790
+      y: 10
+    inputs:
+      args:
+        - '-c'
+        - echo "Test 21: Absolute path Dockerfile"
+      entrypoint:
+        - /bin/sh
+      docker_socket: true
+  - id: core-filepath-location-v1-date-turquoise-teal
+    type: core/filepath-location@v1
+    position:
+      x: 10160
+      y: -50
+    inputs:
+      location: working_dir
+  - id: core-filepath-join-v1-pink-hippopotamus-fig
+    type: core/filepath-join@v1
+    position:
+      x: 10370
+      y: 30
+    inputs:
+      segments[0]: null
+      segments[1]: Dockerfile.e2e
+connections:
+  - src:
+      node: core-filepath-location-v1-date-turquoise-teal
+      port: result
+    dst:
+      node: core-filepath-join-v1-pink-hippopotamus-fig
+      port: segments[0]
+  - src:
+      node: core-filepath-join-v1-pink-hippopotamus-fig
+      port: result
+    dst:
+      node: docker-dockerfile-absolute
+      port: image
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: docker-basic
+      port: exec
+  - src:
+      node: docker-basic
+      port: exec-success
+    dst:
+      node: docker-no-socket
+      port: exec
+  - src:
+      node: docker-no-socket
+      port: exec-success
+    dst:
+      node: docker-workdir
+      port: exec
+  - src:
+      node: docker-workdir
+      port: exec-success
+    dst:
+      node: docker-multi-env
+      port: exec
+  - src:
+      node: docker-multi-env
+      port: exec-success
+    dst:
+      node: docker-busybox
+      port: exec
+  - src:
+      node: docker-busybox
+      port: exec-success
+    dst:
+      node: docker-multiline
+      port: exec
+  - src:
+      node: docker-multiline
+      port: exec-success
+    dst:
+      node: docker-volume
+      port: exec
+  - src:
+      node: docker-volume
+      port: exec-success
+    dst:
+      node: docker-network
+      port: exec
+  - src:
+      node: docker-network
+      port: exec-success
+    dst:
+      node: docker-pull-always
+      port: exec
+  - src:
+      node: docker-pull-always
+      port: exec-success
+    dst:
+      node: docker-special-chars
+      port: exec
+  - src:
+      node: docker-special-chars
+      port: exec-success
+    dst:
+      node: docker-dockerfile-relative
+      port: exec
+  - src:
+      node: docker-dockerfile-relative
+      port: exec-success
+    dst:
+      node: docker-dockerfile-custom
+      port: exec
+  - src:
+      node: docker-dockerfile-custom
+      port: exec-success
+    dst:
+      node: docker-volume-readonly
+      port: exec
+  - src:
+      node: docker-volume-readonly
+      port: exec-success
+    dst:
+      node: docker-multi-volumes
+      port: exec
+  - src:
+      node: docker-multi-volumes
+      port: exec-success
+    dst:
+      node: docker-pipes
+      port: exec
+  - src:
+      node: docker-pipes
+      port: exec-success
+    dst:
+      node: docker-network-none
+      port: exec
+  - src:
+      node: docker-network-none
+      port: exec-success
+    dst:
+      node: docker-env-special
+      port: exec
+  - src:
+      node: docker-env-special
+      port: exec-success
+    dst:
+      node: docker-default-cmd
+      port: exec
+  - src:
+      node: docker-default-cmd
+      port: exec-success
+    dst:
+      node: docker-exit-nonzero
+      port: exec
+  - src:
+      node: docker-exit-nonzero
+      port: exec-err
+    dst:
+      node: docker-error-handler
+      port: exec
+  - src:
+      node: docker-error-handler
+      port: exec-success
+    dst:
+      node: docker-long-args
+      port: exec
+  - src:
+      node: docker-long-args
+      port: exec-success
+    dst:
+      node: docker-dockerfile-absolute
+      port: exec

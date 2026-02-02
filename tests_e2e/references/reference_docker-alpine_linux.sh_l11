@@ -1,0 +1,112 @@
+build hasn't expired yet
+looking for value: 'env_file'
+  no value (is optional) found for: 'env_file'
+looking for value: 'config_file'
+  no value (is optional) found for: 'config_file'
+looking for value: 'concurrency'
+  no value (is optional) found for: 'concurrency'
+looking for value: 'graph_file'
+  found value in: 'env (shell)'
+  evaluated to: 'docker-alpine.act'
+looking for value: 'session_token'
+  no value (is optional) found for: 'session_token'
+looking for value: 'create_debug_session'
+  found value in flags
+  evaluated to: 'false'
+PushNodeVisit: start, execute: true
+🟢 Execute 'Docker Run (docker-basic)'
+PushNodeVisit: docker-basic, execute: true
+Test 1: Basic echo with env vars - MY_VAR=hello_world
+🟢 Execute 'Docker Run (docker-no-socket)'
+PushNodeVisit: docker-no-socket, execute: true
+Test 2: No docker socket, pull=never
+🟢 Execute 'Docker Run (docker-workdir)'
+PushNodeVisit: docker-workdir, execute: true
+Test 3: Working dir is [REDACTED]/tmp
+🟢 Execute 'Docker Run (docker-multi-env)'
+PushNodeVisit: docker-multi-env, execute: true
+Test 4: VAR1=first VAR2=second VAR3=third
+🟢 Execute 'Docker Run (docker-busybox)'
+PushNodeVisit: docker-busybox, execute: true
+Test 5: Running in busybox!
+🟢 Execute 'Docker Run (docker-multiline)'
+PushNodeVisit: docker-multiline, execute: true
+Test 6: Multi-line script
+Line 1: Hello
+Line 2: World
+Line 3: Done
+🟢 Execute 'Docker Run (docker-volume)'
+PushNodeVisit: docker-volume, execute: true
+Test 7: Volume mount test
+Creating file in mounted volume...
+test-content-1234
+🟢 Execute 'Docker Run (docker-network)'
+PushNodeVisit: docker-network, execute: true
+Linux
+🟢 Execute 'Docker Run (docker-pull-always)'
+PushNodeVisit: docker-pull-always, execute: true
+Test 9: Pull always policy
+🟢 Execute 'Docker Run (docker-special-chars)'
+PushNodeVisit: docker-special-chars, execute: true
+Test 10: Special chars test
+Quotes: 'single' and "double"
+Dollar: $HOME
+Backtick: `date`
+🟢 Execute 'Docker Run (docker-dockerfile-relative)'
+PushNodeVisit: docker-dockerfile-relative, execute: true
+Test 11: Built from local Dockerfile (relative path)
+🟢 Execute 'Docker Run (docker-dockerfile-custom)'
+PushNodeVisit: docker-dockerfile-custom, execute: true
+Test 12: Dockerfile with env and workdir
+MY_BUILD_VAR=from_dockerfile_build
+Working dir: [REDACTED]/opt
+🟢 Execute 'Docker Run (docker-volume-readonly)'
+PushNodeVisit: docker-volume-readonly, execute: true
+Test 13: Read-only volume mount
+test-content-1234
+Correctly rejected write on read-only mount
+🟢 Execute 'Docker Run (docker-multi-volumes)'
+PushNodeVisit: docker-multi-volumes, execute: true
+Test 14: Multiple volumes
+Vol1 exists: [REDACTED]/vol1
+yes
+Vol2 exists: [REDACTED]/vol2
+yes
+Vol3 exists: [REDACTED]/vol3
+yes
+🟢 Execute 'Docker Run (docker-pipes)'
+PushNodeVisit: docker-pipes, execute: true
+Test 15: Command with pipes
+apple
+banana
+🟢 Execute 'Docker Run (docker-network-none)'
+PushNodeVisit: docker-network-none, execute: true
+Test 16: Network none (isolated)
+Linux
+🟢 Execute 'Docker Run (docker-env-special)'
+PushNodeVisit: docker-env-special, execute: true
+Test 17: Env vars with spaces/special chars
+SPACE_VAR=hello world with spaces
+SPECIAL_VAR=a=b&c=d!@#
+🟢 Execute 'Docker Run (docker-default-cmd)'
+PushNodeVisit: docker-default-cmd, execute: true
+Hello World
+🟢 Execute 'Docker Run (docker-exit-nonzero)'
+PushNodeVisit: docker-exit-nonzero, execute: true
+Test 19: Non-zero exit code
+🟢 Execute 'Docker Run (docker-error-handler)'
+PushNodeVisit: docker-error-handler, execute: true
+Test 19b: Error handler caught the failure, continuing...
+🟢 Execute 'Docker Run (docker-long-args)'
+PushNodeVisit: docker-long-args, execute: true
+Test 20: Long args list
+Iteration 1
+Iteration 2
+Iteration 3
+Iteration 4
+Iteration 5
+🟢 Execute 'Docker Run (docker-dockerfile-absolute)'
+PushNodeVisit: docker-dockerfile-absolute, execute: true
+PushNodeVisit: core-filepath-join-v1-pink-hippopotamus-fig, execute: false
+PushNodeVisit: core-filepath-location-v1-date-turquoise-teal, execute: false
+Test 21: Absolute path Dockerfile

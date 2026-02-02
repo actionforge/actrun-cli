@@ -1,0 +1,121 @@
+yaml-version: 3.0
+
+id: core/docker-run
+name: Docker Run
+version: 1
+category: system
+icon: octContainer
+style:
+  header:
+    background: "#2496ED"
+  body:
+    background: "#1a6fb3"
+short_desc: Run a Docker container from an image or Dockerfile.
+long_desc: |
+  Runs a Docker container directly without requiring a GitHub Action wrapper.
+
+  The `image` input uses the `docker://` prefix convention (same as GitHub Actions):
+
+  **Pull from registry** (use `docker://` prefix):
+  - `docker://hello-world`
+  - `docker://alpine:latest`
+  - `docker://ghcr.io/owner/image:tag`
+  - `docker://docker.io/library/nginx`
+
+  **Build from Dockerfile** (no prefix):
+  - `Dockerfile`
+  - `./Dockerfile`
+  - `./build/Dockerfile.prod`
+  - `/absolute/path/to/Dockerfile`
+
+outputs:
+  exec-success:
+    name: Success
+    exec: true
+    index: 0
+  exec-err:
+    name: Error
+    exec: true
+    index: 1
+  exit_code:
+    name: Exit Code
+    type: number
+    index: 2
+
+inputs:
+  exec:
+    exec: true
+    index: 0
+  image:
+    name: Image
+    type: string
+    desc: |
+      Use `docker://` prefix for registry images, or path for Dockerfile.
+      Registry: `docker://alpine:latest`, `docker://ghcr.io/owner/image`
+      Dockerfile: `Dockerfile`, `./build/Dockerfile.prod`
+    index: 1
+    hint: "docker://alpine:latest"
+  args:
+    name: Args
+    type: "[]string"
+    desc: Arguments to pass to the container entrypoint.
+    index: 2
+  entrypoint:
+    name: Entrypoint
+    type: "[]string"
+    desc: |
+      Override the image's default entrypoint.
+      Example: `["/bin/sh", "-c"]`
+    index: 3
+  workdir:
+    name: Working Directory
+    type: string
+    desc: |
+      Working directory inside the container.
+      For GitHub workflows: defaults to `/github/workspace` (where the repo is mounted).
+      Otherwise: uses the image's default WORKDIR.
+    index: 4
+    hint: "Eg: /my-dir"
+  volumes:
+    name: Volumes
+    type: "[]string"
+    index: 5
+    hint: "/host/path:/container/path"
+    desc: Volume mounts in the format `host_path:container_path` or `host_path:container_path:ro` for read-only.
+  network:
+    name: Network
+    type: string
+    desc: Docker network to connect the container to (e.g., host, bridge, or a custom network name).
+    index: 6
+    hint: "Eg: host, bridge, none"
+  pull:
+    name: Pull Policy
+    type: option
+    desc: When to pull the image from the registry.
+    index: 7
+    default: missing
+    options:
+      - name: Always
+        value: always
+      - name: Missing
+        value: missing
+      - name: Never
+        value: never
+  docker_socket:
+    name: Mount Docker Socket
+    type: bool
+    desc: |
+      Mount the host's Docker socket into the container, enabling Docker-in-Docker.
+      This matches GitHub Actions' default behavior for container actions.
+      Disable if the container doesn't need Docker access.
+    index: 8
+    default: true
+  env:
+    name: Environment Vars
+    type: "[]string"
+    index: 9
+    hint: "MY_VAR=VALUE"
+    desc: |
+      Additional environment variables for the container.
+      Workflow/job environment variables are automatically included.
+      Use `KEY=VALUE` format to add or override variables.
