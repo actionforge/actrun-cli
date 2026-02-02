@@ -31,6 +31,11 @@ func (n *ConcurrentExecNode) ExecuteImpl(c *core.ExecutionState, inputId core.In
 			continue
 		}
 
+		// Skip exec-completed - it's triggered after all branches complete
+		if outputId == ni.Core_concurrent_exec_v1_Output_exec_completed {
+			continue
+		}
+
 		outputIdCopy := outputId
 
 		fn := func() {

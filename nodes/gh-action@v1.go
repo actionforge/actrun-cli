@@ -192,8 +192,8 @@ func (n *GhActionNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId,
 		return nil
 	}
 
-	// process fiel commands post-execution (GITHUB_ENV, GITHUB_OUTPUT, GITHUB_PATH)
-	ghEnvs, err = ghContextParser.Parse(c, currentEnvMap)
+	// process file commands post-execution (GITHUB_ENV, GITHUB_OUTPUT, GITHUB_PATH)
+	ghEnvs, ghOutputs, err := ghContextParser.Parse(c, currentEnvMap)
 	if err != nil {
 		return err
 	}
@@ -203,28 +203,15 @@ func (n *GhActionNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId,
 	maps.Copy(nextEnvMap, ghEnvs)
 	c.SetContextEnvironMap(nextEnvMap)
 
-	// parse GITHUB_OUTPUT
-	githubOutput := currentEnvMap["GITHUB_OUTPUT"]
-	if githubOutput != "" {
-		b, err := os.ReadFile(githubOutput)
-		if err != nil {
-			return core.CreateErr(c, err, "unable to read github output file")
-		}
-
-		outputs, err := parseOutputFile(string(b))
+	for key, value := range ghOutputs {
+		err = n.SetOutputValue(c, core.OutputId(key), value, core.SetOutputValueOpts{
+			NotExistsIsNoError: true,
+			ForceSet:           true,
+			StringTypeHint:     true,
+		})
 		if err != nil {
 			return err
 		}
-		for key, value := range outputs {
-			err = n.SetOutputValue(c, core.OutputId(key), strings.TrimRight(value, "\t\n"), core.SetOutputValueOpts{
-				NotExistsIsNoError: true,
-			})
-			if err != nil {
-				return err
-			}
-		}
-
-		_ = os.Remove(githubOutput)
 	}
 
 	err = n.Execute(ni.Core_gh_action_v1_Output_exec_success, c, nil)
@@ -349,7 +336,15 @@ func (n *GhActionNode) ExecuteDocker(c *core.ExecutionState, workingDirectory st
 		ReadOnly:         false,
 	})
 
-	exitCode, err := core.DockerRun(context.Background(), n.Data.DockerInstanceLabel, ci, workingDirectory, nil, nil)
+	// Convert to SDK-based config and run
+	dockerClient, err := core.NewDockerClient()
+	if err != nil {
+		return core.CreateErr(c, err, "failed to create Docker client")
+	}
+	defer dockerClient.Close()
+
+	config := core.ContainerInfo2DockerRunConfig(ci)
+	exitCode, err := dockerClient.RunContainer(context.Background(), config)
 	if err != nil {
 		return err
 	}
@@ -530,12 +525,9 @@ func init() {
 
 				node.Data.Image = dockerUrl
 				if !validate {
-					exitCode, err := core.DockerPull(context.Background(), dockerUrl, sysWorkspaceDir)
+					err := core.SDKDockerPull(context.Background(), dockerUrl)
 					if err != nil {
 						return nil, []error{err}
-					}
-					if exitCode != 0 {
-						return nil, []error{core.CreateErr(nil, nil, "docker pull failed with exit code %d", exitCode)}
 					}
 				}
 
@@ -557,23 +549,15 @@ func init() {
 				node.Data.ExecutionStateId = executionContextId.String()
 
 				if !validate {
-					utils.LogOut.Infof("%sBuild container for action use '%s'.\n", u.LogGhStartGroup, "")
-
 					// resolve Dockerfile path relative to the action directory
 					dockerFilePath := filepath.Join(actionDir, action.Runs.Image)
 
 					// Build context is usually the action directory, but we pass actionDir.
 					// If the Dockerfile is "../../Dockerfile", this logic handles the location of the file.
-					exitCode, err := core.DockerBuild(context.Background(), actionDir, dockerFilePath, actionDir, imageName)
+					err := core.SDKDockerBuild(context.Background(), dockerFilePath, actionDir, imageName)
 					if err != nil {
 						return nil, []error{err}
 					}
-
-					if exitCode != 0 {
-						return nil, []error{core.CreateErr(nil, nil, "docker build failed with exit code %d", exitCode)}
-					}
-
-					utils.LogOut.Infof(u.LogGhEndGroup)
 				}
 			}
 		case "node12", "node14", "node16", "node20", "node24":

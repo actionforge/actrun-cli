@@ -36,16 +36,17 @@ func (p *GhContextParser) Init(c *core.ExecutionState, sysRunnerTempDir string) 
 	return envs, nil
 }
 
-func (p *GhContextParser) Parse(c *core.ExecutionState, contextEnvironMap map[string]string) (map[string]string, error) {
+func (p *GhContextParser) Parse(c *core.ExecutionState, contextEnvironMap map[string]string) (envs map[string]string, outputs map[string]string, err error) {
 
-	envs := map[string]string{}
+	envs = map[string]string{}
+	outputs = map[string]string{}
 
 	githubPath := contextEnvironMap["GITHUB_PATH"]
 	// load all paths from the github path file and append them to the PATH
 	if githubPath != "" {
 		p, err := os.ReadFile(githubPath)
 		if err != nil {
-			return nil, core.CreateErr(c, err, "unable to read file set in GITHUB_PATH")
+			return nil, nil, core.CreateErr(c, err, "unable to read file set in GITHUB_PATH")
 		}
 
 		newPaths := []string{}
@@ -65,7 +66,7 @@ func (p *GhContextParser) Parse(c *core.ExecutionState, contextEnvironMap map[st
 
 		err = os.Remove(githubPath)
 		if err != nil {
-			return nil, core.CreateErr(c, nil, "unable to remove file set in GITHUB_PATH")
+			return nil, nil, core.CreateErr(c, nil, "unable to remove file set in GITHUB_PATH")
 		}
 
 		delete(contextEnvironMap, "GITHUB_PATH")
@@ -75,11 +76,11 @@ func (p *GhContextParser) Parse(c *core.ExecutionState, contextEnvironMap map[st
 	if githubEnv != "" {
 		b, err := os.ReadFile(githubEnv)
 		if err != nil {
-			return nil, core.CreateErr(c, nil, "unable to read file set in GITHUB_ENV")
+			return nil, nil, core.CreateErr(c, nil, "unable to read file set in GITHUB_ENV")
 		}
 		ghEnvs, err := parseOutputFile(string(b))
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 		for envName, envValue := range ghEnvs {
 			envs[envName] = strings.TrimRight(envValue, " \t\n\r")
@@ -87,12 +88,36 @@ func (p *GhContextParser) Parse(c *core.ExecutionState, contextEnvironMap map[st
 
 		err = os.Remove(githubEnv)
 		if err != nil {
-			return nil, core.CreateErr(c, err, "unable to remove file set in GITHUB_ENV")
+			return nil, nil, core.CreateErr(c, err, "unable to remove file set in GITHUB_ENV")
 		}
 
 		delete(contextEnvironMap, "GITHUB_ENV")
 	}
-	return envs, nil
+
+	githubOutput := contextEnvironMap["GITHUB_OUTPUT"]
+	if githubOutput != "" {
+		b, err := os.ReadFile(githubOutput)
+		if err != nil {
+			return nil, nil, core.CreateErr(c, err, "unable to read file set in GITHUB_OUTPUT")
+		}
+
+		ghOutputs, err := parseOutputFile(string(b))
+		if err != nil {
+			return nil, nil, err
+		}
+		for key, value := range ghOutputs {
+			outputs[key] = strings.TrimRight(value, "\t\n")
+		}
+
+		err = os.Remove(githubOutput)
+		if err != nil {
+			return nil, nil, core.CreateErr(c, err, "unable to remove file set in GITHUB_OUTPUT")
+		}
+
+		delete(contextEnvironMap, "GITHUB_OUTPUT")
+	}
+
+	return envs, outputs, nil
 }
 
 func parseOutputFile(input string) (map[string]string, error) {
