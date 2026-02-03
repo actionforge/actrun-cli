@@ -262,7 +262,7 @@ func RunSessionMode(configFile string, graphFileForDebugSession string, sessionT
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, syscall.SIGINT, syscall.SIGTERM)
 
-	// if browser disconnects during a --create_debug_session run, we switch to detached mode
+	// if browser disconnects during a --create-debug-session run, we switch to detached mode
 	// to ensure the graph finishes execution instead of hanging on a breakpoint.
 	var detachMu sync.Mutex
 	var detachedMode bool
@@ -503,7 +503,7 @@ func RunSessionMode(configFile string, graphFileForDebugSession string, sessionT
 				currentDebugOps.cachedState = nil
 				currentDebugOps.Unlock()
 
-				// if this was a one-off debug session (initiated by --create_debug_session), exit the process when graph completes
+				// if this was a one-off debug session (initiated by --create-debug-session), exit the process when graph completes
 				if graphFileForDebugSession != "" {
 					done <- syscall.SIGTERM
 				}

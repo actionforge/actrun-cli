@@ -62,17 +62,17 @@ actrun ./my_graph.act --target="production" --verbose
 If you need to strictly separate CLI flags from graph arguments, use the `--` separator:
 
 ```bash
-actrun --env_file=.env -- ./my_graph.act --target="production"
+actrun --env-file=.env -- ./my_graph.act --target="production"
 
 
 ```
 
 ### 🌍 3. Load Environment Variables
 
-Inject environment variables from a file before execution starts using `--env_file`.
+Inject environment variables from a file before execution starts using `--env-file`.
 
 ```bash
-actrun --env_file=.env.local ./my_graph.act
+actrun --env-file=.env.local ./my_graph.act
 
 
 ```
@@ -91,10 +91,10 @@ actrun validate ./complex_workflow.act
 
 ### 🕸️ Debug Sessions
 
-`actrun` can bridge your local terminal to the Actionforge web app for visual debugging. You can either connect to your browser session via a debug session token that your browser provided, or you can let the CLI intiate a debug session by using `--create_debug_session`. The latter will print a link to stdout that you can open in your browser and the debug session will immediately begin.
+`actrun` can bridge your local terminal to the Actionforge web app for visual debugging. You can either connect to your browser session via a debug session token that your browser provided, or you can let the CLI intiate a debug session by using `--create-debug-session`. The latter will print a link to stdout that you can open in your browser and the debug session will immediately begin.
 
 ```bash
-actrun --create_debug_session ./my_graph.act
+actrun --create-debug-session ./my_graph.act
 
 
 ```

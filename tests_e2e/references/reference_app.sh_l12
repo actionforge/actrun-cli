@@ -25,7 +25,7 @@ stack trace:
 github.com/actionforge/actrun-cli/core.RunGraphFromFile
 	graph.go:1123
 github.com/actionforge/actrun-cli/cmd.cmdRootRun
-	cmd_root.go:186
+	cmd_root.go:188
 github.com/spf13/cobra.(*Command).execute
 	command.go:-1
 github.com/spf13/cobra.(*Command).ExecuteC
@@ -33,7 +33,7 @@ github.com/spf13/cobra.(*Command).ExecuteC
 github.com/spf13/cobra.(*Command).Execute
 	command.go:-1
 github.com/actionforge/actrun-cli/cmd.Execute
-	cmd_root.go:198
+	cmd_root.go:200
 main.main
 	main.go:26
 runtime.main

@@ -12,11 +12,11 @@ Available Commands:
 
 Flags:
       --concurrency string     Enable or disable concurrency
-      --config_file string     The config file to use
-      --create_debug_session   Create a debug session by connecting to the web app
-      --env_file string        Absolute path to an env file (.env) to load before execution
+      --config-file string     The config file to use
+      --create-debug-session   Create a debug session by connecting to the web app
+      --env-file string        Absolute path to an env file (.env) to load before execution
   -h, --help                   help for actrun
-      --session_token string   The session token from your browser
+      --session-token string   The session token from your browser
   -v, --version                version for actrun
 
 Use "actrun [command] --help" for more information about a command.

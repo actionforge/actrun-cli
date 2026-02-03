@@ -13,7 +13,9 @@
         "CGO_ENABLED": "0"
       },
       "args": [
-        "--env_file=${workspaceFolder}/.env",
+        "/Users/sebastian/Desktop/test.act",
+        "--config_file=/Users/sebastian/Desktop/test.actconfig",
+        "--concurrency=1"
       ]
     },
     {
