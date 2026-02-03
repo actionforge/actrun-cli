@@ -16,6 +16,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/actionforge/actrun-cli/utils"
 	"github.com/rhysd/actionlint"
 )
 
@@ -318,9 +319,13 @@ func (e *Evaluator) hashFiles(patterns ...string) (string, error) {
 	}
 	var uniqueFiles []string
 	for f := range fileSet {
-		info, err := os.Stat(f)
+		cleanPath, err := utils.ValidatePath(f)
+		if err != nil {
+			continue
+		}
+		info, err := os.Stat(cleanPath)
 		if err == nil && info.Mode().IsRegular() {
-			uniqueFiles = append(uniqueFiles, f)
+			uniqueFiles = append(uniqueFiles, cleanPath)
 		}
 	}
 	sort.Strings(uniqueFiles)
@@ -331,7 +336,11 @@ func (e *Evaluator) hashFiles(patterns ...string) (string, error) {
 
 	hasher := sha256.New()
 	for _, filePath := range uniqueFiles {
-		file, err := os.Open(filePath)
+		cleanPath, err := utils.ValidatePath(filePath)
+		if err != nil {
+			continue
+		}
+		file, err := os.Open(cleanPath)
 		if err != nil {
 			continue
 		}

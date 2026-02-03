@@ -100,7 +100,7 @@ func (d *DockerClient) PullImage(ctx context.Context, imageRef string) error {
 	verbose := !IsTestE2eRunning()
 
 	if verbose {
-		utils.LogOut.Infof("%sPulling image '%s'\n", utils.LogGhStartGroup, imageRef)
+		utils.LogOut.Infof("%sPulling image '%s'\n", utils.LogGhStartGroup, utils.SanitizeImageRef(imageRef))
 		defer utils.LogOut.Infof(utils.LogGhEndGroup)
 	}
 
@@ -138,7 +138,7 @@ func (d *DockerClient) BuildImage(ctx context.Context, dockerfilePath, contextPa
 	verbose := !IsTestE2eRunning()
 
 	if verbose {
-		utils.LogOut.Infof("%sBuilding image '%s' from %s\n", utils.LogGhStartGroup, tag, dockerfilePath)
+		utils.LogOut.Infof("%sBuilding image '%s' from %s\n", utils.LogGhStartGroup, utils.SanitizeImageRef(tag), utils.SanitizeImageRef(dockerfilePath))
 		defer utils.LogOut.Infof(utils.LogGhEndGroup)
 	}
 

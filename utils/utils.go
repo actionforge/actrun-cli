@@ -319,3 +319,16 @@ func Ordinal(i int) string {
 
 	return fmt.Sprintf("%d%s", n, suffix)
 }
+
+// SanitizeImageRef removes any embedded credentials from a Docker image reference.
+// Docker image refs can contain credentials like user:pass@registry/image:tag
+// This function just removes them
+func SanitizeImageRef(imageRef string) string {
+	if idx := strings.Index(imageRef, "@"); idx != -1 {
+		prefix := imageRef[:idx]
+		if strings.Contains(prefix, ":") && !strings.Contains(prefix, "/") {
+			return "***@" + imageRef[idx+1:]
+		}
+	}
+	return imageRef
+}

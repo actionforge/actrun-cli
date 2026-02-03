@@ -376,7 +376,7 @@ def main():
     # excludes reference files from other platforms (e.g., _linux files when running on darwin)
     try:
         git_cmd = ['git', '-c', 'core.autocrlf=input', '-c', 'core.safecrlf=false',
-                   '--no-pager', 'diff', ref_dir, '--']
+                   '--no-pager', 'diff', '--', ref_dir]
 
         for plat in ALL_PLATFORMS:
             if plat != CURRENT_PLATFORM:

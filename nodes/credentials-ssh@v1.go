@@ -1,12 +1,12 @@
 package nodes
 
 import (
-	"github.com/actionforge/actrun-cli/core"
-
 	_ "embed"
 	"os"
 
+	"github.com/actionforge/actrun-cli/core"
 	ni "github.com/actionforge/actrun-cli/node_interfaces"
+	"github.com/actionforge/actrun-cli/utils"
 )
 
 //go:embed credentials-ssh@v1.yml
@@ -48,19 +48,22 @@ func (n *SshCredentialNode) OutputValueById(c *core.ExecutionState, outputId cor
 		}
 		expandedPath = homeDir + expandedPath[1:]
 	}
-	_, err = os.Stat(expandedPath)
-	privateKeyInput = expandedPath
+	cleanPath, pathErr := utils.ValidatePath(expandedPath)
+	if pathErr != nil {
+		return nil, core.CreateErr(c, pathErr, "invalid private key path")
+	}
+	_, err = os.Stat(cleanPath)
 	if err == nil {
-		keyBytes, readErr := os.ReadFile(privateKeyInput)
+		keyBytes, readErr := os.ReadFile(cleanPath)
 		if readErr != nil {
-			return nil, core.CreateErr(c, readErr, "failed to read private key from path '%s'", privateKeyInput)
+			return nil, core.CreateErr(c, readErr, "failed to read private key from path '%s'", cleanPath)
 		}
 		keyContent = string(keyBytes)
 		if keyContent == "" {
 			return nil, core.CreateErr(c, nil, "private key content is empty")
 		}
 	} else {
-		return nil, core.CreateErr(c, err, "error checking path for private key '%s'", privateKeyInput)
+		return nil, core.CreateErr(c, err, "error checking path for private key '%s'", cleanPath)
 	}
 
 	credential := SshCredentials{

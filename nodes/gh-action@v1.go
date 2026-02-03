@@ -227,10 +227,12 @@ func (n *GhActionNode) ExecuteNode(c *core.ExecutionState, workspace string, env
 	runners, err := getRunnersDir()
 	if err == nil {
 		// Look for external node binary bundled with the runner
-		externalNodeBin := filepath.Join(runners, "externals", n.actionRuns.Using, "bin", "node")
-		_, err := os.Stat(nodeBin)
-		if err == nil {
-			nodeBin = externalNodeBin
+		externalNodeBin, pathErr := utils.SafeJoinPath(runners, "externals", n.actionRuns.Using, "bin", "node")
+		if pathErr == nil {
+			_, err := os.Stat(externalNodeBin)
+			if err == nil {
+				nodeBin = externalNodeBin
+			}
 		}
 	}
 

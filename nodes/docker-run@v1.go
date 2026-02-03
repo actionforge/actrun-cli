@@ -11,6 +11,7 @@ import (
 
 	"github.com/actionforge/actrun-cli/core"
 	ni "github.com/actionforge/actrun-cli/node_interfaces"
+	"github.com/actionforge/actrun-cli/utils"
 	"github.com/google/uuid"
 )
 
@@ -130,13 +131,19 @@ func (n *DockerNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, p
 			dockerfilePath = filepath.Join(cwd, dockerfilePath)
 		}
 
-		if _, err := os.Stat(dockerfilePath); os.IsNotExist(err) {
+		cleanPath, pathErr := utils.ValidatePath(dockerfilePath)
+		if pathErr != nil {
+			return core.CreateErr(c, pathErr, "invalid Dockerfile path")
+		}
+
+		if _, err := os.Stat(cleanPath); os.IsNotExist(err) {
 			// check if this looks like an image reference (user forgot docker:// prefix)
 			if looksLikeImageReference(imageRef) {
-				return core.CreateErr(c, nil, "Dockerfile not found: %s. Did you mean 'docker://%s' to pull from a registry?", dockerfilePath, imageRef)
+				return core.CreateErr(c, nil, "Dockerfile not found: %s. Did you mean 'docker://%s' to pull from a registry?", cleanPath, imageRef)
 			}
-			return core.CreateErr(c, nil, "Dockerfile not found: %s", dockerfilePath)
+			return core.CreateErr(c, nil, "Dockerfile not found: %s", cleanPath)
 		}
+		dockerfilePath = cleanPath
 
 		var containerIdSuffix string
 		if core.IsTestE2eRunning() {

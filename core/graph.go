@@ -325,13 +325,17 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 
 	// Priority 1 (Lowest): Config file
 	if opts.ConfigFile != "" {
-		if _, err := os.Stat(opts.ConfigFile); err == nil {
-			localConfig, err := utils.LoadConfig(opts.ConfigFile)
+		cleanConfigPath, err := utils.ValidatePath(opts.ConfigFile)
+		if err != nil {
+			return CreateErr(nil, err, "invalid config file path")
+		}
+		if _, err := os.Stat(cleanConfigPath); err == nil {
+			localConfig, err := utils.LoadConfig(cleanConfigPath)
 			if err != nil {
 				return CreateErr(nil, err, "failed to load config file")
 			}
 
-			configName := filepath.Base(opts.ConfigFile)
+			configName := filepath.Base(cleanConfigPath)
 			envTracker.set(localConfig.Env, configName, true, false)
 			inputTracker.set(localConfig.Inputs, configName, true, false)
 			secretTracker.set(localConfig.Secrets, configName, true, true)
@@ -463,11 +467,15 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 	}
 
 	if newCwd != "" {
+		cleanCwd, err := utils.ValidatePath(newCwd)
+		if err != nil {
+			return CreateErr(nil, err, "invalid working directory path")
+		}
 		originalCwd, err := os.Getwd()
 		if err != nil {
 			return CreateErr(nil, err, "failed to get current working directory")
 		}
-		if err := os.Chdir(newCwd); err != nil {
+		if err := os.Chdir(cleanCwd); err != nil {
 			return CreateErr(nil, err, "failed to change working directory to ACT_CWD/GITHUB_WORKSPACE")
 		}
 		defer func() {
@@ -1102,10 +1110,14 @@ func RunGraphFromString(ctx context.Context, graphName string, graphContent stri
 }
 
 func RunGraphFromFile(ctx context.Context, graphFile string, opts RunOpts, debugCb DebugCallback) error {
-	graphContent, err := os.ReadFile(graphFile)
+	cleanPath, err := utils.ValidatePath(graphFile)
+	if err != nil {
+		return CreateErr(nil, err, "invalid graph file path")
+	}
+	graphContent, err := os.ReadFile(cleanPath)
 	if err != nil {
 		if os.IsNotExist(err) {
-			err = fmt.Errorf("open %s: no such file or directory", graphFile)
+			err = fmt.Errorf("open %s: no such file or directory", cleanPath)
 		}
 
 		return CreateErr(nil, err, "failed loading graph")

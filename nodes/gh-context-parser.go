@@ -3,10 +3,10 @@ package nodes
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/actionforge/actrun-cli/core"
+	"github.com/actionforge/actrun-cli/utils"
 
 	"github.com/google/uuid"
 )
@@ -20,18 +20,24 @@ func (p *GhContextParser) Init(c *core.ExecutionState, sysRunnerTempDir string) 
 
 	for fileCommand, envName := range contextEnvList {
 		fname := fmt.Sprintf("%s_%s", fileCommand, fileCommandUuid)
-		path := filepath.Join(sysRunnerTempDir, "_runner_file_commands")
-		err := os.MkdirAll(path, 0755)
+		dirPath, err := utils.SafeJoinPath(sysRunnerTempDir, "_runner_file_commands")
+		if err != nil {
+			return nil, core.CreateErr(c, err, "invalid directory path")
+		}
+		err = os.MkdirAll(dirPath, 0755)
 		if err != nil {
 			return nil, core.CreateErr(c, err, "unable to create directory")
 		}
 
-		path = filepath.Join(sysRunnerTempDir, "_runner_file_commands", fname)
-		err = os.WriteFile(path, []byte(""), 0644)
+		filePath, err := utils.SafeJoinPath(sysRunnerTempDir, "_runner_file_commands", fname)
+		if err != nil {
+			return nil, core.CreateErr(c, err, "invalid file path")
+		}
+		err = os.WriteFile(filePath, []byte(""), 0644)
 		if err != nil {
 			return nil, core.CreateErr(c, err, "unable to create file")
 		}
-		envs[envName] = path
+		envs[envName] = filePath
 	}
 	return envs, nil
 }
@@ -44,7 +50,11 @@ func (p *GhContextParser) Parse(c *core.ExecutionState, contextEnvironMap map[st
 	githubPath := contextEnvironMap["GITHUB_PATH"]
 	// load all paths from the github path file and append them to the PATH
 	if githubPath != "" {
-		p, err := os.ReadFile(githubPath)
+		cleanPath, err := utils.ValidatePath(githubPath)
+		if err != nil {
+			return nil, nil, core.CreateErr(c, err, "invalid GITHUB_PATH")
+		}
+		p, err := os.ReadFile(cleanPath)
 		if err != nil {
 			return nil, nil, core.CreateErr(c, err, "unable to read file set in GITHUB_PATH")
 		}
@@ -64,7 +74,7 @@ func (p *GhContextParser) Parse(c *core.ExecutionState, contextEnvironMap map[st
 			envs["PATH"] = strings.Join(newPaths, string(os.PathListSeparator)) + string(os.PathListSeparator) + contextEnvironMap["PATH"]
 		}
 
-		err = os.Remove(githubPath)
+		err = os.Remove(cleanPath)
 		if err != nil {
 			return nil, nil, core.CreateErr(c, nil, "unable to remove file set in GITHUB_PATH")
 		}
@@ -74,7 +84,11 @@ func (p *GhContextParser) Parse(c *core.ExecutionState, contextEnvironMap map[st
 
 	githubEnv := contextEnvironMap["GITHUB_ENV"]
 	if githubEnv != "" {
-		b, err := os.ReadFile(githubEnv)
+		cleanPath, err := utils.ValidatePath(githubEnv)
+		if err != nil {
+			return nil, nil, core.CreateErr(c, err, "invalid GITHUB_ENV path")
+		}
+		b, err := os.ReadFile(cleanPath)
 		if err != nil {
 			return nil, nil, core.CreateErr(c, nil, "unable to read file set in GITHUB_ENV")
 		}
@@ -86,7 +100,7 @@ func (p *GhContextParser) Parse(c *core.ExecutionState, contextEnvironMap map[st
 			envs[envName] = strings.TrimRight(envValue, " \t\n\r")
 		}
 
-		err = os.Remove(githubEnv)
+		err = os.Remove(cleanPath)
 		if err != nil {
 			return nil, nil, core.CreateErr(c, err, "unable to remove file set in GITHUB_ENV")
 		}
@@ -96,7 +110,11 @@ func (p *GhContextParser) Parse(c *core.ExecutionState, contextEnvironMap map[st
 
 	githubOutput := contextEnvironMap["GITHUB_OUTPUT"]
 	if githubOutput != "" {
-		b, err := os.ReadFile(githubOutput)
+		cleanPath, err := utils.ValidatePath(githubOutput)
+		if err != nil {
+			return nil, nil, core.CreateErr(c, err, "invalid GITHUB_OUTPUT path")
+		}
+		b, err := os.ReadFile(cleanPath)
 		if err != nil {
 			return nil, nil, core.CreateErr(c, err, "unable to read file set in GITHUB_OUTPUT")
 		}
@@ -109,7 +127,7 @@ func (p *GhContextParser) Parse(c *core.ExecutionState, contextEnvironMap map[st
 			outputs[key] = strings.TrimRight(value, "\t\n")
 		}
 
-		err = os.Remove(githubOutput)
+		err = os.Remove(cleanPath)
 		if err != nil {
 			return nil, nil, core.CreateErr(c, err, "unable to remove file set in GITHUB_OUTPUT")
 		}
