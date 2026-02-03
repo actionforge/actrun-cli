@@ -213,9 +213,12 @@ func LoadGitHubContext(env map[string]string, inputs map[string]any, secrets map
 	// Support for github.event.pull_request, github.event.commits, etc.
 	eventData := make(map[string]any)
 	if eventPath, ok := env["GITHUB_EVENT_PATH"]; ok && eventPath != "" {
-		fileContent, err := os.ReadFile(eventPath)
+		cleanPath, err := utils.ValidatePath(eventPath)
 		if err == nil {
-			_ = json.Unmarshal(fileContent, &eventData)
+			fileContent, err := os.ReadFile(cleanPath)
+			if err == nil {
+				_ = json.Unmarshal(fileContent, &eventData)
+			}
 		}
 	}
 
@@ -439,9 +442,13 @@ func SetupGitHubActionsEnv(finalEnv map[string]string) error {
 
 	for _, filePath := range fileCommandFiles {
 		if filePath != "" {
-			f, err := os.Create(filePath)
+			cleanPath, err := utils.ValidatePath(filePath)
 			if err != nil {
-				return CreateErr(nil, err, "failed to create file command file %s", filePath).
+				return CreateErr(nil, err, "invalid file command path %s", filePath)
+			}
+			f, err := os.Create(cleanPath)
+			if err != nil {
+				return CreateErr(nil, err, "failed to create file command file %s", cleanPath).
 					SetHint("Check that you have write permissions to the runner temp directory.")
 			}
 			f.Close()

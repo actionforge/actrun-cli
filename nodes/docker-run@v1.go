@@ -11,6 +11,7 @@ import (
 
 	"github.com/actionforge/actrun-cli/core"
 	ni "github.com/actionforge/actrun-cli/node_interfaces"
+	"github.com/actionforge/actrun-cli/utils"
 	"github.com/google/uuid"
 )
 
@@ -130,13 +131,19 @@ func (n *DockerNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, p
 			dockerfilePath = filepath.Join(cwd, dockerfilePath)
 		}
 
-		if _, err := os.Stat(dockerfilePath); os.IsNotExist(err) {
+		cleanPath, pathErr := utils.ValidatePath(dockerfilePath)
+		if pathErr != nil {
+			return core.CreateErr(c, pathErr, "invalid Dockerfile path")
+		}
+
+		if _, err := os.Stat(cleanPath); os.IsNotExist(err) {
 			// check if this looks like an image reference (user forgot docker:// prefix)
 			if looksLikeImageReference(imageRef) {
-				return core.CreateErr(c, nil, "Dockerfile not found: %s. Did you mean 'docker://%s' to pull from a registry?", dockerfilePath, imageRef)
+				return core.CreateErr(c, nil, "Dockerfile not found: %s. Did you mean 'docker://%s' to pull from a registry?", cleanPath, imageRef)
 			}
-			return core.CreateErr(c, nil, "Dockerfile not found: %s", dockerfilePath)
+			return core.CreateErr(c, nil, "Dockerfile not found: %s", cleanPath)
 		}
+		dockerfilePath = cleanPath
 
 		var containerIdSuffix string
 		if core.IsTestE2eRunning() {
@@ -245,7 +252,7 @@ func (n *DockerNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, p
 	// Handle GITHUB_ENV and GITHUB_OUTPUT for GitHub workflows
 	if c.IsGitHubWorkflow {
 		ghContextParser := GhContextParser{}
-		ghEnvs, err := ghContextParser.Parse(c, currentEnvMap)
+		ghEnvs, ghOutputs, err := ghContextParser.Parse(c, currentEnvMap)
 		if err != nil {
 			return err
 		}
@@ -254,28 +261,15 @@ func (n *DockerNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, p
 		maps.Copy(nextEnvMap, ghEnvs)
 		c.SetContextEnvironMap(nextEnvMap)
 
-		// Parse GITHUB_OUTPUT file if it exists
-		githubOutput := currentEnvMap["GITHUB_OUTPUT"]
-		if githubOutput != "" {
-			b, err := os.ReadFile(githubOutput)
-			if err != nil {
-				return core.CreateErr(c, err, "unable to read github output file")
-			}
-
-			outputs, err := parseOutputFile(string(b))
+		for key, value := range ghOutputs {
+			err = n.SetOutputValue(c, core.OutputId(key), value, core.SetOutputValueOpts{
+				NotExistsIsNoError: true,
+				ForceSet:           true,
+				StringTypeHint:     true,
+			})
 			if err != nil {
 				return err
 			}
-			for key, value := range outputs {
-				err = n.SetOutputValue(c, core.OutputId(key), strings.TrimRight(value, "\t\n"), core.SetOutputValueOpts{
-					NotExistsIsNoError: true,
-				})
-				if err != nil {
-					return err
-				}
-			}
-
-			_ = os.Remove(githubOutput)
 		}
 	}
 

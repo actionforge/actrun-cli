@@ -388,7 +388,12 @@ func (n *Inputs) InputValueById(ec *ExecutionState, host NodeWithInputs, inputId
 			valueFound = true
 
 			if regardCache {
-				ec.CacheDataOutput(dataSource.SrcNode.GetCacheId(), outputCacheIdForCache, finalValue, cacheType)
+				// Get the output type from the source node's output definition
+				outputType := "unknown"
+				if outputDef, _, ok := dataSource.SrcNodeOutputs.OutputDefByPortId(outputCacheId); ok {
+					outputType = outputDef.Type
+				}
+				ec.CacheDataOutput(dataSource.SrcNode, outputCacheIdForCache, finalValue, outputType, cacheType)
 			}
 		}
 	} else {

@@ -104,9 +104,7 @@ func (n *RunNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, prev
 		if err != nil {
 			return core.CreateErr(c, err, "failed to initialize GitHub context parser")
 		}
-		for envName, path := range ghEnvs {
-			currentEnvMap[envName] = path
-		}
+		maps.Copy(currentEnvMap, ghEnvs)
 	}
 
 	output, exitCode, runErr := runCommand(c, shell, &script, args, print, stdin, currentEnvMap)
@@ -133,7 +131,7 @@ func (n *RunNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, prev
 	} else {
 		if c.IsGitHubWorkflow {
 			ghContextParser := GhContextParser{}
-			ghEnvs, err := ghContextParser.Parse(c, currentEnvMap)
+			ghEnvs, ghOutputs, err := ghContextParser.Parse(c, currentEnvMap)
 			if err != nil {
 				return err
 			}
@@ -141,6 +139,17 @@ func (n *RunNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, prev
 			nextEnvMap := c.GetContextEnvironMapCopy()
 			maps.Copy(nextEnvMap, ghEnvs)
 			c.SetContextEnvironMap(nextEnvMap)
+
+			for key, value := range ghOutputs {
+				err = n.SetOutputValue(c, core.OutputId(key), value, core.SetOutputValueOpts{
+					NotExistsIsNoError: true,
+					ForceSet:           true,
+					StringTypeHint:     true,
+				})
+				if err != nil {
+					return err
+				}
+			}
 		}
 
 		err = n.Execute(ni.Core_run_v1_Output_exec_success, c, nil)

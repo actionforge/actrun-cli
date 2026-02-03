@@ -32,8 +32,6 @@ type HashNode struct {
 
 func getHashFunction(c *core.ExecutionState, algorithm string) (hash.Hash, error) {
 	switch strings.ToLower(algorithm) {
-	case "sha1":
-		return sha1.New(), nil
 	case "sha224":
 		return sha256.New224(), nil
 	case "sha256":
@@ -48,16 +46,20 @@ func getHashFunction(c *core.ExecutionState, algorithm string) (hash.Hash, error
 		return sha3.New384(), nil
 	case "sha3_512":
 		return sha3.New512(), nil
-	case "md5":
-		return md5.New(), nil
-	case "crc32":
-		return crc32.New(crc32.MakeTable(crc32.IEEE)), nil
 	case "blake2b256":
 		return blake2b.New256(nil)
 	case "blake2b384":
 		return blake2b.New384(nil)
 	case "blake2b512":
 		return blake2b.New512(nil)
+	// legacy algorithms for file checksums and compatibility only
+	// codeql[go/weak-sensitive-data-hashing]: intentionally available for non-security use cases
+	case "sha1":
+		return sha1.New(), nil
+	case "md5":
+		return md5.New(), nil
+	case "crc32":
+		return crc32.New(crc32.MakeTable(crc32.IEEE)), nil
 	default:
 		return nil, core.CreateErr(c, nil, "unsupported hash algorithm: %s", algorithm)
 	}
@@ -81,6 +83,8 @@ func (n *HashNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, pre
 		return err
 	}
 
+	// user explicitly selects the hash algorithm. Legacy algorithms like md5, sha1, crc32
+	// codeql[go/weak-sensitive-data-hashing]
 	_, copyErr := io.Copy(hashFunc, input)
 	if copyErr != nil {
 		copyErr = core.CreateErr(c, copyErr, "error reading stream")

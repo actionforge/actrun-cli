@@ -1,0 +1,91 @@
+editor:
+  version:
+    created: v1.34.0
+entry: start
+type: standard
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 0
+      y: 0
+  - id: step-heredoc
+    type: core/run@v1
+    position:
+      x: 200
+      y: 0
+    inputs:
+      script: |
+        echo "Setting MULTILINE_OUTPUT using heredoc"
+        {
+          echo "MULTILINE_OUTPUT<<EOF"
+          echo "Line 1"
+          echo "Line 2"
+          echo "Line 3"
+          echo "EOF"
+        } >> $GITHUB_OUTPUT
+      shell: bash
+  - id: step-simple
+    type: core/run@v1
+    position:
+      x: 400
+      y: 0
+    inputs:
+      script: |
+        echo "Setting SIMPLE_OUTPUT"
+        echo "SIMPLE_OUTPUT=simple_value" >> $GITHUB_OUTPUT
+      shell: bash
+  - id: print-heredoc
+    type: core/const-string@v1
+    position:
+      x: 600
+      y: 100
+    inputs:
+      value: "heredoc output: [${{ steps.step-heredoc.outputs.MULTILINE_OUTPUT }}]"
+  - id: print-simple
+    type: core/const-string@v1
+    position:
+      x: 600
+      y: 200
+    inputs:
+      value: "simple output: [${{ steps.step-simple.outputs.SIMPLE_OUTPUT }}]"
+  - id: final-print
+    type: core/print@v1
+    position:
+      x: 800
+      y: 0
+    inputs:
+      values[0]: null
+      values[1]: null
+connections:
+  - src:
+      node: print-heredoc
+      port: result
+    dst:
+      node: final-print
+      port: values[0]
+  - src:
+      node: print-simple
+      port: result
+    dst:
+      node: final-print
+      port: values[1]
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: step-heredoc
+      port: exec
+  - src:
+      node: step-heredoc
+      port: exec-success
+    dst:
+      node: step-simple
+      port: exec
+  - src:
+      node: step-simple
+      port: exec-success
+    dst:
+      node: final-print
+      port: exec

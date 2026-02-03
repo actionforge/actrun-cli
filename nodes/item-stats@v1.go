@@ -7,6 +7,7 @@ import (
 
 	"github.com/actionforge/actrun-cli/core"
 	ni "github.com/actionforge/actrun-cli/node_interfaces"
+	"github.com/actionforge/actrun-cli/utils"
 )
 
 //go:embed item-stats@v1.yml
@@ -25,6 +26,11 @@ func (n *ItemStatsNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId
 		return err
 	}
 
+	cleanPath, pathErr := utils.ValidatePath(path)
+	if pathErr != nil {
+		return core.CreateErr(c, pathErr, "invalid path")
+	}
+
 	exists := true
 
 	var (
@@ -34,7 +40,7 @@ func (n *ItemStatsNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId
 	isRegular := false
 	isDir := false
 
-	stats, err := os.Stat(path)
+	stats, err := os.Stat(cleanPath)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
 			exists = false

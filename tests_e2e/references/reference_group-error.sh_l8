@@ -126,131 +126,131 @@ error:
 
 stack trace:
 github.com/actionforge/actrun-cli/nodes.runAndCaptureOutput
-	run@v1.go:384
+	run@v1.go:393
 github.com/actionforge/actrun-cli/nodes.runCommand
-	run@v1.go:260
+	run@v1.go:269
 github.com/actionforge/actrun-cli/nodes.(*RunNode).ExecuteImpl
-	run@v1.go:112
+	run@v1.go:110
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
-	executions.go:56
+	executions.go:68
 github.com/actionforge/actrun-cli/nodes.(*GroupInputsNode).ExecuteImpl
 	group-inputs@v1.go:39
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
-	executions.go:56
+	executions.go:68
 github.com/actionforge/actrun-cli/nodes.(*GroupNode).ExecuteImpl
 	group@v1.go:102
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
-	executions.go:56
+	executions.go:68
 github.com/actionforge/actrun-cli/nodes.(*PrintNode).ExecuteImpl
 	print@v1.go:103
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
-	executions.go:56
+	executions.go:68
 github.com/actionforge/actrun-cli/nodes.(*GroupNode).ExecuteImpl
 	group@v1.go:102
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
-	executions.go:56
+	executions.go:68
 github.com/actionforge/actrun-cli/nodes.(*GroupOutputsNode).ExecuteImpl
 	group-outputs@v1.go:30
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
-	executions.go:56
+	executions.go:68
 github.com/actionforge/actrun-cli/nodes.(*RunNode).ExecuteImpl
-	run@v1.go:129
+	run@v1.go:127
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
-	executions.go:56
+	executions.go:68
 github.com/actionforge/actrun-cli/nodes.(*GroupInputsNode).ExecuteImpl
 	group-inputs@v1.go:39
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
-	executions.go:56
+	executions.go:68
 github.com/actionforge/actrun-cli/nodes.(*GroupNode).ExecuteImpl
 	group@v1.go:102
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
-	executions.go:56
+	executions.go:68
 github.com/actionforge/actrun-cli/nodes.(*PrintNode).ExecuteImpl
 	print@v1.go:103
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
-	executions.go:56
+	executions.go:68
 github.com/actionforge/actrun-cli/nodes.(*GroupNode).ExecuteImpl
 	group@v1.go:102
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
-	executions.go:56
+	executions.go:68
 github.com/actionforge/actrun-cli/nodes.(*GroupOutputsNode).ExecuteImpl
 	group-outputs@v1.go:30
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
-	executions.go:56
+	executions.go:68
 github.com/actionforge/actrun-cli/nodes.(*GroupNode).ExecuteImpl
 	group@v1.go:102
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
-	executions.go:56
+	executions.go:68
 github.com/actionforge/actrun-cli/nodes.(*GroupOutputsNode).ExecuteImpl
 	group-outputs@v1.go:30
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
-	executions.go:56
+	executions.go:68
 github.com/actionforge/actrun-cli/nodes.(*RunNode).ExecuteImpl
-	run@v1.go:129
+	run@v1.go:127
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
-	executions.go:56
+	executions.go:68
 github.com/actionforge/actrun-cli/nodes.(*GroupInputsNode).ExecuteImpl
 	group-inputs@v1.go:39
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
-	executions.go:56
+	executions.go:68
 github.com/actionforge/actrun-cli/nodes.(*GroupNode).ExecuteImpl
 	group@v1.go:102
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
-	executions.go:56
+	executions.go:68
 github.com/actionforge/actrun-cli/nodes.(*GroupInputsNode).ExecuteImpl
 	group-inputs@v1.go:39
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
-	executions.go:56
+	executions.go:68
 github.com/actionforge/actrun-cli/nodes.(*GroupNode).ExecuteImpl
 	group@v1.go:102
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
-	executions.go:56
+	executions.go:68
 github.com/actionforge/actrun-cli/nodes.(*PrintNode).ExecuteImpl
 	print@v1.go:103
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
-	executions.go:56
+	executions.go:68
 github.com/actionforge/actrun-cli/nodes.(*GroupNode).ExecuteImpl
 	group@v1.go:102
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
-	executions.go:56
+	executions.go:68
 github.com/actionforge/actrun-cli/nodes.(*GroupOutputsNode).ExecuteImpl
 	group-outputs@v1.go:30
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
-	executions.go:56
+	executions.go:68
 github.com/actionforge/actrun-cli/nodes.(*GroupNode).ExecuteImpl
 	group@v1.go:102
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
-	executions.go:56
+	executions.go:68
 github.com/actionforge/actrun-cli/nodes.(*GroupOutputsNode).ExecuteImpl
 	group-outputs@v1.go:30
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
-	executions.go:56
+	executions.go:68
 github.com/actionforge/actrun-cli/nodes.(*RunNode).ExecuteImpl
-	run@v1.go:146
+	run@v1.go:155
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
-	executions.go:56
+	executions.go:68
 github.com/actionforge/actrun-cli/nodes.(*GroupInputsNode).ExecuteImpl
 	group-inputs@v1.go:39
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
-	executions.go:56
+	executions.go:68
 github.com/actionforge/actrun-cli/nodes.(*GroupNode).ExecuteImpl
 	group@v1.go:102
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
-	executions.go:56
+	executions.go:68
 github.com/actionforge/actrun-cli/nodes.(*GroupInputsNode).ExecuteImpl
 	group-inputs@v1.go:39
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
-	executions.go:56
+	executions.go:68
 github.com/actionforge/actrun-cli/nodes.(*GroupNode).ExecuteImpl
 	group@v1.go:102
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
-	executions.go:56
+	executions.go:68
 github.com/actionforge/actrun-cli/nodes.(*StartNode).ExecuteImpl
 	start@v1.go:50
 github.com/actionforge/actrun-cli/nodes.(*StartNode).ExecuteEntry
 	start@v1.go:45
 github.com/actionforge/actrun-cli/core.RunGraph
-	graph.go:484
+	graph.go:514
 github.com/actionforge/actrun-cli/core.RunGraphFromString
-	graph.go:1074
+	graph.go:1104
 

@@ -11,6 +11,8 @@ import (
 	"github.com/google/uuid"
 )
 
+const MAX_STEP_CACHE_ITEM_SIZE = 64 * 1024 // 64KB
+
 type ContextVisit struct {
 	Node     NodeBaseInterface `json:"-"`
 	NodeID   string            `json:"node_id"`
@@ -29,6 +31,82 @@ const (
 	// Cache type used for outputs of data nodes
 	Ephemeral
 )
+
+type StepCacheEntry struct {
+	Conclusion string         `json:"conclusion"`
+	Outputs    map[string]any `json:"outputs"`
+}
+
+// HierarchicalMap is a memory-efficient map that chains to parent contexts.
+// Each context only stores its own entries; lookups traverse the parent chain.
+type HierarchicalMap[K comparable, V any] struct {
+	data   map[K]V
+	parent *HierarchicalMap[K, V]
+}
+
+// NewHierarchicalMap creates a new map, optionally chained to a parent.
+func NewHierarchicalMap[K comparable, V any](parent *HierarchicalMap[K, V]) *HierarchicalMap[K, V] {
+	return &HierarchicalMap[K, V]{
+		data:   make(map[K]V),
+		parent: parent,
+	}
+}
+
+// Get retrieves a value by key, traversing up the parent chain if not found locally.
+func (m *HierarchicalMap[K, V]) Get(key K) (V, bool) {
+	if val, ok := m.data[key]; ok {
+		return val, true
+	}
+	if m.parent != nil {
+		return m.parent.Get(key)
+	}
+	var zero V
+	return zero, false
+}
+
+// GetLocal retrieves a value only from local data, not traversing parents.
+func (m *HierarchicalMap[K, V]) GetLocal(key K) (V, bool) {
+	val, ok := m.data[key]
+	return val, ok
+}
+
+// Set stores a value in the current context only (does not affect parent).
+func (m *HierarchicalMap[K, V]) Set(key K, value V) {
+	m.data[key] = value
+}
+
+// All returns all entries merged from the entire chain (child entries override parent).
+func (m *HierarchicalMap[K, V]) All() map[K]V {
+	result := make(map[K]V)
+	m.collectAll(result)
+	return result
+}
+
+func (m *HierarchicalMap[K, V]) collectAll(result map[K]V) {
+	if m.parent != nil {
+		m.parent.collectAll(result)
+	}
+	maps.Copy(result, m.data)
+}
+
+// StepCache is a type alias for the step output cache.
+type StepCache = HierarchicalMap[string, *StepCacheEntry]
+
+// NewStepCache creates a new step cache, optionally chained to a parent.
+func NewStepCache(parent *StepCache) *StepCache {
+	return NewHierarchicalMap(parent)
+}
+
+// GetOrCreateStepEntry retrieves an existing local entry or creates a new one.
+// Only checks local cache to avoid races on shared parent entries.
+func GetOrCreateStepEntry(cache *StepCache, key string) *StepCacheEntry {
+	if entry, ok := cache.GetLocal(key); ok {
+		return entry
+	}
+	entry := &StepCacheEntry{Outputs: make(map[string]any)}
+	cache.Set(key, entry)
+	return entry
+}
 
 // ExecutionState is a structure whose main purpose is to provide the correct output values
 // and environment variables requested by nodes that were executed in subsequent goroutines.
@@ -85,6 +163,7 @@ type ExecutionState struct {
 	OutputCacheLock      *sync.RWMutex  `json:"-"`
 	DataOutputCache      map[string]any `json:"dataOutputCache"`
 	ExecutionOutputCache map[string]any `json:"executionOutputCache"`
+	StepCache            *StepCache     `json:"stepCache"`
 
 	DebugCallback DebugCallback `json:"-"`
 }
@@ -157,6 +236,7 @@ func (c *ExecutionState) PushNewExecutionState(parentNode NodeBaseInterface) *Ex
 		OutputCacheLock:      &sync.RWMutex{},
 		DataOutputCache:      make(map[string]any),
 		ExecutionOutputCache: make(map[string]any),
+		StepCache:            NewStepCache(c.StepCache),
 
 		Visited:       visited,
 		DebugCallback: c.DebugCallback,
@@ -203,19 +283,44 @@ func (c *ExecutionState) GetDataFromOutputCache(nodeCacheId string, outputId str
 	return nil, false
 }
 
-func (c *ExecutionState) CacheDataOutput(nodeCacheId string, outputId string, value any, ct CacheType) {
+func (c *ExecutionState) CacheDataOutput(node NodeBaseInterface, outputId string, value any, outputType string, ct CacheType) {
 	c.ContextStackLock.RLock()
 	defer c.ContextStackLock.RUnlock()
 
 	c.OutputCacheLock.Lock()
 	defer c.OutputCacheLock.Unlock()
 
-	cacheId := nodeCacheId + ":" + outputId
+	cacheId := node.GetCacheId() + ":" + outputId
 	if ct == Permanent {
 		c.ExecutionOutputCache[cacheId] = value
 	} else {
 		c.DataOutputCache[cacheId] = value
 	}
+
+	// Only cache primitive types under 64KB
+	if isPrimitiveType(outputType) && isUnderCacheLimit(value) {
+		stepEntry := GetOrCreateStepEntry(c.StepCache, node.GetId())
+		stepEntry.Outputs[outputId] = value
+	}
+}
+
+// isPrimitiveType returns true if the output type is a primitive type that should be cached.
+func isPrimitiveType(outputType string) bool {
+	switch outputType {
+	case "string", "number", "bool":
+		return true
+	default:
+		return false
+	}
+}
+
+// isUnderCacheLimit checks if a string value is under the cache size limit.
+// Non-string primitives always return true as they are small.
+func isUnderCacheLimit(value any) bool {
+	if s, ok := value.(string); ok {
+		return len(s) <= MAX_STEP_CACHE_ITEM_SIZE
+	}
+	return true
 }
 
 func (c *ExecutionState) EmptyDataOutputCache() {

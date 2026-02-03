@@ -1,0 +1,85 @@
+editor:
+  version:
+    created: v1.34.0
+entry: start
+type: standard
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 0
+      y: 0
+  - id: step1
+    type: core/run@v1
+    position:
+      x: 200
+      y: 0
+    inputs:
+      script: |
+        echo "Setting STEP1_OUTPUT"
+        echo "STEP1_OUTPUT=value_from_step1" >> $GITHUB_OUTPUT
+      shell: bash
+  - id: step2
+    type: core/run@v1
+    position:
+      x: 400
+      y: 0
+    inputs:
+      script: |
+        echo "Setting STEP2_OUTPUT"
+        echo "STEP2_OUTPUT=value_from_step2" >> $GITHUB_OUTPUT
+      shell: bash
+  - id: print-step1
+    type: core/const-string@v1
+    position:
+      x: 600
+      y: 100
+    inputs:
+      value: "step1.STEP1_OUTPUT: ${{ steps.step1.outputs.STEP1_OUTPUT }}"
+  - id: print-step2
+    type: core/const-string@v1
+    position:
+      x: 600
+      y: 200
+    inputs:
+      value: "step2.STEP2_OUTPUT: ${{ steps.step2.outputs.STEP2_OUTPUT }}"
+  - id: final-print
+    type: core/print@v1
+    position:
+      x: 800
+      y: 0
+    inputs:
+      values[0]: null
+      values[1]: null
+connections:
+  - src:
+      node: print-step1
+      port: result
+    dst:
+      node: final-print
+      port: values[0]
+  - src:
+      node: print-step2
+      port: result
+    dst:
+      node: final-print
+      port: values[1]
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: step1
+      port: exec
+  - src:
+      node: step1
+      port: exec-success
+    dst:
+      node: step2
+      port: exec
+  - src:
+      node: step2
+      port: exec-success
+    dst:
+      node: final-print
+      port: exec

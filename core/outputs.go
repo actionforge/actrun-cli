@@ -8,6 +8,8 @@ import (
 
 type SetOutputValueOpts struct {
 	NotExistsIsNoError bool
+	ForceSet           bool
+	StringTypeHint     bool // If true, treat value as string type; otherwise determine from value
 }
 
 // HasOutputsInterface is a representation for all outputs of a node.
@@ -116,9 +118,11 @@ func (n *Outputs) OutputValueById(c *ExecutionState, outputId OutputId) (any, er
 // The value type must match the output type, otherwise an error
 // is returned.
 func (n *Outputs) SetOutputValue(ec *ExecutionState, outputId OutputId, value any, opts SetOutputValueOpts) error {
+	var outputType string
 	outputDef, outputExists := n.outputDefs[outputId]
 	if outputExists {
-		expectedType := outputDef.Type
+		outputType = outputDef.Type
+		expectedType := outputType
 		if outputDef.Array {
 			expectedType = "[]" + expectedType
 		}
@@ -127,39 +131,50 @@ func (n *Outputs) SetOutputValue(ec *ExecutionState, outputId OutputId, value an
 			return CreateErr(ec, nil, "output '%s' (%s): expected %v, but got %T", outputDef.Name, outputId, outputDef.Type, value)
 		}
 	} else {
-		// if the output could not be found,
-		// check if it is a sub port instead
-		groupPortId, _, isIndexPort := IsValidIndexPortId(string(outputId))
-		if !isIndexPort {
-			if opts.NotExistsIsNoError {
-				return nil
+		if !opts.ForceSet {
+			// if the output could not be found,
+			// check if it is a sub port instead
+			groupPortId, _, isIndexPort := IsValidIndexPortId(string(outputId))
+			if !isIndexPort {
+				if opts.NotExistsIsNoError {
+					return nil
+				}
+				return CreateErr(ec, nil, "failed to set a value to an unknown port '%s'", outputId)
 			}
-			return CreateErr(ec, nil, "failed to set a value to an unknown port '%s'", outputId)
-		}
 
-		outputDef, outputExists = n.outputDefs[OutputId(groupPortId)]
-		if !outputExists {
-			if opts.NotExistsIsNoError {
-				return nil
+			outputDef, outputExists = n.outputDefs[OutputId(groupPortId)]
+			if !outputExists {
+				if opts.NotExistsIsNoError {
+					return nil
+				}
+				// If still nothing found, return an error
+				return CreateErr(ec, nil, "failed to set a value to an unknown port '%s'", outputId)
 			}
-			// If still nothing found, return an error
-			return CreateErr(ec, nil, "failed to set a value to an unknown port '%s'", outputId)
-		}
 
-		if !isValueValidForOutput(value, outputDef.Type) {
-			return CreateErr(ec, nil, "output '%s' (%s): expected %v, but got %T", outputDef.Name, outputId, outputDef.Type, value)
+			outputType = outputDef.Type
+			if !isValueValidForOutput(value, outputType) {
+				return CreateErr(ec, nil, "output '%s' (%s): expected %v, but got %T", outputDef.Name, outputId, outputDef.Type, value)
+			}
+		} else {
+			// ForceSet without known output definition - use provided type or determine from value
+			if opts.StringTypeHint {
+				outputType = "string"
+			} else {
+				outputType = determineOutputType(value)
+			}
 		}
 	}
 
 	// If the output is not connected, there's no need to keep the value. It can be discarded, unless
 	// for debug sessions where we always keep the output value, as it will be transmitted to the client for inspection
 	connectionCounter := n.outputConnectionCounter[outputId]
-	if connectionCounter == 0 && !ec.IsDebugSession {
+	if connectionCounter == 0 && !ec.IsDebugSession && !opts.ForceSet {
 		// TODO: (Seb) If the value is a stream, we should close it here
 		return nil
 	}
 
-	ec.CacheDataOutput(n.owner.GetCacheId(), string(outputId), value, Permanent)
+	ec.CacheDataOutput(n.owner, string(outputId), value, outputType, Permanent)
+
 	return nil
 }
 
@@ -235,4 +250,25 @@ var validKindsForExpectedType = map[string]map[reflect.Kind]struct{}{
 	"bool": {
 		reflect.Bool: {},
 	},
+}
+
+// determineOutputType returns the primitive type name for a value, or "unknown" if not a primitive.
+func determineOutputType(value any) string {
+	if value == nil {
+		return "unknown"
+	}
+
+	kind := reflect.TypeOf(value).Kind()
+	switch kind {
+	case reflect.String:
+		return "string"
+	case reflect.Bool:
+		return "bool"
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
+		reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64,
+		reflect.Float32, reflect.Float64:
+		return "number"
+	default:
+		return "unknown"
+	}
 }

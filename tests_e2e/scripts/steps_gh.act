@@ -1,0 +1,248 @@
+editor:
+  version:
+    created: v1.34.0
+    updated: v1.58.0
+entry: start
+type: standard
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: -1230
+      y: 1530
+  - id: core-concurrent-exec-v1-plum-parrot-tangerine
+    type: core/concurrent-exec@v1
+    position:
+      x: 160
+      y: 1390
+    outputs:
+      exec[0]: null
+      exec[1]: null
+  - id: core-print-v1-blackberry-teal-fig
+    type: core/print@v1
+    position:
+      x: 2460
+      y: 1430
+    inputs:
+      values[0]: null
+      values[1]: null
+      values[2]: null
+      values[3]: null
+      values[4]: null
+  - id: core-const-string-v1-black-snake-violet
+    type: core/const-string@v1
+    position:
+      x: 2010
+      y: 1650
+    inputs:
+      value: 'left.LEFT: ${{ steps.left.outputs.LEFT }}'
+  - id: core-const-string-v1-lion-gray-blackberry
+    type: core/const-string@v1
+    position:
+      x: 2010
+      y: 1710
+    inputs:
+      value: 'right.RIGHT: ${{ steps.right.outputs.RIGHT }}'
+  - id: core-const-string-v1-squirrel-octopus-pineapple
+    type: core/const-string@v1
+    position:
+      x: 2030
+      y: 1570
+    inputs:
+      value: 'root.ROOT: ${{ steps.root.outputs.ROOT }}'
+  - id: left
+    type: core/run@v1
+    position:
+      x: 650
+      y: 1050
+    inputs:
+      script: |-
+        echo "set left.LEFT"
+        echo "LEFT=Left Value" >> $GITHUB_OUTPUT
+      shell: bash
+    label: ''
+  - id: right
+    type: core/run@v1
+    position:
+      x: 740
+      y: 1650
+    inputs:
+      script: |-
+        sleep 1
+        echo "set right.RIGHT"
+        echo "RIGHT=Right Value" >> $GITHUB_OUTPUT
+      shell: bash
+    label: ''
+  - id: root
+    type: core/run@v1
+    position:
+      x: -620
+      y: 1630
+    inputs:
+      script: |-
+        echo "set root.ROOT"
+        echo "ROOT=Im the root value" >> $GITHUB_OUTPUT
+    label: ''
+  - id: core-concurrent-exec-v1-gold-raspberry-jellyfish
+    type: core/concurrent-exec@v1
+    position:
+      x: 1130
+      y: 1120
+    outputs:
+      exec[0]: null
+      exec[1]: null
+  - id: left-2
+    type: core/run@v1
+    position:
+      x: 1750
+      y: 980
+    inputs:
+      script: |-
+        sleep 0.5
+        echo "set left-2.LEFT_2"
+        echo "LEFT_2=Left 2 Value" >> $GITHUB_OUTPUT
+      shell: bash
+    label: ''
+  - id: right-2
+    type: core/run@v1
+    position:
+      x: 1540
+      y: 1580
+    inputs:
+      script: |-
+        echo "set right-2.RIGHT_2"
+        echo "RIGHT_2=Right Value" >> $GITHUB_OUTPUT
+      shell: bash
+    label: ''
+  - id: core-const-string-v1-grape-jellyfish-shark
+    type: core/const-string@v1
+    position:
+      x: 2010
+      y: 1760
+    inputs:
+      value: 'left-2.LEFT_2: ${{ steps.left-2.outputs.LEFT_2 }}'
+  - id: core-const-string-v1-nectarine-jellyfish-rabbit
+    type: core/const-string@v1
+    position:
+      x: 2010
+      y: 1810
+    inputs:
+      value: 'right-2.RIGHT_2: ${{ steps.right-2.outputs.RIGHT_2 }}'
+  - id: core-sequence-v1-giraffe-fox-jackfruit
+    type: core/sequence@v1
+    position:
+      x: -150
+      y: 1570
+    outputs:
+      exec[0]: null
+      exec[1]: null
+connections:
+  - src:
+      node: core-const-string-v1-black-snake-violet
+      port: result
+    dst:
+      node: core-print-v1-blackberry-teal-fig
+      port: values[1]
+  - src:
+      node: core-const-string-v1-lion-gray-blackberry
+      port: result
+    dst:
+      node: core-print-v1-blackberry-teal-fig
+      port: values[2]
+  - src:
+      node: core-const-string-v1-squirrel-octopus-pineapple
+      port: result
+    dst:
+      node: core-print-v1-blackberry-teal-fig
+      port: values[0]
+  - src:
+      node: core-const-string-v1-grape-jellyfish-shark
+      port: result
+    dst:
+      node: core-print-v1-blackberry-teal-fig
+      port: values[3]
+  - src:
+      node: core-const-string-v1-nectarine-jellyfish-rabbit
+      port: result
+    dst:
+      node: core-print-v1-blackberry-teal-fig
+      port: values[4]
+executions:
+  - src:
+      node: core-concurrent-exec-v1-plum-parrot-tangerine
+      port: exec[0]
+    dst:
+      node: left
+      port: exec
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: root
+      port: exec
+  - src:
+      node: core-concurrent-exec-v1-plum-parrot-tangerine
+      port: exec-completed
+    dst:
+      node: core-print-v1-blackberry-teal-fig
+      port: exec
+  - src:
+      node: core-concurrent-exec-v1-gold-raspberry-jellyfish
+      port: exec[1]
+    dst:
+      node: right-2
+      port: exec
+  - src:
+      node: left-2
+      port: exec-success
+    dst:
+      node: core-print-v1-blackberry-teal-fig
+      port: exec
+  - src:
+      node: right
+      port: exec-success
+    dst:
+      node: core-print-v1-blackberry-teal-fig
+      port: exec
+  - src:
+      node: right-2
+      port: exec-success
+    dst:
+      node: core-print-v1-blackberry-teal-fig
+      port: exec
+  - src:
+      node: left
+      port: exec-success
+    dst:
+      node: core-concurrent-exec-v1-gold-raspberry-jellyfish
+      port: exec
+  - src:
+      node: root
+      port: exec-success
+    dst:
+      node: core-sequence-v1-giraffe-fox-jackfruit
+      port: exec
+  - src:
+      node: core-sequence-v1-giraffe-fox-jackfruit
+      port: exec[0]
+    dst:
+      node: core-print-v1-blackberry-teal-fig
+      port: exec
+  - src:
+      node: core-sequence-v1-giraffe-fox-jackfruit
+      port: exec[1]
+    dst:
+      node: core-concurrent-exec-v1-plum-parrot-tangerine
+      port: exec
+  - src:
+      node: core-concurrent-exec-v1-plum-parrot-tangerine
+      port: exec[1]
+    dst:
+      node: right
+      port: exec
+  - src:
+      node: core-concurrent-exec-v1-gold-raspberry-jellyfish
+      port: exec[0]
+    dst:
+      node: left-2
+      port: exec

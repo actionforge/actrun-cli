@@ -102,7 +102,7 @@ func (n *RunExecNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, 
 	} else {
 		if c.IsGitHubWorkflow {
 			ghContextParser := GhContextParser{}
-			ghEnvs, err := ghContextParser.Parse(c, currentEnvMap)
+			ghEnvs, ghOutputs, err := ghContextParser.Parse(c, currentEnvMap)
 			if err != nil {
 				return err
 			}
@@ -110,6 +110,17 @@ func (n *RunExecNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, 
 			nextEnvMap := c.GetContextEnvironMapCopy()
 			maps.Copy(nextEnvMap, ghEnvs)
 			c.SetContextEnvironMap(nextEnvMap)
+
+			for key, value := range ghOutputs {
+				err = n.SetOutputValue(c, core.OutputId(key), value, core.SetOutputValueOpts{
+					NotExistsIsNoError: true,
+					ForceSet:           true,
+					StringTypeHint:     true,
+				})
+				if err != nil {
+					return err
+				}
+			}
 		}
 
 		err = n.Execute(ni.Core_run_exec_v1_Output_exec_success, c, nil)

@@ -6,6 +6,7 @@ import (
 
 	"github.com/actionforge/actrun-cli/core"
 	ni "github.com/actionforge/actrun-cli/node_interfaces"
+	"github.com/actionforge/actrun-cli/utils"
 )
 
 //go:embed dir-create@v1.yml
@@ -29,11 +30,16 @@ func (n *DirCreateNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId
 		return err
 	}
 
+	cleanPath, pathErr := utils.ValidatePath(path)
+	if pathErr != nil {
+		return core.CreateErr(c, pathErr, "invalid directory path")
+	}
+
 	var mkdirErr error
 	if mkdirAll {
-		mkdirErr = os.MkdirAll(path, 0755)
+		mkdirErr = os.MkdirAll(cleanPath, 0755)
 	} else {
-		mkdirErr = os.Mkdir(path, 0755)
+		mkdirErr = os.Mkdir(cleanPath, 0755)
 	}
 
 	if mkdirErr != nil {

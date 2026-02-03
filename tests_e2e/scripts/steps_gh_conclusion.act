@@ -1,0 +1,69 @@
+editor:
+  version:
+    created: v1.34.0
+entry: start
+type: standard
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 0
+      y: 0
+  - id: step-success
+    type: core/run@v1
+    position:
+      x: 200
+      y: 0
+    inputs:
+      script: |
+        echo "This step will succeed"
+        echo "SUCCESS_OUTPUT=worked" >> $GITHUB_OUTPUT
+      shell: bash
+  - id: print-conclusion-success
+    type: core/const-string@v1
+    position:
+      x: 400
+      y: 100
+    inputs:
+      value: "step-success.conclusion: ${{ steps.step-success.conclusion }}"
+  - id: print-output
+    type: core/const-string@v1
+    position:
+      x: 400
+      y: 200
+    inputs:
+      value: "step-success.outputs.SUCCESS_OUTPUT: ${{ steps.step-success.outputs.SUCCESS_OUTPUT }}"
+  - id: final-print
+    type: core/print@v1
+    position:
+      x: 600
+      y: 0
+    inputs:
+      values[0]: null
+      values[1]: null
+connections:
+  - src:
+      node: print-conclusion-success
+      port: result
+    dst:
+      node: final-print
+      port: values[0]
+  - src:
+      node: print-output
+      port: result
+    dst:
+      node: final-print
+      port: values[1]
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: step-success
+      port: exec
+  - src:
+      node: step-success
+      port: exec-success
+    dst:
+      node: final-print
+      port: exec

@@ -7,6 +7,7 @@ import (
 
 	"github.com/actionforge/actrun-cli/core"
 	ni "github.com/actionforge/actrun-cli/node_interfaces"
+	"github.com/actionforge/actrun-cli/utils"
 )
 
 //go:embed file-read@v1.yml
@@ -25,13 +26,18 @@ func (n *FileReadNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId,
 		return err
 	}
 
-	fp, err := os.Open(path)
+	cleanPath, pathErr := utils.ValidatePath(path)
+	if pathErr != nil {
+		return core.CreateErr(c, pathErr, "invalid file path")
+	}
+
+	fp, err := os.Open(cleanPath)
 	if err != nil {
 		return core.CreateErr(c, err)
 	}
 
 	dsf := core.DataStreamFactory{
-		SourcePath: path,
+		SourcePath: cleanPath,
 		Reader:     fp,
 		Length:     core.GetReaderLength(fp),
 	}
@@ -42,10 +48,10 @@ func (n *FileReadNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId,
 		return err
 	}
 
-	st, statErr := os.Stat(path)
+	st, statErr := os.Stat(cleanPath)
 	if statErr == nil {
 		if st.IsDir() {
-			statErr = core.CreateErr(c, nil, "stat %s: is a directory", path)
+			statErr = core.CreateErr(c, nil, "stat %s: is a directory", cleanPath)
 		}
 	}
 

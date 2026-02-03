@@ -33,7 +33,12 @@ func (n *FileWriteNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId
 		return err
 	}
 
-	fw, err := os.Create(p)
+	cleanPath, pathErr := utils.ValidatePath(p)
+	if pathErr != nil {
+		return core.CreateErr(c, pathErr, "invalid file path")
+	}
+
+	fw, err := os.Create(cleanPath)
 	if err != nil {
 		return core.CreateErr(c, err, "error creating file")
 	}

@@ -9,6 +9,7 @@ import (
 
 	"github.com/actionforge/actrun-cli/core"
 	ni "github.com/actionforge/actrun-cli/node_interfaces"
+	"github.com/actionforge/actrun-cli/utils"
 
 	"golang.org/x/exp/maps"
 )
@@ -116,6 +117,11 @@ func walk(root string, opts walkOpts, pattern []string, items map[string]os.File
 		if err != nil {
 			return "", core.CreateErr(nil, err, "failed to get current working directory")
 		}
+	}
+
+	root, err = utils.ValidatePath(root)
+	if err != nil {
+		return "", core.CreateErr(nil, err, "invalid path")
 	}
 
 	root, err = filepath.Abs(root)

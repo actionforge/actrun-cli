@@ -1,0 +1,98 @@
+  evaluated to: 'false'
+  evaluated to: 'steps_gh.act'
+  found value in flags
+  found value in: 'env (shell)'
+  no value (is optional) found for: 'concurrency'
+  no value (is optional) found for: 'config_file'
+  no value (is optional) found for: 'env_file'
+  no value (is optional) found for: 'session_token'
+GitHub workflow detected via GITHUB_ACTIONS environment variable (.env or shell)changing working directory to GITHUB_WORKSPACE: [REDACTED]/scripts
+PushNodeVisit: core-concurrent-exec-v1-gold-raspberry-jellyfish, execute: true
+PushNodeVisit: core-concurrent-exec-v1-plum-parrot-tangerine, execute: true
+PushNodeVisit: core-const-string-v1-black-snake-violet, execute: false
+PushNodeVisit: core-const-string-v1-black-snake-violet, execute: false
+PushNodeVisit: core-const-string-v1-black-snake-violet, execute: false
+PushNodeVisit: core-const-string-v1-black-snake-violet, execute: false
+PushNodeVisit: core-const-string-v1-black-snake-violet, execute: false
+PushNodeVisit: core-const-string-v1-grape-jellyfish-shark, execute: false
+PushNodeVisit: core-const-string-v1-grape-jellyfish-shark, execute: false
+PushNodeVisit: core-const-string-v1-grape-jellyfish-shark, execute: false
+PushNodeVisit: core-const-string-v1-grape-jellyfish-shark, execute: false
+PushNodeVisit: core-const-string-v1-grape-jellyfish-shark, execute: false
+PushNodeVisit: core-const-string-v1-lion-gray-blackberry, execute: false
+PushNodeVisit: core-const-string-v1-lion-gray-blackberry, execute: false
+PushNodeVisit: core-const-string-v1-lion-gray-blackberry, execute: false
+PushNodeVisit: core-const-string-v1-lion-gray-blackberry, execute: false
+PushNodeVisit: core-const-string-v1-lion-gray-blackberry, execute: false
+PushNodeVisit: core-const-string-v1-nectarine-jellyfish-rabbit, execute: false
+PushNodeVisit: core-const-string-v1-nectarine-jellyfish-rabbit, execute: false
+PushNodeVisit: core-const-string-v1-nectarine-jellyfish-rabbit, execute: false
+PushNodeVisit: core-const-string-v1-nectarine-jellyfish-rabbit, execute: false
+PushNodeVisit: core-const-string-v1-nectarine-jellyfish-rabbit, execute: false
+PushNodeVisit: core-const-string-v1-squirrel-octopus-pineapple, execute: false
+PushNodeVisit: core-const-string-v1-squirrel-octopus-pineapple, execute: false
+PushNodeVisit: core-const-string-v1-squirrel-octopus-pineapple, execute: false
+PushNodeVisit: core-const-string-v1-squirrel-octopus-pineapple, execute: false
+PushNodeVisit: core-const-string-v1-squirrel-octopus-pineapple, execute: false
+PushNodeVisit: core-print-v1-blackberry-teal-fig, execute: true
+PushNodeVisit: core-print-v1-blackberry-teal-fig, execute: true
+PushNodeVisit: core-print-v1-blackberry-teal-fig, execute: true
+PushNodeVisit: core-print-v1-blackberry-teal-fig, execute: true
+PushNodeVisit: core-print-v1-blackberry-teal-fig, execute: true
+PushNodeVisit: core-sequence-v1-giraffe-fox-jackfruit, execute: true
+PushNodeVisit: left, execute: true
+PushNodeVisit: left-2, execute: true
+PushNodeVisit: right, execute: true
+PushNodeVisit: right-2, execute: true
+PushNodeVisit: root, execute: true
+PushNodeVisit: start, execute: true
+build hasn't expired yet
+left-2.LEFT_2: 
+left-2.LEFT_2: 
+left-2.LEFT_2: 
+left-2.LEFT_2: 
+left-2.LEFT_2: Left 2 Value
+left.LEFT: 
+left.LEFT: 
+left.LEFT: 
+left.LEFT: Left Value
+left.LEFT: Left Value
+looking for value: 'concurrency'
+looking for value: 'config_file'
+looking for value: 'create_debug_session'
+looking for value: 'env_file'
+looking for value: 'graph_file'
+looking for value: 'session_token'
+right-2.RIGHT_2: 
+right-2.RIGHT_2: 
+right-2.RIGHT_2: 
+right-2.RIGHT_2: 
+right-2.RIGHT_2: Right Value
+right.RIGHT: 
+right.RIGHT: 
+right.RIGHT: 
+right.RIGHT: 
+right.RIGHT: Right Value
+root.ROOT: Im the root value
+root.ROOT: Im the root value
+root.ROOT: Im the root value
+root.ROOT: Im the root value
+root.ROOT: Im the root value
+set left-2.LEFT_2
+set left.LEFT
+set right-2.RIGHT_2
+set right.RIGHT
+set root.ROOT
+🟢 Execute 'Concurrent Execution (core-concurrent-exec-v1-gold-raspberry-jellyfish)'
+🟢 Execute 'Concurrent Execution (core-concurrent-exec-v1-plum-parrot-tangerine)'
+🟢 Execute 'Print (core-print-v1-blackberry-teal-fig)'
+🟢 Execute 'Print (core-print-v1-blackberry-teal-fig)'
+🟢 Execute 'Print (core-print-v1-blackberry-teal-fig)'
+🟢 Execute 'Print (core-print-v1-blackberry-teal-fig)'
+🟢 Execute 'Print (core-print-v1-blackberry-teal-fig)'
+🟢 Execute 'Run Script (left)'
+🟢 Execute 'Run Script (left-2)'
+🟢 Execute 'Run Script (right)'
+🟢 Execute 'Run Script (right-2)'
+🟢 Execute 'Run Script (root)'
+🟢 Execute 'Sequence (core-sequence-v1-giraffe-fox-jackfruit)'

@@ -16,6 +16,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/actionforge/actrun-cli/utils"
 	"github.com/rhysd/actionlint"
 )
 
@@ -318,9 +319,13 @@ func (e *Evaluator) hashFiles(patterns ...string) (string, error) {
 	}
 	var uniqueFiles []string
 	for f := range fileSet {
-		info, err := os.Stat(f)
+		cleanPath, err := utils.ValidatePath(f)
+		if err != nil {
+			continue
+		}
+		info, err := os.Stat(cleanPath)
 		if err == nil && info.Mode().IsRegular() {
-			uniqueFiles = append(uniqueFiles, f)
+			uniqueFiles = append(uniqueFiles, cleanPath)
 		}
 	}
 	sort.Strings(uniqueFiles)
@@ -331,7 +336,11 @@ func (e *Evaluator) hashFiles(patterns ...string) (string, error) {
 
 	hasher := sha256.New()
 	for _, filePath := range uniqueFiles {
-		file, err := os.Open(filePath)
+		cleanPath, err := utils.ValidatePath(filePath)
+		if err != nil {
+			continue
+		}
+		file, err := os.Open(cleanPath)
 		if err != nil {
 			continue
 		}
@@ -356,7 +365,7 @@ func (e *Evaluator) resolveRootVar(name string) (any, error) {
 	case "needs":
 		return &GhNeedsProxy{GhNeeds: e.ctx.GhNeeds}, nil
 	case "steps":
-		return e.ctx.DataOutputCache, nil
+		return e.ctx.StepCache, nil
 	case "inputs":
 		return &InputsProxy{ctx: e.ctx}, nil
 	case "matrix":
@@ -475,6 +484,9 @@ func (e *Evaluator) evaluateArrayDeref(node *actionlint.ArrayDerefNode) (any, er
 		receiverVal = v.Secrets
 	case *InputsProxy:
 		receiverVal = v.ctx.Inputs
+	case *StepCache:
+		// Only flatten for iteration (steps.*)
+		return toSortedValues(v.All()), nil
 	}
 
 	switch m := receiverVal.(type) {
@@ -512,6 +524,19 @@ func (e *Evaluator) evaluateObjectDeref(node *actionlint.ObjectDerefNode) (any, 
 		key := strings.ToUpper(propName)
 		if val, ok := v.Secrets[key]; ok {
 			return val, nil
+		}
+
+	case *StepCache:
+		if entry, ok := v.Get(propName); ok {
+			return entry, nil
+		}
+
+	case *StepCacheEntry:
+		switch propName {
+		case "outputs":
+			return v.Outputs, nil
+		case "conclusion":
+			return v.Conclusion, nil
 		}
 
 	case map[string]any:

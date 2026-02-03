@@ -1,0 +1,27 @@
+build hasn't expired yet
+looking for value: 'env_file'
+  no value (is optional) found for: 'env_file'
+looking for value: 'config_file'
+  no value (is optional) found for: 'config_file'
+looking for value: 'concurrency'
+  no value (is optional) found for: 'concurrency'
+looking for value: 'graph_file'
+  found value in: 'env (shell)'
+  evaluated to: 'steps_gh_path.act'
+looking for value: 'session_token'
+  no value (is optional) found for: 'session_token'
+looking for value: 'create_debug_session'
+  found value in flags
+  evaluated to: 'false'
+GitHub workflow detected via GITHUB_ACTIONS environment variable (.env or shell)changing working directory to GITHUB_WORKSPACE: [REDACTED]/scripts
+PushNodeVisit: start, execute: true
+🟢 Execute 'Run Script (step-add-path)'
+PushNodeVisit: step-add-path, execute: true
+Adding [REDACTED]/bin to PATH via GITHUB_PATH
+🟢 Execute 'Run Script (step-check-path)'
+PushNodeVisit: step-check-path, execute: true
+SUCCESS: PATH contains [REDACTED]/bin
+🟢 Execute 'Print (final-print)'
+PushNodeVisit: final-print, execute: true
+PushNodeVisit: print-result, execute: false
+Path modification result: path_modified

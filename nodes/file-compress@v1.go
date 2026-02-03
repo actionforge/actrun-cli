@@ -16,6 +16,7 @@ import (
 
 	"github.com/actionforge/actrun-cli/core"
 	ni "github.com/actionforge/actrun-cli/node_interfaces"
+	"github.com/actionforge/actrun-cli/utils"
 
 	"golang.org/x/exp/maps"
 )
@@ -126,25 +127,29 @@ func createArchiveStreamFromPaths(c *core.ExecutionState, itemPaths []string, co
 	dirSet := make(map[string]struct{})
 
 	for _, path := range itemPaths {
-		stats, err := os.Lstat(path)
+		cleanPath, pathErr := utils.ValidatePath(path)
+		if pathErr != nil {
+			return nil, core.CreateErr(c, pathErr, "invalid path: '%s'", path)
+		}
+		stats, err := os.Lstat(cleanPath)
 		if err != nil {
-			return nil, core.CreateErr(c, err, "failed to stat file: '%s'", path)
+			return nil, core.CreateErr(c, err, "failed to stat file: '%s'", cleanPath)
 		}
 
 		if stats.IsDir() {
 			// ignore walking a directory that has already been walked
-			if _, ok := dirSet[path]; ok {
+			if _, ok := dirSet[cleanPath]; ok {
 				continue
 			}
 
 			tmpItemSet := make(map[string]os.FileInfo)
-			path, err = walk(path, walkOpts{
+			walkPath, err := walk(cleanPath, walkOpts{
 				recursive: true,
 				files:     true,
 				dirs:      false,
 			}, nil, tmpItemSet)
 			if err != nil {
-				return nil, core.CreateErr(c, err, "failed to walk directory: '%s'", path)
+				return nil, core.CreateErr(c, err, "failed to walk directory: '%s'", walkPath)
 			}
 
 			for k, v := range tmpItemSet {
@@ -158,7 +163,7 @@ func createArchiveStreamFromPaths(c *core.ExecutionState, itemPaths []string, co
 			}
 
 		} else if stats.Mode().IsRegular() {
-			itemSet[path] = stats
+			itemSet[cleanPath] = stats
 		}
 	}
 

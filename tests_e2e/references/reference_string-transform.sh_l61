@@ -37,25 +37,25 @@ github.com/actionforge/actrun-cli/nodes.(*StringTransform).OutputValueById
 github.com/actionforge/actrun-cli/core.(*Inputs).InputValueById
 	inputs.go:364
 github.com/actionforge/actrun-cli/core.inputValueById[...]
-	inputs.go:478
+	inputs.go:483
 github.com/actionforge/actrun-cli/core.InputValueFromSubInputs[...]
-	inputs.go:473
+	inputs.go:478
 github.com/actionforge/actrun-cli/core.InputArrayValueById[...]
-	inputs.go:555
+	inputs.go:560
 github.com/actionforge/actrun-cli/nodes.(*PrintNode).ExecuteImpl
 	print@v1.go:27
 github.com/actionforge/actrun-cli/core.(*Executions).Execute
-	executions.go:56
+	executions.go:68
 github.com/actionforge/actrun-cli/nodes.(*StartNode).ExecuteImpl
 	start@v1.go:50
 github.com/actionforge/actrun-cli/nodes.(*StartNode).ExecuteEntry
 	start@v1.go:45
 github.com/actionforge/actrun-cli/core.RunGraph
-	graph.go:484
+	graph.go:514
 github.com/actionforge/actrun-cli/core.RunGraphFromString
-	graph.go:1074
+	graph.go:1104
 github.com/actionforge/actrun-cli/core.RunGraphFromFile
-	graph.go:1092
+	graph.go:1126
 github.com/actionforge/actrun-cli/cmd.cmdRootRun
 	cmd_root.go:186
 github.com/spf13/cobra.(*Command).execute

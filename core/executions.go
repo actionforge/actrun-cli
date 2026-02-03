@@ -30,6 +30,18 @@ func (n *Executions) Execute(outputPort OutputId, ec *ExecutionState, err error)
 
 	dest, hasDest := n.GetExecutionTarget(outputPort)
 
+	// Set the step conclusion for the SOURCE node based on which output port is being executed.
+	// This enables ${{ steps.X.conclusion }} syntax similar to GitHub Actions.
+	// The conclusion is set BEFORE downstream nodes execute so they can read it.
+	if hasDest && dest.SrcNode != nil {
+		srcStepEntry := GetOrCreateStepEntry(ec.StepCache, dest.SrcNode.GetId())
+		if err != nil {
+			srcStepEntry.Conclusion = "failure"
+		} else {
+			srcStepEntry.Conclusion = "success"
+		}
+	}
+
 	// if this is the error path, and the error port is not connected
 	// we return the error so it won't be silently ignored
 	if err != nil {

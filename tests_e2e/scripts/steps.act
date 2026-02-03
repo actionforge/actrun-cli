@@ -1,0 +1,69 @@
+editor:
+  version:
+    created: v1.34.0
+entry: start
+type: standard
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 0
+      y: 0
+  - id: step1
+    type: core/run@v1
+    position:
+      x: 200
+      y: 0
+    inputs:
+      script: |
+        echo "step1 executed"
+      shell: bash
+  - id: step2
+    type: core/run@v1
+    position:
+      x: 400
+      y: 0
+    inputs:
+      script: |
+        echo "step2 executed"
+      shell: bash
+  - id: print-conclusions
+    type: core/const-string@v1
+    position:
+      x: 600
+      y: 100
+    inputs:
+      value: "step1.conclusion: ${{ steps.step1.conclusion }}, step2.conclusion: ${{ steps.step2.conclusion }}"
+  - id: final-print
+    type: core/print@v1
+    position:
+      x: 800
+      y: 0
+    inputs:
+      values[0]: null
+connections:
+  - src:
+      node: print-conclusions
+      port: result
+    dst:
+      node: final-print
+      port: values[0]
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: step1
+      port: exec
+  - src:
+      node: step1
+      port: exec-success
+    dst:
+      node: step2
+      port: exec
+  - src:
+      node: step2
+      port: exec-success
+    dst:
+      node: final-print
+      port: exec
