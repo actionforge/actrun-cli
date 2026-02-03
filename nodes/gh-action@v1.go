@@ -264,6 +264,17 @@ func (n *GhActionNode) ExecuteDocker(c *core.ExecutionState, workingDirectory st
 		return core.CreateErr(c, nil, "RUNNER_TEMP is not set")
 	}
 
+	tempDirs := []string{
+		filepath.Join(sysRunnerTempDir, "_github_workflow"),
+		filepath.Join(sysRunnerTempDir, "_github_home"),
+		filepath.Join(sysRunnerTempDir, "_runner_file_commands"),
+	}
+	for _, dir := range tempDirs {
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			return core.CreateErr(c, err, "failed to create directory %s", dir)
+		}
+	}
+
 	sysGithubWorkspace := env["GITHUB_WORKSPACE"]
 	if sysGithubWorkspace == "" {
 		return core.CreateErr(c, nil, "GITHUB_WORKSPACE is not set")
