@@ -7,6 +7,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/actionforge/actrun-cli/build"
 	"github.com/actionforge/actrun-cli/core"
@@ -17,6 +18,7 @@ import (
 	"github.com/fatih/color"
 	"github.com/inconshreveable/mousetrap"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 
 	// initialize all nodes
 	_ "github.com/actionforge/actrun-cli/nodes"
@@ -140,9 +142,9 @@ var cmdRoot = &cobra.Command{
 		}
 
 		if finalCreateDebugSession && finalSessionToken != "" {
-			return errors.New("both --session_token and --create_debug_session cannot be used together")
+			return errors.New("both --session-token and --create-debug-session cannot be used together")
 		} else if finalCreateDebugSession && finalGraphFile == "" {
-			return errors.New("when using --create_debug_session, a graph file must be specified")
+			return errors.New("when using --create-debug-session, a graph file must be specified")
 		}
 
 		return nil
@@ -200,6 +202,11 @@ func Execute() {
 	}
 }
 
+// Allow both variations, both --env-file and --env_file will work
+func normalizeFlag(f *pflag.FlagSet, name string) pflag.NormalizedName {
+	return pflag.NormalizedName(strings.ReplaceAll(name, "_", "-"))
+}
+
 func init() {
 	flag.Usage = func() {
 		fmt.Print("\n")
@@ -214,12 +221,16 @@ func init() {
 		fmt.Print("\n\n")
 	}
 
-	cmdRoot.PersistentFlags().StringVar(&flagEnvFile, "env_file", "", "Absolute path to an env file (.env) to load before execution")
+	// Enable backwards compatibility: allow both --env-file and --env_file
+	cmdRoot.PersistentFlags().SetNormalizeFunc(normalizeFlag)
+	cmdRoot.Flags().SetNormalizeFunc(normalizeFlag)
 
-	cmdRoot.Flags().StringVar(&flagConfigFile, "config_file", "", "The config file to use")
+	cmdRoot.PersistentFlags().StringVar(&flagEnvFile, "env-file", "", "Absolute path to an env file (.env) to load before execution")
+
+	cmdRoot.Flags().StringVar(&flagConfigFile, "config-file", "", "The config file to use")
 	cmdRoot.Flags().StringVar(&flagConcurrency, "concurrency", "", "Enable or disable concurrency")
-	cmdRoot.Flags().StringVar(&flagSessionToken, "session_token", "", "The session token from your browser")
-	cmdRoot.Flags().BoolVar(&flagCreateDebugSession, "create_debug_session", false, "Create a debug session by connecting to the web app")
+	cmdRoot.Flags().StringVar(&flagSessionToken, "session-token", "", "The session token from your browser")
+	cmdRoot.Flags().BoolVar(&flagCreateDebugSession, "create-debug-session", false, "Create a debug session by connecting to the web app")
 
 	// disable interspersed flag parsing to allow passing arbitrary flags to graphs.
 	// it stops cobra from parsing flags once it hits positional argument
