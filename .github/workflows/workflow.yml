@@ -39,29 +39,29 @@ jobs:
     steps:
 
       - name: Build temporary actrun
-        uses: actionforge/action@e5e24692b5a9a1e5f5135852711715a1468590dc # v0.0.1
+        uses: actionforge/action@6635019c96dcd6b3e018df654473a547471338a5 # v0.14.5
         with:
-          graph_file: build-quick.act
+          graph-file: build-quick.act
         env:
           UPLOAD_COVER: true
 
       - name: Test test_input_output.act
         # execute on every push that is a tag
-        uses: actionforge/action@ed08177bf37e770602c7d3f0ac43580621ddd727
+        uses: actionforge/action@6635019c96dcd6b3e018df654473a547471338a5 # v0.14.5
         with:
           # Use actrun in workdir directory
-          runner_path: ${{ github.workspace }}/actrun
-          graph_file: test_input_output.act
-          session_token: ${{ github.event.inputs.session_token }}
+          runner-path: ${{ github.workspace }}/actrun
+          graph-file: test_input_output.act
+          session-token: ${{ github.event.inputs.session_token }}
 
       - name: Test test_env.yml
         # execute on every push that is a tag
-        uses: actionforge/action@ed08177bf37e770602c7d3f0ac43580621ddd727
+        uses: actionforge/action@6635019c96dcd6b3e018df654473a547471338a5 # v0.14.5
         with:
           # Use actrun in workdir directory
-          runner_path: ${{ github.workspace }}/actrun
-          graph_file: test_env.act
-          session_token: ${{ github.event.inputs.session_token }}
+          runner-path: ${{ github.workspace }}/actrun
+          graph-file: test_env.act
+          session-token: ${{ github.event.inputs.session_token }}
         env:
           MY_ENV: "hello world"
 
@@ -88,17 +88,17 @@ jobs:
 
     steps:
       - name: Build temporary actrun
-        uses: actionforge/action@e5e24692b5a9a1e5f5135852711715a1468590dc # v0.0.1
+        uses: actionforge/action@6635019c96dcd6b3e018df654473a547471338a5 # v0.14.5
         with:
-          graph_file: build-quick.act
+          graph-file: build-quick.act
 
       - name: (${{ matrix.license }})
-        uses: actionforge/action@e5e24692b5a9a1e5f5135852711715a1468590dc # v0.0.1
+        uses: actionforge/action@6635019c96dcd6b3e018df654473a547471338a5 # v0.14.5
         env:
           LICENSE: ${{ matrix.license }}
         with:
-          runner_path: ${{ github.workspace }}/actrun
-          graph_file: build-test-publish.act
+          runner-path: ${{ github.workspace }}/actrun
+          graph-file: build-test-publish.act
           inputs: ${{ toJson(inputs) }}
           secrets: ${{ toJson(secrets) }}
           matrix: ${{ toJson(matrix) }}
