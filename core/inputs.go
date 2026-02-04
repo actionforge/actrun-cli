@@ -1040,7 +1040,7 @@ func EvaluateToStringExpression(ctx *ExecutionState, raw string) (string, error)
 
 	strRes, ok := res.(string)
 	if !ok {
-		return "", fmt.Errorf("expression did not evaluate to a string: %T", res)
+		return fmt.Sprintf("%v", res), nil
 	}
 
 	return strRes, nil
