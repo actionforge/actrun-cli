@@ -1,0 +1,169 @@
+editor:
+  version:
+    created: v1.58.0
+entry: start
+type: standard
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 20
+      y: 10
+  - id: const-starts-with
+    type: core/const-string@v1
+    position:
+      x: 30
+      y: 210
+    inputs:
+      value: ${{ startsWith(github.ref, 'refs/tags/') }}
+  - id: const-bool-true
+    type: core/const-string@v1
+    position:
+      x: 310
+      y: 280
+    inputs:
+      value: ${{ true }}
+  - id: const-bool-false
+    type: core/const-string@v1
+    position:
+      x: 590
+      y: 350
+    inputs:
+      value: ${{ false }}
+  - id: const-int
+    type: core/const-string@v1
+    position:
+      x: 880
+      y: 420
+    inputs:
+      value: ${{ 42 }}
+  - id: const-float
+    type: core/const-string@v1
+    position:
+      x: 1160
+      y: 490
+    inputs:
+      value: ${{ 3.14 }}
+  - id: const-comparison
+    type: core/const-string@v1
+    position:
+      x: 1440
+      y: 560
+    inputs:
+      value: ${{ 1 == 1 }}
+  - id: print-starts-with
+    type: core/print@v1
+    position:
+      x: 320
+      y: 70
+    inputs:
+      values[0]: null
+  - id: print-bool-true
+    type: core/print@v1
+    position:
+      x: 610
+      y: 140
+    inputs:
+      values[0]: null
+  - id: print-bool-false
+    type: core/print@v1
+    position:
+      x: 890
+      y: 210
+    inputs:
+      values[0]: null
+  - id: print-int
+    type: core/print@v1
+    position:
+      x: 1170
+      y: 280
+    inputs:
+      values[0]: null
+  - id: print-float
+    type: core/print@v1
+    position:
+      x: 1460
+      y: 350
+    inputs:
+      values[0]: null
+  - id: print-comparison
+    type: core/print@v1
+    position:
+      x: 1730
+      y: 420
+    inputs:
+      values[0]: null
+connections:
+  - src:
+      node: const-starts-with
+      port: result
+    dst:
+      node: print-starts-with
+      port: values[0]
+  - src:
+      node: const-bool-true
+      port: result
+    dst:
+      node: print-bool-true
+      port: values[0]
+  - src:
+      node: const-bool-false
+      port: result
+    dst:
+      node: print-bool-false
+      port: values[0]
+  - src:
+      node: const-int
+      port: result
+    dst:
+      node: print-int
+      port: values[0]
+  - src:
+      node: const-float
+      port: result
+    dst:
+      node: print-float
+      port: values[0]
+  - src:
+      node: const-comparison
+      port: result
+    dst:
+      node: print-comparison
+      port: values[0]
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: print-starts-with
+      port: exec
+  - src:
+      node: print-starts-with
+      port: exec
+    dst:
+      node: print-bool-true
+      port: exec
+  - src:
+      node: print-bool-true
+      port: exec
+    dst:
+      node: print-bool-false
+      port: exec
+  - src:
+      node: print-bool-false
+      port: exec
+    dst:
+      node: print-int
+      port: exec
+  - src:
+      node: print-int
+      port: exec
+    dst:
+      node: print-float
+      port: exec
+  - src:
+      node: print-float
+      port: exec
+    dst:
+      node: print-comparison
+      port: exec
