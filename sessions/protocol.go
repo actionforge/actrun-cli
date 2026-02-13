@@ -6,12 +6,16 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"io"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/Masterminds/semver/v3"
+	"github.com/actionforge/actrun-cli/utils"
+	"github.com/gorilla/websocket"
 )
 
 var wsWriteMutex sync.Mutex
@@ -74,6 +78,67 @@ var (
 	// Holds the cancel function for the *current* running graph
 	currentGraphCancel context.CancelFunc
 )
+
+// MessageSender is a function that sends a payload over a WebSocket connection.
+// Both encrypted (gateway) and plain (local) modes implement this signature.
+type MessageSender func(ws *websocket.Conn, payload any)
+
+func newEncryptedSender(sharedKey string) MessageSender {
+	return func(ws *websocket.Conn, payload any) {
+		sendEncryptedJSON(ws, payload, sharedKey)
+	}
+}
+
+func newPlainSender() MessageSender {
+	return func(ws *websocket.Conn, payload any) {
+		sendPlainJSON(ws, payload)
+	}
+}
+
+func sendPlainJSON(ws *websocket.Conn, payload any) {
+	wsWriteMutex.Lock()
+	defer wsWriteMutex.Unlock()
+
+	if err := ws.SetWriteDeadline(time.Now().Add(10 * time.Second)); err != nil {
+		utils.LogOut.Errorf("failed to set write deadline (connection likely closed): %v\n", err)
+		return
+	}
+
+	if err := ws.WriteJSON(payload); err != nil {
+		utils.LogOut.Errorf("failed to send JSON message: %v\n", err)
+	}
+}
+
+func sendEncryptedJSON(ws *websocket.Conn, payload any, sharedKey string) {
+	jsonPayload, err := json.Marshal(payload)
+	if err != nil {
+		utils.LogOut.Errorf("failed to marshal outgoing JSON: %v\n", err)
+		return
+	}
+
+	encryptedPayload, err := encryptData(string(jsonPayload), sharedKey)
+	if err != nil {
+		utils.LogOut.Errorf("failed to encrypt outgoing message: %v\n", err)
+		return
+	}
+
+	msg := EncryptedMessage{
+		Type:    MsgTypeData,
+		Payload: encryptedPayload,
+	}
+
+	wsWriteMutex.Lock()
+	defer wsWriteMutex.Unlock()
+
+	if err := ws.SetWriteDeadline(time.Now().Add(10 * time.Second)); err != nil {
+		utils.LogOut.Errorf("failed to set write deadline (connection likely closed): %v\n", err)
+		return
+	}
+
+	if err := ws.WriteJSON(msg); err != nil {
+		utils.LogOut.Errorf("failed to send encrypted message: %v\n", err)
+	}
+}
 
 func encryptData(plaintext string, base64Key string) (string, error) {
 	key, err := base64.StdEncoding.DecodeString(base64Key)

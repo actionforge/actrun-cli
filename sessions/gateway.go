@@ -28,37 +28,6 @@ import (
 )
 
 
-func sendEncryptedJSON(ws *websocket.Conn, payload any, sharedKey string) {
-	jsonPayload, err := json.Marshal(payload)
-	if err != nil {
-		utils.LogOut.Errorf("failed to marshal outgoing JSON: %v\n", err)
-		return
-	}
-
-	encryptedPayload, err := encryptData(string(jsonPayload), sharedKey)
-	if err != nil {
-		utils.LogOut.Errorf("failed to encrypt outgoing message: %v\n", err)
-		return
-	}
-
-	msg := EncryptedMessage{
-		Type:    MsgTypeData,
-		Payload: encryptedPayload,
-	}
-
-	wsWriteMutex.Lock()
-	defer wsWriteMutex.Unlock()
-
-	if err := ws.SetWriteDeadline(time.Now().Add(10 * time.Second)); err != nil {
-		utils.LogOut.Errorf("failed to set write deadline (connection likely closed): %v\n", err)
-		return
-	}
-
-	if err := ws.WriteJSON(msg); err != nil {
-		utils.LogOut.Errorf("failed to send encrypted message: %v\n", err)
-	}
-}
-
 
 func RunSessionMode(configFile string, graphFileForDebugSession string, sessionToken string, configValueSource string) error {
 
