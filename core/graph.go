@@ -277,7 +277,7 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 		return CreateErr(nil, err, "failed to load yaml")
 	}
 
-	// Capture GITHUB_TOKEN / INPUT_TOKEN from the OS environment and store in
+	// Capture GITHUB_TOKEN / INPUT_GITHUB_TOKEN from the OS environment and store in
 	// OverrideSecrets so it remains available for repo cloning (gh-action) and
 	// is properly surfaced as secrets.GITHUB_TOKEN / github.token. Then remove
 	// from the OS environment to prevent subprocesses from extracting it via
@@ -290,12 +290,13 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 			opts.OverrideSecrets["GITHUB_TOKEN"] = ghToken
 		} else if ghToken := os.Getenv("GITHUB_TOKEN"); ghToken != "" {
 			opts.OverrideSecrets["GITHUB_TOKEN"] = ghToken
-		} else if inputToken := os.Getenv("INPUT_TOKEN"); inputToken != "" {
+		} else if inputToken := os.Getenv("INPUT_GITHUB_TOKEN"); inputToken != "" {
 			opts.OverrideSecrets["GITHUB_TOKEN"] = inputToken
 		}
 	}
 	delete(opts.OverrideEnv, "GITHUB_TOKEN")
 	os.Unsetenv("GITHUB_TOKEN")
+	os.Unsetenv("INPUT_GITHUB_TOKEN")
 	os.Unsetenv("INPUT_TOKEN")
 
 	ag, errs := LoadGraph(graphYaml, nil, "", false, opts)
@@ -427,7 +428,7 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 			if m, err := decodeJsonFromEnvValue[any](v.Value); err == nil {
 				needsTracker.set(m, source, true, true)
 			}
-		case isGitHubWorkflow && k == "ACT_INPUT_TOKEN":
+		case isGitHubWorkflow && (k == "ACT_INPUT_TOKEN" || k == "ACT_INPUT_GITHUB_TOKEN"):
 			secretTracker.setSingle("GITHUB_TOKEN", v.Value, source, true, true)
 
 		default:

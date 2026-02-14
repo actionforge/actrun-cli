@@ -397,7 +397,7 @@ func init() {
 		}
 
 		// Reminder:
-		// `INPUT_TOKEN` comes from the GitHub Action actionforge/action.
+		// `INPUT_GITHUB_TOKEN` comes from the GitHub Action actionforge/action.
 		// `GITHUB_TOKEN` is manually provided, eg through the web app and has a higher precedence.
 		// GITHUB_TOKEN should always be set via secrets, but just in case the user provides it via env, check also there
 		ghToken := opts.OverrideSecrets["GITHUB_TOKEN"]
@@ -406,8 +406,11 @@ func init() {
 			if ghToken == "" {
 				ghToken = os.Getenv("GITHUB_TOKEN")
 				if ghToken == "" {
-					// Note that `INPUT_*` env vars are only prefixed for the graph execution, not here
-					ghToken = os.Getenv("INPUT_TOKEN")
+					// Note that `INPUT_*` env vars are only prefixed with ACT_ for the graph execution, not here
+					ghToken = os.Getenv("INPUT_GITHUB_TOKEN")
+					if ghToken == "" {
+						ghToken = os.Getenv("INPUT_TOKEN")
+					}
 				}
 			}
 		}
@@ -417,7 +420,7 @@ func init() {
 		_, err = os.Stat(actionRepoRoot)
 		if errors.Is(err, os.ErrNotExist) {
 			if ghToken == "" {
-				return nil, []error{core.CreateErr(nil, nil, "neither GITHUB_TOKEN nor INPUT_TOKEN are set")}
+				return nil, []error{core.CreateErr(nil, nil, "neither GITHUB_TOKEN nor INPUT_GITHUB_TOKEN are set")}
 			}
 
 			cloneUrl := fmt.Sprintf("https://github.com/%s/%s", owner, repo)
