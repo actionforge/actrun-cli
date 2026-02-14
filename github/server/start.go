@@ -35,6 +35,8 @@ func (rs *RunningServer) InjectEnv(env map[string]string) {
 	env["ACTIONS_RESULTS_URL"] = rs.URL + "/"
 	env["ACTIONS_ID_TOKEN_REQUEST_URL"] = rs.URL + "/_services/token"
 	env["ACTIONS_ID_TOKEN_REQUEST_TOKEN"] = rs.RuntimeToken
+	// Required for @actions/cache to use the twirp v2 api instead of the legacy REST API.
+	env["ACTIONS_CACHE_SERVICE_V2"] = "true"
 }
 
 // StartServer starts a local GitHub Actions mock server on a random port.

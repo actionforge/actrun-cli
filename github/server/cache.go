@@ -68,10 +68,32 @@ type CreateCacheEntryResponse struct {
 	SignedUploadURL string `json:"signed_upload_url"`
 }
 
+// FlexInt64 unmarshals from both JSON numbers and JSON strings.
+// Protobuf's canonical JSON encoding represents int64 as strings.
+type FlexInt64 int64
+
+func (f *FlexInt64) UnmarshalJSON(data []byte) error {
+	var n int64
+	if err := json.Unmarshal(data, &n); err == nil {
+		*f = FlexInt64(n)
+		return nil
+	}
+	var s string
+	if err := json.Unmarshal(data, &s); err != nil {
+		return fmt.Errorf("FlexInt64: cannot unmarshal %s", string(data))
+	}
+	n, err := strconv.ParseInt(s, 10, 64)
+	if err != nil {
+		return fmt.Errorf("FlexInt64: invalid int64 string %q: %w", s, err)
+	}
+	*f = FlexInt64(n)
+	return nil
+}
+
 type FinalizeCacheEntryRequest struct {
-	Key       string `json:"key"`
-	Version   string `json:"version"`
-	SizeBytes int64  `json:"size_bytes"`
+	Key       string    `json:"key"`
+	Version   string    `json:"version"`
+	SizeBytes FlexInt64 `json:"size_bytes"`
 }
 
 type FinalizeCacheEntryResponse struct {
@@ -89,6 +111,7 @@ type GetCacheEntryDownloadURLRequest struct {
 type GetCacheEntryDownloadURLResponse struct {
 	Ok                bool   `json:"ok"`
 	SignedDownloadURL string `json:"signed_download_url"`
+	MatchedKey        string `json:"matched_key"`
 }
 
 type DeleteCacheEntryRequest struct {
@@ -166,7 +189,7 @@ func (s *Server) handleFinalizeCacheEntry(w http.ResponseWriter, r *http.Request
 		writeTwirpError(w, http.StatusNotFound, "not_found", "cache entry not found")
 		return
 	}
-	found.Size = req.SizeBytes
+	found.Size = int64(req.SizeBytes)
 	found.Finalized = true
 	s.mu.Unlock()
 
@@ -198,6 +221,7 @@ func (s *Server) handleGetCacheEntryDownloadURL(w http.ResponseWriter, r *http.R
 		writeJSON(w, http.StatusOK, GetCacheEntryDownloadURLResponse{
 			Ok:                true,
 			SignedDownloadURL: downloadURL,
+			MatchedKey:        entry.Key,
 		})
 		return
 	}
@@ -224,6 +248,7 @@ func (s *Server) handleGetCacheEntryDownloadURL(w http.ResponseWriter, r *http.R
 			writeJSON(w, http.StatusOK, GetCacheEntryDownloadURLResponse{
 				Ok:                true,
 				SignedDownloadURL: downloadURL,
+				MatchedKey:        best.Key,
 			})
 			return
 		}

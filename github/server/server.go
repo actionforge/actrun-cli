@@ -155,10 +155,11 @@ func (s *Server) handleTwirp(w http.ResponseWriter, r *http.Request) {
 // --- Request/Response types ---
 
 type CreateArtifactRequest struct {
-	WorkflowRunBackendID    string `json:"workflow_run_backend_id"`
-	WorkflowJobRunBackendID string `json:"workflow_job_run_backend_id"`
-	Name                    string `json:"name"`
-	Version                 int    `json:"version"`
+	WorkflowRunBackendID    string  `json:"workflow_run_backend_id"`
+	WorkflowJobRunBackendID string  `json:"workflow_job_run_backend_id"`
+	Name                    string  `json:"name"`
+	Version                 int     `json:"version"`
+	ExpiresAt               *string `json:"expires_at,omitempty"`
 }
 
 type CreateArtifactResponse struct {
@@ -180,9 +181,10 @@ type FinalizeArtifactResponse struct {
 }
 
 type ListArtifactsRequest struct {
-	WorkflowRunBackendID string  `json:"workflow_run_backend_id"`
-	NameFilter           *string `json:"name_filter,omitempty"`
-	IDFilter             *string `json:"id_filter,omitempty"`
+	WorkflowRunBackendID    string  `json:"workflow_run_backend_id"`
+	WorkflowJobRunBackendID string  `json:"workflow_job_run_backend_id"`
+	NameFilter              *string `json:"name_filter,omitempty"`
+	IDFilter                *string `json:"id_filter,omitempty"`
 }
 
 type ListArtifactsResponse struct {
@@ -196,11 +198,13 @@ type ArtifactEntry struct {
 	Name                    string  `json:"name"`
 	Size                    string  `json:"size"`
 	CreatedAt               *string `json:"created_at,omitempty"`
+	Digest                  *string `json:"digest,omitempty"`
 }
 
 type GetSignedArtifactURLRequest struct {
-	WorkflowRunBackendID string `json:"workflow_run_backend_id"`
-	Name                 string `json:"name"`
+	WorkflowRunBackendID    string `json:"workflow_run_backend_id"`
+	WorkflowJobRunBackendID string `json:"workflow_job_run_backend_id"`
+	Name                    string `json:"name"`
 }
 
 type GetSignedArtifactURLResponse struct {
@@ -208,8 +212,9 @@ type GetSignedArtifactURLResponse struct {
 }
 
 type DeleteArtifactRequest struct {
-	WorkflowRunBackendID string `json:"workflow_run_backend_id"`
-	Name                 string `json:"name"`
+	WorkflowRunBackendID    string `json:"workflow_run_backend_id"`
+	WorkflowJobRunBackendID string `json:"workflow_job_run_backend_id"`
+	Name                    string `json:"name"`
 }
 
 type DeleteArtifactResponse struct {
@@ -218,9 +223,9 @@ type DeleteArtifactResponse struct {
 }
 
 type MigrateArtifactRequest struct {
-	WorkflowRunBackendID string `json:"workflow_run_backend_id"`
-	Name                 string `json:"name"`
-	Version              int    `json:"version"`
+	WorkflowRunBackendID string  `json:"workflow_run_backend_id"`
+	Name                 string  `json:"name"`
+	ExpiresAt            *string `json:"expires_at,omitempty"`
 }
 
 type MigrateArtifactResponse struct {
@@ -280,6 +285,11 @@ func (s *Server) handleCreateArtifact(w http.ResponseWriter, r *http.Request, ru
 		BlobPath:     blobPath,
 		CreatedAt:    time.Now(),
 	}
+	if req.ExpiresAt != nil {
+		if t, err := time.Parse(time.RFC3339, *req.ExpiresAt); err == nil {
+			art.ExpiresAt = t
+		}
+	}
 	s.artifacts[key] = art
 	s.artByID[id] = art
 	s.uploadMu[id] = &sync.Mutex{}
@@ -299,7 +309,7 @@ func (s *Server) handleCreateArtifact(w http.ResponseWriter, r *http.Request, ru
 	})
 }
 
-func (s *Server) handleFinalizeArtifact(w http.ResponseWriter, r *http.Request, runID, jobID string) {
+func (s *Server) handleFinalizeArtifact(w http.ResponseWriter, r *http.Request, runID, _ string) {
 	var req FinalizeArtifactRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		writeTwirpError(w, http.StatusBadRequest, "invalid_argument", "invalid JSON")
@@ -362,14 +372,19 @@ func (s *Server) handleListArtifacts(w http.ResponseWriter, r *http.Request, run
 			}
 		}
 		ts := art.CreatedAt.UTC().Format(time.RFC3339)
-		entries = append(entries, ArtifactEntry{
+		entry := ArtifactEntry{
 			WorkflowRunBackendID:    art.RunBackendID,
 			WorkflowJobRunBackendID: art.JobBackendID,
 			DatabaseID:              strconv.FormatInt(art.ID, 10),
 			Name:                    art.Name,
 			Size:                    strconv.FormatInt(art.Size, 10),
 			CreatedAt:               &ts,
-		})
+		}
+		if art.Hash != "" {
+			h := art.Hash
+			entry.Digest = &h
+		}
+		entries = append(entries, entry)
 	}
 	s.mu.RUnlock()
 

@@ -249,6 +249,87 @@ func TestCacheInvalidAuth(t *testing.T) {
 	}
 }
 
+func TestCacheSizeBytesAsString(t *testing.T) {
+	_, ts := setupTestServer(t)
+	defer ts.Close()
+
+	token := makeTestJWT("Actions.Results:run1:job1")
+
+	// Create cache entry
+	resp := cacheTwirpRequest(t, ts, "CreateCacheEntry", token, map[string]any{
+		"key":     "str-size-test",
+		"version": "v1",
+	})
+	createResp := decodeResponse[CreateCacheEntryResponse](t, resp)
+	req, _ := http.NewRequest("PUT", createResp.SignedUploadURL, bytes.NewReader([]byte("data")))
+	r, _ := http.DefaultClient.Do(req)
+	r.Body.Close()
+
+	// Finalize with size_bytes as a JSON string (protobuf int64 encoding)
+	b, _ := json.Marshal(map[string]any{
+		"key":        "str-size-test",
+		"version":    "v1",
+		"size_bytes": "4",
+	})
+	url := ts.URL + "/twirp/github.actions.results.api.v1.CacheService/FinalizeCacheEntryUpload"
+	httpReq, _ := http.NewRequest("POST", url, bytes.NewReader(b))
+	httpReq.Header.Set("Content-Type", "application/json")
+	httpReq.Header.Set("Authorization", "Bearer "+token)
+	resp, err := http.DefaultClient.Do(httpReq)
+	if err != nil {
+		t.Fatalf("request: %v", err)
+	}
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		t.Fatalf("FinalizeCacheEntryUpload with string size_bytes: status=%d body=%s", resp.StatusCode, body)
+	}
+	finalResp := decodeResponse[FinalizeCacheEntryResponse](t, resp)
+	if !finalResp.Ok {
+		t.Fatal("finalize failed")
+	}
+}
+
+func TestCacheMatchedKey(t *testing.T) {
+	_, ts := setupTestServer(t)
+	defer ts.Close()
+
+	token := makeTestJWT("Actions.Results:run1:job1")
+
+	// Create, upload, finalize
+	resp := cacheTwirpRequest(t, ts, "CreateCacheEntry", token, map[string]any{
+		"key":     "my-key-abc",
+		"version": "v1",
+	})
+	createResp := decodeResponse[CreateCacheEntryResponse](t, resp)
+	req, _ := http.NewRequest("PUT", createResp.SignedUploadURL, bytes.NewReader([]byte("data")))
+	r, _ := http.DefaultClient.Do(req)
+	r.Body.Close()
+	cacheTwirpRequest(t, ts, "FinalizeCacheEntryUpload", token, map[string]any{
+		"key": "my-key-abc", "version": "v1", "size_bytes": 4,
+	})
+
+	// Exact match — matched_key should be the key
+	resp = cacheTwirpRequest(t, ts, "GetCacheEntryDownloadURL", token, map[string]any{
+		"key":     "my-key-abc",
+		"version": "v1",
+	})
+	dlResp := decodeResponse[GetCacheEntryDownloadURLResponse](t, resp)
+	if dlResp.MatchedKey != "my-key-abc" {
+		t.Fatalf("exact match: matched_key=%q, want %q", dlResp.MatchedKey, "my-key-abc")
+	}
+
+	// Prefix match via restore_keys — matched_key should be the matched entry's key
+	resp = cacheTwirpRequest(t, ts, "GetCacheEntryDownloadURL", token, map[string]any{
+		"key":          "my-key-xyz",
+		"version":      "v1",
+		"restore_keys": []string{"my-key-"},
+	})
+	dlResp = decodeResponse[GetCacheEntryDownloadURLResponse](t, resp)
+	if dlResp.MatchedKey != "my-key-abc" {
+		t.Fatalf("prefix match: matched_key=%q, want %q", dlResp.MatchedKey, "my-key-abc")
+	}
+}
+
 func TestCacheInvalidContentType(t *testing.T) {
 	_, ts := setupTestServer(t)
 	defer ts.Close()
