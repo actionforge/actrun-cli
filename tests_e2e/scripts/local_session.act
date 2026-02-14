@@ -1,0 +1,91 @@
+editor:
+  version:
+    created: v1.34.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 20
+      y: 10
+  - id: const-str-1
+    type: core/const-string@v1
+    position:
+      x: 30
+      y: 210
+    inputs:
+      value: step one
+  - id: const-str-2
+    type: core/const-string@v1
+    position:
+      x: 30
+      y: 410
+    inputs:
+      value: step two
+  - id: const-str-3
+    type: core/const-string@v1
+    position:
+      x: 30
+      y: 610
+    inputs:
+      value: step three
+  - id: print-1
+    type: core/print@v1
+    position:
+      x: 310
+      y: 70
+    inputs:
+      values[0]: null
+  - id: print-2
+    type: core/print@v1
+    position:
+      x: 310
+      y: 270
+    inputs:
+      values[0]: null
+  - id: print-3
+    type: core/print@v1
+    position:
+      x: 310
+      y: 470
+    inputs:
+      values[0]: null
+connections:
+  - src:
+      node: const-str-1
+      port: result
+    dst:
+      node: print-1
+      port: values[0]
+  - src:
+      node: const-str-2
+      port: result
+    dst:
+      node: print-2
+      port: values[0]
+  - src:
+      node: const-str-3
+      port: result
+    dst:
+      node: print-3
+      port: values[0]
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: print-1
+      port: exec
+  - src:
+      node: print-1
+      port: exec
+    dst:
+      node: print-2
+      port: exec
+  - src:
+      node: print-2
+      port: exec
+    dst:
+      node: print-3
+      port: exec

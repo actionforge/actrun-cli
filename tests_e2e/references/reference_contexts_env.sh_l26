@@ -16,6 +16,7 @@ Flags:
       --create-debug-session   Create a debug session by connecting to the web app
       --env-file string        Absolute path to an env file (.env) to load before execution
   -h, --help                   help for actrun
+      --local                  Start a local WebSocket server for direct editor connection
       --session-token string   The session token from your browser
   -v, --version                version for actrun
 

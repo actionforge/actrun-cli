@@ -30,12 +30,14 @@ var (
 	flagSessionToken       string
 	flagEnvFile            string
 	flagCreateDebugSession bool
+	flagLocal              bool
 
 	finalConfigFile         string
 	finalConcurrency        string
 	finalSessionToken       string
 	finalConfigValueSource  string
 	finalCreateDebugSession bool
+	finalLocal              bool
 
 	finalGraphFile string
 	finalGraphArgs []string
@@ -109,6 +111,8 @@ var cmdRoot = &cobra.Command{
 		})
 		finalCreateDebugSession = finalCreateDebugSessionStr == "true" || finalCreateDebugSessionStr == "1"
 
+		finalLocal = flagLocal
+
 		// the block below is used to distinguish between implicit graph files (eg if defined in an env var) + graph flags
 		// vs explicit graph file (eg provided by positional arg) + graph flags.
 
@@ -147,6 +151,13 @@ var cmdRoot = &cobra.Command{
 			return errors.New("when using --create-debug-session, a graph file must be specified")
 		}
 
+		if finalLocal && finalSessionToken != "" {
+			return errors.New("--local and --session-token cannot be used together")
+		}
+		if finalLocal && finalCreateDebugSession {
+			return errors.New("--local and --create-debug-session cannot be used together")
+		}
+
 		return nil
 	},
 }
@@ -154,6 +165,16 @@ var cmdRoot = &cobra.Command{
 func cmdRootRun(cmd *cobra.Command, args []string) {
 
 	utils.SetConcurrencyEnabled(finalConcurrency == "" || finalConcurrency == "true" || finalConcurrency == "1")
+
+	// start a local WS server for local connections (eg the vscode extension)
+	if finalLocal {
+		err := sessions.RunLocalMode(finalConfigFile)
+		if err != nil {
+			utils.LogErr.Print(err.Error())
+			os.Exit(1)
+		}
+		return
+	}
 
 	// if we still have no graph file, go to Session Mode
 	if finalGraphFile == "" || finalCreateDebugSession {
@@ -231,6 +252,7 @@ func init() {
 	cmdRoot.Flags().StringVar(&flagConcurrency, "concurrency", "", "Enable or disable concurrency")
 	cmdRoot.Flags().StringVar(&flagSessionToken, "session-token", "", "The session token from your browser")
 	cmdRoot.Flags().BoolVar(&flagCreateDebugSession, "create-debug-session", false, "Create a debug session by connecting to the web app")
+	cmdRoot.Flags().BoolVar(&flagLocal, "local", false, "Start a local WebSocket server for direct editor connection")
 
 	// disable interspersed flag parsing to allow passing arbitrary flags to graphs.
 	// it stops cobra from parsing flags once it hits positional argument

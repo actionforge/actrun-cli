@@ -154,7 +154,7 @@ func walk(root string, opts walkOpts, pattern []string, items map[string]os.File
 		})
 
 	} else {
-		entries, err := os.ReadDir(root)
+		entries, err := os.ReadDir(filepath.Clean(root))
 		if err != nil {
 			return "", core.CreateErr(nil, err, "failed to read directory")
 		}

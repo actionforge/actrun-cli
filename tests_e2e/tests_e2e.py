@@ -16,6 +16,8 @@ import shlex
 import re
 import platform
 import tempfile
+import concurrent.futures
+import io
 from pathlib import Path
 
 # Setup paths
@@ -218,17 +220,19 @@ def run_test_script(root_path: str, script_file: str, working_dir: str):
         "PATH_SEPARATOR": os.sep
     })
 
-    subprocess.run(
+    return subprocess.run(
         ["bash", to_posix_path(script_file)],
         shell=IS_WINDOWS,
         env=env,
         cwd=working_dir,
-        stdout=sys.stdout,
+        stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
-        check=True
+        text=True,
+        check=False
     )
 
 def process_and_run_test(root_dir: str, source_script: str, ref_dir: str, cov_dir: str):
+    output = io.StringIO()
     temp_script_path = create_temp_script()
     redact_func = get_redact_function_script()
     script_name = os.path.basename(source_script)
@@ -266,15 +270,13 @@ def process_and_run_test(root_dir: str, source_script: str, ref_dir: str, cov_di
                 if stripped:
                     if stripped.startswith("function"):
                         fname = stripped.split()[1] if len(stripped.split()) > 1 else "unknown"
-                        print(f"‼️ 'function' keyword is not POSIX compliant. Use '{fname}() {{' instead.")
-                        sys.exit(1)
+                        raise RuntimeError(f"'function' keyword is not POSIX compliant. Use '{fname}() {{' instead.")
                     
                     if not current_func_name and stripped.endswith("() {"):
                         current_func_name = stripped.split()[0]
                     elif stripped == "}":
                         if not current_func_name:
-                            print(f"‼️ Closing brace without function definition in {source_script}:{lineno}")
-                            sys.exit(1)
+                            raise RuntimeError(f"Closing brace without function definition in {source_script}:{lineno}")
                         current_func_name = None
                     elif not stripped.startswith("#"):
                         # echo line if not inside a function definition
@@ -284,13 +286,15 @@ def process_and_run_test(root_dir: str, source_script: str, ref_dir: str, cov_di
                 dest.write(line)
 
         if current_func_name:
-            print(f"‼️ Function {current_func_name} was never closed.")
-            sys.exit(1)
+            raise RuntimeError(f"Function {current_func_name} was never closed.")
 
     tmp_cwd = tempfile.mkdtemp(prefix=f"actrun.{script_name}")
-    print(f"Running script: {source_script} -> {temp_script_path}:\n           cwd: {tmp_cwd}\n")
-    run_test_script(root_dir, temp_script_path, tmp_cwd)
+    output.write(f"Running script: {source_script} -> {temp_script_path}:\n           cwd: {tmp_cwd}\n\n")
+    result = run_test_script(root_dir, temp_script_path, tmp_cwd)
+    if result.stdout:
+        output.write(result.stdout)
     normalize_stack_trace_lines(ref_dir, script_name)
+    return output.getvalue(), result.returncode == 0
 
 def compile_binaries(is_github_runner: bool):
     if is_github_runner:
@@ -377,11 +381,42 @@ def main():
 
     # Run Tests
     if target_test is None:
-        for script_path in collect_shell_scripts(scripts_dir):
-            process_and_run_test(base_cwd, script_path, ref_dir, cov_dir)
+        scripts = collect_shell_scripts(scripts_dir)
     else:
-        full_path = os.path.join(scripts_dir, target_test)
-        process_and_run_test(base_cwd, full_path, ref_dir, cov_dir)
+        scripts = [os.path.join(scripts_dir, target_test)]
+
+    failed = []
+    with concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count()) as executor:
+        future_to_script = {
+            executor.submit(process_and_run_test, base_cwd, script, ref_dir, cov_dir): script
+            for script in scripts
+        }
+        for future in concurrent.futures.as_completed(future_to_script):
+            script = future_to_script[future]
+            script_name = os.path.basename(script)
+            try:
+                test_output, success = future.result()
+                print(f"\n{'='*60}")
+                print(f" {script_name}")
+                print(f"{'='*60}")
+                print(test_output, end='')
+                if not success:
+                    print(f"\n{Style.RED}‼️ FAILED: {script_name}{Style.RESET}")
+                    failed.append(script)
+                else:
+                    print(f"\n{Style.GREEN}✓ PASSED: {script_name}{Style.RESET}")
+            except Exception as e:
+                print(f"\n{'='*60}")
+                print(f" {script_name}")
+                print(f"{'='*60}")
+                print(f"{Style.RED}‼️ {script_name} failed with exception: {e}{Style.RESET}")
+                failed.append(script)
+
+    if failed:
+        print(f"\n{Style.RED}‼️ {len(failed)} test(s) failed:{Style.RESET}")
+        for f in failed:
+            print(f"  - {os.path.basename(f)}")
+        sys.exit(1)
 
     # check if there are any diffs between generated refs and committed/staged refs.
     # excludes reference files from other platforms (e.g., _linux files when running on darwin)
@@ -399,8 +434,23 @@ def main():
         print(f"Running git diff (excluding other platforms): {' '.join(git_cmd)}")
         res = subprocess.run(git_cmd, text=True, encoding='utf-8', capture_output=True, check=False)
 
+        # git diff only checked for changes so far, but we also want to check for untracked files
+        untracked_cmd = ['git', 'ls-files', '--others', '--exclude-standard', '--', ref_dir]
+        untracked_res = subprocess.run(untracked_cmd, text=True, encoding='utf-8', capture_output=True, check=False)
+
+        # still filter out reference files from other platforms although they should never really
+        untracked_files = [f for f in untracked_res.stdout.splitlines()]
+
         print(res.stdout)
-        if res.stdout:
+        has_diff = bool(res.stdout)
+        has_untracked = bool(untracked_files)
+
+        if has_untracked:
+            print("untracked reference files:")
+            for f in untracked_files:
+                print(f"  {f}")
+
+        if has_diff or has_untracked:
             print("‼️ there are changes in the tests.")
             sys.exit(1)
         else:
