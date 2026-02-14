@@ -130,6 +130,7 @@ async def main():
             process.terminate()
             await process.wait()
         except ProcessLookupError:
+            # proxess already exited
             pass
         if drain_out:
             drain_out.cancel()

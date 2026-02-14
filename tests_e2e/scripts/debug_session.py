@@ -244,6 +244,7 @@ async def main():
             process.terminate()
             await process.wait()
         except ProcessLookupError:
+            # process already exited
             pass
         
         stdout_task.cancel()
