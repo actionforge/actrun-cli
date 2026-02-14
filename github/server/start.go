@@ -85,7 +85,11 @@ func StartServer(cfg Config) (*RunningServer, error) {
 		return nil, fmt.Errorf("generating runtime token: %w", err)
 	}
 
-	go httpServer.Serve(listener)
+	go func() {
+		if err := httpServer.Serve(listener); err != nil {
+			fmt.Fprintf(os.Stderr, "server error: %v\n", err)
+		}
+	}()
 
 	return &RunningServer{
 		URL:          externalURL,
