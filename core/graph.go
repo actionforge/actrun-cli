@@ -292,6 +292,8 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 			opts.OverrideSecrets["GITHUB_TOKEN"] = ghToken
 		} else if inputToken := os.Getenv("INPUT_GITHUB_TOKEN"); inputToken != "" {
 			opts.OverrideSecrets["GITHUB_TOKEN"] = inputToken
+		} else if inputToken := os.Getenv("INPUT_TOKEN"); inputToken != "" {
+			opts.OverrideSecrets["GITHUB_TOKEN"] = inputToken
 		}
 	}
 	delete(opts.OverrideEnv, "GITHUB_TOKEN")
