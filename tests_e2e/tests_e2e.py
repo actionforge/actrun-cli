@@ -434,8 +434,23 @@ def main():
         print(f"Running git diff (excluding other platforms): {' '.join(git_cmd)}")
         res = subprocess.run(git_cmd, text=True, encoding='utf-8', capture_output=True, check=False)
 
+        # git diff only checked for changes so far, but we also want to check for untracked files
+        untracked_cmd = ['git', 'ls-files', '--others', '--exclude-standard', '--', ref_dir]
+        untracked_res = subprocess.run(untracked_cmd, text=True, encoding='utf-8', capture_output=True, check=False)
+
+        # still filter out reference files from other platforms although they should never really
+        untracked_files = [f for f in untracked_res.stdout.splitlines()]
+
         print(res.stdout)
-        if res.stdout:
+        has_diff = bool(res.stdout)
+        has_untracked = bool(untracked_files)
+
+        if has_untracked:
+            print("untracked reference files:")
+            for f in untracked_files:
+                print(f"  {f}")
+
+        if has_diff or has_untracked:
             print("‼️ there are changes in the tests.")
             sys.exit(1)
         else:
