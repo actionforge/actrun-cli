@@ -39,7 +39,7 @@ func RunSessionMode(configFile string, graphFileForDebugSession string, sessionT
 			return fmt.Errorf("error loading config: %v", err) // fmt.Errorf doesn't strictly need \n if returned as error
 		}
 	} else {
-		utils.LogOut.Info("No config file specified, config values will be derived from environment variables and flags")
+		utils.LogOut.Info("No config file specified, config values will be derived from environment variables and flags\n")
 	}
 
 	apiGatewayUrl := GetGatewayURL()

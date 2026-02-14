@@ -33,7 +33,7 @@ func RunLocalMode(configFile string) error {
 			return fmt.Errorf("error loading config: %v", err)
 		}
 	} else {
-		utils.LogOut.Info("No config file specified, config values will be derived from environment variables and flags")
+		utils.LogOut.Info("No config file specified, config values will be derived from environment variables and flags\n")
 	}
 
 	send := newPlainSender()
