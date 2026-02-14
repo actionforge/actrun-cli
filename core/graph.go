@@ -16,6 +16,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/actionforge/actrun-cli/github/server"
 	"github.com/actionforge/actrun-cli/utils"
 	"github.com/google/uuid"
 
@@ -30,6 +31,7 @@ type RunOpts struct {
 	OverrideInputs  map[string]any
 	OverrideEnv     map[string]string
 	Args            []string
+	LocalGhServer   bool
 }
 
 type ActionGraph struct {
@@ -469,6 +471,17 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 		err = SetupGitHubActionsEnv(finalEnv)
 		if err != nil {
 			return CreateErr(nil, err, "failed to setup GitHub Actions environment")
+		}
+
+		if opts.LocalGhServer {
+			storageDir := filepath.Join(finalEnv["RUNNER_TEMP"], "gh-server-storage")
+			rs, srvErr := server.StartServer(server.Config{StorageDir: storageDir})
+			if srvErr != nil {
+				return CreateErr(nil, srvErr, "failed to start local GitHub Actions server")
+			}
+			defer rs.Stop()
+			rs.InjectEnv(finalEnv)
+			utils.LogOut.Infof("local GitHub Actions server started at %s\n", rs.URL)
 		}
 
 		// Use the updated GITHUB_WORKSPACE as the working directory.
