@@ -3,9 +3,6 @@ package sessions
 import (
 	"bufio"
 	"bytes"
-	"context"
-	"crypto/aes"
-	"crypto/cipher"
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
@@ -19,15 +16,11 @@ import (
 	"strings"
 	"sync"
 	"syscall"
-	"time"
 
 	"github.com/actionforge/actrun-cli/build"
-	"github.com/actionforge/actrun-cli/core"
 	"github.com/actionforge/actrun-cli/utils"
 	"github.com/gorilla/websocket"
 )
-
-
 
 func RunSessionMode(configFile string, graphFileForDebugSession string, sessionToken string, configValueSource string) error {
 
@@ -112,6 +105,7 @@ func RunSessionMode(configFile string, graphFileForDebugSession string, sessionT
 
 	sessionID := string(sessionIDBytes)
 	sharedKey := base64.StdEncoding.EncodeToString(keyBytes)
+	send := newEncryptedSender(sharedKey)
 
 	uAddr := url.URL{Scheme: wsScheme, Host: apiGatewayUrl, Path: "/api/v2/ws/runner/" + sessionID}
 	utils.LogOut.Info("Connecting to Actionforge\n")
@@ -143,254 +137,20 @@ func RunSessionMode(configFile string, graphFileForDebugSession string, sessionT
 	var detachMu sync.Mutex
 	var detachedMode bool
 
-	// current debug op state
-	var currentDebugOps struct {
-		sync.Mutex
-		pause            func()
-		resume           func()
-		step             func()
-		stepInto         func()
-		stepOut          func()
-		addBreakpoint    func(string)
-		removeBreakpoint func(string)
-		cachedState      any
+	var ops debugOps
+
+	// if browser disconnected override pause to ensure the graph finishes.
+	// Its the same behaviour if you detach a debugger in an IDE.
+	shouldSkipPause := func() bool {
+		detachMu.Lock()
+		defer detachMu.Unlock()
+		return detachedMode
 	}
 
-	triggerGraphExecution := func(
-		graphPayload string,
-		secrets map[string]string,
-		inputs map[string]any,
-		env map[string]string,
-		breakpoints []string,
-		startPaused bool,
-		ignoreBreakpoints bool,
-	) {
-		select {
-		case graphRunning <- true:
-			ctx, cancel := context.WithCancel(context.Background())
-
-			cancelLock.Lock()
-			currentGraphCancel = cancel
-			cancelLock.Unlock()
-
-			var debugMu sync.Mutex
-			debugCond := sync.NewCond(&debugMu)
-
-			var bpMutex sync.RWMutex
-			activeBreakpoints := make(map[string]bool)
-
-			type StepMode int
-			const (
-				StepRun StepMode = iota
-				StepOver
-				StepInto
-				StepOut
-			)
-
-			currentStepMode := StepRun
-			stepReferenceDepth := 0
-
-			if len(breakpoints) > 0 {
-				bpMutex.Lock()
-				for _, bp := range breakpoints {
-					activeBreakpoints[bp] = true
-				}
-				bpMutex.Unlock()
-			}
-
-			isPaused := startPaused
-
-			// Setup control functions
-			currentDebugOps.Lock()
-
-			currentDebugOps.pause = func() {
-				debugMu.Lock()
-				isPaused = true
-				currentStepMode = StepRun
-				debugMu.Unlock()
-				utils.LogOut.Debug("pausing execution...\n")
-			}
-
-			currentDebugOps.resume = func() {
-				debugMu.Lock()
-				isPaused = false
-				currentStepMode = StepRun
-				currentDebugOps.Lock()
-				currentDebugOps.cachedState = nil
-				currentDebugOps.Unlock()
-				debugCond.Broadcast()
-				debugMu.Unlock()
-				utils.LogOut.Debug("resuming execution...\n")
-			}
-
-			currentDebugOps.step = func() {
-				debugMu.Lock()
-				currentStepMode = StepOver
-				debugMu.Unlock()
-				currentDebugOps.Lock()
-				currentDebugOps.cachedState = nil
-				currentDebugOps.Unlock()
-				debugMu.Lock()
-				debugCond.Signal()
-				debugMu.Unlock()
-				utils.LogOut.Debug("stepping Over...\n")
-			}
-
-			currentDebugOps.stepInto = func() {
-				debugMu.Lock()
-				currentStepMode = StepInto
-				debugMu.Unlock()
-				currentDebugOps.Lock()
-				currentDebugOps.cachedState = nil
-				currentDebugOps.Unlock()
-				debugMu.Lock()
-				debugCond.Signal()
-				debugMu.Unlock()
-				utils.LogOut.Debug("stepping Into...\n")
-			}
-
-			currentDebugOps.stepOut = func() {
-				debugMu.Lock()
-				currentStepMode = StepOut
-				debugMu.Unlock()
-				currentDebugOps.Lock()
-				currentDebugOps.cachedState = nil
-				currentDebugOps.Unlock()
-				debugMu.Lock()
-				debugCond.Signal()
-				debugMu.Unlock()
-				utils.LogOut.Debug("stepping Out...\n")
-			}
-
-			currentDebugOps.addBreakpoint = func(nodeId string) {
-				bpMutex.Lock()
-				activeBreakpoints[nodeId] = true
-				bpMutex.Unlock()
-				utils.LogOut.Debugf("breakpoint added at %s\n", nodeId)
-			}
-
-			currentDebugOps.removeBreakpoint = func(nodeId string) {
-				bpMutex.Lock()
-				delete(activeBreakpoints, nodeId)
-				bpMutex.Unlock()
-				utils.LogOut.Debugf("breakpoint removed at %s\n", nodeId)
-			}
-			currentDebugOps.Unlock()
-
-			lastKnownDepth := 0
-
-			debugCb := func(ec *core.ExecutionState, nodeVisit core.ContextVisit) {
-				fullPath := nodeVisit.Node.GetFullPath()
-				currentDepth := calculateGraphDepth(fullPath)
-				utils.LogOut.Debugf("visiting %s | Paused: %v\n", fullPath, isPaused)
-
-				bpMutex.RLock()
-				hasBreakpoint := activeBreakpoints[fullPath]
-				bpMutex.RUnlock()
-
-				debugMu.Lock()
-
-				if hasBreakpoint {
-					utils.LogOut.Debugf("hit explicit breakpoint at %s\n", fullPath)
-					isPaused = true
-					currentStepMode = StepRun
-				} else if !isPaused {
-					switch currentStepMode {
-					case StepInto:
-						isPaused = true
-						currentStepMode = StepRun
-					case StepOver:
-						if currentDepth <= stepReferenceDepth {
-							isPaused = true
-							currentStepMode = StepRun
-						}
-					case StepOut:
-						if currentDepth < stepReferenceDepth {
-							isPaused = true
-							currentStepMode = StepRun
-						}
-					}
-				}
-
-				if isPaused {
-					lastKnownDepth = currentDepth
-				}
-
-				// if browser disconnected override pause to ensure the graph finishes
-				// Its the same behaviour if you detach a debugger in an IDE
-				detachMu.Lock()
-				if detachedMode {
-					isPaused = false
-				}
-				detachMu.Unlock()
-
-				if isPaused {
-					utils.LogOut.Infof("debugging paused at node: %s\n", fullPath)
-
-					var rootEc *core.ExecutionState = ec
-					for rootEc.ParentExecution != nil {
-						rootEc = rootEc.ParentExecution
-					}
-
-					debugState := map[string]any{
-						"type":             MsgTypeDebugState,
-						"fullPath":         fullPath,
-						"executionContext": *rootEc,
-					}
-
-					go sendEncryptedJSON(ws, debugState, sharedKey)
-
-					currentDebugOps.Lock()
-					currentDebugOps.cachedState = debugState
-					currentDebugOps.Unlock()
-
-					debugCond.Wait()
-
-					stepReferenceDepth = lastKnownDepth
-					isPaused = false
-				}
-
-				debugMu.Unlock()
-			}
-
-			if ignoreBreakpoints {
-				activeBreakpoints = make(map[string]bool)
-				debugCb = nil
-			}
-
-			go func() {
-				runGraphFromConn(ctx, graphPayload, core.RunOpts{
-					ConfigFile:      configFile,
-					OverrideSecrets: secrets,
-					OverrideInputs:  inputs,
-					OverrideEnv:     env,
-					Args:            []string{},
-				}, ws, sharedKey, debugCb)
-
-				// Cleanup
-				currentDebugOps.Lock()
-				currentDebugOps.pause = nil
-				currentDebugOps.resume = nil
-				currentDebugOps.step = nil
-				currentDebugOps.stepInto = nil
-				currentDebugOps.stepOut = nil
-				currentDebugOps.addBreakpoint = nil
-				currentDebugOps.removeBreakpoint = nil
-				currentDebugOps.cachedState = nil
-				currentDebugOps.Unlock()
-
-				// if this was a one-off debug session (initiated by --create-debug-session), exit the process when graph completes
-				if graphFileForDebugSession != "" {
-					done <- syscall.SIGTERM
-				}
-			}()
-
-		default:
-			utils.LogOut.Warn("Cannot run graph: another graph is already in progress.\n")
-			sendEncryptedJSON(ws, map[string]string{
-				"type":  MsgTypeJobError,
-				"error": "A graph is already running.",
-			}, sharedKey)
+	var onGraphComplete func()
+	if graphFileForDebugSession != "" {
+		onGraphComplete = func() {
+			done <- syscall.SIGTERM
 		}
 	}
 
@@ -413,7 +173,7 @@ func RunSessionMode(configFile string, graphFileForDebugSession string, sessionT
 			utils.LogOut.Infof("👉 Debug Session: %s\n", fmt.Sprintf("%s://%s/graph#%s", httpScheme, APP_URL, fragmentString))
 
 			// Force StartPaused = true
-			triggerGraphExecution(string(graphContent), nil, nil, nil, nil, true, false)
+			triggerGraphExecution(&ops, ws, send, configFile, string(graphContent), nil, nil, nil, nil, true, false, shouldSkipPause, onGraphComplete)
 		}()
 	}
 
@@ -458,23 +218,17 @@ func RunSessionMode(configFile string, graphFileForDebugSession string, sessionT
 						detachedMode = true
 						detachMu.Unlock()
 
-						currentDebugOps.Lock()
-						resumeFn := currentDebugOps.resume
-						currentDebugOps.Unlock()
-
-						if resumeFn != nil {
-							resumeFn()
-						}
+						ops.dispatch(MsgTypeDebugResume, "")
 					}
 
 				case ControlBrowserConnected:
 					utils.LogOut.Debug("browser connected. Checking for active debug state...\n")
-					currentDebugOps.Lock()
-					if currentDebugOps.cachedState != nil {
+					ops.Lock()
+					if ops.cachedState != nil {
 						utils.LogOut.Debug("resending execution state to new browser connection...\n")
-						go sendEncryptedJSON(ws, currentDebugOps.cachedState, sharedKey)
+						go send(ws, ops.cachedState)
 					}
-					currentDebugOps.Unlock()
+					ops.Unlock()
 				}
 
 				continue
@@ -488,10 +242,10 @@ func RunSessionMode(configFile string, graphFileForDebugSession string, sessionT
 			decryptedJSON, err := decryptData(rawMsg.Payload, sharedKey)
 			if err != nil {
 				utils.LogOut.Errorf("dECRYPTION FAILED: %v", err)
-				sendEncryptedJSON(ws, map[string]string{
+				send(ws, map[string]string{
 					"type":  MsgTypeJobError,
 					"error": "Decryption failed. Check your key.",
-				}, sharedKey)
+				})
 				continue
 			}
 
@@ -504,16 +258,17 @@ func RunSessionMode(configFile string, graphFileForDebugSession string, sessionT
 			currentVer := build.Version
 			if isVersionOutdated(currentVer, payload.RequiredVersion) {
 				utils.LogOut.Warnf("Runner version %s is older than required %s\n", currentVer, payload.RequiredVersion)
-				sendEncryptedJSON(ws, map[string]string{
+				send(ws, map[string]string{
 					"type":    MsgTypeWarning,
 					"message": fmt.Sprintf("WARNING: Runner version %s is older than required %s", currentVer, payload.RequiredVersion),
-				}, sharedKey)
+				})
 			}
 
 			switch payload.Type {
 
 			case MsgTypeRun:
 				triggerGraphExecution(
+					&ops, ws, send, configFile,
 					payload.Payload,
 					payload.Secrets,
 					payload.Inputs,
@@ -521,91 +276,22 @@ func RunSessionMode(configFile string, graphFileForDebugSession string, sessionT
 					payload.Breakpoints,
 					payload.StartPaused,
 					payload.IgnoreBreakpoints,
+					shouldSkipPause,
+					onGraphComplete,
 				)
 
 			case MsgTypeStop:
 				utils.LogOut.Debug("received stop signal\n")
-				sendEncryptedJSON(ws, map[string]string{
+				send(ws, map[string]string{
 					"type":    MsgTypeLog,
 					"message": "Stop signal received. Attempting to cancel...",
-				}, sharedKey)
+				})
+				ops.cancelAndResume()
 
-				cancelLock.Lock()
-				if currentGraphCancel != nil {
-					currentGraphCancel()
-				}
-				cancelLock.Unlock()
-
-				currentDebugOps.Lock()
-				resumeFn := currentDebugOps.resume
-				currentDebugOps.Unlock()
-
-				if resumeFn != nil {
-					resumeFn()
-				}
-
-			case MsgTypeDebugStep:
-				currentDebugOps.Lock()
-				stepFn := currentDebugOps.step
-				currentDebugOps.Unlock()
-
-				if stepFn != nil {
-					stepFn()
-				}
-
-			case MsgTypeDebugStepInto:
-				currentDebugOps.Lock()
-				stepIntoFn := currentDebugOps.stepInto
-				currentDebugOps.Unlock()
-
-				if stepIntoFn != nil {
-					stepIntoFn()
-				}
-
-			case MsgTypeDebugStepOut:
-				currentDebugOps.Lock()
-				stepOutFn := currentDebugOps.stepOut
-				currentDebugOps.Unlock()
-
-				if stepOutFn != nil {
-					stepOutFn()
-				}
-
-			case MsgTypeDebugPause:
-				currentDebugOps.Lock()
-				pauseFn := currentDebugOps.pause
-				currentDebugOps.Unlock()
-
-				if pauseFn != nil {
-					pauseFn()
-				}
-
-			case MsgTypeDebugResume:
-				currentDebugOps.Lock()
-				resumeFn := currentDebugOps.resume
-				currentDebugOps.Unlock()
-
-				if resumeFn != nil {
-					resumeFn()
-				}
-
-			case MsgTypeDebugAddBreakpoint:
-				currentDebugOps.Lock()
-				addBpFn := currentDebugOps.addBreakpoint
-				currentDebugOps.Unlock()
-
-				if addBpFn != nil {
-					addBpFn(payload.NodeID)
-				}
-
-			case MsgTypeDebugRemoveBreakpoint:
-				currentDebugOps.Lock()
-				removeBpFn := currentDebugOps.removeBreakpoint
-				currentDebugOps.Unlock()
-
-				if removeBpFn != nil {
-					removeBpFn(payload.NodeID)
-				}
+			case MsgTypeDebugStep, MsgTypeDebugStepInto, MsgTypeDebugStepOut,
+				MsgTypeDebugPause, MsgTypeDebugResume,
+				MsgTypeDebugAddBreakpoint, MsgTypeDebugRemoveBreakpoint:
+				ops.dispatch(payload.Type, payload.NodeID)
 
 			default:
 				utils.LogOut.Debugf("unknown command type: %s\n", payload.Type)
@@ -686,148 +372,3 @@ func PrintWelcomeMessage() {
 	// newline at the very end, keeping the cursor right after the prompt.
 	fmt.Print(welcomeText)
 }
-
-func runGraphFromConn(ctx context.Context, graphData string, opts core.RunOpts, ws *websocket.Conn, sharedKey string, debugCb core.DebugCallback) {
-
-	// *must* release the lock when it's done
-	defer func() {
-		<-graphRunning
-
-		// cleanup the cancel function so "stop" can't be called on a finished job
-		cancelLock.Lock()
-		currentGraphCancel = nil
-		cancelLock.Unlock()
-	}()
-
-	origStdout := os.Stdout
-	origStderr := os.Stderr
-	origLogOutput := utils.LogOut.Out // <-- this is logruses original output
-
-	rOut, wOut, errOut := os.Pipe()
-	if errOut != nil {
-		utils.LogOut.Debugf("failed to create pipe for stdout/log capture: %v\n", errOut)
-		sendEncryptedJSON(ws, map[string]string{
-			"type":  MsgTypeJobError,
-			"error": fmt.Sprintf("Failed to capture stdout/log: %v", errOut),
-		}, sharedKey)
-		return
-	}
-
-	rErr, wErr, errErr := os.Pipe()
-	if errErr != nil {
-		wOut.Close()
-		utils.LogOut.Debugf("failed to create pipe for stderr capture: %v\n", errErr)
-		sendEncryptedJSON(ws, map[string]string{
-			"type":  MsgTypeJobError,
-			"error": fmt.Sprintf("Failed to capture stderr: %v", errErr),
-		}, sharedKey)
-		return
-	}
-
-	os.Stdout = wOut
-	utils.LogOut.SetOutput(wOut)
-
-	os.Stderr = wErr
-
-	startTime := time.Now()
-	fmt.Printf("🚀 Task started...\n")
-
-	var wg sync.WaitGroup
-	wg.Add(2)
-
-	// for stdout
-	go func() {
-		defer wg.Done()
-		scanner := bufio.NewScanner(rOut)
-		for scanner.Scan() {
-			line := scanner.Text()
-
-			if strings.TrimSpace(line) == "" {
-				continue
-			}
-
-			// here we write to original console
-			fmt.Fprintln(origStdout, line)
-
-			sendEncryptedJSON(ws, map[string]string{
-				"type":    MsgTypeLog,
-				"message": fmt.Sprintf("[%s] %s", time.Now().Format("2006-01-02 15:04:05"), line),
-			}, sharedKey)
-		}
-		if err := scanner.Err(); err != nil {
-			utils.LogOut.Debugf("error reading from stdout/log pipe: %v\n", err)
-		}
-	}()
-
-	// for stderr
-	go func() {
-		defer wg.Done()
-		scanner := bufio.NewScanner(rErr)
-		for scanner.Scan() {
-			line := scanner.Text()
-
-			if strings.TrimSpace(line) == "" {
-				continue
-			}
-
-			// here we write to original console
-			fmt.Fprintln(origStderr, line)
-
-			sendEncryptedJSON(ws, map[string]string{
-				"type":    MsgTypeLogError,
-				"message": line,
-			}, sharedKey)
-		}
-		if err := scanner.Err(); err != nil {
-			utils.LogOut.Debugf("error reading from stderr pipe: %v\n", err)
-		}
-	}()
-
-	runErr := func() (err error) {
-		defer core.RecoverHandler(false)
-		return core.RunGraphFromString(ctx, "browser", graphData, core.RunOpts{
-			ConfigFile:      opts.ConfigFile,
-			OverrideSecrets: opts.OverrideSecrets,
-			OverrideInputs:  opts.OverrideInputs,
-			OverrideEnv:     opts.OverrideEnv,
-			Args:            []string{},
-		}, debugCb)
-	}()
-
-	endTime := time.Now()
-	duration := endTime.Sub(startTime)
-	durationStr := fmt.Sprintf("%.2fs", duration.Seconds())
-
-	// we print this *before* closing the pipes, so it still gets captured
-	if runErr != nil {
-		fmt.Printf("\n❌ Job failed. (Total time: %s)\n", durationStr)
-	} else {
-		fmt.Printf("\n✅ Job succeeded. (Total time: %s)\n", durationStr)
-	}
-
-	wOut.Close()
-	wErr.Close()
-
-	os.Stdout = origStdout
-	os.Stderr = origStderr
-	utils.LogOut.SetOutput(origLogOutput)
-
-	wg.Wait()
-
-	// all output has already been streamed, including the summary line.
-	// now we just send the final status message.
-	if runErr != nil {
-		utils.LogOut.Debugf("graph execution failed: %v\n", runErr)
-		// send final error, even if error lines were already streamed
-		sendEncryptedJSON(ws, map[string]string{
-			"type":  MsgTypeJobError,
-			"error": fmt.Sprintf("%#v", runErr),
-		}, sharedKey)
-		return // Exit, the deferred lock release will still run
-	}
-
-	sendEncryptedJSON(ws, map[string]string{
-		"type": MsgTypeJobFinished,
-	}, sharedKey)
-}
-
