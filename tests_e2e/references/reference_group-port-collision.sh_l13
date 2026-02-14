@@ -21,23 +21,23 @@ error:
 
 stack trace:
 github.com/actionforge/actrun-cli/nodes.init.41.func1
-	group@v1.go:154
+	group@v1.go:-1
 github.com/actionforge/actrun-cli/core.NewNodeInstance
-	base.go:619
+	base.go:-1
 github.com/actionforge/actrun-cli/core.LoadNode
-	graph.go:687
+	graph.go:-1
 github.com/actionforge/actrun-cli/core.LoadNodes
-	graph.go:627
+	graph.go:-1
 github.com/actionforge/actrun-cli/core.LoadGraph
-	graph.go:542
+	graph.go:-1
 github.com/actionforge/actrun-cli/core.RunGraph
-	graph.go:280
+	graph.go:-1
 github.com/actionforge/actrun-cli/core.RunGraphFromString
-	graph.go:1104
+	graph.go:-1
 github.com/actionforge/actrun-cli/core.RunGraphFromFile
-	graph.go:1126
+	graph.go:-1
 github.com/actionforge/actrun-cli/cmd.cmdRootRun
-	cmd_root.go:188
+	cmd_root.go:-1
 github.com/spf13/cobra.(*Command).execute
 	command.go:-1
 github.com/spf13/cobra.(*Command).ExecuteC
@@ -45,9 +45,9 @@ github.com/spf13/cobra.(*Command).ExecuteC
 github.com/spf13/cobra.(*Command).Execute
 	command.go:-1
 github.com/actionforge/actrun-cli/cmd.Execute
-	cmd_root.go:200
+	cmd_root.go:-1
 main.main
-	main.go:26
+	main.go:-1
 runtime.main
 	proc.go:-1
 runtime.goexit

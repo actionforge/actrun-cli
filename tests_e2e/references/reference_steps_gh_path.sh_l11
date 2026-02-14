@@ -13,7 +13,8 @@ looking for value: 'session_token'
 looking for value: 'create_debug_session'
   found value in flags
   evaluated to: 'false'
-GitHub workflow detected via GITHUB_ACTIONS environment variable (.env or shell)changing working directory to GITHUB_WORKSPACE: [REDACTED]/scripts
+GitHub workflow detected via GITHUB_ACTIONS environment variable (.env or shell)
+changing working directory to GITHUB_WORKSPACE: [REDACTED]/actrun-cli
 PushNodeVisit: start, execute: true
 🟢 Execute 'Run Script (step-add-path)'
 PushNodeVisit: step-add-path, execute: true

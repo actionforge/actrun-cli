@@ -147,6 +147,16 @@ def collect_shell_scripts(directory: str) -> list[str]:
             print(f"Skipping {os.path.basename(script)} (platform: {script_platform}, current: {CURRENT_PLATFORM})")
     return filtered
 
+STACK_TRACE_LINE_PATTERN = re.compile(r'(\t\S+:)\d+')
+
+def normalize_stack_trace_lines(ref_dir: str, script_name: str):
+    """Normalize unstable line numbers in stack traces to -1."""
+    for ref_file in Path(ref_dir).glob(f"reference_{script_name}_l*"):
+        content = ref_file.read_text(encoding="utf-8")
+        modified = STACK_TRACE_LINE_PATTERN.sub(r'\g<1>-1', content)
+        if modified != content:
+            ref_file.write_text(modified, encoding="utf-8")
+
 def create_temp_script() -> str:
     fd, path = tempfile.mkstemp(suffix=".sh")
     os.close(fd)
@@ -280,6 +290,7 @@ def process_and_run_test(root_dir: str, source_script: str, ref_dir: str, cov_di
     tmp_cwd = tempfile.mkdtemp(prefix=f"actrun.{script_name}")
     print(f"Running script: {source_script} -> {temp_script_path}:\n           cwd: {tmp_cwd}\n")
     run_test_script(root_dir, temp_script_path, tmp_cwd)
+    normalize_stack_trace_lines(ref_dir, script_name)
 
 def compile_binaries(is_github_runner: bool):
     if is_github_runner:

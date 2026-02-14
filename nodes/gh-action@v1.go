@@ -396,28 +396,14 @@ func init() {
 			return nil, []error{core.CreateErr(nil, nil, "node representing GitHub Action '%v' can only be used in a GitHub Actions workflow.", nodeType)}
 		}
 
-		// Reminder:
-		// `INPUT_TOKEN` comes from the GitHub Action actionforge/action.
-		// `GITHUB_TOKEN` is manually provided, eg through the web app and has a higher precedence.
-		// GITHUB_TOKEN should always be set via secrets, but just in case the user provides it via env, check also there
 		ghToken := opts.OverrideSecrets["GITHUB_TOKEN"]
-		if ghToken == "" {
-			ghToken = opts.OverrideEnv["GITHUB_TOKEN"]
-			if ghToken == "" {
-				ghToken = os.Getenv("GITHUB_TOKEN")
-				if ghToken == "" {
-					// Note that `INPUT_*` env vars are only prefixed for the graph execution, not here
-					ghToken = os.Getenv("INPUT_TOKEN")
-				}
-			}
-		}
 
 		// TODO: (Seb) for the validation process we only need the action.yml, not the entire repo
 		// so check if we are in validate mode and only download the action.yml file
 		_, err = os.Stat(actionRepoRoot)
 		if errors.Is(err, os.ErrNotExist) {
 			if ghToken == "" {
-				return nil, []error{core.CreateErr(nil, nil, "neither GITHUB_TOKEN nor INPUT_TOKEN are set")}
+				return nil, []error{core.CreateErr(nil, nil, "neither GITHUB_TOKEN nor INPUT_GITHUB_TOKEN are set")}
 			}
 
 			cloneUrl := fmt.Sprintf("https://github.com/%s/%s", owner, repo)

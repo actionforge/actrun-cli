@@ -277,6 +277,30 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 		return CreateErr(nil, err, "failed to load yaml")
 	}
 
+	// Capture GITHUB_TOKEN / INPUT_GITHUB_TOKEN from the OS environment and store in
+	// OverrideSecrets so it remains available for repo cloning (gh-action) and
+	// is properly surfaced as secrets.GITHUB_TOKEN / github.token. Then remove
+	// from the OS environment to prevent subprocesses from extracting it via
+	// /proc/<ppid>/environ or similar.
+	if opts.OverrideSecrets == nil {
+		opts.OverrideSecrets = make(map[string]string)
+	}
+	if _, exists := opts.OverrideSecrets["GITHUB_TOKEN"]; !exists {
+		if ghToken, ok := opts.OverrideEnv["GITHUB_TOKEN"]; ok && ghToken != "" {
+			opts.OverrideSecrets["GITHUB_TOKEN"] = ghToken
+		} else if ghToken := os.Getenv("GITHUB_TOKEN"); ghToken != "" {
+			opts.OverrideSecrets["GITHUB_TOKEN"] = ghToken
+		} else if inputToken := os.Getenv("INPUT_GITHUB_TOKEN"); inputToken != "" {
+			opts.OverrideSecrets["GITHUB_TOKEN"] = inputToken
+		} else if inputToken := os.Getenv("INPUT_TOKEN"); inputToken != "" {
+			opts.OverrideSecrets["GITHUB_TOKEN"] = inputToken
+		}
+	}
+	delete(opts.OverrideEnv, "GITHUB_TOKEN")
+	os.Unsetenv("GITHUB_TOKEN")
+	os.Unsetenv("INPUT_GITHUB_TOKEN")
+	os.Unsetenv("INPUT_TOKEN")
+
 	ag, errs := LoadGraph(graphYaml, nil, "", false, opts)
 	if len(errs) > 0 {
 		return CreateErr(nil, errs[0], "failed to load graph")
@@ -299,13 +323,13 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 	isGitHubWorkflow := false
 	if opts.OverrideEnv["GITHUB_ACTIONS"] == "true" {
 		isGitHubWorkflow = true
-		utils.LogOut.Infof("GitHub workflow detected via OverrideEnv")
+		utils.LogOut.Info("GitHub workflow detected via OverrideEnv\n")
 	} else if os.Getenv("GITHUB_ACTIONS") == "true" {
 		isGitHubWorkflow = true
-		utils.LogOut.Infof("GitHub workflow detected via GITHUB_ACTIONS environment variable (.env or shell)")
+		utils.LogOut.Info("GitHub workflow detected via GITHUB_ACTIONS environment variable (.env or shell)\n")
 	} else if entryNode.GetNodeTypeId() == "core/gh-start@v1" {
 		isGitHubWorkflow = true
-		utils.LogOut.Infof("GitHub workflow detected via entry node type: core/gh-start@v1")
+		utils.LogOut.Info("GitHub workflow detected via entry node type: core/gh-start@v1\n")
 	}
 
 	// mimickGitHubEnv: Determines if we need to set up a simulated GitHub environment. The easiest
@@ -406,7 +430,7 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 			if m, err := decodeJsonFromEnvValue[any](v.Value); err == nil {
 				needsTracker.set(m, source, true, true)
 			}
-		case isGitHubWorkflow && k == "ACT_INPUT_TOKEN":
+		case isGitHubWorkflow && (k == "ACT_INPUT_TOKEN" || k == "ACT_INPUT_GITHUB_TOKEN"):
 			secretTracker.setSingle("GITHUB_TOKEN", v.Value, source, true, true)
 
 		default:
@@ -440,16 +464,18 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 	}
 
 	if mimickGitHubEnv {
-		if cwd, ok := finalEnv["GITHUB_WORKSPACE"]; ok {
-			newCwd = cwd
-			utils.LogOut.Debugf("changing working directory to GITHUB_WORKSPACE: %s\n", newCwd)
-		}
-
 		// If we are running a github actions workflow, then mimic a GitHub Actions environment
 		// But only do is if we are NOT already in GitHub Actions
 		err = SetupGitHubActionsEnv(finalEnv)
 		if err != nil {
 			return CreateErr(nil, err, "failed to setup GitHub Actions environment")
+		}
+
+		// Use the updated GITHUB_WORKSPACE as the working directory.
+		// SetupGitHubActionsEnv replaces GITHUB_WORKSPACE with a fresh temp folder.
+		if cwd, ok := finalEnv["GITHUB_WORKSPACE"]; ok {
+			newCwd = cwd
+			utils.LogOut.Debugf("changing working directory to GITHUB_WORKSPACE: %s\n", newCwd)
 		}
 	} else if debugCb != nil && newCwd == "" {
 		// for debug sessions, always create a temp working directory if none is set
