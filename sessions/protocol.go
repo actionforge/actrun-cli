@@ -605,7 +605,7 @@ func runGraphFromConn(ctx context.Context, graphData string, opts core.RunOpts, 
 	// all output has already been streamed, including the summary line.
 	// now we just send the final status message.
 	if runErr != nil {
-		utils.LogOut.Debugf("graph execution failed: %v\n", runErr)
+		utils.LogOut.Debug("graph execution failed\n")
 		// send final error, even if error lines were already streamed
 		send(ws, map[string]string{
 			"type":  MsgTypeJobError,
