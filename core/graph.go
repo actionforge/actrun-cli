@@ -321,13 +321,13 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 	isGitHubWorkflow := false
 	if opts.OverrideEnv["GITHUB_ACTIONS"] == "true" {
 		isGitHubWorkflow = true
-		utils.LogOut.Infoln("GitHub workflow detected via OverrideEnv")
+		utils.LogOut.Info("GitHub workflow detected via OverrideEnv\n")
 	} else if os.Getenv("GITHUB_ACTIONS") == "true" {
 		isGitHubWorkflow = true
-		utils.LogOut.Infoln("GitHub workflow detected via GITHUB_ACTIONS environment variable (.env or shell)")
+		utils.LogOut.Info("GitHub workflow detected via GITHUB_ACTIONS environment variable (.env or shell)\n")
 	} else if entryNode.GetNodeTypeId() == "core/gh-start@v1" {
 		isGitHubWorkflow = true
-		utils.LogOut.Infoln("GitHub workflow detected via entry node type: core/gh-start@v1")
+		utils.LogOut.Info("GitHub workflow detected via entry node type: core/gh-start@v1\n")
 	}
 
 	// mimickGitHubEnv: Determines if we need to set up a simulated GitHub environment. The easiest

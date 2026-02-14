@@ -84,11 +84,11 @@ github.com/actionforge/actrun-cli/nodes.(*StartNode).ExecuteImpl
 github.com/actionforge/actrun-cli/nodes.(*StartNode).ExecuteEntry
 	start@v1.go:45
 github.com/actionforge/actrun-cli/core.RunGraph
-	graph.go:514
+	graph.go:538
 github.com/actionforge/actrun-cli/core.RunGraphFromString
-	graph.go:1104
+	graph.go:1128
 github.com/actionforge/actrun-cli/core.RunGraphFromFile
-	graph.go:1126
+	graph.go:1150
 github.com/actionforge/actrun-cli/cmd.cmdRootRun
 	cmd_root.go:188
 github.com/spf13/cobra.(*Command).execute
