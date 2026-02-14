@@ -249,6 +249,8 @@ func runCommand(c *core.ExecutionState, shell string, script *string, args []str
 			curEnvMap["PYTHONIOENCODING"] = "utf-8"
 
 			args = append([]string{scriptPath}, args...)
+		default:
+			return "", 0, core.CreateErr(c, nil, "unsupported shell: %s", shell)
 		}
 		cmd = exec.Command(shell, args...)
 
