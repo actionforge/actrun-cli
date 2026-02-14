@@ -29,6 +29,7 @@ Welcome to your Actionforge Runner
 📖 Docs: https:[REDACTED]/docs.actionforge.dev
 
 No config file specified, config values will be derived from environment variables and flags
+
 🔑 Enter session token: <session token was provided via flag>
 
 invalid token string (not Base64): illegal base64 data at input byte 7
