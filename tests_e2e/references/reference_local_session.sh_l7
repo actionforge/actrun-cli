@@ -1,0 +1,20 @@
+Cleaning up
+Connecting to WebSocket
+DEBUG PAUSED #1 at node: start
+DEBUG PAUSED #2 at node: print-1
+DEBUG PAUSED #3 at node: const-str-1
+Job Finished Successfully!
+Launching local runner
+Log:  created temp working directory for debug session: [REDACTED]/actrun-debug-[REDACTED]
+Log:  debugging paused at node: const-str-1
+Log:  debugging paused at node: print-1
+Log:  debugging paused at node: start
+Log:  step one
+Log:  step three
+Log:  step two
+Log:  ✅ Job succeeded. (Total time: )
+Log:  🚀 Task started...
+Runner connected! Sending Graph (Paused)
+Sending RESUME command
+Sending STEP command
+Sending STEP command
