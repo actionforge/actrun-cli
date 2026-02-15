@@ -92,7 +92,7 @@ func (p *GhContextParser) Parse(c *core.ExecutionState, contextEnvironMap map[st
 		if err != nil {
 			return nil, nil, core.CreateErr(c, nil, "unable to read file set in GITHUB_ENV")
 		}
-		ghEnvs, err := parseOutputFile(string(b))
+		ghEnvs, err := core.ParseKeyValueString(string(b))
 		if err != nil {
 			return nil, nil, err
 		}
@@ -119,7 +119,7 @@ func (p *GhContextParser) Parse(c *core.ExecutionState, contextEnvironMap map[st
 			return nil, nil, core.CreateErr(c, err, "unable to read file set in GITHUB_OUTPUT")
 		}
 
-		ghOutputs, err := parseOutputFile(string(b))
+		ghOutputs, err := core.ParseKeyValueString(string(b))
 		if err != nil {
 			return nil, nil, err
 		}
@@ -136,60 +136,6 @@ func (p *GhContextParser) Parse(c *core.ExecutionState, contextEnvironMap map[st
 	}
 
 	return envs, outputs, nil
-}
-
-func parseOutputFile(input string) (map[string]string, error) {
-	results := make(map[string]string)
-	lines := strings.Split(input, "\n")
-
-	for i := 0; i < len(lines); i++ {
-		line := lines[i]
-		if line == "" {
-			continue
-		}
-
-		var key, value string
-		equalsIndex := strings.Index(line, "=")
-		heredocIndex := strings.Index(line, "<<")
-
-		// Normal style: NAME=VALUE
-		if equalsIndex >= 0 && (heredocIndex < 0 || equalsIndex < heredocIndex) {
-			parts := strings.SplitN(line, "=", 2)
-			if len(parts) != 2 || parts[0] == "" {
-				return nil, core.CreateErr(nil, nil, "invalid format '%s'. Name must not be empty", line)
-			}
-			key, value = parts[0], parts[1]
-		} else if heredocIndex >= 0 && (equalsIndex < 0 || heredocIndex < equalsIndex) {
-			// Heredoc style: NAME<<EOF
-			parts := strings.SplitN(line, "<<", 2)
-			if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
-				return nil, core.CreateErr(nil, nil, "invalid format '%s'. Name must not be empty", line)
-			}
-			key = parts[0]
-			delimiter := strings.TrimRight(parts[1], " \t\n\r")
-
-			var heredocValue strings.Builder
-			for i++; i < len(lines); i++ {
-				if strings.TrimRight(lines[i], " \t\n\r") == delimiter {
-					break
-				}
-				heredocValue.WriteString(lines[i])
-				if i < len(lines)-1 {
-					heredocValue.WriteString("\n")
-				}
-			}
-			if i >= len(lines) {
-				return nil, core.CreateErr(nil, nil, "invalid value. Matching delimiter not found '%s'", delimiter)
-			}
-			value = heredocValue.String()
-		} else {
-			return nil, core.CreateErr(nil, nil, "invalid format '%s'", line)
-		}
-
-		results[key] = value
-	}
-
-	return results, nil
 }
 
 // https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#environment-files

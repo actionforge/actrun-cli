@@ -62,10 +62,12 @@ type GhActionNode struct {
 	core.Outputs
 	core.Executions
 
-	actionName      string
-	actionType      ActionType // docker or node
-	actionRuns      ActionRuns
-	actionRunJsPath string
+	actionName        string
+	actionType        ActionType // docker or node
+	actionRuns        ActionRuns
+	actionRunJsPath   string
+	actionPostJsPath  string
+	actionDir         string
 
 	Data DockerData
 }
@@ -162,6 +164,18 @@ func (n *GhActionNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId,
 	}
 
 	executionEnv := maps.Clone(currentEnvMap)
+
+	// Register post step if action defines one
+	if n.actionPostJsPath != "" || n.actionRuns.PostEntrypoint != "" {
+		c.PostSteps.Register(core.PostStep{
+			ActionName:    n.actionName,
+			NodeID:        n.GetId(),
+			PostIf:        n.actionRuns.PostIf,
+			Runner:        &GhActionPostRunner{node: n},
+			StateFilePath: currentEnvMap["GITHUB_STATE"],
+			EnvSnapshot:   maps.Clone(currentEnvMap),
+		})
+	}
 
 	var runErr error
 	switch n.actionType {
@@ -367,6 +381,141 @@ func (n *GhActionNode) ExecuteDocker(c *core.ExecutionState, workingDirectory st
 	return nil
 }
 
+// GhActionPostRunner implements core.PostStepRunner for GitHub Actions.
+type GhActionPostRunner struct {
+	node *GhActionNode
+}
+
+func (r *GhActionPostRunner) RunPost(c *core.ExecutionState, env map[string]string) error {
+	workspace := env["GITHUB_WORKSPACE"]
+	if workspace == "" {
+		return core.CreateErr(c, nil, "GITHUB_WORKSPACE is not set for post step")
+	}
+
+	switch r.node.actionType {
+	case Node:
+		return r.node.ExecuteNodePost(c, workspace, env)
+	case Docker:
+		return r.node.ExecuteDockerPost(c, workspace, env)
+	default:
+		return core.CreateErr(c, nil, "unsupported action type for post step: %v", r.node.actionType)
+	}
+}
+
+// ExecuteNodePost runs the post step for Node-type actions.
+func (n *GhActionNode) ExecuteNodePost(c *core.ExecutionState, workspace string, envs map[string]string) error {
+	nodeBin := "node"
+	runners, err := getRunnersDir()
+	if err == nil {
+		externalNodeBin, pathErr := utils.SafeJoinPath(runners, "externals", n.actionRuns.Using, "bin", "node")
+		if pathErr == nil {
+			_, err := os.Stat(externalNodeBin)
+			if err == nil {
+				nodeBin = externalNodeBin
+			}
+		}
+	}
+
+	utils.LogOut.Infof("Use node binary (post): %s %s\n", nodeBin, n.actionPostJsPath)
+
+	cmd := exec.Command(nodeBin, n.actionPostJsPath)
+	cmd.Dir = workspace
+	cmd.Stdout = utils.LogOut.Out
+	cmd.Stderr = utils.LogErr.Out
+	cmd.Stdin = nil
+	cmd.Env = func() []string {
+		env := make([]string, 0, len(envs))
+		for k, v := range envs {
+			env = append(env, fmt.Sprintf("%s=%s", k, v))
+		}
+		return env
+	}()
+	return cmd.Run()
+}
+
+// ExecuteDockerPost runs the post step for Docker-type actions.
+func (n *GhActionNode) ExecuteDockerPost(c *core.ExecutionState, workingDirectory string, env map[string]string) error {
+	sysRunnerTempDir := env["RUNNER_TEMP"]
+	if sysRunnerTempDir == "" {
+		return core.CreateErr(c, nil, "RUNNER_TEMP is not set for post step")
+	}
+
+	sysGithubWorkspace := env["GITHUB_WORKSPACE"]
+	if sysGithubWorkspace == "" {
+		return core.CreateErr(c, nil, "GITHUB_WORKSPACE is not set for post step")
+	}
+
+	// path translation for file commands
+	fileCmds := []string{"GITHUB_ENV", "GITHUB_PATH", "GITHUB_OUTPUT", "GITHUB_STATE", "GITHUB_STEP_SUMMARY"}
+	for _, envName := range fileCmds {
+		path := env[envName]
+		if path != "" {
+			env[envName] = filepath.Join(dockerGithubFileCommands, filepath.Base(path))
+		}
+	}
+
+	env["HOME"] = dockerGithubHome
+
+	entrypoint := n.actionRuns.PostEntrypoint
+	if entrypoint == "" {
+		return core.CreateErr(c, nil, "post-entrypoint is not set for Docker post step")
+	}
+
+	ci := core.ContainerInfo{
+		ContainerImage:                n.Data.Image,
+		ContainerDisplayName:          fmt.Sprintf("actionforge_%s_post_%s", n.Data.DockerInstanceLabel, uuid.New()),
+		ContainerWorkDirectory:        dockerGithubWorkspace,
+		ContainerEntryPointArgs:       entrypoint,
+		ContainerEnvironmentVariables: env,
+	}
+
+	// mount docker sock
+	if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
+		ci.MountVolumes = append(ci.MountVolumes, core.Volume{
+			SourceVolumePath: "/var/run/docker.sock",
+			TargetVolumePath: "/var/run/docker.sock",
+			ReadOnly:         false,
+		})
+	}
+
+	ci.MountVolumes = append(ci.MountVolumes, core.Volume{
+		SourceVolumePath: sysGithubWorkspace,
+		TargetVolumePath: dockerGithubWorkspace,
+		ReadOnly:         false,
+	})
+	ci.MountVolumes = append(ci.MountVolumes, core.Volume{
+		SourceVolumePath: filepath.Join(sysRunnerTempDir, "_github_workflow"),
+		TargetVolumePath: dockerGithubWorkflow,
+		ReadOnly:         false,
+	})
+	ci.MountVolumes = append(ci.MountVolumes, core.Volume{
+		SourceVolumePath: filepath.Join(sysRunnerTempDir, "_github_home"),
+		TargetVolumePath: dockerGithubHome,
+		ReadOnly:         false,
+	})
+	ci.MountVolumes = append(ci.MountVolumes, core.Volume{
+		SourceVolumePath: filepath.Join(sysRunnerTempDir, "_runner_file_commands"),
+		TargetVolumePath: dockerGithubFileCommands,
+		ReadOnly:         false,
+	})
+
+	dockerClient, err := core.NewDockerClient()
+	if err != nil {
+		return core.CreateErr(c, err, "failed to create Docker client for post step")
+	}
+	defer dockerClient.Close()
+
+	config := core.ContainerInfo2DockerRunConfig(ci)
+	exitCode, err := dockerClient.RunContainer(context.Background(), config)
+	if err != nil {
+		return err
+	}
+	if exitCode != 0 {
+		return core.CreateErr(c, nil, "docker post step failed with exit code %d", exitCode)
+	}
+	return nil
+}
+
 func init() {
 	err := core.RegisterNodeFactory(ghActionNodeDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
 
@@ -502,6 +651,7 @@ func init() {
 		node := &GhActionNode{
 			actionName: action.Name,
 			actionRuns: action.Runs,
+			actionDir:  actionDir,
 		}
 
 		switch action.Runs.Using {
@@ -575,6 +725,19 @@ func init() {
 			}
 
 			node.actionRunJsPath = actionRunFile
+
+			// resolve post script if defined
+			if action.Runs.Post != "" {
+				postRunFile := filepath.Join(actionDir, action.Runs.Post)
+				postRunFile = filepath.Clean(postRunFile)
+
+				_, err := os.Stat(postRunFile)
+				if errors.Is(err, os.ErrNotExist) {
+					return nil, []error{core.CreateErr(nil, nil, "action post file does not exist: %s", postRunFile)}
+				}
+
+				node.actionPostJsPath = postRunFile
+			}
 
 		case "composite":
 			// we should never see a composite here, since they should have already been expanded by the editor/gateway
@@ -678,11 +841,13 @@ type ActionOutput struct {
 }
 
 type ActionRuns struct {
-	Image string   `json:"image"`
-	Using string   `json:"using"`
-	Main  string   `json:"main"`
-	Post  string   `json:"post"`
-	Args  []string `json:"args"`
+	Image          string   `json:"image"`
+	Using          string   `json:"using"`
+	Main           string   `json:"main"`
+	Post           string   `json:"post"`
+	PostIf         string   `json:"post-if" yaml:"post-if"`
+	PostEntrypoint string   `json:"post-entrypoint" yaml:"post-entrypoint"`
+	Args           []string `json:"args"`
 }
 
 // getRunnersDir returns the directory of the latest runner version.

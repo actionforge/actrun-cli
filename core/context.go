@@ -165,6 +165,9 @@ type ExecutionState struct {
 	ExecutionOutputCache map[string]any `json:"executionOutputCache"`
 	StepCache            *StepCache     `json:"stepCache"`
 
+	PostSteps     *PostStepQueue `json:"-"`
+	JobConclusion string         `json:"jobConclusion"`
+
 	DebugCallback DebugCallback `json:"-"`
 }
 
@@ -237,6 +240,9 @@ func (c *ExecutionState) PushNewExecutionState(parentNode NodeBaseInterface) *Ex
 		DataOutputCache:      make(map[string]any),
 		ExecutionOutputCache: make(map[string]any),
 		StepCache:            NewStepCache(c.StepCache),
+
+		PostSteps:     c.PostSteps,
+		JobConclusion: c.JobConclusion,
 
 		Visited:       visited,
 		DebugCallback: c.DebugCallback,
