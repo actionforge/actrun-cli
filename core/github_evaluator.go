@@ -193,11 +193,11 @@ func (e *Evaluator) callFunction(name string, args []any) (any, error) {
 	case "always":
 		return true, nil
 	case "success":
-		return true, nil
+		return e.ctx.JobConclusion == "success", nil
 	case "failure":
-		return false, nil
+		return e.ctx.JobConclusion == "failure", nil
 	case "cancelled":
-		return false, nil
+		return e.ctx.JobConclusion == "cancelled", nil
 
 	case "fromjson":
 		if len(args) < 1 {
