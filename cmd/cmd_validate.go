@@ -150,6 +150,17 @@ func expandPath(path string) string {
 	return os.ExpandEnv(path)
 }
 
+var cmdSchema = &cobra.Command{
+	Use:   "schema",
+	Short: "Print the JSON schema for .act files.",
+	Long:  `Prints the JSON schema used to validate ActionForge graph (.act) files.`,
+	Args:  cobra.NoArgs,
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println(string(ActfileSchema))
+	},
+}
+
 func init() {
 	cmdRoot.AddCommand(cmdValidate)
+	cmdRoot.AddCommand(cmdSchema)
 }
