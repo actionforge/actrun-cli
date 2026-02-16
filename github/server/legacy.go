@@ -70,6 +70,11 @@ func (s *Server) handleLegacyCreate(w http.ResponseWriter, r *http.Request) {
 
 // PUT /v3-upload/{containerId}?itemPath={path}
 func (s *Server) handleLegacyUpload(w http.ResponseWriter, r *http.Request) {
+	if !hasBearer(r) {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+
 	cidStr := r.PathValue("containerId")
 	cid, err := strconv.ParseInt(cidStr, 10, 64)
 	if err != nil {
@@ -114,7 +119,11 @@ func (s *Server) handleLegacyUpload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if start > 0 {
-		f.Seek(start, io.SeekStart)
+		if _, err := f.Seek(start, io.SeekStart); err != nil {
+			f.Close()
+			http.Error(w, "storage error", http.StatusInternalServerError)
+			return
+		}
 	}
 	n, copyErr := io.Copy(f, r.Body)
 	if err := f.Close(); err != nil && copyErr == nil {
@@ -199,6 +208,11 @@ func (s *Server) handleLegacyList(w http.ResponseWriter, r *http.Request) {
 
 // GET /download-v3/{containerId}?itemPath={prefix}
 func (s *Server) handleLegacyListFiles(w http.ResponseWriter, r *http.Request) {
+	if !hasBearer(r) {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+
 	cidStr := r.PathValue("containerId")
 	cid, err := strconv.ParseInt(cidStr, 10, 64)
 	if err != nil {
@@ -239,6 +253,11 @@ func (s *Server) handleLegacyListFiles(w http.ResponseWriter, r *http.Request) {
 
 // GET /artifact/{path...}
 func (s *Server) handleLegacyDownload(w http.ResponseWriter, r *http.Request) {
+	if !hasBearer(r) {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+
 	fullPath := r.PathValue("path")
 	before, after, ok := strings.Cut(fullPath, "/")
 	if !ok {

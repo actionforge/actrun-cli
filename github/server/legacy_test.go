@@ -60,6 +60,7 @@ func TestLegacyFullCycle(t *testing.T) {
 	// 2. Upload file
 	req, _ := http.NewRequest("PUT", uploadURL+"?itemPath=data/file.txt", bytes.NewReader(fileContent))
 	req.Header.Set("Content-Type", "application/octet-stream")
+	req.Header.Set("Authorization", "Bearer test-token")
 	uploadResp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		t.Fatalf("upload: %v", err)
@@ -115,7 +116,9 @@ func TestLegacyFullCycle(t *testing.T) {
 	contentLocation := filesResult.Value[0]["contentLocation"].(string)
 
 	// 6. Download file
-	dlResp, err := http.Get(contentLocation)
+	dlReq, _ := http.NewRequest("GET", contentLocation, nil)
+	dlReq.Header.Set("Authorization", "Bearer test-token")
+	dlResp, err := http.DefaultClient.Do(dlReq)
 	if err != nil {
 		t.Fatalf("download: %v", err)
 	}
@@ -148,6 +151,7 @@ func TestLegacyChunkedUpload(t *testing.T) {
 	// Upload chunk 1
 	req, _ := http.NewRequest("PUT", uploadURL+"?itemPath=file.bin", bytes.NewReader(chunk1))
 	req.Header.Set("Content-Range", fmt.Sprintf("bytes 0-%d/%d", len(chunk1)-1, total))
+	req.Header.Set("Authorization", "Bearer test-token")
 	r, _ := http.DefaultClient.Do(req)
 	r.Body.Close()
 	if r.StatusCode != http.StatusCreated {
@@ -157,6 +161,7 @@ func TestLegacyChunkedUpload(t *testing.T) {
 	// Upload chunk 2
 	req, _ = http.NewRequest("PUT", uploadURL+"?itemPath=file.bin", bytes.NewReader(chunk2))
 	req.Header.Set("Content-Range", fmt.Sprintf("bytes %d-%d/%d", len(chunk1), total-1, total))
+	req.Header.Set("Authorization", "Bearer test-token")
 	r, _ = http.DefaultClient.Do(req)
 	r.Body.Close()
 	if r.StatusCode != http.StatusCreated {
@@ -184,7 +189,9 @@ func TestLegacyChunkedUpload(t *testing.T) {
 	resp.Body.Close()
 	contentLocation := filesResult.Value[0]["contentLocation"].(string)
 
-	dlResp, _ := http.Get(contentLocation)
+	dlReq, _ := http.NewRequest("GET", contentLocation, nil)
+	dlReq.Header.Set("Authorization", "Bearer test-token")
+	dlResp, _ := http.DefaultClient.Do(dlReq)
 	defer dlResp.Body.Close()
 	data, _ := io.ReadAll(dlResp.Body)
 	expected := append(chunk1, chunk2...)
@@ -215,6 +222,7 @@ func TestLegacyGzipRoundtrip(t *testing.T) {
 	// Upload with Content-Encoding: gzip
 	req, _ := http.NewRequest("PUT", uploadURL+"?itemPath=data.gz", bytes.NewReader(gzipData))
 	req.Header.Set("Content-Encoding", "gzip")
+	req.Header.Set("Authorization", "Bearer test-token")
 	r, _ := http.DefaultClient.Do(req)
 	r.Body.Close()
 	if r.StatusCode != http.StatusCreated {
@@ -239,7 +247,9 @@ func TestLegacyGzipRoundtrip(t *testing.T) {
 	// Use raw HTTP transport to avoid automatic decompression
 	transport := &http.Transport{DisableCompression: true}
 	client := &http.Client{Transport: transport}
-	dlResp, _ := client.Get(filesResult.Value[0]["contentLocation"].(string))
+	dlReq, _ := http.NewRequest("GET", filesResult.Value[0]["contentLocation"].(string), nil)
+	dlReq.Header.Set("Authorization", "Bearer test-token")
+	dlResp, _ := client.Do(dlReq)
 	defer dlResp.Body.Close()
 
 	if dlResp.Header.Get("Content-Encoding") != "gzip" {
@@ -272,6 +282,7 @@ func TestLegacyMultipleFiles(t *testing.T) {
 
 	for path, content := range files {
 		req, _ := http.NewRequest("PUT", uploadURL+"?itemPath="+path, bytes.NewReader([]byte(content)))
+		req.Header.Set("Authorization", "Bearer test-token")
 		r, _ := http.DefaultClient.Do(req)
 		r.Body.Close()
 	}
@@ -319,14 +330,14 @@ func TestLegacyNotFound(t *testing.T) {
 	}
 
 	// Download non-existent container
-	dlResp, _ := http.Get(ts.URL + "/download-v3/9999")
+	dlResp := legacyRequest(t, ts, "GET", "/download-v3/9999", nil)
 	dlResp.Body.Close()
 	if dlResp.StatusCode != http.StatusNotFound {
 		t.Fatalf("expected 404, got %d", dlResp.StatusCode)
 	}
 
 	// Download non-existent file
-	dlResp, _ = http.Get(ts.URL + "/artifact/9999/nofile.txt")
+	dlResp = legacyRequest(t, ts, "GET", "/artifact/9999/nofile.txt", nil)
 	dlResp.Body.Close()
 	if dlResp.StatusCode != http.StatusNotFound {
 		t.Fatalf("expected 404, got %d", dlResp.StatusCode)

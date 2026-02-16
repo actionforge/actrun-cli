@@ -271,6 +271,16 @@ func (s *Server) handleCreateArtifact(w http.ResponseWriter, r *http.Request, ru
 
 	blobPath := s.artifactBlobPath(req.WorkflowRunBackendID, req.Name)
 
+	safeDir, err := utils.SafeJoinPath(s.storageDir, filepath.Base(req.WorkflowRunBackendID))
+	if err != nil {
+		writeTwirpError(w, http.StatusBadRequest, "invalid_argument", "invalid artifact path")
+		return
+	}
+	if err := os.MkdirAll(safeDir, 0o755); err != nil {
+		writeTwirpError(w, http.StatusInternalServerError, "internal", "failed to create storage directory")
+		return
+	}
+
 	s.mu.Lock()
 	if existing, ok := s.artifacts[key]; ok && existing.Finalized {
 		s.mu.Unlock()
@@ -297,16 +307,6 @@ func (s *Server) handleCreateArtifact(w http.ResponseWriter, r *http.Request, ru
 	s.artByID[id] = art
 	s.uploadMu[id] = &sync.Mutex{}
 	s.mu.Unlock()
-
-	safeDir, err := utils.SafeJoinPath(s.storageDir, filepath.Base(req.WorkflowRunBackendID))
-	if err != nil {
-		writeTwirpError(w, http.StatusBadRequest, "invalid_argument", "invalid artifact path")
-		return
-	}
-	if err := os.MkdirAll(safeDir, 0o755); err != nil {
-		writeTwirpError(w, http.StatusInternalServerError, "internal", "failed to create storage directory")
-		return
-	}
 
 	uploadURL := s.makeSignedURL("PUT", id)
 
@@ -480,6 +480,16 @@ func (s *Server) handleMigrateArtifact(w http.ResponseWriter, r *http.Request, r
 	key := req.WorkflowRunBackendID + "/" + req.Name
 	blobPath := s.artifactBlobPath(req.WorkflowRunBackendID, req.Name)
 
+	safeDir, err := utils.SafeJoinPath(s.storageDir, filepath.Base(req.WorkflowRunBackendID))
+	if err != nil {
+		writeTwirpError(w, http.StatusBadRequest, "invalid_argument", "invalid artifact path")
+		return
+	}
+	if err := os.MkdirAll(safeDir, 0o755); err != nil {
+		writeTwirpError(w, http.StatusInternalServerError, "internal", "failed to create storage directory")
+		return
+	}
+
 	s.mu.Lock()
 	if existing, ok := s.artifacts[key]; ok && existing.Finalized {
 		s.mu.Unlock()
@@ -500,16 +510,6 @@ func (s *Server) handleMigrateArtifact(w http.ResponseWriter, r *http.Request, r
 	s.artByID[id] = art
 	s.uploadMu[id] = &sync.Mutex{}
 	s.mu.Unlock()
-
-	safeDir, err := utils.SafeJoinPath(s.storageDir, filepath.Base(req.WorkflowRunBackendID))
-	if err != nil {
-		writeTwirpError(w, http.StatusBadRequest, "invalid_argument", "invalid artifact path")
-		return
-	}
-	if err := os.MkdirAll(safeDir, 0o755); err != nil {
-		writeTwirpError(w, http.StatusInternalServerError, "internal", "failed to create storage directory")
-		return
-	}
 
 	uploadURL := s.makeSignedURL("PUT", id)
 

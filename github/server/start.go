@@ -2,6 +2,7 @@ package server
 
 import (
 	"crypto/rand"
+	"errors"
 	"fmt"
 	"net"
 	"net/http"
@@ -85,7 +86,7 @@ func StartServer(cfg Config) (*RunningServer, error) {
 	}
 
 	go func() {
-		if err := httpServer.Serve(listener); err != nil {
+		if err := httpServer.Serve(listener); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			fmt.Fprintf(os.Stderr, "server error: %v\n", err)
 		}
 	}()

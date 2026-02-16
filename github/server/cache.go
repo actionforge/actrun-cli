@@ -211,47 +211,54 @@ func (s *Server) handleGetCacheEntryDownloadURL(w http.ResponseWriter, r *http.R
 		scope = req.Metadata.Scope
 	}
 
-	s.mu.RLock()
-	defer s.mu.RUnlock()
+	type match struct {
+		id  int64
+		key string
+	}
 
+	var found *match
+
+	s.mu.RLock()
 	// 1. Exact match: scope + key + version
 	exactKey := scope + "/" + req.Key + "/" + req.Version
 	if entry, ok := s.caches[exactKey]; ok && entry.Finalized {
-		downloadURL := s.makeSignedURL("GET", entry.ID)
-		writeJSON(w, http.StatusOK, GetCacheEntryDownloadURLResponse{
-			Ok:                true,
-			SignedDownloadURL: downloadURL,
-			MatchedKey:        entry.Key,
-		})
-		return
+		found = &match{id: entry.ID, key: entry.Key}
 	}
 
 	// 2. Prefix match with restore_keys
-	for _, rk := range req.RestoreKeys {
-		var best *CacheEntry
-		for _, entry := range s.caches {
-			if entry.Scope != scope || entry.Version != req.Version {
-				continue
+	if found == nil {
+		for _, rk := range req.RestoreKeys {
+			var best *CacheEntry
+			for _, entry := range s.caches {
+				if entry.Scope != scope || entry.Version != req.Version {
+					continue
+				}
+				if !entry.Finalized {
+					continue
+				}
+				if !strings.HasPrefix(entry.Key, rk) {
+					continue
+				}
+				if best == nil || entry.CreatedAt.After(best.CreatedAt) {
+					best = entry
+				}
 			}
-			if !entry.Finalized {
-				continue
-			}
-			if !strings.HasPrefix(entry.Key, rk) {
-				continue
-			}
-			if best == nil || entry.CreatedAt.After(best.CreatedAt) {
-				best = entry
+			if best != nil {
+				found = &match{id: best.ID, key: best.Key}
+				break
 			}
 		}
-		if best != nil {
-			downloadURL := s.makeSignedURL("GET", best.ID)
-			writeJSON(w, http.StatusOK, GetCacheEntryDownloadURLResponse{
-				Ok:                true,
-				SignedDownloadURL: downloadURL,
-				MatchedKey:        best.Key,
-			})
-			return
-		}
+	}
+	s.mu.RUnlock()
+
+	if found != nil {
+		downloadURL := s.makeSignedURL("GET", found.id)
+		writeJSON(w, http.StatusOK, GetCacheEntryDownloadURLResponse{
+			Ok:                true,
+			SignedDownloadURL: downloadURL,
+			MatchedKey:        found.key,
+		})
+		return
 	}
 
 	writeTwirpError(w, http.StatusNotFound, "not_found", "cache entry not found")
