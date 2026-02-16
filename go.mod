@@ -22,6 +22,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/rhysd/actionlint v1.7.10
 	github.com/rossmacarthur/cases v0.3.0
+	github.com/santhosh-tekuri/jsonschema/v6 v6.0.2
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/pflag v1.0.10
@@ -107,7 +108,6 @@ require (
 	github.com/pkoukk/tiktoken-go v0.1.8 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
-	github.com/santhosh-tekuri/jsonschema/v6 v6.0.2 // indirect
 	github.com/sergi/go-diff v1.4.0 // indirect
 	github.com/skeema/knownhosts v1.3.2 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
