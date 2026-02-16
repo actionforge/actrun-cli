@@ -6,6 +6,8 @@ import (
 	"net"
 	"net/http"
 	"os"
+
+	"github.com/actionforge/actrun-cli/utils"
 )
 
 // Config holds parameters for starting a local GitHub Actions server.
@@ -50,6 +52,12 @@ func StartServer(cfg Config) (*RunningServer, error) {
 	if cfg.OIDCSub == "" {
 		cfg.OIDCSub = "repo:local/repo:ref:refs/heads/main"
 	}
+
+	cleanDir, err := utils.ValidatePath(cfg.StorageDir)
+	if err != nil {
+		return nil, fmt.Errorf("invalid storage directory: %w", err)
+	}
+	cfg.StorageDir = cleanDir
 
 	if err := os.MkdirAll(cfg.StorageDir, 0o755); err != nil {
 		return nil, fmt.Errorf("creating storage directory: %w", err)

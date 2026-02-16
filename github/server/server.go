@@ -15,38 +15,40 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/actionforge/actrun-cli/utils"
 )
 
 // Artifact represents a stored artifact with its metadata.
 type Artifact struct {
-	ID              int64
-	Name            string
-	RunBackendID    string
-	JobBackendID    string
-	BlobPath        string // on-disk path: {storageDir}/{runBackendID}/{name}
-	Size            int64
-	Hash            string
-	Finalized       bool
-	CreatedAt       time.Time
-	ExpiresAt       time.Time
-	WorkflowName    string
-	RunID           int64
-	WorkflowRunID   int64
-	MonolithRunID   int64
+	ID            int64
+	Name          string
+	RunBackendID  string
+	JobBackendID  string
+	BlobPath      string // on-disk path: {storageDir}/{runBackendID}/{name}
+	Size          int64
+	Hash          string
+	Finalized     bool
+	CreatedAt     time.Time
+	ExpiresAt     time.Time
+	WorkflowName  string
+	RunID         int64
+	WorkflowRunID int64
+	MonolithRunID int64
 }
 
 // Server implements the GitHub Actions artifact service protocol.
 type Server struct {
-	mu          sync.RWMutex
+	mu sync.RWMutex
 	// Artifact v4 state
-	artifacts   map[string]*Artifact          // "{runBackendId}/{name}"
-	artByID     map[int64]*Artifact
+	artifacts map[string]*Artifact // "{runBackendId}/{name}"
+	artByID   map[int64]*Artifact
 	// Cache state
-	caches      map[string]*CacheEntry        // "{scope}/{key}/{version}"
-	cacheByID   map[int64]*CacheEntry
+	caches    map[string]*CacheEntry // "{scope}/{key}/{version}"
+	cacheByID map[int64]*CacheEntry
 	// Legacy artifact v3 state
-	containers  map[string]*ArtifactContainer // "{runId}/{name}"
-	contByID    map[int64]*ArtifactContainer
+	containers map[string]*ArtifactContainer // "{runId}/{name}"
+	contByID   map[int64]*ArtifactContainer
 	// Shared
 	uploadMu    map[int64]*sync.Mutex
 	nextID      int64
@@ -295,8 +297,12 @@ func (s *Server) handleCreateArtifact(w http.ResponseWriter, r *http.Request, ru
 	s.uploadMu[id] = &sync.Mutex{}
 	s.mu.Unlock()
 
-	// Ensure run subdirectory exists
-	if err := os.MkdirAll(filepath.Dir(blobPath), 0o755); err != nil {
+	safeDir, err := utils.SafeJoinPath(s.storageDir, filepath.Base(req.WorkflowRunBackendID))
+	if err != nil {
+		writeTwirpError(w, http.StatusBadRequest, "invalid_argument", "invalid artifact path")
+		return
+	}
+	if err := os.MkdirAll(safeDir, 0o755); err != nil {
 		writeTwirpError(w, http.StatusInternalServerError, "internal", "failed to create storage directory")
 		return
 	}
@@ -494,7 +500,12 @@ func (s *Server) handleMigrateArtifact(w http.ResponseWriter, r *http.Request, r
 	s.uploadMu[id] = &sync.Mutex{}
 	s.mu.Unlock()
 
-	if err := os.MkdirAll(filepath.Dir(blobPath), 0o755); err != nil {
+	safeDir, err := utils.SafeJoinPath(s.storageDir, filepath.Base(req.WorkflowRunBackendID))
+	if err != nil {
+		writeTwirpError(w, http.StatusBadRequest, "invalid_argument", "invalid artifact path")
+		return
+	}
+	if err := os.MkdirAll(safeDir, 0o755); err != nil {
 		writeTwirpError(w, http.StatusInternalServerError, "internal", "failed to create storage directory")
 		return
 	}

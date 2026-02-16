@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/actionforge/actrun-cli/utils"
 )
 
 type ArtifactContainer struct {
@@ -89,13 +91,16 @@ func (s *Server) handleLegacyUpload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dir := filepath.Join(s.storageDir, "v3", cidStr, filepath.Dir(itemPath))
-	if err := os.MkdirAll(dir, 0o755); err != nil {
-		http.Error(w, "storage error", http.StatusInternalServerError)
+	filePath, err := utils.SafeJoinPath(s.storageDir, "v3", cidStr, itemPath)
+	if err != nil {
+		http.Error(w, "invalid item path", http.StatusBadRequest)
 		return
 	}
 
-	filePath := filepath.Join(s.storageDir, "v3", cidStr, itemPath)
+	if err := os.MkdirAll(filepath.Dir(filePath), 0o755); err != nil {
+		http.Error(w, "storage error", http.StatusInternalServerError)
+		return
+	}
 
 	// Parse Content-Range for chunked uploads: "bytes {start}-{end}/{total}"
 	var start int64
@@ -261,7 +266,11 @@ func (s *Server) handleLegacyDownload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	diskPath := filepath.Join(s.storageDir, "v3", cidStr, filePath)
+	diskPath, err := utils.SafeJoinPath(s.storageDir, "v3", cidStr, filePath)
+	if err != nil {
+		http.Error(w, "invalid path", http.StatusBadRequest)
+		return
+	}
 	f, err := os.Open(diskPath)
 	if err != nil {
 		http.Error(w, "file not found", http.StatusNotFound)
