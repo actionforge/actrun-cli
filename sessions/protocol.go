@@ -579,6 +579,7 @@ func runGraphFromConn(ctx context.Context, graphData string, opts core.RunOpts, 
 			OverrideInputs:  opts.OverrideInputs,
 			OverrideEnv:     opts.OverrideEnv,
 			Args:            []string{},
+			LocalGhServer:   true,
 		}, debugCb)
 	}()
 

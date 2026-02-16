@@ -31,6 +31,7 @@ var (
 	flagEnvFile            string
 	flagCreateDebugSession bool
 	flagLocal              bool
+	flagLocalGhServer      bool
 
 	finalConfigFile         string
 	finalConcurrency        string
@@ -38,6 +39,7 @@ var (
 	finalConfigValueSource  string
 	finalCreateDebugSession bool
 	finalLocal              bool
+	finalLocalGhServer      bool
 
 	finalGraphFile string
 	finalGraphArgs []string
@@ -112,6 +114,7 @@ var cmdRoot = &cobra.Command{
 		finalCreateDebugSession = finalCreateDebugSessionStr == "true" || finalCreateDebugSessionStr == "1"
 
 		finalLocal = flagLocal
+		finalLocalGhServer = flagLocalGhServer
 
 		// the block below is used to distinguish between implicit graph files (eg if defined in an env var) + graph flags
 		// vs explicit graph file (eg provided by positional arg) + graph flags.
@@ -201,6 +204,7 @@ func cmdRootRun(cmd *cobra.Command, args []string) {
 		OverrideSecrets: nil,
 		OverrideInputs:  nil,
 		Args:            finalGraphArgs,
+		LocalGhServer:   finalLocalGhServer,
 	}
 
 	if core.IsSharedGraphURL(finalGraphFile) {
@@ -253,6 +257,7 @@ func init() {
 	cmdRoot.Flags().StringVar(&flagSessionToken, "session-token", "", "The session token from your browser")
 	cmdRoot.Flags().BoolVar(&flagCreateDebugSession, "create-debug-session", false, "Create a debug session by connecting to the web app")
 	cmdRoot.Flags().BoolVar(&flagLocal, "local", false, "Start a local WebSocket server for direct editor connection")
+	cmdRoot.Flags().BoolVar(&flagLocalGhServer, "local-gh-server", false, "Start a local server mimicking GitHub Actions artifact, cache, and OIDC services")
 
 	// disable interspersed flag parsing to allow passing arbitrary flags to graphs.
 	// it stops cobra from parsing flags once it hits positional argument
