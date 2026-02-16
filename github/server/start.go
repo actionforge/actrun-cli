@@ -52,11 +52,7 @@ func StartServer(cfg Config) (*RunningServer, error) {
 		cfg.OIDCSub = "repo:local/repo:ref:refs/heads/main"
 	}
 
-	absDir, err := filepath.Abs(cfg.StorageDir)
-	if err != nil {
-		return nil, fmt.Errorf("invalid storage directory: %w", err)
-	}
-	cfg.StorageDir = absDir
+	cfg.StorageDir = filepath.Clean(cfg.StorageDir)
 
 	if err := os.MkdirAll(cfg.StorageDir, 0o755); err != nil {
 		return nil, fmt.Errorf("creating storage directory: %w", err)

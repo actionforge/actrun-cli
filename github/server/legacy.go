@@ -117,7 +117,9 @@ func (s *Server) handleLegacyUpload(w http.ResponseWriter, r *http.Request) {
 		f.Seek(start, io.SeekStart)
 	}
 	n, copyErr := io.Copy(f, r.Body)
-	f.Close()
+	if err := f.Close(); err != nil && copyErr == nil {
+		copyErr = err
+	}
 	if copyErr != nil {
 		http.Error(w, "storage error", http.StatusInternalServerError)
 		return
@@ -238,13 +240,13 @@ func (s *Server) handleLegacyListFiles(w http.ResponseWriter, r *http.Request) {
 // GET /artifact/{path...}
 func (s *Server) handleLegacyDownload(w http.ResponseWriter, r *http.Request) {
 	fullPath := r.PathValue("path")
-	idx := strings.IndexByte(fullPath, '/')
-	if idx < 0 {
+	before, after, ok := strings.Cut(fullPath, "/")
+	if !ok {
 		http.Error(w, "invalid path", http.StatusBadRequest)
 		return
 	}
-	cidStr := fullPath[:idx]
-	filePath := fullPath[idx+1:]
+	cidStr := before
+	filePath := after
 
 	cid, err := strconv.ParseInt(cidStr, 10, 64)
 	if err != nil {

@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -586,7 +587,11 @@ func (s *Server) handleBlobUpload(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "storage error", http.StatusInternalServerError)
 			return
 		}
-		defer f.Close()
+		defer func() {
+			if err := f.Close(); err != nil {
+				log.Printf("closing blob file: %v", err)
+			}
+		}()
 		if _, err := io.Copy(f, r.Body); err != nil {
 			http.Error(w, "storage error", http.StatusInternalServerError)
 			return
@@ -604,7 +609,11 @@ func (s *Server) handleBlobUpload(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "storage error", http.StatusInternalServerError)
 			return
 		}
-		defer f.Close()
+		defer func() {
+			if err := f.Close(); err != nil {
+				log.Printf("closing blob file: %v", err)
+			}
+		}()
 		if _, err := io.Copy(f, r.Body); err != nil {
 			http.Error(w, "storage error", http.StatusInternalServerError)
 			return
