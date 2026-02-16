@@ -1,0 +1,475 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://actionforge.dev/schemas/actfile.json",
+  "title": "ActionForge Graph File (.act)",
+  "description": "Schema for ActionForge .act graph files — YAML-based workflow definitions with nodes, data connections, and execution connections.",
+  "type": "object",
+  "required": ["entry", "nodes"],
+  "additionalProperties": false,
+  "properties": {
+    "editor": {
+      "description": "Metadata about the editor that created/updated this file. Not used during execution.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "created": {
+              "type": "string",
+              "description": "Editor version when the file was created (e.g. \"v1.26.5\").",
+              "pattern": "^v\\d+\\.\\d+\\.\\d+$"
+            },
+            "updated": {
+              "type": "string",
+              "description": "Editor version when the file was last updated.",
+              "pattern": "^v\\d+\\.\\d+\\.\\d+$"
+            }
+          }
+        }
+      }
+    },
+    "entry": {
+      "type": "string",
+      "description": "Node ID of the graph's entry point. Must reference a node that implements the entry interface (e.g. core/start@v1 or core/gh-start@v1 for top-level graphs, or core/group-inputs@v1 for group sub-graphs)."
+    },
+    "type": {
+      "type": "string",
+      "description": "The graph type.",
+      "enum": ["generic", "standard", "group", "github"]
+    },
+    "desc": {
+      "type": "string",
+      "description": "Human-readable description of the graph."
+    },
+    "nodes": {
+      "type": "array",
+      "description": "Array of node definitions that make up the graph.",
+      "items": {
+        "$ref": "#/$defs/node"
+      }
+    },
+    "connections": {
+      "type": "array",
+      "description": "Data-flow connections between node ports. Each connection links a source output port to a destination input port.",
+      "items": {
+        "$ref": "#/$defs/connection"
+      }
+    },
+    "executions": {
+      "type": "array",
+      "description": "Execution-flow connections between node ports. Each execution link defines the order in which nodes execute.",
+      "items": {
+        "$ref": "#/$defs/execution"
+      }
+    },
+    "inputs": {
+      "type": "object",
+      "description": "Graph-level input port definitions. Used in group sub-graphs to define the interface exposed to the parent graph.",
+      "additionalProperties": {
+        "$ref": "#/$defs/inputDefinition"
+      }
+    },
+    "outputs": {
+      "type": "object",
+      "description": "Graph-level output port definitions. Used in group sub-graphs to define the interface exposed to the parent graph.",
+      "additionalProperties": {
+        "$ref": "#/$defs/outputDefinition"
+      }
+    },
+    "info": {
+      "$ref": "#/$defs/graphInfo"
+    }
+  },
+  "$defs": {
+    "node": {
+      "type": "object",
+      "description": "A single node in the graph.",
+      "required": ["id", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for this node within the graph."
+        },
+        "type": {
+          "type": "string",
+          "description": "Node type identifier. Built-in nodes use the format \"core/<name>@v<N>\" (e.g. \"core/start@v1\", \"core/run@v1\"). GitHub Action nodes use \"github.com/<owner>/<repo>@<ref>\" (e.g. \"github.com/actions/checkout@v4\").",
+          "pattern": "^(core/[a-z0-9-]+@v\\d+|github\\.com/.+)$"
+        },
+        "label": {
+          "type": "string",
+          "description": "Optional display label shown in the graph editor."
+        },
+        "position": {
+          "$ref": "#/$defs/position"
+        },
+        "dimensions": {
+          "$ref": "#/$defs/dimensions"
+        },
+        "settings": {
+          "type": "object",
+          "description": "Visual settings for the graph editor.",
+          "additionalProperties": false,
+          "properties": {
+            "folded": {
+              "type": "boolean",
+              "description": "Whether the node is visually collapsed in the editor."
+            }
+          }
+        },
+        "inputs": {
+          "type": "object",
+          "description": "Input values for the node's input ports. Keys are port IDs. Array ports use bracket notation (e.g. \"values[0]\", \"env[1]\"). Values can be any type — strings, numbers, booleans, null, arrays, or objects — depending on the port's type definition.",
+          "additionalProperties": true
+        },
+        "outputs": {
+          "type": "object",
+          "description": "Output port declarations. Used for array output ports that need to be pre-declared with bracket notation (e.g. \"exec[0]\": null, \"exec[1]\": null). Values are typically null.",
+          "additionalProperties": true
+        },
+        "comment": {
+          "type": "string",
+          "description": "An optional comment or annotation for the node."
+        },
+        "graph": {
+          "$ref": "#/$defs/nestedGraph",
+          "description": "Nested sub-graph for group nodes (type: core/group@v1). Contains a complete graph definition with its own nodes, connections, executions, inputs, and outputs."
+        }
+      }
+    },
+    "nestedGraph": {
+      "type": "object",
+      "description": "A nested graph definition used inside group nodes. Has the same structure as a top-level graph, with additional input/output interface definitions.",
+      "required": ["entry", "nodes"],
+      "additionalProperties": false,
+      "properties": {
+        "entry": {
+          "type": "string",
+          "description": "Node ID of the sub-graph's entry point (typically a core/group-inputs@v1 node)."
+        },
+        "type": {
+          "type": "string",
+          "description": "Must be \"group\" for nested graphs.",
+          "const": "group"
+        },
+        "desc": {
+          "type": "string",
+          "description": "Description of the sub-graph."
+        },
+        "nodes": {
+          "type": "array",
+          "description": "Array of node definitions within the sub-graph.",
+          "items": {
+            "$ref": "#/$defs/node"
+          }
+        },
+        "connections": {
+          "type": "array",
+          "description": "Data-flow connections within the sub-graph.",
+          "items": {
+            "$ref": "#/$defs/connection"
+          }
+        },
+        "executions": {
+          "type": "array",
+          "description": "Execution-flow connections within the sub-graph.",
+          "items": {
+            "$ref": "#/$defs/execution"
+          }
+        },
+        "inputs": {
+          "type": "object",
+          "description": "Input port definitions for the group interface, exposed to the parent graph.",
+          "additionalProperties": {
+            "$ref": "#/$defs/inputDefinition"
+          }
+        },
+        "outputs": {
+          "type": "object",
+          "description": "Output port definitions for the group interface, exposed to the parent graph.",
+          "additionalProperties": {
+            "$ref": "#/$defs/outputDefinition"
+          }
+        },
+        "info": {
+          "$ref": "#/$defs/graphInfo"
+        }
+      }
+    },
+    "connection": {
+      "type": "object",
+      "description": "A data-flow connection from a source node's output port to a destination node's input port.",
+      "required": ["src", "dst"],
+      "additionalProperties": false,
+      "properties": {
+        "src": {
+          "$ref": "#/$defs/portReference",
+          "description": "Source node and output port."
+        },
+        "dst": {
+          "$ref": "#/$defs/portReference",
+          "description": "Destination node and input port."
+        },
+        "isLoop": {
+          "type": "boolean",
+          "description": "Marks this connection as a loop-back (i.e. the source is downstream of the destination). Self-referencing connections are valid.",
+          "default": false
+        }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "description": "An execution-flow connection from a source node's execution output port to a destination node's execution input port. Defines the control-flow order of the graph.",
+      "required": ["src", "dst"],
+      "additionalProperties": false,
+      "properties": {
+        "src": {
+          "$ref": "#/$defs/portReference",
+          "description": "Source node and execution output port (e.g. \"exec\", \"exec-success\", \"exec-then\")."
+        },
+        "dst": {
+          "$ref": "#/$defs/portReference",
+          "description": "Destination node and execution input port (e.g. \"exec\")."
+        },
+        "isLoop": {
+          "type": "boolean",
+          "description": "Marks this execution link as a loop-back.",
+          "default": false
+        }
+      }
+    },
+    "portReference": {
+      "type": "object",
+      "description": "A reference to a specific port on a specific node.",
+      "required": ["node", "port"],
+      "additionalProperties": false,
+      "properties": {
+        "node": {
+          "type": "string",
+          "description": "The node ID."
+        },
+        "port": {
+          "type": "string",
+          "description": "The port ID. May use bracket notation for array ports (e.g. \"values[0]\")."
+        }
+      }
+    },
+    "position": {
+      "type": "object",
+      "description": "X/Y coordinates for the node's position in the graph editor.",
+      "required": ["x", "y"],
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        }
+      }
+    },
+    "dimensions": {
+      "type": "object",
+      "description": "Width and height of the node in the graph editor. Primarily used for comment nodes.",
+      "additionalProperties": false,
+      "properties": {
+        "width": {
+          "type": "number"
+        },
+        "height": {
+          "type": "number"
+        }
+      }
+    },
+    "portType": {
+      "type": "string",
+      "description": "The data type of a port.",
+      "enum": [
+        "string",
+        "number",
+        "bool",
+        "secret",
+        "option",
+        "stream",
+        "any",
+        "unknown",
+        "iterable",
+        "indexable",
+        "[]any",
+        "[]string",
+        "[]number",
+        "[]bool"
+      ]
+    },
+    "inputDefinition": {
+      "type": "object",
+      "description": "Definition of an input port on a graph or group interface.",
+      "required": ["type", "index"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Human-readable name of the port."
+        },
+        "type": {
+          "description": "Data type of the port. Empty string indicates an execution port (used with exec: true).",
+          "oneOf": [
+            { "$ref": "#/$defs/portType" },
+            { "type": "string", "const": "" }
+          ]
+        },
+        "desc": {
+          "type": "string",
+          "description": "Description of the port."
+        },
+        "index": {
+          "type": "integer",
+          "description": "Display order index of the port.",
+          "minimum": 0
+        },
+        "exec": {
+          "type": "boolean",
+          "description": "If true, this is an execution port rather than a data port.",
+          "default": false
+        },
+        "array": {
+          "type": "boolean",
+          "description": "If true, this port accepts an array of values using bracket notation.",
+          "default": false
+        },
+        "array_initial_count": {
+          "type": "integer",
+          "description": "Initial number of array elements to create in the editor.",
+          "minimum": 0
+        },
+        "hide_socket": {
+          "type": "boolean",
+          "description": "If true, the port socket is hidden in the editor UI.",
+          "default": false
+        },
+        "default": {
+          "description": "Default value used during execution if no connection or user value is provided."
+        },
+        "initial": {
+          "description": "Initial value used by the editor to prefill the field. Has no effect during execution."
+        },
+        "required": {
+          "type": "boolean",
+          "description": "Whether this input must be provided.",
+          "default": false
+        },
+        "options": {
+          "type": "array",
+          "description": "Available options for ports of type \"option\".",
+          "items": {
+            "$ref": "#/$defs/inputOption"
+          }
+        },
+        "multiline": {
+          "type": "boolean",
+          "description": "For string-type ports: enables a multi-line text editor.",
+          "default": false
+        },
+        "hint": {
+          "type": "string",
+          "description": "Hint text displayed in the editor UI."
+        },
+        "array_hints": {
+          "type": "array",
+          "description": "Hint texts for individual array elements.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "step": {
+          "type": "number",
+          "description": "For number-type ports: the increment step for the editor."
+        }
+      }
+    },
+    "outputDefinition": {
+      "type": "object",
+      "description": "Definition of an output port on a graph or group interface.",
+      "required": ["type", "index"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Human-readable name of the port."
+        },
+        "type": {
+          "description": "Data type of the port. Empty string indicates an execution port (used with exec: true).",
+          "oneOf": [
+            { "$ref": "#/$defs/portType" },
+            { "type": "string", "const": "" }
+          ]
+        },
+        "desc": {
+          "type": "string",
+          "description": "Description of the port."
+        },
+        "index": {
+          "type": "integer",
+          "description": "Display order index of the port.",
+          "minimum": 0
+        },
+        "exec": {
+          "type": "boolean",
+          "description": "If true, this is an execution port rather than a data port.",
+          "default": false
+        },
+        "array": {
+          "type": "boolean",
+          "description": "If true, this port produces an array of values.",
+          "default": false
+        },
+        "array_initial_count": {
+          "type": "integer",
+          "description": "Initial number of array elements.",
+          "minimum": 0
+        }
+      }
+    },
+    "graphInfo": {
+      "type": "object",
+      "description": "Metadata about the graph or sub-graph author and versioning.",
+      "additionalProperties": false,
+      "properties": {
+        "author": {
+          "type": "string",
+          "description": "Author of the graph."
+        },
+        "version": {
+          "type": "string",
+          "description": "Version of the graph."
+        },
+        "contact": {
+          "type": "string",
+          "description": "Contact information for the graph author."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the graph."
+        }
+      }
+    },
+    "inputOption": {
+      "type": "object",
+      "description": "A selectable option for an input port of type \"option\".",
+      "required": ["name", "value"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Display name of the option."
+        },
+        "value": {
+          "type": "string",
+          "description": "Value of the option."
+        }
+      }
+    }
+  }
+}
