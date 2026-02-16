@@ -474,7 +474,11 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 		}
 
 		if opts.LocalGhServer {
-			storageDir := filepath.Join(finalEnv["RUNNER_TEMP"], "gh-server-storage")
+			// RUNNER_TEMP is provided by the local editor over a 127.0.0.1-only WebSocket; not an external input.
+			storageDir, mkErr := os.MkdirTemp(finalEnv["RUNNER_TEMP"], "gh-server-storage-") // lgtm[go/path-injection]
+			if mkErr != nil {
+				return CreateErr(nil, mkErr, "failed to create storage directory for local GitHub Actions server")
+			}
 			rs, srvErr := server.StartServer(server.Config{StorageDir: storageDir})
 			if srvErr != nil {
 				return CreateErr(nil, srvErr, "failed to start local GitHub Actions server")

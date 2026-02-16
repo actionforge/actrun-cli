@@ -54,10 +54,6 @@ func StartServer(cfg Config) (*RunningServer, error) {
 
 	cfg.StorageDir = filepath.Clean(cfg.StorageDir)
 
-	if err := os.MkdirAll(cfg.StorageDir, 0o755); err != nil {
-		return nil, fmt.Errorf("creating storage directory: %w", err)
-	}
-
 	// Generate random HMAC signing key
 	signingKey := make([]byte, 32)
 	if _, err := rand.Read(signingKey); err != nil {
