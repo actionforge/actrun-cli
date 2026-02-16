@@ -4,7 +4,7 @@ looking for value: 'graph_file'
   evaluated to: 'validate.act'
 Validating 'validate.act'...
 
-❌ Validation failed with 4 error(s):
+❌ Graph validation failed with 4 error(s):
 
 --- Error 1 ---
 error:

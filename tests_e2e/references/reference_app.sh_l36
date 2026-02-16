@@ -3,7 +3,7 @@ looking for value: 'graph_file'
   no value (is optional) found for: 'graph_file'
 Validating '[REDACTED]/missing-exec-connection2.act'...
 
-❌ Validation failed with 2 error(s):
+❌ Graph validation failed with 2 error(s):
 
 --- Error 1 ---
 error:

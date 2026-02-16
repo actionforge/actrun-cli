@@ -1,6 +1,8 @@
 package main
 
 import (
+	_ "embed"
+
 	_ "github.com/actionforge/actrun-cli/api"
 	"github.com/actionforge/actrun-cli/cmd"
 	_ "github.com/actionforge/actrun-cli/cmd"
@@ -8,6 +10,9 @@ import (
 	_ "github.com/actionforge/actrun-cli/tests_unit"
 	"github.com/actionforge/actrun-cli/utils"
 )
+
+//go:embed actfile-schema.json
+var actfileSchema []byte
 
 func main() {
 	utils.ApplyLogLevel()
@@ -23,5 +28,6 @@ func main() {
 		return
 	}
 
+	cmd.ActfileSchema = actfileSchema
 	cmd.Execute()
 }
