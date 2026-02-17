@@ -1,0 +1,32 @@
+Cleaning up
+Connecting to WebSocket
+DEBUG PAUSED #1 at node: start (depth=0)
+DEBUG PAUSED #2 at node: print-greeting (depth=0)
+DEBUG PAUSED #3 at node: greeting-text (depth=0)
+DEBUG PAUSED #4 at node: my-group (depth=0)
+DEBUG PAUSED #5 at node: my-group/group-inputs (depth=1)
+DEBUG PAUSED #6 at node: my-group (depth=0)
+DEBUG PAUSED #7 at node: print-done (depth=0)
+Job Finished Successfully!
+Launching local runner
+Log:  Done! Debug session complete.
+Log:  Hello from MCP debug session!
+Log:  Inside the group!
+Log:  created temp working directory for debug session: [REDACTED]/actrun-debug-[REDACTED]
+Log:  debugging paused at node: greeting-text
+Log:  debugging paused at node: my-group
+Log:  debugging paused at node: my-group
+Log:  debugging paused at node: my-group/group-inputs
+Log:  debugging paused at node: print-done
+Log:  debugging paused at node: print-greeting
+Log:  debugging paused at node: start
+Log:  ✅ Job succeeded. (Total time: )
+Log:  🚀 Task started...
+Runner connected! Sending Graph (Paused)
+Sending RESUME command
+Sending STEP command
+Sending STEP command
+Sending STEP command
+Sending STEP command
+Sending STEP_INTO command
+Sending STEP_OUT command
