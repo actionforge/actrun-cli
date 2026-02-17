@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://actionforge.dev/schemas/actfile.json",
-  "title": "ActionForge Graph File (.act)",
-  "description": "Schema for ActionForge .act graph files — YAML-based workflow definitions with nodes, data connections, and execution connections.",
+  "title": "Actionforge Graph File (.act)",
+  "description": "Schema for Actionforge .act graph files — YAML-based workflow definitions with nodes, data connections, and execution connections.",
   "type": "object",
   "required": ["entry", "nodes"],
   "additionalProperties": false,

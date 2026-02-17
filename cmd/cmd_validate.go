@@ -20,7 +20,7 @@ var ActfileSchema []byte
 var cmdValidate = &cobra.Command{
 	Use:   "validate [graph-file]",
 	Short: "Validate a graph file.",
-	Long:  `Validates the structure, types, connections, and required inputs of an ActionForge graph file without executing it.`,
+	Long:  `Validates the structure, types, connections, and required inputs of an Actionforge graph file without executing it.`,
 	Args:  cobra.ArbitraryArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 
@@ -153,7 +153,7 @@ func expandPath(path string) string {
 var cmdSchema = &cobra.Command{
 	Use:   "schema",
 	Short: "Print the JSON schema for .act files.",
-	Long:  `Prints the JSON schema used to validate ActionForge graph (.act) files.`,
+	Long:  `Prints the JSON schema used to validate Actionforge graph (.act) files.`,
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println(string(ActfileSchema))

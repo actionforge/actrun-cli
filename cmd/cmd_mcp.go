@@ -14,7 +14,7 @@ import (
 func buildMCPInstructions() string {
 	var b strings.Builder
 
-	b.WriteString("This MCP server provides tools for debugging and running ActionForge graph (.act) files interactively. ")
+	b.WriteString("This MCP server provides tools for debugging and running Actionforge graph (.act) files interactively. ")
 	b.WriteString("Use the debug_* tools to step through graph execution node by node, set breakpoints, and inspect state.\n\n")
 
 	b.WriteString("If you just need to run a graph without debugging, use the actrun CLI directly instead of this MCP server:\n\n")

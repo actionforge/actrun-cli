@@ -1,5 +1,5 @@
 #!/bin/bash
-# actrun - ActionForge graph runner
+# actrun - Actionforge graph runner
 #
 # This script is deployed at:
 #   https://www.actionforge.dev/actrun.sh

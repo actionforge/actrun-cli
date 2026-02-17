@@ -14,7 +14,7 @@ func RegisterDebugTools(s *server.MCPServer) {
 		mcp.NewTool("debug_connect",
 			mcp.WithDescription(
 				"Connect to an actrun local debug server via WebSocket. "+
-					"This is the entry point for debugging ActionForge graph (.act) files. "+
+					"This is the entry point for debugging Actionforge graph (.act) files. "+
 					"The entire debug flow is automated — the user provides an .act file path and optional flags, you handle the rest. "+
 					"\n\nWorkflow: "+
 					"(1) Start 'actrun --local' in the background with NO file argument and capture LOCAL_WS_PORT from stdout. "+
