@@ -291,8 +291,11 @@ func init() {
 			}
 		}
 
-		if len(collectedErrors) > 0 {
-			return nil, collectedErrors
+		if len(collectedErrors) > 0 && !validate {
+			// Return the collected errors instead of nil to prevent cascading
+			// validation errors where the group node is never registered in the
+			// parent graph, causing some ghost errors about missing nodes
+			return group, collectedErrors
 		}
 
 		return group, nil

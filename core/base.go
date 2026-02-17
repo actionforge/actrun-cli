@@ -618,8 +618,14 @@ func NewNodeInstance(nodeType string, parent NodeBaseInterface, parentId string,
 		// Pass 'validate' to the factory function
 		node, errs = factoryEntry.FactoryFn(nil, parent, parentId, nodeDef, validate, opts)
 		if len(errs) > 0 {
-			// If the factory failed to produce a node (or found errors), return them.
-			return nil, errs
+			if node == nil || !validate {
+				// factory failed to produce a node, or we're not in validation mode.
+				return nil, errs
+			}
+			// factory produced a valid node but found validation errors (eg group
+			// with sub-graph errors). We continue here so the parent graph
+			// at least can continue to register the node and report. All the
+			// validation errors are returned anyway, so nothing is lost.
 		}
 	} else {
 		return nil, []error{CreateErr(nil, nil, "unknown node type '%v'", nodeType)}
@@ -658,7 +664,7 @@ func NewNodeInstance(nodeType string, parent NodeBaseInterface, parentId string,
 	node.SetNodeType(nodeType)
 	node.SetName(factoryEntry.Name)
 	node.SetParent(parent)
-	return node, nil
+	return node, errs
 }
 
 func GlobFilter(path string, pattern []string) (bool, error) {
