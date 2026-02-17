@@ -43,7 +43,7 @@ var cmdValidate = &cobra.Command{
 	},
 }
 
-func validateSchema(data any) error {
+func ValidateSchema(data any) error {
 	if len(ActfileSchema) == 0 {
 		return fmt.Errorf("actfile schema not loaded")
 	}
@@ -63,23 +63,23 @@ func validateSchema(data any) error {
 		return fmt.Errorf("failed to compile schema: %w", err)
 	}
 
-	return schema.Validate(convertToJSONCompatible(data))
+	return schema.Validate(ConvertToJSONCompatible(data))
 }
 
-// convertToJSONCompatible recursively converts YAML-unmarshalled data into
+// ConvertToJSONCompatible recursively converts YAML-unmarshalled data into
 // types that the JSON schema validator accepts.
-func convertToJSONCompatible(v any) any {
+func ConvertToJSONCompatible(v any) any {
 	switch val := v.(type) {
 	case map[string]any:
 		result := make(map[string]any, len(val))
 		for k, v := range val {
-			result[k] = convertToJSONCompatible(v)
+			result[k] = ConvertToJSONCompatible(v)
 		}
 		return result
 	case []any:
 		result := make([]any, len(val))
 		for i, v := range val {
-			result[i] = convertToJSONCompatible(v)
+			result[i] = ConvertToJSONCompatible(v)
 		}
 		return result
 	case int:
@@ -111,7 +111,7 @@ func validateGraph(filePath string) error {
 
 	hasErrors := false
 
-	if err := validateSchema(graphYaml); err != nil {
+	if err := ValidateSchema(graphYaml); err != nil {
 		fmt.Printf("\n❌ Graph schema validation failed:\n%v\n", err)
 		hasErrors = true
 	}
