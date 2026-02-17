@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/actionforge/actrun-cli/sessions"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
@@ -45,11 +46,11 @@ func jsonResult(v any) *mcp.CallToolResult {
 func blockingResponse(msg *IncomingMessage, logs []LogEntry) *mcp.CallToolResult {
 	status := "unknown"
 	switch msg.Type {
-	case "debug_state":
+	case sessions.MsgTypeDebugState:
 		status = "paused"
-	case "job_finished":
+	case sessions.MsgTypeJobFinished:
 		status = "finished"
-	case "job_error":
+	case sessions.MsgTypeJobError:
 		status = "error"
 	}
 
@@ -110,7 +111,7 @@ func handleDebugRun(b *Bridge) server.ToolHandlerFunc {
 		breakpoints := req.GetStringSlice("breakpoints", nil)
 
 		payload := map[string]any{
-			"type":         "run",
+			"type":         sessions.MsgTypeRun,
 			"payload":      graph,
 			"start_paused": startPaused,
 		}
@@ -132,7 +133,7 @@ func handleDebugStep(b *Bridge) server.ToolHandlerFunc {
 		if err := requireConnected(b); err != nil {
 			return errorResult(err.Error()), nil
 		}
-		msg, logs, err := b.SendAndWait(map[string]string{"type": "debug_step"}, 60*time.Second)
+		msg, logs, err := b.SendAndWait(map[string]string{"type": sessions.MsgTypeDebugStep}, 60*time.Second)
 		if err != nil {
 			return errorResult(fmt.Sprintf("step failed: %v", err)), nil
 		}
@@ -146,7 +147,7 @@ func handleDebugStepInto(b *Bridge) server.ToolHandlerFunc {
 		if err := requireConnected(b); err != nil {
 			return errorResult(err.Error()), nil
 		}
-		msg, logs, err := b.SendAndWait(map[string]string{"type": "debug_step_into"}, 60*time.Second)
+		msg, logs, err := b.SendAndWait(map[string]string{"type": sessions.MsgTypeDebugStepInto}, 60*time.Second)
 		if err != nil {
 			return errorResult(fmt.Sprintf("step into failed: %v", err)), nil
 		}
@@ -160,7 +161,7 @@ func handleDebugStepOut(b *Bridge) server.ToolHandlerFunc {
 		if err := requireConnected(b); err != nil {
 			return errorResult(err.Error()), nil
 		}
-		msg, logs, err := b.SendAndWait(map[string]string{"type": "debug_step_out"}, 60*time.Second)
+		msg, logs, err := b.SendAndWait(map[string]string{"type": sessions.MsgTypeDebugStepOut}, 60*time.Second)
 		if err != nil {
 			return errorResult(fmt.Sprintf("step out failed: %v", err)), nil
 		}
@@ -174,7 +175,7 @@ func handleDebugResume(b *Bridge) server.ToolHandlerFunc {
 		if err := requireConnected(b); err != nil {
 			return errorResult(err.Error()), nil
 		}
-		msg, logs, err := b.SendAndWait(map[string]string{"type": "debug_resume"}, 120*time.Second)
+		msg, logs, err := b.SendAndWait(map[string]string{"type": sessions.MsgTypeDebugResume}, 120*time.Second)
 		if err != nil {
 			return errorResult(fmt.Sprintf("resume failed: %v", err)), nil
 		}
@@ -188,7 +189,7 @@ func handleDebugPause(b *Bridge) server.ToolHandlerFunc {
 		if err := requireConnected(b); err != nil {
 			return errorResult(err.Error()), nil
 		}
-		if err := b.Send(map[string]string{"type": "debug_pause"}); err != nil {
+		if err := b.Send(map[string]string{"type": sessions.MsgTypeDebugPause}); err != nil {
 			return errorResult(fmt.Sprintf("pause failed: %v", err)), nil
 		}
 		return textResult("Pause signal sent"), nil
@@ -205,7 +206,7 @@ func handleDebugSetBreakpoint(b *Bridge) server.ToolHandlerFunc {
 		if err != nil {
 			return errorResult("missing required parameter: node_id"), nil
 		}
-		if err := b.Send(map[string]string{"type": "debug_add_breakpoint", "nodeId": nodeID}); err != nil {
+		if err := b.Send(map[string]string{"type": sessions.MsgTypeDebugAddBreakpoint, "nodeId": nodeID}); err != nil {
 			return errorResult(fmt.Sprintf("set breakpoint failed: %v", err)), nil
 		}
 		return textResult(fmt.Sprintf("Breakpoint set at %s", nodeID)), nil
@@ -222,7 +223,7 @@ func handleDebugRemoveBreakpoint(b *Bridge) server.ToolHandlerFunc {
 		if err != nil {
 			return errorResult("missing required parameter: node_id"), nil
 		}
-		if err := b.Send(map[string]string{"type": "debug_remove_breakpoint", "nodeId": nodeID}); err != nil {
+		if err := b.Send(map[string]string{"type": sessions.MsgTypeDebugRemoveBreakpoint, "nodeId": nodeID}); err != nil {
 			return errorResult(fmt.Sprintf("remove breakpoint failed: %v", err)), nil
 		}
 		return textResult(fmt.Sprintf("Breakpoint removed from %s", nodeID)), nil
@@ -263,7 +264,7 @@ func handleDebugStop(b *Bridge) server.ToolHandlerFunc {
 		if err := requireConnected(b); err != nil {
 			return errorResult(err.Error()), nil
 		}
-		if err := b.Send(map[string]string{"type": "stop"}); err != nil {
+		if err := b.Send(map[string]string{"type": sessions.MsgTypeStop}); err != nil {
 			return errorResult(fmt.Sprintf("stop failed: %v", err)), nil
 		}
 		return textResult("Stop signal sent"), nil

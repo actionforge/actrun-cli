@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/actionforge/actrun-cli/sessions"
 	"github.com/gorilla/websocket"
 )
 
@@ -24,10 +25,15 @@ type IncomingMessage struct {
 	Error            string `json:"error,omitempty"`
 }
 
+// writeDeadline is the timeout applied to every WebSocket write,
+// matching the convention in sessions/protocol.go.
+const writeDeadline = 10 * time.Second
+
 // Bridge is a stateful WebSocket client that converts the push-based WS
 // stream into pull-based tool results for the MCP server.
 type Bridge struct {
 	mu        sync.Mutex
+	writeMu   sync.Mutex // serialises all WebSocket writes (gorilla/websocket allows one concurrent writer)
 	conn      *websocket.Conn
 	connected bool
 	readErr   error
@@ -97,34 +103,34 @@ func (b *Bridge) readLoop() {
 
 		b.mu.Lock()
 		switch msg.Type {
-		case "log":
+		case sessions.MsgTypeLog:
 			b.logBuffer = append(b.logBuffer, LogEntry{
 				Level:   "log",
 				Message: msg.Message,
 			})
-		case "log_error":
+		case sessions.MsgTypeLogError:
 			b.logBuffer = append(b.logBuffer, LogEntry{
 				Level:   "error",
 				Message: msg.Message,
 			})
-		case "warning":
+		case sessions.MsgTypeWarning:
 			b.logBuffer = append(b.logBuffer, LogEntry{
 				Level:   "warning",
 				Message: msg.Message,
 			})
-		case "debug_state":
+		case sessions.MsgTypeDebugState:
 			b.lastState = &msg
 			// Deliver to waiter if someone is waiting
 			select {
 			case b.waiter <- msg:
 			default:
 			}
-		case "job_finished", "job_error":
+		case sessions.MsgTypeJobFinished, sessions.MsgTypeJobError:
 			select {
 			case b.waiter <- msg:
 			default:
 			}
-		case "control":
+		case sessions.MsgTypeControl:
 			// Control messages (e.g. runner_connected) are informational
 			b.logBuffer = append(b.logBuffer, LogEntry{
 				Level:   "info",
@@ -150,6 +156,12 @@ func (b *Bridge) Send(payload any) error {
 		return fmt.Errorf("failed to marshal payload: %w", err)
 	}
 
+	b.writeMu.Lock()
+	defer b.writeMu.Unlock()
+
+	if err := conn.SetWriteDeadline(time.Now().Add(writeDeadline)); err != nil {
+		return fmt.Errorf("failed to set write deadline: %w", err)
+	}
 	if err := conn.WriteMessage(websocket.TextMessage, data); err != nil {
 		return fmt.Errorf("failed to write message: %w", err)
 	}
@@ -211,20 +223,29 @@ func (b *Bridge) Connected() bool {
 	return b.connected
 }
 
-// Disconnect closes the WebSocket connection.
+// Disconnect closes the WebSocket connection and waits for the read loop to exit.
 func (b *Bridge) Disconnect() error {
 	b.mu.Lock()
-	defer b.mu.Unlock()
-
 	if !b.connected {
+		b.mu.Unlock()
 		return fmt.Errorf("not connected")
 	}
+	done := b.done
+	b.mu.Unlock()
 
-	err := b.conn.WriteMessage(
+	// Send close frame under the write mutex.
+	b.writeMu.Lock()
+	_ = b.conn.SetWriteDeadline(time.Now().Add(writeDeadline))
+	_ = b.conn.WriteMessage(
 		websocket.CloseMessage,
 		websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""),
 	)
+	b.writeMu.Unlock()
+
 	b.conn.Close()
-	b.connected = false
-	return err
+
+	// Wait for readLoop to finish so the Bridge is fully idle before returning.
+	<-done
+
+	return nil
 }

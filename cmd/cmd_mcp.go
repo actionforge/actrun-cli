@@ -35,6 +35,7 @@ var cmdMcp = &cobra.Command{
 	Use:   "mcp",
 	Short: "Start the MCP server (stdio transport).",
 	Long:  `Starts an MCP server over stdio that exposes debug tools for bridging between an AI agent and an actrun local debug session (WebSocket). Configure this as an MCP server in your AI tool with: {"command": "actrun", "args": ["mcp"]}`,
+	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := mcpserver.RunMCPServer(buildMCPInstructions()); err != nil {
 			fmt.Fprintf(os.Stderr, "MCP server error: %v\n", err)
