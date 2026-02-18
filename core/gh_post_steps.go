@@ -100,7 +100,7 @@ func evaluatePostIf(c *ExecutionState, step PostStep) bool {
 	evaluator := NewEvaluator(c)
 	result, err := evaluator.Evaluate(condition)
 	if err != nil {
-		utils.LogErr.Errorf("Failed to evaluate post-if condition '%s' for %s: %v\n", step.PostIf, step.ActionName, err)
+		utils.LogErr.Errorf("Failed to evaluate post-if condition for %s: %v\n", step.ActionName, err)
 		return false
 	}
 
