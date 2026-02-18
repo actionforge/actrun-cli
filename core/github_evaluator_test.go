@@ -8,6 +8,7 @@ import (
 
 func TestEvaluate_GitHubParity(t *testing.T) {
 	ctx := ExecutionState{
+		JobConclusion: "success",
 		GhNeeds: map[string]any{
 			"setup": map[string]any{
 				"outputs": map[string]any{
