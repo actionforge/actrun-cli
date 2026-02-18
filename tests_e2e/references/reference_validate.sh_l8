@@ -4,23 +4,13 @@ looking for value: 'graph_file'
   evaluated to: 'validate.act'
 Validating 'validate.act'...
 
-❌ Graph validation failed with 4 error(s):
+❌ Graph validation failed with 2 error(s):
 
 --- Error 1 ---
 error:
-   1: failed to connect data ports
-       ↳ source node 'Group Inputs' (core-group-inputs-v1-coconut-jackfruit-pomegranate) has no output 'penguin-teal-cranberry-doesnt-exist'
-
---- Error 2 ---
-error:
-   1: failed to connect data ports
-       ↳ destination node 'Group Output' (core-group-outputs-v1-lobster-kangaroo-squirrel) has no input 'tiger-cranberry-white-doesnt-exist'
-
---- Error 3 ---
-error:
    1: connection dst node 'core-print-v1-crab-red-gold-doesnt-exist' does not exist
 
---- Error 4 ---
+--- Error 2 ---
 error:
    1: failed to connect data ports
        ↳ destination node 'Print' (core-print-v1-crab-red-gold) has no input 'values[999999]'

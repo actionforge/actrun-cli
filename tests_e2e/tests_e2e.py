@@ -228,6 +228,7 @@ def run_test_script(root_path: str, script_file: str, working_dir: str):
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
+        encoding='utf-8',
         check=False
     )
 
