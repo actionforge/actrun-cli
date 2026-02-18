@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 )
 
-// Config holds parameters for starting a local GitHub Actions server.
+// Config holds parameters for starting a GitHub Actions mock server.
 type Config struct {
 	StorageDir string // Directory for blob storage (created if missing)
 	OIDCIssuer string // OIDC token issuer (defaults to GitHub's)

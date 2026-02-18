@@ -270,6 +270,9 @@ func NewExecutionState(
 		DataOutputCache:      make(map[string]any),
 		ExecutionOutputCache: make(map[string]any),
 		StepCache:            NewStepCache(nil),
+
+		PostSteps:     NewPostStepQueue(),
+		JobConclusion: "success",
 	}
 }
 
@@ -481,11 +484,11 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 			}
 			rs, srvErr := server.StartServer(server.Config{StorageDir: storageDir})
 			if srvErr != nil {
-				return CreateErr(nil, srvErr, "failed to start local GitHub Actions server")
+				return CreateErr(nil, srvErr, "failed to start GitHub Actions mock server")
 			}
 			defer rs.Stop()
 			rs.InjectEnv(finalEnv)
-			utils.LogOut.Infof("local GitHub Actions server started at %s\n", rs.URL)
+			utils.LogOut.Infof("GitHub Actions mock server started at %s\n", rs.URL)
 		}
 
 		// Use the updated GITHUB_WORKSPACE as the working directory.
@@ -554,7 +557,14 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 		c.PushNodeVisit(entryNode, true)
 	}
 
-	return entry.ExecuteEntry(c, nil, opts.Args)
+	mainErr := entry.ExecuteEntry(c, nil, opts.Args)
+	if mainErr != nil {
+		c.JobConclusion = "failure"
+	}
+	if c.PostSteps.Len() > 0 {
+		executePostSteps(c, c.PostSteps.DrainLIFO())
+	}
+	return mainErr
 }
 
 func LoadGraph(graphYaml map[string]any, parent NodeBaseInterface, parentId string, validate bool, opts RunOpts) (ActionGraph, []error) {
