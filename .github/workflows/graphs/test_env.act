@@ -7,7 +7,7 @@ nodes:
       y: 450
   - id: gh-actionforge-test-action-node-main-lemon-penguin-yellow
     type: >-
-      github.com/actionforge/test-action-node@3ab9dc157c66635112bf0abf7b2f668e401c8dba
+      github.com/actionforge/test-action-node@26491c0042d95182826dacd3c64d8254c69dadcb
     position:
       x: 1020
       y: 510
@@ -49,7 +49,7 @@ nodes:
         fi
   - id: gh-actionforge-test-action-node-main-blueberry-monkey-plum
     type: >-
-      github.com/actionforge/test-action-node@3ab9dc157c66635112bf0abf7b2f668e401c8dba
+      github.com/actionforge/test-action-node@26491c0042d95182826dacd3c64d8254c69dadcb
     position:
       x: 1020
       y: 990
