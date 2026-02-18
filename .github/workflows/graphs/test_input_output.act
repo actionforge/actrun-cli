@@ -7,7 +7,7 @@ nodes:
       y: 1360
   - id: gh-actionforge-test-action-node-main-lemon-penguin-yellow
     type: >-
-      github.com/actionforge/test-action-node@22db00979573158856d37b2a91c05deccde3b41b
+      github.com/actionforge/test-action-node@3ab9dc157c66635112bf0abf7b2f668e401c8dba
     position:
       x: 290
       y: 1220
@@ -45,7 +45,7 @@ nodes:
       env[0]: ''
   - id: gh-actionforge-test-action-registry-main-cat-purple-watermelon
     type: >-
-      github.com/actionforge/test-action-registry@6075e108fe3a7edd08d11178b02d96f5eef3e835
+      github.com/actionforge/test-action-registry@fd5c912c37d3e7bf2ab1d8f8662418032ed8f55e
     position:
       x: 1980
       y: 710
@@ -84,7 +84,7 @@ nodes:
         fi
   - id: gh-actionforge-test-action-dockerfile-main-purple-pear-kangaroo
     type: >-
-      github.com/actionforge/test-action-dockerfile@c3bd2754b38ec3500b786a3cca9279322d6ee5dd
+      github.com/actionforge/test-action-dockerfile@b534d25852e5eb0612450225b2d169bd47ecabe8
     position:
       x: 3880
       y: 250
