@@ -541,7 +541,7 @@ func init() {
 		actionDir := filepath.Join(actionRepoRoot, path)
 
 		isGitHubAction := opts.OverrideEnv["GITHUB_ACTIONS"] == "true" || os.Getenv("GITHUB_ACTIONS") == "true"
-		if !isGitHubAction {
+		if !isGitHubAction && !validate {
 			return nil, []error{core.CreateErr(nil, nil, "node representing GitHub Action '%v' can only be used in a GitHub Actions workflow.", nodeType)}
 		}
 
@@ -552,6 +552,25 @@ func init() {
 		_, err = os.Stat(actionRepoRoot)
 		if errors.Is(err, os.ErrNotExist) {
 			if ghToken == "" {
+				if validate {
+					// No token and repo not cached — return a stub node with
+					// standard exec ports so graph structure can still be validated.
+					node := &GhActionNode{}
+					inputs := map[core.InputId]core.InputDefinition{
+						"exec": {PortDefinition: core.PortDefinition{Exec: true}},
+						"env":  {PortDefinition: core.PortDefinition{Name: "Environment Vars", Type: "[]string"}},
+					}
+					outputs := map[core.OutputId]core.OutputDefinition{
+						"exec-success": {PortDefinition: core.PortDefinition{Exec: true}},
+						"exec-err":     {PortDefinition: core.PortDefinition{Exec: true}},
+					}
+					node.SetInputDefs(inputs, core.SetDefsOpts{})
+					node.SetOutputDefs(outputs, core.SetDefsOpts{})
+					node.SetNodeType(nodeType)
+					opts.VS.Warnings = append(opts.VS.Warnings,
+						fmt.Sprintf("node '%s': GITHUB_TOKEN not set — cannot verify that the action exists or that its inputs and outputs are correct", nodeType))
+					return node, nil
+				}
 				return nil, []error{core.CreateErr(nil, nil, "neither GITHUB_TOKEN nor INPUT_GITHUB_TOKEN are set")}
 			}
 
