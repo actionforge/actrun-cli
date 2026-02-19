@@ -579,7 +579,7 @@ func init() {
 
 		node := &GhActionNode{}
 
-		// Common ports shared by both stub and fully-resolved nodes.
+		// Common ports shared by both proxy and fully-resolved nodes.
 		inputs := map[core.InputId]core.InputDefinition{
 			"exec": {PortDefinition: core.PortDefinition{Exec: true}},
 			"env": {
