@@ -354,7 +354,6 @@ nodes:
       x: -240
       y: 320
     inputs:
-      secret_env: SECRET_OPENAI_API_KEY
       name: OPENAI_API_KEY
 connections:
   - src:
