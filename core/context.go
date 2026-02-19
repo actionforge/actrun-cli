@@ -169,6 +169,12 @@ type ExecutionState struct {
 	JobConclusion string         `json:"jobConclusion"`
 
 	DebugCallback DebugCallback `json:"-"`
+
+	// PendingConcurrencyLocks tracks concurrency locks that are held during
+	// ExecuteImpl. The key is node id → *sync.Mutex. Released when the
+	// node calls Execute to dispatch downstream node, or as a fallback when
+	// ExecuteImpl returns without any dispatching
+	PendingConcurrencyLocks *sync.Map `json:"-"`
 }
 
 type ExecutionStateOptions struct {
@@ -244,8 +250,9 @@ func (c *ExecutionState) PushNewExecutionState(parentNode NodeBaseInterface) *Ex
 		PostSteps:     c.PostSteps,
 		JobConclusion: c.JobConclusion,
 
-		Visited:       visited,
-		DebugCallback: c.DebugCallback,
+		Visited:              visited,
+		DebugCallback:        c.DebugCallback,
+		PendingConcurrencyLocks: &sync.Map{},
 	}
 
 	return newEc

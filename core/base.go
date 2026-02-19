@@ -562,6 +562,21 @@ func RegisterNodeFactory(nodeDefStr string, fn nodeFactoryFunc) error {
 		nodeDef.Outputs[outputId] = outputDef
 	}
 
+	// inject the hidden _disable_concurrency input for execution nodes.
+	// When set to true at runtime, concurrent calls to this nodes
+	// ExecuteImpl are serialized via a per-node-ID mutex
+	if countExec > 0 {
+		nodeDef.Inputs[InputId("_disable_concurrency")] = InputDefinition{
+			PortDefinition: PortDefinition{
+				Name:  "Disable Concurrency",
+				Type:  "bool",
+				Index: 999999,
+			},
+			HideSocket: true,
+			Default:    false,
+		}
+	}
+
 	id := fmt.Sprintf("%v@v%v", nodeDef.Id, nodeDef.Version)
 	_, ok := registries[id]
 	if ok {

@@ -40,6 +40,10 @@ type ActionGraph struct {
 	Outputs map[OutputId]OutputDefinition `yaml:"outputs" json:"outputs" bson:"outputs"`
 
 	Entry string
+
+	// ConcurrencyLocks maps node ID → *sync.Mutex. Used to serialize concurrent
+	// calls to a node's ExecuteImpl when the node's _disable_concurrency input is true.
+	ConcurrencyLocks *sync.Map `yaml:"-" json:"-"`
 }
 
 func (ag *ActionGraph) AddNode(nodeId string, node NodeBaseInterface) {
@@ -78,7 +82,8 @@ func (ag *ActionGraph) GetEntry() (NodeEntryInterface, error) {
 
 func NewActionGraph() ActionGraph {
 	return ActionGraph{
-		Nodes: make(map[string]NodeBaseInterface),
+		Nodes:         make(map[string]NodeBaseInterface),
+		ConcurrencyLocks: &sync.Map{},
 	}
 }
 
@@ -245,10 +250,11 @@ func NewExecutionState(
 	ctx, cancel := context.WithCancel(ctx)
 
 	return &ExecutionState{
-		Graph:            graph,
-		Hierarchy:        make([]NodeBaseInterface, 0),
-		ContextStackLock: &sync.RWMutex{},
-		OutputCacheLock:  &sync.RWMutex{},
+		Graph:                graph,
+		Hierarchy:            make([]NodeBaseInterface, 0),
+		ContextStackLock:     &sync.RWMutex{},
+		OutputCacheLock:      &sync.RWMutex{},
+		PendingConcurrencyLocks: &sync.Map{},
 
 		IsDebugSession: debugCb != nil,
 		DebugCallback:  debugCb,
