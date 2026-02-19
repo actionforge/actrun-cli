@@ -32,6 +32,7 @@ type RunOpts struct {
 	OverrideEnv     map[string]string
 	Args            []string
 	LocalGhServer   bool
+	VS              *ValidationState
 }
 
 type ActionGraph struct {
@@ -44,6 +45,14 @@ type ActionGraph struct {
 	// ConcurrencyLocks maps node ID → *sync.Mutex. Used to serialize concurrent
 	// calls to a node's ExecuteImpl when the node's _disable_concurrency input is true.
 	ConcurrencyLocks *sync.Map `yaml:"-" json:"-"`
+}
+
+// ValidationState collects errors and warnings during graph validation.
+// When a non-nil *ValidationState is passed to Load* functions, it signals
+// validation mode: errors are accumulated instead of failing fast.
+type ValidationState struct {
+	Errors   []error
+	Warnings []string
 }
 
 func (ag *ActionGraph) AddNode(nodeId string, node NodeBaseInterface) {
@@ -87,27 +96,29 @@ func NewActionGraph() ActionGraph {
 	}
 }
 
-// helper to handle error collection
-func collectOrReturn(err error, validate bool, errList *[]error) error {
+// collectOrReturn appends err to vs.Errors when in validation mode (vs != nil)
+// and returns nil so the caller can continue. In non-validation mode it returns
+// the error directly so the caller can fail fast.
+func collectOrReturn(err error, vs *ValidationState) error {
 	if err == nil {
 		return nil
 	}
-	if validate {
-		*errList = append(*errList, err)
+	if vs != nil {
+		vs.Errors = append(vs.Errors, err)
 		return nil
 	}
 	return err
 }
 
-func LoadEntry(ag *ActionGraph, nodesYaml map[string]any, validate bool, errs *[]error) error {
+func LoadEntry(ag *ActionGraph, nodesYaml map[string]any, vs *ValidationState) error {
 	entryAny, exists := nodesYaml["entry"]
 	if !exists {
-		return collectOrReturn(CreateErr(nil, nil, "entry is missing"), validate, errs)
+		return collectOrReturn(CreateErr(nil, nil, "entry is missing"), vs)
 	}
 
 	entry, ok := entryAny.(string)
 	if !ok {
-		return collectOrReturn(CreateErr(nil, nil, "entry is not a string"), validate, errs)
+		return collectOrReturn(CreateErr(nil, nil, "entry is not a string"), vs)
 	}
 
 	ag.SetEntry(entry)
@@ -312,7 +323,7 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 	os.Unsetenv("INPUT_GITHUB_TOKEN")
 	os.Unsetenv("INPUT_TOKEN")
 
-	ag, errs := LoadGraph(graphYaml, nil, "", false, opts)
+	ag, errs := LoadGraph(graphYaml, nil, "", nil, opts)
 	if len(errs) > 0 {
 		return CreateErr(nil, errs[0], "failed to load graph")
 	}
@@ -573,52 +584,51 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 	return mainErr
 }
 
-func LoadGraph(graphYaml map[string]any, parent NodeBaseInterface, parentId string, validate bool, opts RunOpts) (ActionGraph, []error) {
+func LoadGraph(graphYaml map[string]any, parent NodeBaseInterface, parentId string, vs *ValidationState, opts RunOpts) (ActionGraph, []error) {
 
-	var (
-		collectedErrors []error
-		err             error
-	)
-
+	opts.VS = vs
 	ag := NewActionGraph()
+
+	var err error
 
 	ag.Inputs, err = LoadGraphInputs(graphYaml)
 	if err != nil {
-		if !validate {
+		if collectOrReturn(err, vs) != nil {
 			return ActionGraph{}, []error{err}
 		}
-		collectedErrors = append(collectedErrors, err)
 	}
 
 	ag.Outputs, err = LoadGraphOutputs(graphYaml)
 	if err != nil {
-		if !validate {
+		if collectOrReturn(err, vs) != nil {
 			return ActionGraph{}, []error{err}
 		}
-		collectedErrors = append(collectedErrors, err)
 	}
 
-	err = LoadNodes(&ag, parent, parentId, graphYaml, validate, &collectedErrors, opts)
-	if err != nil && !validate {
+	err = LoadNodes(&ag, parent, parentId, graphYaml, vs, opts)
+	if err != nil && vs == nil {
 		return ActionGraph{}, []error{err}
 	}
 
-	err = LoadExecutions(&ag, graphYaml, validate, &collectedErrors)
-	if err != nil && !validate {
+	err = LoadExecutions(&ag, graphYaml, vs)
+	if err != nil && vs == nil {
 		return ActionGraph{}, []error{err}
 	}
 
-	err = LoadConnections(&ag, graphYaml, parent, validate, &collectedErrors)
-	if err != nil && !validate {
+	err = LoadConnections(&ag, graphYaml, parent, vs)
+	if err != nil && vs == nil {
 		return ActionGraph{}, []error{err}
 	}
 
-	err = LoadEntry(&ag, graphYaml, validate, &collectedErrors)
-	if err != nil && !validate {
+	err = LoadEntry(&ag, graphYaml, vs)
+	if err != nil && vs == nil {
 		return ActionGraph{}, []error{err}
 	}
 
-	return ag, collectedErrors
+	if vs != nil {
+		return ag, vs.Errors
+	}
+	return ag, nil
 }
 
 func LoadGraphInputs(graphYaml map[string]any) (map[InputId]InputDefinition, error) {
@@ -676,14 +686,14 @@ func anyToPortDefinition[T any](o any) (T, error) {
 	return ret, err
 }
 
-func LoadNodes(ag *ActionGraph, parent NodeBaseInterface, parentId string, nodesYaml map[string]any, validate bool, errs *[]error, opts RunOpts) error {
+func LoadNodes(ag *ActionGraph, parent NodeBaseInterface, parentId string, nodesYaml map[string]any, vs *ValidationState, opts RunOpts) error {
 	nodesList, err := utils.GetTypedPropertyByPath[[]any](nodesYaml, "nodes")
 	if err != nil {
-		return collectOrReturn(err, validate, errs)
+		return collectOrReturn(err, vs)
 	}
 
 	for _, nodeData := range nodesList {
-		n, id, err := LoadNode(parent, parentId, nodeData, validate, errs, opts)
+		n, id, err := LoadNode(parent, parentId, nodeData, vs, opts)
 		if err != nil {
 			return err
 		}
@@ -698,21 +708,23 @@ func LoadNodes(ag *ActionGraph, parent NodeBaseInterface, parentId string, nodes
 	return nil
 }
 
-func LoadNode(parent NodeBaseInterface, parentId string, nodeData any, validate bool, errs *[]error, opts RunOpts) (NodeBaseInterface, string, error) {
+func LoadNode(parent NodeBaseInterface, parentId string, nodeData any, vs *ValidationState, opts RunOpts) (NodeBaseInterface, string, error) {
 	nodeI, ok := nodeData.(map[string]any)
 	if !ok {
 		err := CreateErr(nil, nil, "node is not a map")
-		if collectOrReturn(err, validate, errs) != nil {
+		if collectOrReturn(err, vs) != nil {
 			return nil, "", err
 		}
 		return nil, "", nil
 	}
 
+	validate := vs != nil
+
 	// We attempt to get the ID. If it fails, we record the error but CONTINUE
 	// processing (if validating) to check Type, Inputs, and Outputs.
 	id, idErr := utils.GetTypedPropertyByPath[string](nodeI, "id")
 	if idErr != nil {
-		if err := collectOrReturn(idErr, validate, errs); err != nil {
+		if err := collectOrReturn(idErr, vs); err != nil {
 			return nil, "", err
 		}
 	}
@@ -721,7 +733,7 @@ func LoadNode(parent NodeBaseInterface, parentId string, nodeData any, validate 
 	// We must early out here.
 	nodeType, typeErr := utils.GetTypedPropertyByPath[string](nodeI, "type")
 	if typeErr != nil {
-		if err := collectOrReturn(typeErr, validate, errs); err != nil {
+		if err := collectOrReturn(typeErr, vs); err != nil {
 			return nil, "", err
 		}
 		return nil, "", nil
@@ -751,8 +763,7 @@ func LoadNode(parent NodeBaseInterface, parentId string, nodeData any, validate 
 			// Early out on first error if not validating
 			return nil, "", factoryErrs[0]
 		}
-		// Collect errors and proceed IF we have a valid node instance 'n'
-		*errs = append(*errs, factoryErrs...)
+		vs.Errors = append(vs.Errors, factoryErrs...)
 	}
 
 	// If the factory failed to produce a node instance completely (n is nil),
@@ -775,13 +786,13 @@ func LoadNode(parent NodeBaseInterface, parentId string, nodeData any, validate 
 
 	// We continue to check inputs/outputs even if factoryErrs occurred,
 	// provided 'n' exists.
-	inputErr := LoadInputValues(n, nodeI, validate, errs)
+	inputErr := LoadInputValues(n, nodeI, vs)
 	if inputErr != nil && !validate {
 		return nil, "", inputErr
 	}
 
 	// Validate Outputs
-	outputErr := LoadOutputValues(n, nodeI, validate, errs)
+	outputErr := LoadOutputValues(n, nodeI, vs)
 	if outputErr != nil && !validate {
 		return nil, "", outputErr
 	}
@@ -801,17 +812,17 @@ func LoadNode(parent NodeBaseInterface, parentId string, nodeData any, validate 
 	return n, id, nil
 }
 
-func LoadInputValues(node NodeBaseInterface, nodeI map[string]any, validate bool, errs *[]error) error {
+func LoadInputValues(node NodeBaseInterface, nodeI map[string]any, vs *ValidationState) error {
 	inputs, hasInputs := node.(HasInputsInterface)
 	inputValues, err := utils.GetTypedPropertyByPath[map[string]any](nodeI, "inputs")
 	if err != nil {
 		if errors.Is(err, &utils.ErrPropertyNotFound{}) {
 			return nil
 		}
-		return collectOrReturn(err, validate, errs)
+		return collectOrReturn(err, vs)
 	}
 	if !hasInputs {
-		return collectOrReturn(CreateErr(nil, nil, "dst node '%s' (%s) does not have inputs but inputs are defined", node.GetName(), node.GetId()), validate, errs)
+		return collectOrReturn(CreateErr(nil, nil, "dst node '%s' (%s) does not have inputs but inputs are defined", node.GetName(), node.GetId()), vs)
 	}
 
 	type subInput struct {
@@ -836,7 +847,7 @@ func LoadInputValues(node NodeBaseInterface, nodeI map[string]any, validate bool
 			_, _, ok := inputs.InputDefByPortId(groupInputId)
 			if !ok {
 				err := CreateErr(nil, nil, "dst node '%s' (%s) has no array input '%s'", node.GetName(), node.GetId(), groupInputId)
-				if collectOrReturn(err, validate, errs) != nil {
+				if collectOrReturn(err, vs) != nil {
 					return err
 				}
 				continue
@@ -848,9 +859,22 @@ func LoadInputValues(node NodeBaseInterface, nodeI map[string]any, validate bool
 			})
 		}
 
+		// In validation mode, check that the input actually exists in the
+		// node's definition. At runtime we skip this because SetInputValue
+		// silently stores any key and unknown inputs are simply ignored.
+		if vs != nil && !isIndexPort {
+			if _, _, ok := inputs.InputDefByPortId(portId); !ok {
+				err := CreateErr(nil, nil, "dst node '%s' (%s) has no input '%s'", node.GetName(), node.GetId(), portId)
+				if collectOrReturn(err, vs) != nil {
+					return err
+				}
+				continue
+			}
+		}
+
 		err = inputs.SetInputValue(InputId(portId), inputValue)
 		if err != nil {
-			if collectOrReturn(err, validate, errs) != nil {
+			if collectOrReturn(err, vs) != nil {
 				return err
 			}
 			continue
@@ -867,7 +891,7 @@ func LoadInputValues(node NodeBaseInterface, nodeI map[string]any, validate bool
 		for _, subInput := range subInputs {
 			err = inputs.AddSubInput(subInput.PortId, groupInputId, subInput.PortIndex)
 			if err != nil {
-				if collectOrReturn(err, validate, errs) != nil {
+				if collectOrReturn(err, vs) != nil {
 					return err
 				}
 			}
@@ -876,7 +900,7 @@ func LoadInputValues(node NodeBaseInterface, nodeI map[string]any, validate bool
 	return nil
 }
 
-func LoadOutputValues(node NodeBaseInterface, nodeI map[string]any, validate bool, errs *[]error) error {
+func LoadOutputValues(node NodeBaseInterface, nodeI map[string]any, vs *ValidationState) error {
 	outputs, hasOutputs := node.(HasOutputsInterface)
 	outputValues, err := utils.GetTypedPropertyByPath[map[string]any](nodeI, "outputs")
 	if err != nil {
@@ -885,7 +909,7 @@ func LoadOutputValues(node NodeBaseInterface, nodeI map[string]any, validate boo
 		}
 	}
 	if !hasOutputs {
-		return collectOrReturn(CreateErr(nil, nil, "node '%s' (%s) does not have outputs but outputs are defined", node.GetName(), node.GetId()), validate, errs)
+		return collectOrReturn(CreateErr(nil, nil, "node '%s' (%s) does not have outputs but outputs are defined", node.GetName(), node.GetId()), vs)
 	}
 
 	type subOutput struct {
@@ -901,7 +925,7 @@ func LoadOutputValues(node NodeBaseInterface, nodeI map[string]any, validate boo
 			_, _, ok := outputs.OutputDefByPortId(arrayOutputId)
 			if !ok {
 				err := CreateErr(nil, nil, "source node '%s' (%s) has no array output '%s'", node.GetName(), node.GetId(), arrayOutputId)
-				if collectOrReturn(err, validate, errs) != nil {
+				if collectOrReturn(err, vs) != nil {
 					return err
 				}
 				continue
@@ -914,7 +938,7 @@ func LoadOutputValues(node NodeBaseInterface, nodeI map[string]any, validate boo
 		} else {
 			// at the moment output values can only be used to define an output port
 			err := CreateErr(nil, nil, "source node '%s' (%s) has no output '%s'", node.GetName(), node.GetId(), portId)
-			if collectOrReturn(err, validate, errs) != nil {
+			if collectOrReturn(err, vs) != nil {
 				return err
 			}
 		}
@@ -930,7 +954,7 @@ func LoadOutputValues(node NodeBaseInterface, nodeI map[string]any, validate boo
 		for _, subOutput := range subOutputs {
 			err = outputs.AddSubOutput(subOutput.PortId, arrayOutputId, subOutput.PortIndex)
 			if err != nil {
-				if collectOrReturn(err, validate, errs) != nil {
+				if collectOrReturn(err, vs) != nil {
 					return err
 				}
 			}
@@ -939,18 +963,18 @@ func LoadOutputValues(node NodeBaseInterface, nodeI map[string]any, validate boo
 	return nil
 }
 
-func LoadExecutions(ag *ActionGraph, nodesYaml map[string]any, validate bool, errs *[]error) error {
+func LoadExecutions(ag *ActionGraph, nodesYaml map[string]any, vs *ValidationState) error {
 
 	executionsList, err := utils.GetTypedPropertyByPath[[]any](nodesYaml, "executions")
 	if err != nil {
-		return collectOrReturn(err, validate, errs)
+		return collectOrReturn(err, vs)
 	}
 
 	for _, executions := range executionsList {
 		c, ok := executions.(map[string]any)
 		if !ok {
 			err := CreateErr(nil, nil, "execution is not a map")
-			if collectOrReturn(err, validate, errs) != nil {
+			if collectOrReturn(err, vs) != nil {
 				return err
 			}
 			continue
@@ -958,7 +982,7 @@ func LoadExecutions(ag *ActionGraph, nodesYaml map[string]any, validate bool, er
 
 		srcNodeId, err := utils.GetTypedPropertyByPath[string](c, "src.node")
 		if err != nil {
-			if collectOrReturn(err, validate, errs) != nil {
+			if collectOrReturn(err, vs) != nil {
 				return err
 			}
 			continue
@@ -966,7 +990,7 @@ func LoadExecutions(ag *ActionGraph, nodesYaml map[string]any, validate bool, er
 
 		dstNodeId, err := utils.GetTypedPropertyByPath[string](c, "dst.node")
 		if err != nil {
-			if collectOrReturn(err, validate, errs) != nil {
+			if collectOrReturn(err, vs) != nil {
 				return err
 			}
 			continue
@@ -974,7 +998,7 @@ func LoadExecutions(ag *ActionGraph, nodesYaml map[string]any, validate bool, er
 
 		srcPort, err := utils.GetTypedPropertyByPath[string](c, "src.port")
 		if err != nil {
-			if collectOrReturn(err, validate, errs) != nil {
+			if collectOrReturn(err, vs) != nil {
 				return err
 			}
 			continue
@@ -982,7 +1006,7 @@ func LoadExecutions(ag *ActionGraph, nodesYaml map[string]any, validate bool, er
 
 		dstPort, err := utils.GetTypedPropertyByPath[string](c, "dst.port")
 		if err != nil {
-			if collectOrReturn(err, validate, errs) != nil {
+			if collectOrReturn(err, vs) != nil {
 				return err
 			}
 			continue
@@ -991,7 +1015,7 @@ func LoadExecutions(ag *ActionGraph, nodesYaml map[string]any, validate bool, er
 		srcNode, ok := ag.FindNode(srcNodeId)
 		if !ok {
 			err := CreateErr(nil, nil, "src node '%s' does not exist", srcNodeId)
-			if collectOrReturn(err, validate, errs) != nil {
+			if collectOrReturn(err, vs) != nil {
 				return err
 			}
 			continue
@@ -1000,7 +1024,7 @@ func LoadExecutions(ag *ActionGraph, nodesYaml map[string]any, validate bool, er
 		dstNode, ok := ag.FindNode(dstNodeId)
 		if !ok {
 			err := CreateErr(nil, nil, "connection dst node '%s' does not exist", dstNodeId)
-			if collectOrReturn(err, validate, errs) != nil {
+			if collectOrReturn(err, vs) != nil {
 				return err
 			}
 			continue
@@ -1009,7 +1033,7 @@ func LoadExecutions(ag *ActionGraph, nodesYaml map[string]any, validate bool, er
 		srcExecNode, ok := srcNode.(HasExecutionInterface)
 		if !ok {
 			err := CreateErr(nil, err, "src node '%s' (%s) does not have an execution interface", srcNode.GetName(), srcNodeId)
-			if collectOrReturn(err, validate, errs) != nil {
+			if collectOrReturn(err, vs) != nil {
 				return err
 			}
 			continue
@@ -1020,7 +1044,7 @@ func LoadExecutions(ag *ActionGraph, nodesYaml map[string]any, validate bool, er
 			srcOutputNode, ok := srcNode.(HasOutputsInterface)
 			if !ok {
 				err := CreateErr(nil, err, "src node '%s' (%s) does not have an output interface", srcNode.GetName(), srcNodeId)
-				if collectOrReturn(err, validate, errs) != nil {
+				if collectOrReturn(err, vs) != nil {
 					return err
 				}
 				continue
@@ -1029,7 +1053,7 @@ func LoadExecutions(ag *ActionGraph, nodesYaml map[string]any, validate bool, er
 			_, _, ok = srcOutputNode.OutputDefByPortId(srcPort)
 			if !ok {
 				err := CreateErr(nil, nil, "src node '%s' (%s) has no execution output '%s'", srcNode.GetName(), srcNodeId, srcPort)
-				if collectOrReturn(err, validate, errs) != nil {
+				if collectOrReturn(err, vs) != nil {
 					return err
 				}
 				continue
@@ -1041,7 +1065,7 @@ func LoadExecutions(ag *ActionGraph, nodesYaml map[string]any, validate bool, er
 			dstInputNode, ok := dstNode.(HasInputsInterface)
 			if !ok {
 				err := CreateErr(nil, err, "dst node '%s' ('%s') does not have an input interface", dstNode.GetName(), dstNodeId)
-				if collectOrReturn(err, validate, errs) != nil {
+				if collectOrReturn(err, vs) != nil {
 					return err
 				}
 				continue
@@ -1050,7 +1074,7 @@ func LoadExecutions(ag *ActionGraph, nodesYaml map[string]any, validate bool, er
 			_, _, ok = dstInputNode.InputDefByPortId(dstPort)
 			if !ok {
 				err := CreateErr(nil, nil, "dst node '%s' (%s) has no execution input '%s'", dstNode.GetName(), dstNodeId, dstPort)
-				if collectOrReturn(err, validate, errs) != nil {
+				if collectOrReturn(err, vs) != nil {
 					return err
 				}
 				continue
@@ -1059,7 +1083,7 @@ func LoadExecutions(ag *ActionGraph, nodesYaml map[string]any, validate bool, er
 
 		err = srcExecNode.ConnectExecutionPort(srcNode, OutputId(srcPort), dstNode, InputId(dstPort))
 		if err != nil {
-			if collectOrReturn(CreateErr(nil, err, "failed to connect execution ports"), validate, errs) != nil {
+			if collectOrReturn(CreateErr(nil, err, "failed to connect execution ports"), vs) != nil {
 				return err
 			}
 			continue
@@ -1068,18 +1092,18 @@ func LoadExecutions(ag *ActionGraph, nodesYaml map[string]any, validate bool, er
 	return nil
 }
 
-func LoadConnections(ag *ActionGraph, nodesYaml map[string]any, parent NodeBaseInterface, validate bool, errs *[]error) error {
+func LoadConnections(ag *ActionGraph, nodesYaml map[string]any, parent NodeBaseInterface, vs *ValidationState) error {
 
 	connectionsList, err := utils.GetTypedPropertyByPath[[]any](nodesYaml, "connections")
 	if err != nil {
-		return collectOrReturn(err, validate, errs)
+		return collectOrReturn(err, vs)
 	}
 
 	for _, connection := range connectionsList {
 		c, ok := connection.(map[string]any)
 		if !ok {
 			err := CreateErr(nil, nil, "connection is not a map")
-			if collectOrReturn(err, validate, errs) != nil {
+			if collectOrReturn(err, vs) != nil {
 				return err
 			}
 			continue
@@ -1087,7 +1111,7 @@ func LoadConnections(ag *ActionGraph, nodesYaml map[string]any, parent NodeBaseI
 
 		srcNodeId, err := utils.GetTypedPropertyByPath[string](c, "src.node")
 		if err != nil {
-			if collectOrReturn(err, validate, errs) != nil {
+			if collectOrReturn(err, vs) != nil {
 				return err
 			}
 			continue
@@ -1095,7 +1119,7 @@ func LoadConnections(ag *ActionGraph, nodesYaml map[string]any, parent NodeBaseI
 
 		dstNodeId, err := utils.GetTypedPropertyByPath[string](c, "dst.node")
 		if err != nil {
-			if collectOrReturn(err, validate, errs) != nil {
+			if collectOrReturn(err, vs) != nil {
 				return err
 			}
 			continue
@@ -1103,7 +1127,7 @@ func LoadConnections(ag *ActionGraph, nodesYaml map[string]any, parent NodeBaseI
 
 		srcPort, err := utils.GetTypedPropertyByPath[string](c, "src.port")
 		if err != nil {
-			if collectOrReturn(err, validate, errs) != nil {
+			if collectOrReturn(err, vs) != nil {
 				return err
 			}
 			continue
@@ -1111,7 +1135,7 @@ func LoadConnections(ag *ActionGraph, nodesYaml map[string]any, parent NodeBaseI
 
 		dstPort, err := utils.GetTypedPropertyByPath[string](c, "dst.port")
 		if err != nil {
-			if collectOrReturn(err, validate, errs) != nil {
+			if collectOrReturn(err, vs) != nil {
 				return err
 			}
 			continue
@@ -1120,7 +1144,7 @@ func LoadConnections(ag *ActionGraph, nodesYaml map[string]any, parent NodeBaseI
 		srcNode, ok := ag.FindNode(srcNodeId)
 		if !ok {
 			err := CreateErr(nil, nil, "src node '%s' does not exist", srcNodeId)
-			if collectOrReturn(err, validate, errs) != nil {
+			if collectOrReturn(err, vs) != nil {
 				return err
 			}
 			continue
@@ -1129,7 +1153,7 @@ func LoadConnections(ag *ActionGraph, nodesYaml map[string]any, parent NodeBaseI
 		dstNode, ok := ag.FindNode(dstNodeId)
 		if !ok {
 			err := CreateErr(nil, nil, "connection dst node '%s' does not exist", dstNodeId)
-			if collectOrReturn(err, validate, errs) != nil {
+			if collectOrReturn(err, vs) != nil {
 				return err
 			}
 			continue
@@ -1138,7 +1162,7 @@ func LoadConnections(ag *ActionGraph, nodesYaml map[string]any, parent NodeBaseI
 		dstInputNode, ok := dstNode.(HasInputsInterface)
 		if !ok {
 			err := CreateErr(nil, err, "dst node '%s' ('%s') does not have an input interface", dstNode.GetName(), dstNodeId)
-			if collectOrReturn(err, validate, errs) != nil {
+			if collectOrReturn(err, vs) != nil {
 				return err
 			}
 			continue
@@ -1150,7 +1174,7 @@ func LoadConnections(ag *ActionGraph, nodesYaml map[string]any, parent NodeBaseI
 			SkipValidation: strings.HasPrefix(srcNode.GetNodeTypeId(), "core/group@") || strings.HasPrefix(dstNode.GetNodeTypeId(), "core/group@"),
 		})
 		if err != nil {
-			if collectOrReturn(CreateErr(nil, err, "failed to connect data ports"), validate, errs) != nil {
+			if collectOrReturn(CreateErr(nil, err, "failed to connect data ports"), vs) != nil {
 				return err
 			}
 			continue

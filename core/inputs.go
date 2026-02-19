@@ -306,9 +306,6 @@ func (n *Inputs) SetInputDefs(inputDefs map[InputId]InputDefinition, opts SetDef
 }
 
 func (n *Inputs) SetInputValue(inputId InputId, value any) error {
-	// TODO: (Seb) Ensure that only input values are set
-	// that are defined in the node definition.
-
 	if n.inputValues == nil {
 		n.inputValues = make(map[InputId]any)
 	}

@@ -605,7 +605,13 @@ func NewGhActionNode(nodeType string, parent NodeBaseInterface, parentId string,
 
 	node, errs := factoryEntry.FactoryFn(nodeType, parent, parentId, nil, validate, opts)
 	if len(errs) > 0 {
-		return nil, errs
+		if node == nil {
+			return nil, errs
+		}
+		// Factory returned a valid node with warnings/errors (e.g. validation
+		// stub). Initialise the node and pass the errors through.
+		utils.InitMapAndSliceInStructRecursively(reflect.ValueOf(node))
+		return node, errs
 	}
 
 	utils.InitMapAndSliceInStructRecursively(reflect.ValueOf(node))

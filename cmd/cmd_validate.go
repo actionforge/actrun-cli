@@ -116,7 +116,7 @@ func validateGraph(filePath string) error {
 		hasErrors = true
 	}
 
-	_, errs := core.LoadGraph(graphYaml, nil, "", true, core.RunOpts{})
+	_, errs := core.LoadGraph(graphYaml, nil, "", &core.ValidationState{}, core.RunOpts{})
 
 	if len(errs) > 0 {
 		fmt.Printf("\n❌ Graph validation failed with %d error(s):\n", len(errs))

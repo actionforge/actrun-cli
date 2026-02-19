@@ -356,7 +356,7 @@ executions: []
 		return nil, nil, nil, nil, err
 	}
 
-	ag, errs := core.LoadGraph(graphYaml, nil, "", false, core.RunOpts{})
+	ag, errs := core.LoadGraph(graphYaml, nil, "", nil, core.RunOpts{})
 	if errs != nil {
 		return nil, nil, nil, nil, errs[0]
 	}
