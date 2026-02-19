@@ -1,0 +1,128 @@
+entry: start
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 10
+      y: 500
+  - id: loop
+    type: core/concurrent-for-loop@v1
+    position:
+      x: 290
+      y: 400
+    inputs:
+      first_index: 0
+      last_index: 4
+      worker_count: 0
+  - id: mul
+    type: core/math-multiply@v1
+    position:
+      x: 600
+      y: 200
+    inputs:
+      inputs[0]: null
+      inputs[1]: 100
+  - id: stagger
+    type: core/sleep@v1
+    position:
+      x: 900
+      y: 300
+    inputs:
+      unit: milliseconds
+  - id: fmt
+    type: core/string-fmt@v1
+    position:
+      x: 600
+      y: 500
+    inputs:
+      substitutes[0]: null
+      fmt: IDX=%v
+  - id: env
+    type: core/env-array@v1
+    position:
+      x: 1000
+      y: 500
+    inputs:
+      env[0]: ''
+  - id: run
+    type: core/run@v1
+    position:
+      x: 1400
+      y: 300
+    inputs:
+      _disable_concurrency: true
+      shell: python
+      script: |-
+        import time, sys, os
+        idx = os.environ["IDX"]
+        sys.stdout.write("start-" + idx + "\n")
+        sys.stdout.flush()
+        time.sleep(0.5)
+        sys.stdout.write("end-" + idx + "\n")
+        sys.stdout.flush()
+  - id: done
+    type: core/run@v1
+    position:
+      x: 1400
+      y: 800
+    inputs:
+      shell: python
+      script: |-
+        import sys
+        sys.stdout.write("all done\n")
+connections:
+  - src:
+      node: loop
+      port: index
+    dst:
+      node: mul
+      port: inputs[0]
+  - src:
+      node: mul
+      port: result
+    dst:
+      node: stagger
+      port: duration
+  - src:
+      node: loop
+      port: index
+    dst:
+      node: fmt
+      port: substitutes[0]
+  - src:
+      node: fmt
+      port: result
+    dst:
+      node: env
+      port: env[0]
+  - src:
+      node: env
+      port: env
+    dst:
+      node: run
+      port: env
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: loop
+      port: exec
+  - src:
+      node: loop
+      port: exec-body
+    dst:
+      node: stagger
+      port: exec
+  - src:
+      node: stagger
+      port: exec
+    dst:
+      node: run
+      port: exec
+  - src:
+      node: loop
+      port: exec-completed
+    dst:
+      node: done
+      port: exec
