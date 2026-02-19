@@ -79,28 +79,24 @@ func (n *Executions) Execute(outputPort OutputId, ec *ExecutionState, err error)
 		return nil
 	}
 
-	// If the destination node has _disable_concurrency set to true, serialize execution
+	// If the destination node has _disable_concurrency set, serialize execution
 	// through a per-node-ID mutex to prevent concurrent ExecuteImpl calls.
 	// The lock is stored as pending and released when the node calls Execute
 	// to dispatch downstream (above), or as a fallback when ExecuteImpl
 	// returns without dispatching (below).
-	var dcNodeId string
-	if nwi, ok := dest.DstNode.(NodeWithInputs); ok {
-		dcVal, dcErr := InputValueById[bool](ec, nwi, InputId("_disable_concurrency"))
-		if dcErr == nil && dcVal {
-			dcNodeId = dest.DstNode.GetId()
-			actual, _ := ec.Graph.ConcurrencyLocks.LoadOrStore(dcNodeId, &sync.Mutex{})
-			mu := actual.(*sync.Mutex)
-			mu.Lock()
-			ec.PendingConcurrencyLocks.Store(dcNodeId, mu)
-			// Fallback: release if ExecuteImpl returns without calling Execute
-			// (end of chain, error, or panic).
-			defer func() {
-				if lockVal, loaded := ec.PendingConcurrencyLocks.LoadAndDelete(dcNodeId); loaded {
-					lockVal.(*sync.Mutex).Unlock()
-				}
-			}()
-		}
+	if dest.DstNode.DisableConcurrency() {
+		dcNodeId := dest.DstNode.GetId()
+		actual, _ := ec.Graph.ConcurrencyLocks.LoadOrStore(dcNodeId, &sync.Mutex{})
+		mu := actual.(*sync.Mutex)
+		mu.Lock()
+		ec.PendingConcurrencyLocks.Store(dcNodeId, mu)
+		// Fallback: release if ExecuteImpl returns without calling Execute
+		// (end of chain, error, or panic).
+		defer func() {
+			if lockVal, loaded := ec.PendingConcurrencyLocks.LoadAndDelete(dcNodeId); loaded {
+				lockVal.(*sync.Mutex).Unlock()
+			}
+		}()
 	}
 
 	err = dest.DstNode.ExecuteImpl(ec, dest.Port, err)

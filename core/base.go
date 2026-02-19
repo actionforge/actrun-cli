@@ -169,6 +169,9 @@ type NodeBaseInterface interface {
 	IsExecutionNode() bool
 	SetExecutionNode(execNode bool)
 
+	DisableConcurrency() bool
+	SetDisableConcurrency(v bool)
+
 	// Returns the cache type where data is stored or should be stored to
 	// By default this depends on if this is an execution node or not.
 	GetCacheType() CacheType
@@ -183,9 +186,10 @@ type NodeBaseComponent struct {
 	FullPath        string // Full path of the node within the graph hierarchy
 	CacheId         string // Unique identifier for the cache
 	NodeType        string // Node type of the node (e.g. core/run@v1 or github.com/actions/checkout@v3)
-	Graph           *ActionGraph
-	Parent          NodeBaseInterface
-	isExecutionNode bool
+	Graph              *ActionGraph
+	Parent             NodeBaseInterface
+	isExecutionNode    bool
+	disableConcurrency bool
 }
 
 func (n *NodeBaseComponent) GetCacheType() CacheType {
@@ -202,6 +206,14 @@ func (n *NodeBaseComponent) IsExecutionNode() bool {
 
 func (n *NodeBaseComponent) SetExecutionNode(execNode bool) {
 	n.isExecutionNode = execNode
+}
+
+func (n *NodeBaseComponent) DisableConcurrency() bool {
+	return n.disableConcurrency
+}
+
+func (n *NodeBaseComponent) SetDisableConcurrency(v bool) {
+	n.disableConcurrency = v
 }
 
 func (n *NodeBaseComponent) SetId(id string) {
@@ -560,21 +572,6 @@ func RegisterNodeFactory(nodeDefStr string, fn nodeFactoryFunc) error {
 		}
 
 		nodeDef.Outputs[outputId] = outputDef
-	}
-
-	// inject the hidden _disable_concurrency input for execution nodes.
-	// When set to true at runtime, concurrent calls to this nodes
-	// ExecuteImpl are serialized via a per-node-ID mutex
-	if countExec > 0 {
-		nodeDef.Inputs[InputId("_disable_concurrency")] = InputDefinition{
-			PortDefinition: PortDefinition{
-				Name:  "Disable Concurrency",
-				Type:  "bool",
-				Index: 999999,
-			},
-			HideSocket: true,
-			Default:    false,
-		}
 	}
 
 	id := fmt.Sprintf("%v@v%v", nodeDef.Id, nodeDef.Version)

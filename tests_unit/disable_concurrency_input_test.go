@@ -6,47 +6,78 @@ import (
 	"testing"
 
 	"github.com/actionforge/actrun-cli/core"
+	"go.yaml.in/yaml/v4"
 
 	// initialize all nodes
 	_ "github.com/actionforge/actrun-cli/nodes"
 )
 
-func TestDisableConcurrencyInputInjection(t *testing.T) {
-	registries := core.GetRegistries()
-	if len(registries) == 0 {
-		t.Fatal("no node types registered; node factories not loaded")
+func loadTestGraph(t *testing.T, graphStr string) core.ActionGraph {
+	t.Helper()
+	var graphYaml map[string]any
+	if err := yaml.Unmarshal([]byte(graphStr), &graphYaml); err != nil {
+		t.Fatalf("unmarshal YAML: %v", err)
 	}
+	ag, errs := core.LoadGraph(graphYaml, nil, "", false, core.RunOpts{})
+	if len(errs) > 0 {
+		t.Fatalf("LoadGraph: %v", errs[0])
+	}
+	return ag
+}
 
-	for id, nodeDef := range registries {
-		// Count execution inputs to determine if this is an execution node.
-		hasExecInput := false
-		for _, inputDef := range nodeDef.Inputs {
-			if inputDef.Exec {
-				hasExecInput = true
-				break
-			}
-		}
+func TestDisableConcurrencyNotSetByDefault(t *testing.T) {
+	ag := loadTestGraph(t, `
+entry: start
+nodes:
+  - id: start
+    type: core/start@v1
+    position: {x: 0, y: 0}
+  - id: run1
+    type: core/run@v1
+    position: {x: 100, y: 0}
+    inputs:
+      shell: bash
+      script: echo hello
+connections: []
+executions:
+  - src: {node: start, port: exec}
+    dst: {node: run1, port: exec}
+`)
 
-		dcDef, hasDC := nodeDef.Inputs[core.InputId("_disable_concurrency")]
+	node := ag.Nodes["run1"]
+	if node == nil {
+		t.Fatal("node run1 not found")
+	}
+	if node.DisableConcurrency() {
+		t.Error("expected DisableConcurrency to be false by default")
+	}
+}
 
-		if hasExecInput {
-			if !hasDC {
-				t.Errorf("node %s has execution inputs but is missing _disable_concurrency input", id)
-				continue
-			}
-			if dcDef.Type != "bool" {
-				t.Errorf("node %s: _disable_concurrency type = %q, want \"bool\"", id, dcDef.Type)
-			}
-			if dcDef.Default != false {
-				t.Errorf("node %s: _disable_concurrency default = %v, want false", id, dcDef.Default)
-			}
-			if !dcDef.HideSocket {
-				t.Errorf("node %s: _disable_concurrency HideSocket = false, want true", id)
-			}
-		} else {
-			if hasDC {
-				t.Errorf("node %s has no execution inputs but has _disable_concurrency input", id)
-			}
-		}
+func TestDisableConcurrencySetFromYaml(t *testing.T) {
+	ag := loadTestGraph(t, `
+entry: start
+nodes:
+  - id: start
+    type: core/start@v1
+    position: {x: 0, y: 0}
+  - id: run1
+    type: core/run@v1
+    position: {x: 100, y: 0}
+    inputs:
+      _disable_concurrency: true
+      shell: bash
+      script: echo hello
+connections: []
+executions:
+  - src: {node: start, port: exec}
+    dst: {node: run1, port: exec}
+`)
+
+	node := ag.Nodes["run1"]
+	if node == nil {
+		t.Fatal("node run1 not found")
+	}
+	if !node.DisableConcurrency() {
+		t.Error("expected DisableConcurrency to be true when set in YAML")
 	}
 }

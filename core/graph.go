@@ -82,7 +82,7 @@ func (ag *ActionGraph) GetEntry() (NodeEntryInterface, error) {
 
 func NewActionGraph() ActionGraph {
 	return ActionGraph{
-		Nodes:         make(map[string]NodeBaseInterface),
+		Nodes:            make(map[string]NodeBaseInterface),
 		ConcurrencyLocks: &sync.Map{},
 	}
 }
@@ -250,10 +250,10 @@ func NewExecutionState(
 	ctx, cancel := context.WithCancel(ctx)
 
 	return &ExecutionState{
-		Graph:                graph,
-		Hierarchy:            make([]NodeBaseInterface, 0),
-		ContextStackLock:     &sync.RWMutex{},
-		OutputCacheLock:      &sync.RWMutex{},
+		Graph:                   graph,
+		Hierarchy:               make([]NodeBaseInterface, 0),
+		ContextStackLock:        &sync.RWMutex{},
+		OutputCacheLock:         &sync.RWMutex{},
 		PendingConcurrencyLocks: &sync.Map{},
 
 		IsDebugSession: debugCb != nil,
@@ -820,6 +820,15 @@ func LoadInputValues(node NodeBaseInterface, nodeI map[string]any, validate bool
 	}
 
 	subInputs := map[string][]subInput{}
+
+	// _disable_concurrency is not a regular input, its stored directly on
+	// the node instance so we pull it out before processing the rest.
+	if v, ok := inputValues["_disable_concurrency"]; ok {
+		if b, ok := v.(bool); ok && b {
+			node.SetDisableConcurrency(true)
+		}
+		delete(inputValues, "_disable_concurrency")
+	}
 
 	for portId, inputValue := range inputValues {
 		groupInputId, portIndex, isIndexPort := IsValidIndexPortId(portId)
