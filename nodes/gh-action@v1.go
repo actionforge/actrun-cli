@@ -62,14 +62,46 @@ type GhActionNode struct {
 	core.Outputs
 	core.Executions
 
-	actionName        string
-	actionType        ActionType // docker or node
-	actionRuns        ActionRuns
-	actionRunJsPath   string
-	actionPostJsPath  string
-	actionDir         string
+	actionName       string
+	actionType       ActionType // docker or node
+	actionRuns       ActionRuns
+	actionRunJsPath  string
+	actionPostJsPath string
+	actionDir        string
+
+	// isStub indicates whether this node is a stub created during
+	// validation when the action.yml couldn't be fetched for validation.
+	isStub bool
 
 	Data DockerData
+}
+
+// InputDefByPortId returns a generic string definition for any unknown port
+// when the node is a stub. See GhActionNode.isStub
+func (n *GhActionNode) InputDefByPortId(inputId string) (core.InputDefinition, *core.IndexPortInfo, bool) {
+	def, info, ok := n.Inputs.InputDefByPortId(inputId)
+	if ok || !n.isStub {
+		return def, info, ok
+	}
+
+	// since we couldn't validate the actual input, just return a dummy string input.
+	return core.InputDefinition{
+		PortDefinition: core.PortDefinition{Name: inputId, Type: "string"},
+	}, nil, true
+}
+
+// OutputDefByPortId returns a generic string definition for any unknown port
+// when the node is a stub. See GhActionNode.isStub
+func (n *GhActionNode) OutputDefByPortId(outputId string) (core.OutputDefinition, *core.IndexPortInfo, bool) {
+	def, info, ok := n.Outputs.OutputDefByPortId(outputId)
+	if ok || !n.isStub {
+		return def, info, ok
+	}
+
+	// since we couldn't validate the actual output, just return a dummy string output.
+	return core.OutputDefinition{
+		PortDefinition: core.PortDefinition{Name: outputId, Type: "string"},
+	}, nil, true
 }
 
 func (n *GhActionNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, prevError error) error {
@@ -545,6 +577,21 @@ func init() {
 			return nil, []error{core.CreateErr(nil, nil, "node representing GitHub Action '%v' can only be used in a GitHub Actions workflow.", nodeType)}
 		}
 
+		node := &GhActionNode{}
+
+		// Common ports shared by both stub and fully-resolved nodes.
+		inputs := map[core.InputId]core.InputDefinition{
+			"exec": {PortDefinition: core.PortDefinition{Exec: true}},
+			"env": {
+				PortDefinition: core.PortDefinition{Name: "Environment Vars", Type: "[]string"},
+				Hint:           "MY_ENV=1234",
+			},
+		}
+		outputs := map[core.OutputId]core.OutputDefinition{
+			"exec-success": {PortDefinition: core.PortDefinition{Exec: true}},
+			"exec-err":     {PortDefinition: core.PortDefinition{Exec: true}},
+		}
+
 		ghToken := opts.OverrideSecrets["GITHUB_TOKEN"]
 
 		// TODO: (Seb) for the validation process we only need the action.yml, not the entire repo
@@ -553,17 +600,9 @@ func init() {
 		if errors.Is(err, os.ErrNotExist) {
 			if ghToken == "" {
 				if validate {
-					// No token and repo not cached — return a stub node with
-					// standard exec ports so graph structure can still be validated.
-					node := &GhActionNode{}
-					inputs := map[core.InputId]core.InputDefinition{
-						"exec": {PortDefinition: core.PortDefinition{Exec: true}},
-						"env":  {PortDefinition: core.PortDefinition{Name: "Environment Vars", Type: "[]string"}},
-					}
-					outputs := map[core.OutputId]core.OutputDefinition{
-						"exec-success": {PortDefinition: core.PortDefinition{Exec: true}},
-						"exec-err":     {PortDefinition: core.PortDefinition{Exec: true}},
-					}
+					// No token and repo is not cached so we return a stub node so
+					// graph structure can still be validated.
+					node.isStub = true
 					node.SetInputDefs(inputs, core.SetDefsOpts{})
 					node.SetOutputDefs(outputs, core.SetDefsOpts{})
 					node.SetNodeType(nodeType)
@@ -667,11 +706,9 @@ func init() {
 			return nil, []error{err}
 		}
 
-		node := &GhActionNode{
-			actionName: action.Name,
-			actionRuns: action.Runs,
-			actionDir:  actionDir,
-		}
+		node.actionName = action.Name
+		node.actionRuns = action.Runs
+		node.actionDir = actionDir
 
 		switch action.Runs.Using {
 		case "docker":
@@ -767,42 +804,28 @@ func init() {
 			return nil, []error{core.CreateErr(nil, nil, "unsupported action run type: %s", action.Runs.Using)}
 		}
 
-		inputs := make(map[core.InputId]core.InputDefinition, 0)
-		if len(action.Inputs) > 0 {
-			for name, input := range action.Inputs {
-				pd := core.InputDefinition{
-					PortDefinition: core.PortDefinition{
-						Name: name,
-						Type: "string",
-						Desc: input.Desc,
-					},
-				}
-				if input.Default != "" {
-					pd.Default = input.Default
-				}
-				inputs[core.InputId(name)] = pd
+		for name, input := range action.Inputs {
+			pd := core.InputDefinition{
+				PortDefinition: core.PortDefinition{
+					Name: name,
+					Type: "string",
+					Desc: input.Desc,
+				},
 			}
+			if input.Default != "" {
+				pd.Default = input.Default
+			}
+			inputs[core.InputId(name)] = pd
 		}
 
-		outputs := make(map[core.OutputId]core.OutputDefinition, 0)
-		if len(action.Outputs) > 0 {
-			for name, output := range action.Outputs {
-				outputs[core.OutputId(name)] = core.OutputDefinition{
-					PortDefinition: core.PortDefinition{
-						Name: name,
-						Type: "string",
-						Desc: output.Description,
-					},
-				}
+		for name, output := range action.Outputs {
+			outputs[core.OutputId(name)] = core.OutputDefinition{
+				PortDefinition: core.PortDefinition{
+					Name: name,
+					Type: "string",
+					Desc: output.Description,
+				},
 			}
-		}
-
-		inputs["exec"] = core.InputDefinition{PortDefinition: core.PortDefinition{Exec: true}}
-		outputs["exec-success"] = core.OutputDefinition{PortDefinition: core.PortDefinition{Exec: true}}
-		outputs["exec-err"] = core.OutputDefinition{PortDefinition: core.PortDefinition{Exec: true}}
-		inputs["env"] = core.InputDefinition{
-			PortDefinition: core.PortDefinition{Name: "Environment Vars", Type: "[]string"},
-			Hint:           "MY_ENV=1234",
 		}
 
 		node.SetInputDefs(inputs, core.SetDefsOpts{})
