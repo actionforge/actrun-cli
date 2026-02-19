@@ -319,7 +319,7 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 	os.Unsetenv("INPUT_GITHUB_TOKEN")
 	os.Unsetenv("INPUT_TOKEN")
 
-	ag, errs := LoadGraph(graphYaml, nil, "", nil, opts)
+	ag, errs := LoadGraph(graphYaml, nil, "", opts)
 	if len(errs) > 0 {
 		return CreateErr(nil, errs[0], "failed to load graph")
 	}
@@ -580,9 +580,9 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 	return mainErr
 }
 
-func LoadGraph(graphYaml map[string]any, parent NodeBaseInterface, parentId string, vs *ValidationState, opts RunOpts) (ActionGraph, []error) {
+func LoadGraph(graphYaml map[string]any, parent NodeBaseInterface, parentId string, opts RunOpts) (ActionGraph, []error) {
 
-	opts.VS = vs
+	vs := opts.VS
 	ag := NewActionGraph()
 
 	var err error
@@ -601,7 +601,7 @@ func LoadGraph(graphYaml map[string]any, parent NodeBaseInterface, parentId stri
 		}
 	}
 
-	err = LoadNodes(&ag, parent, parentId, graphYaml, vs, opts)
+	err = LoadNodes(&ag, parent, parentId, graphYaml, opts)
 	if err != nil && vs == nil {
 		return ActionGraph{}, []error{err}
 	}
@@ -682,14 +682,14 @@ func anyToPortDefinition[T any](o any) (T, error) {
 	return ret, err
 }
 
-func LoadNodes(ag *ActionGraph, parent NodeBaseInterface, parentId string, nodesYaml map[string]any, vs *ValidationState, opts RunOpts) error {
+func LoadNodes(ag *ActionGraph, parent NodeBaseInterface, parentId string, nodesYaml map[string]any, opts RunOpts) error {
 	nodesList, err := utils.GetTypedPropertyByPath[[]any](nodesYaml, "nodes")
 	if err != nil {
-		return collectOrReturn(err, vs)
+		return collectOrReturn(err, opts.VS)
 	}
 
 	for _, nodeData := range nodesList {
-		n, id, err := LoadNode(parent, parentId, nodeData, vs, opts)
+		n, id, err := LoadNode(parent, parentId, nodeData, opts)
 		if err != nil {
 			return err
 		}
@@ -704,7 +704,8 @@ func LoadNodes(ag *ActionGraph, parent NodeBaseInterface, parentId string, nodes
 	return nil
 }
 
-func LoadNode(parent NodeBaseInterface, parentId string, nodeData any, vs *ValidationState, opts RunOpts) (NodeBaseInterface, string, error) {
+func LoadNode(parent NodeBaseInterface, parentId string, nodeData any, opts RunOpts) (NodeBaseInterface, string, error) {
+	vs := opts.VS
 	nodeI, ok := nodeData.(map[string]any)
 	if !ok {
 		err := CreateErr(nil, nil, "node is not a map")

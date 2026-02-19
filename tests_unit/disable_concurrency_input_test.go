@@ -18,7 +18,7 @@ func loadTestGraph(t *testing.T, graphStr string) core.ActionGraph {
 	if err := yaml.Unmarshal([]byte(graphStr), &graphYaml); err != nil {
 		t.Fatalf("unmarshal YAML: %v", err)
 	}
-	ag, errs := core.LoadGraph(graphYaml, nil, "", nil, core.RunOpts{})
+	ag, errs := core.LoadGraph(graphYaml, nil, "", core.RunOpts{})
 	if len(errs) > 0 {
 		t.Fatalf("LoadGraph: %v", errs[0])
 	}
