@@ -1,6 +1,10 @@
 package core
 
-import "github.com/actionforge/actrun-cli/utils"
+import (
+	"sync"
+
+	"github.com/actionforge/actrun-cli/utils"
+)
 
 type ExecutionSource struct {
 	SrcNode HasExecutionInterface
@@ -29,6 +33,16 @@ func (n *Executions) Execute(outputPort OutputId, ec *ExecutionState, err error)
 	ec.EmptyDataOutputCache()
 
 	dest, hasDest := n.GetExecutionTarget(outputPort)
+
+	// Release any pending concurrency lock for the source node. When a node
+	// calls Execute on its own Executions to dispatch downstream, it means
+	// the nodes own ExecuteImpl work is done so we can release its lock
+	// and let the next concurrent caller continue
+	if hasDest && dest.SrcNode != nil {
+		if lockVal, loaded := ec.PendingConcurrencyLocks.LoadAndDelete(dest.SrcNode.GetId()); loaded {
+			lockVal.(*sync.Mutex).Unlock()
+		}
+	}
 
 	// Set the step conclusion for the SOURCE node based on which output port is being executed.
 	// This enables ${{ steps.X.conclusion }} syntax similar to GitHub Actions.
@@ -63,6 +77,26 @@ func (n *Executions) Execute(outputPort OutputId, ec *ExecutionState, err error)
 	ec.PushNodeVisit(dest.DstNode, true)
 	if ec.IsCancelled() {
 		return nil
+	}
+
+	// If the destination node has _disable_concurrency set, serialize execution
+	// through a per-node-ID mutex to prevent concurrent ExecuteImpl calls.
+	// The lock is stored as pending and released when the node calls Execute
+	// to dispatch downstream (above), or as a fallback when ExecuteImpl
+	// returns without dispatching (below).
+	if dest.DstNode.DisableConcurrency() {
+		dcNodeId := dest.DstNode.GetId()
+		actual, _ := ec.Graph.ConcurrencyLocks.LoadOrStore(dcNodeId, &sync.Mutex{})
+		mu := actual.(*sync.Mutex)
+		mu.Lock()
+		ec.PendingConcurrencyLocks.Store(dcNodeId, mu)
+		// Fallback: release if ExecuteImpl returns without calling Execute
+		// (end of chain, error, or panic).
+		defer func() {
+			if lockVal, loaded := ec.PendingConcurrencyLocks.LoadAndDelete(dcNodeId); loaded {
+				lockVal.(*sync.Mutex).Unlock()
+			}
+		}()
 	}
 
 	err = dest.DstNode.ExecuteImpl(ec, dest.Port, err)
