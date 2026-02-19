@@ -69,18 +69,18 @@ type GhActionNode struct {
 	actionPostJsPath string
 	actionDir        string
 
-	// isStub indicates whether this node is a stub created during
+	// isProxy indicates whether this node is a proxy created during
 	// validation when the action.yml couldn't be fetched for validation.
-	isStub bool
+	isProxy bool
 
 	Data DockerData
 }
 
 // InputDefByPortId returns a generic string definition for any unknown port
-// when the node is a stub. See GhActionNode.isStub
+// when the node is a proxy. See GhActionNode.isProxy
 func (n *GhActionNode) InputDefByPortId(inputId string) (core.InputDefinition, *core.IndexPortInfo, bool) {
 	def, info, ok := n.Inputs.InputDefByPortId(inputId)
-	if ok || !n.isStub {
+	if ok || !n.isProxy {
 		return def, info, ok
 	}
 
@@ -91,10 +91,10 @@ func (n *GhActionNode) InputDefByPortId(inputId string) (core.InputDefinition, *
 }
 
 // OutputDefByPortId returns a generic string definition for any unknown port
-// when the node is a stub. See GhActionNode.isStub
+// when the node is a proxy. See GhActionNode.isProxy
 func (n *GhActionNode) OutputDefByPortId(outputId string) (core.OutputDefinition, *core.IndexPortInfo, bool) {
 	def, info, ok := n.Outputs.OutputDefByPortId(outputId)
-	if ok || !n.isStub {
+	if ok || !n.isProxy {
 		return def, info, ok
 	}
 
@@ -600,9 +600,9 @@ func init() {
 		if errors.Is(err, os.ErrNotExist) {
 			if ghToken == "" {
 				if validate {
-					// No token and repo is not cached so we return a stub node so
+					// No token and repo is not cached so we return a proxy node so
 					// graph structure can still be validated.
-					node.isStub = true
+					node.isProxy = true
 					node.SetInputDefs(inputs, core.SetDefsOpts{})
 					node.SetOutputDefs(outputs, core.SetDefsOpts{})
 					node.SetNodeType(nodeType)
