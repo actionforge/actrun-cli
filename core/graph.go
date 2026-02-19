@@ -310,12 +310,8 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 	if _, exists := opts.OverrideSecrets["GITHUB_TOKEN"]; !exists {
 		if ghToken, ok := opts.OverrideEnv["GITHUB_TOKEN"]; ok && ghToken != "" {
 			opts.OverrideSecrets["GITHUB_TOKEN"] = ghToken
-		} else if ghToken := os.Getenv("GITHUB_TOKEN"); ghToken != "" {
+		} else if ghToken := utils.GetGhTokenFromEnv(); ghToken != "" {
 			opts.OverrideSecrets["GITHUB_TOKEN"] = ghToken
-		} else if inputToken := os.Getenv("INPUT_GITHUB_TOKEN"); inputToken != "" {
-			opts.OverrideSecrets["GITHUB_TOKEN"] = inputToken
-		} else if inputToken := os.Getenv("INPUT_TOKEN"); inputToken != "" {
-			opts.OverrideSecrets["GITHUB_TOKEN"] = inputToken
 		}
 	}
 	delete(opts.OverrideEnv, "GITHUB_TOKEN")

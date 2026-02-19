@@ -21,6 +21,21 @@ var (
 	ORIGIN_ENV_DOTENV = "env (dotenv)"
 )
 
+// GetGhTokenFromEnv returns the GitHub token from environment variables,
+// checking GITHUB_TOKEN, INPUT_GITHUB_TOKEN, and INPUT_TOKEN in order.
+func GetGhTokenFromEnv() string {
+	if t := os.Getenv("GITHUB_TOKEN"); t != "" {
+		return t
+	}
+	if t := os.Getenv("INPUT_GITHUB_TOKEN"); t != "" {
+		return t
+	}
+	if t := os.Getenv("INPUT_TOKEN"); t != "" {
+		return t
+	}
+	return ""
+}
+
 func SafeCloseReaderAndIgnoreError(r io.Reader) {
 	_ = SafeCloseReader(r)
 }
