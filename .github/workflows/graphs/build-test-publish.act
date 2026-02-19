@@ -6021,6 +6021,7 @@ nodes:
       x: 13320
       y: 620
     inputs:
+      _disable_concurrency: true
       dependency-snapshot: 'true'
   - id: core-string-fmt-v1-lychee-coconut-gray
     type: core/string-fmt@v1
