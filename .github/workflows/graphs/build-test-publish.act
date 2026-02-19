@@ -2172,12 +2172,10 @@ nodes:
       plum-kiwano-lobster: dev.actionforge.actrun
       coral-dragonfruit-jackfruit: ''
       persimmon-date-coral: distribution.xml
-      blackberry-apricot-butterfly: 'Developer ID Installer: Actionforge Inc. (D9L94G8QN4)'
       grape-peach-apricot: 1.0.0
       goose-goat-indigo: ''
       guava-boysenberry-hippopotamus: ''
       strawberry-nectarine-seahorse: actrun-cli.pkg
-      pomegranate-cranberry-gold: actrun-cli.pkg
     graph:
       entry: group-inputs-v1-kiwano-peach-horse
       type: group
