@@ -80,6 +80,10 @@
     },
     "info": {
       "$ref": "#/$defs/graphInfo"
+    },
+    "locked_by": {
+      "type": "string",
+      "description": "Identifier of the user or system that has locked this graph for editing."
     }
   },
   "$defs": {
