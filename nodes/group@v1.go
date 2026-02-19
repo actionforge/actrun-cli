@@ -179,7 +179,12 @@ func init() {
 			}
 		}
 
-		ag, errs := core.LoadGraph(subGraph, group, parentId, validate, opts)
+		if validate {
+			opts.VS = &core.ValidationState{}
+		} else {
+			opts.VS = nil
+		}
+		ag, errs := core.LoadGraph(subGraph, group, parentId, opts)
 		if len(errs) > 0 {
 			if !validate {
 				return nil, errs

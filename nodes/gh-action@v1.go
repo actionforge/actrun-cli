@@ -62,14 +62,46 @@ type GhActionNode struct {
 	core.Outputs
 	core.Executions
 
-	actionName        string
-	actionType        ActionType // docker or node
-	actionRuns        ActionRuns
-	actionRunJsPath   string
-	actionPostJsPath  string
-	actionDir         string
+	actionName       string
+	actionType       ActionType // docker or node
+	actionRuns       ActionRuns
+	actionRunJsPath  string
+	actionPostJsPath string
+	actionDir        string
+
+	// isProxy indicates whether this node is a proxy created during
+	// validation when the action.yml couldn't be fetched for validation.
+	isProxy bool
 
 	Data DockerData
+}
+
+// InputDefByPortId returns a generic string definition for any unknown port
+// when the node is a proxy. See GhActionNode.isProxy
+func (n *GhActionNode) InputDefByPortId(inputId string) (core.InputDefinition, *core.IndexPortInfo, bool) {
+	def, info, ok := n.Inputs.InputDefByPortId(inputId)
+	if ok || !n.isProxy {
+		return def, info, ok
+	}
+
+	// since we couldn't validate the actual input, just return a dummy string input.
+	return core.InputDefinition{
+		PortDefinition: core.PortDefinition{Name: inputId, Type: "string"},
+	}, nil, true
+}
+
+// OutputDefByPortId returns a generic string definition for any unknown port
+// when the node is a proxy. See GhActionNode.isProxy
+func (n *GhActionNode) OutputDefByPortId(outputId string) (core.OutputDefinition, *core.IndexPortInfo, bool) {
+	def, info, ok := n.Outputs.OutputDefByPortId(outputId)
+	if ok || !n.isProxy {
+		return def, info, ok
+	}
+
+	// since we couldn't validate the actual output, just return a dummy string output.
+	return core.OutputDefinition{
+		PortDefinition: core.PortDefinition{Name: outputId, Type: "string"},
+	}, nil, true
 }
 
 func (n *GhActionNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, prevError error) error {
@@ -541,8 +573,23 @@ func init() {
 		actionDir := filepath.Join(actionRepoRoot, path)
 
 		isGitHubAction := opts.OverrideEnv["GITHUB_ACTIONS"] == "true" || os.Getenv("GITHUB_ACTIONS") == "true"
-		if !isGitHubAction {
+		if !isGitHubAction && !validate {
 			return nil, []error{core.CreateErr(nil, nil, "node representing GitHub Action '%v' can only be used in a GitHub Actions workflow.", nodeType)}
+		}
+
+		node := &GhActionNode{}
+
+		// Common ports shared by both proxy and fully-resolved nodes.
+		inputs := map[core.InputId]core.InputDefinition{
+			"exec": {PortDefinition: core.PortDefinition{Exec: true}},
+			"env": {
+				PortDefinition: core.PortDefinition{Name: "Environment Vars", Type: "[]string"},
+				Hint:           "MY_ENV=1234",
+			},
+		}
+		outputs := map[core.OutputId]core.OutputDefinition{
+			"exec-success": {PortDefinition: core.PortDefinition{Exec: true}},
+			"exec-err":     {PortDefinition: core.PortDefinition{Exec: true}},
 		}
 
 		ghToken := opts.OverrideSecrets["GITHUB_TOKEN"]
@@ -552,6 +599,17 @@ func init() {
 		_, err = os.Stat(actionRepoRoot)
 		if errors.Is(err, os.ErrNotExist) {
 			if ghToken == "" {
+				if validate {
+					// No token and repo is not cached so we return a proxy node so
+					// graph structure can still be validated.
+					node.isProxy = true
+					node.SetInputDefs(inputs, core.SetDefsOpts{})
+					node.SetOutputDefs(outputs, core.SetDefsOpts{})
+					node.SetNodeType(nodeType)
+					opts.VS.Warnings = append(opts.VS.Warnings,
+						fmt.Sprintf("node '%s': GITHUB_TOKEN not set — cannot verify that the action exists or that its inputs and outputs are correct", nodeType))
+					return node, nil
+				}
 				return nil, []error{core.CreateErr(nil, nil, "neither GITHUB_TOKEN nor INPUT_GITHUB_TOKEN are set")}
 			}
 
@@ -648,11 +706,9 @@ func init() {
 			return nil, []error{err}
 		}
 
-		node := &GhActionNode{
-			actionName: action.Name,
-			actionRuns: action.Runs,
-			actionDir:  actionDir,
-		}
+		node.actionName = action.Name
+		node.actionRuns = action.Runs
+		node.actionDir = actionDir
 
 		switch action.Runs.Using {
 		case "docker":
@@ -748,42 +804,28 @@ func init() {
 			return nil, []error{core.CreateErr(nil, nil, "unsupported action run type: %s", action.Runs.Using)}
 		}
 
-		inputs := make(map[core.InputId]core.InputDefinition, 0)
-		if len(action.Inputs) > 0 {
-			for name, input := range action.Inputs {
-				pd := core.InputDefinition{
-					PortDefinition: core.PortDefinition{
-						Name: name,
-						Type: "string",
-						Desc: input.Desc,
-					},
-				}
-				if input.Default != "" {
-					pd.Default = input.Default
-				}
-				inputs[core.InputId(name)] = pd
+		for name, input := range action.Inputs {
+			pd := core.InputDefinition{
+				PortDefinition: core.PortDefinition{
+					Name: name,
+					Type: "string",
+					Desc: input.Desc,
+				},
 			}
+			if input.Default != "" {
+				pd.Default = input.Default
+			}
+			inputs[core.InputId(name)] = pd
 		}
 
-		outputs := make(map[core.OutputId]core.OutputDefinition, 0)
-		if len(action.Outputs) > 0 {
-			for name, output := range action.Outputs {
-				outputs[core.OutputId(name)] = core.OutputDefinition{
-					PortDefinition: core.PortDefinition{
-						Name: name,
-						Type: "string",
-						Desc: output.Description,
-					},
-				}
+		for name, output := range action.Outputs {
+			outputs[core.OutputId(name)] = core.OutputDefinition{
+				PortDefinition: core.PortDefinition{
+					Name: name,
+					Type: "string",
+					Desc: output.Description,
+				},
 			}
-		}
-
-		inputs["exec"] = core.InputDefinition{PortDefinition: core.PortDefinition{Exec: true}}
-		outputs["exec-success"] = core.OutputDefinition{PortDefinition: core.PortDefinition{Exec: true}}
-		outputs["exec-err"] = core.OutputDefinition{PortDefinition: core.PortDefinition{Exec: true}}
-		inputs["env"] = core.InputDefinition{
-			PortDefinition: core.PortDefinition{Name: "Environment Vars", Type: "[]string"},
-			Hint:           "MY_ENV=1234",
 		}
 
 		node.SetInputDefs(inputs, core.SetDefsOpts{})

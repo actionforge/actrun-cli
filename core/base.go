@@ -180,12 +180,12 @@ type NodeBaseInterface interface {
 // Base component for nodes that offer values from other nodes.
 // The node that implements this component has outgoing connections.
 type NodeBaseComponent struct {
-	Name            string // Human readable name of the node
-	Label           string // Label of the node shown in the graph editor
-	Id              string // Unique identifier for the node
-	FullPath        string // Full path of the node within the graph hierarchy
-	CacheId         string // Unique identifier for the cache
-	NodeType        string // Node type of the node (e.g. core/run@v1 or github.com/actions/checkout@v3)
+	Name               string // Human readable name of the node
+	Label              string // Label of the node shown in the graph editor
+	Id                 string // Unique identifier for the node
+	FullPath           string // Full path of the node within the graph hierarchy
+	CacheId            string // Unique identifier for the cache
+	NodeType           string // Node type of the node (e.g. core/run@v1 or github.com/actions/checkout@v3)
 	Graph              *ActionGraph
 	Parent             NodeBaseInterface
 	isExecutionNode    bool
@@ -605,7 +605,13 @@ func NewGhActionNode(nodeType string, parent NodeBaseInterface, parentId string,
 
 	node, errs := factoryEntry.FactoryFn(nodeType, parent, parentId, nil, validate, opts)
 	if len(errs) > 0 {
-		return nil, errs
+		if node == nil {
+			return nil, errs
+		}
+		// Factory returned a valid node with warnings/errors (e.g. validation
+		// proxy). Initialise the node and pass the errors through.
+		utils.InitMapAndSliceInStructRecursively(reflect.ValueOf(node))
+		return node, errs
 	}
 
 	utils.InitMapAndSliceInStructRecursively(reflect.ValueOf(node))

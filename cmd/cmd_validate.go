@@ -116,7 +116,14 @@ func validateGraph(filePath string) error {
 		hasErrors = true
 	}
 
-	_, errs := core.LoadGraph(graphYaml, nil, "", true, core.RunOpts{})
+	opts := core.RunOpts{
+		VS:              &core.ValidationState{},
+		OverrideSecrets: make(map[string]string),
+	}
+	if ghToken := u.GetGhTokenFromEnv(); ghToken != "" {
+		opts.OverrideSecrets["GITHUB_TOKEN"] = ghToken
+	}
+	_, errs := core.LoadGraph(graphYaml, nil, "", opts)
 
 	if len(errs) > 0 {
 		fmt.Printf("\n❌ Graph validation failed with %d error(s):\n", len(errs))
@@ -130,6 +137,13 @@ func validateGraph(filePath string) error {
 			}
 		}
 		hasErrors = true
+	}
+
+	if len(opts.VS.Warnings) > 0 {
+		fmt.Printf("\n⚠️  %d warning(s):\n", len(opts.VS.Warnings))
+		for i, w := range opts.VS.Warnings {
+			fmt.Printf("  %d. %s\n", i+1, w)
+		}
 	}
 
 	if hasErrors {
