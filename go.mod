@@ -17,9 +17,11 @@ require (
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/websocket v1.5.3
+	github.com/hashicorp/vault/api v1.22.0
 	github.com/inconshreveable/mousetrap v1.1.0
 	github.com/joho/godotenv v1.5.1
 	github.com/mark3labs/mcp-go v0.44.0
+	github.com/perforce/p4go v1.20252.2872356
 	github.com/pkg/errors v0.9.1
 	github.com/rhysd/actionlint v1.7.10
 	github.com/rossmacarthur/cases v0.3.0
@@ -105,7 +107,6 @@ require (
 	github.com/hashicorp/go-secure-stdlib/strutil v0.1.2 // indirect
 	github.com/hashicorp/go-sockaddr v1.0.7 // indirect
 	github.com/hashicorp/hcl v1.0.1-vault-7 // indirect
-	github.com/hashicorp/vault/api v1.22.0 // indirect
 	github.com/invopop/jsonschema v0.13.0 // indirect
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
 	github.com/kevinburke/ssh_config v1.4.0 // indirect
@@ -123,7 +124,6 @@ require (
 	github.com/montanaflynn/stats v0.7.1 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.1 // indirect
-	github.com/perforce/p4go v1.20252.2872356 // indirect
 	github.com/pjbgf/sha1cd v0.5.0 // indirect
 	github.com/pkoukk/tiktoken-go v0.1.8 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
