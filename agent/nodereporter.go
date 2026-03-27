@@ -15,6 +15,7 @@ type NodeReporter struct {
 	activeNodes []ActiveNode // ordered by start time, latest last
 	dirty       bool
 	done        chan struct{}
+	closeOnce   sync.Once
 }
 
 func NewNodeReporter(client *Client, jobID string) *NodeReporter {
@@ -73,10 +74,13 @@ func (r *NodeReporter) flush() {
 }
 
 // Close stops the reporter and sends a final (empty) update.
+// Safe to call multiple times.
 func (r *NodeReporter) Close() {
-	r.mu.Lock()
-	r.activeNodes = nil
-	r.dirty = true
-	r.mu.Unlock()
-	close(r.done)
+	r.closeOnce.Do(func() {
+		r.mu.Lock()
+		r.activeNodes = nil
+		r.dirty = true
+		r.mu.Unlock()
+		close(r.done)
+	})
 }
