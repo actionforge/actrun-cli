@@ -1,0 +1,42 @@
+yaml-version: 3.0
+
+id: core/artifact-download
+name: Artifact Download
+version: 1
+category: network
+icon: featherDownloadCloud
+short_desc: Download a run artifact from the orchestrator.
+style:
+  header:
+    background: "#1b5f5e"
+  body:
+    background: "#429694"
+outputs:
+  exec-success:
+    name: Success
+    exec: true
+    index: 0
+  exec-err:
+    name: Error
+    exec: true
+    index: 1
+  data:
+    name: Data
+    type: stream
+    index: 2
+    desc: The downloaded artifact data stream.
+inputs:
+  exec:
+    exec: true
+    index: 0
+  name:
+    name: Filename
+    type: string
+    index: 1
+    required: true
+    desc: The filename of the artifact to download.
+  run_id:
+    name: Run ID
+    type: string
+    index: 2
+    desc: The run ID to download the artifact from. Defaults to the current run if empty.

@@ -1,0 +1,38 @@
+yaml-version: 3.0
+
+id: core/artifact-upload
+name: Artifact Upload
+version: 1
+category: network
+icon: featherUploadCloud
+short_desc: Upload a file as a run artifact to the orchestrator.
+style:
+  header:
+    background: "#1b5f5e"
+  body:
+    background: "#429694"
+outputs:
+  exec-success:
+    name: Success
+    exec: true
+    index: 0
+  exec-err:
+    name: Error
+    exec: true
+    index: 1
+inputs:
+  exec:
+    exec: true
+    index: 0
+  name:
+    name: Filename
+    type: string
+    index: 1
+    required: true
+    desc: The filename for the artifact.
+  data:
+    name: Data
+    type: any
+    index: 2
+    required: true
+    desc: The data stream to upload as an artifact.
