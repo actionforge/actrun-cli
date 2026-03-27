@@ -1,0 +1,142 @@
+editor:
+  version:
+    created: v1.34.0
+    updated: v1.58.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+
+  # ── Download scripts from workspace ────────────────────
+  - id: sync-scripts
+    type: core/workspace-download@v1
+    inputs:
+      paths:
+        - step-fetch-assets.sh
+        - step-build.sh
+        - step-test.sh
+
+  # ── Stage 1: Fetch Assets ─────────────────────────────
+  - id: stage-fetch
+    type: core/run-exec@v1
+    inputs:
+      path: bash
+      args:
+        - step-fetch-assets.sh
+    comment: Stage Fetch
+
+  # ── Stage 2: Build ────────────────────────────────────
+  - id: stage-build
+    type: core/run-exec@v1
+    inputs:
+      path: bash
+      args:
+        - step-build.sh
+    comment: Stage Build
+
+  # ── Stage 3: Test ─────────────────────────────────────
+  - id: stage-test
+    type: core/run-exec@v1
+    inputs:
+      path: bash
+      args:
+        - step-test.sh
+    comment: Stage Test
+
+  # ── Stage 4: Package ──────────────────────────────────
+  - id: stage-package
+    type: core/file-compress@v1
+    inputs:
+      format: zip
+      paths:
+        - build/out
+      base_path: build/out
+
+  # ── Stage 5: Upload Artifact ──────────────────────────
+  - id: artifact-name
+    type: core/const-string@v1
+    inputs:
+      value: game-build.zip
+  - id: stage-upload
+    type: core/artifact-upload@v1
+    inputs:
+      name: null
+      data: null
+
+  # ── Upload skipped (local run) ────────────────────────
+  - id: upload-skip-text
+    type: core/const-string@v1
+    inputs:
+      value: 'WARN: Artifact upload skipped (no orchestrator connection)'
+  - id: upload-skip-msg
+    type: core/print@v1
+    inputs:
+      values[0]: null
+      color: fg_yellow
+
+connections:
+  # Package stream → upload
+  - src:
+      node: stage-package
+      port: data
+    dst:
+      node: stage-upload
+      port: data
+  - src:
+      node: artifact-name
+      port: result
+    dst:
+      node: stage-upload
+      port: name
+  - src:
+      node: upload-skip-text
+      port: result
+    dst:
+      node: upload-skip-msg
+      port: values[0]
+
+executions:
+  # Start → sync scripts → run stages
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: sync-scripts
+      port: exec
+  - src:
+      node: sync-scripts
+      port: exec-success
+    dst:
+      node: stage-fetch
+      port: exec
+  - src:
+      node: stage-fetch
+      port: exec-success
+    dst:
+      node: stage-build
+      port: exec
+  - src:
+      node: stage-build
+      port: exec-success
+    dst:
+      node: stage-test
+      port: exec
+  - src:
+      node: stage-test
+      port: exec-success
+    dst:
+      node: stage-package
+      port: exec
+  - src:
+      node: stage-package
+      port: exec-success
+    dst:
+      node: stage-upload
+      port: exec
+  - src:
+      node: stage-upload
+      port: exec-err
+    dst:
+      node: upload-skip-msg
+      port: exec
