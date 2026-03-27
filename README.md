@@ -110,6 +110,26 @@ actrun --concurrency=false ./sequential_task.act
 
 ```
 
+## 🔧 Perforce Support (Optional)
+
+To build with Perforce (P4) support, you need the Perforce C/C++ API and OpenSSL installed.
+
+1. Download the [Helix C/C++ API](https://www.perforce.com/downloads/helix-core-c/c++-api) and place it in `p4api/<os>/` (e.g. `p4api/macos/`).
+
+2. Set the required environment variables before building:
+
+```bash
+export CGO_CPPFLAGS="-I$(pwd)/p4api/macos/include -g"
+export CGO_LDFLAGS="-Wl,-no_warn_duplicate_libraries -L$(pwd)/p4api/macos/lib -L/opt/homebrew/opt/openssl@1.1/lib -lp4api -lssl -lcrypto -framework ApplicationServices -framework Foundation -framework Security"
+export CGO_ENABLED=1
+```
+
+3. Build or run with the `p4` tag:
+
+```bash
+go run -tags p4 . agent --token=<your-token> --server=<server-url>
+```
+
 ## 🛠️ Development Commands
 
 If you are contributing to the core nodes or the CLI itself, the `dev` subcommand provides utilities to maintain the internal registry.
