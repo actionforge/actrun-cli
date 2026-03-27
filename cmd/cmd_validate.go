@@ -14,8 +14,16 @@ import (
 	"go.yaml.in/yaml/v4"
 )
 
-// ActfileSchema holds the embedded JSON schema bytes, set from main.
-var ActfileSchema []byte
+// holds the embedded JSON schema bytes, set via SetActfileSchema.
+var actfileSchema []byte
+
+func GetActfileSchema() []byte {
+	return actfileSchema
+}
+
+func SetActfileSchema(schema []byte) {
+	actfileSchema = schema
+}
 
 var cmdValidate = &cobra.Command{
 	Use:   "validate [graph-file]",
@@ -44,12 +52,12 @@ var cmdValidate = &cobra.Command{
 }
 
 func ValidateSchema(data any) error {
-	if len(ActfileSchema) == 0 {
+	if len(actfileSchema) == 0 {
 		return fmt.Errorf("actfile schema not loaded")
 	}
 
 	var schemaObj any
-	if err := json.Unmarshal(ActfileSchema, &schemaObj); err != nil {
+	if err := json.Unmarshal(actfileSchema, &schemaObj); err != nil {
 		return fmt.Errorf("failed to parse schema JSON: %w", err)
 	}
 
@@ -170,7 +178,7 @@ var cmdSchema = &cobra.Command{
 	Long:  `Prints the JSON schema used to validate Actionforge graph (.act) files.`,
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(string(ActfileSchema))
+		fmt.Println(string(actfileSchema))
 	},
 }
 

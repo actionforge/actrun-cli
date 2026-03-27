@@ -78,7 +78,7 @@ type Job struct {
 	Env             map[string]string    `yaml:"env,omitempty"`
 	Defaults        Defaults             `yaml:"defaults,omitempty"`
 	Steps           []Step               `yaml:"steps,omitempty"`
-	TimeoutMinutes  int                  `yaml:"timeout-minutes,omitempty"`
+	TimeoutMinutes  IntOrString           `yaml:"timeout-minutes,omitempty"`
 	ContinueOnError BoolOrString         `yaml:"continue-on-error,omitempty"`
 	Strategy        *Strategy            `yaml:"strategy,omitempty"`
 	Container       Container            `yaml:"container,omitempty"`
@@ -101,7 +101,7 @@ type Step struct {
 	With             map[string]interface{} `yaml:"with,omitempty"`
 	Env              map[string]string      `yaml:"env,omitempty"`
 	ContinueOnError  BoolOrString           `yaml:"continue-on-error,omitempty"`
-	TimeoutMinutes   int                    `yaml:"timeout-minutes,omitempty"`
+	TimeoutMinutes   IntOrString            `yaml:"timeout-minutes,omitempty"`
 }
 
 // ----------------------------------------------------------------------------
@@ -250,6 +250,29 @@ func (b *BoolOrString) UnmarshalYAML(value *yaml.Node) error {
 	return nil
 }
 
+// IntOrString handles fields that can be an integer or an expression string.
+// Example: timeout-minutes: ${{ inputs.timeout }}
+type IntOrString struct {
+	Value      int
+	Expression string
+	IsInt      bool
+}
+
+func (i *IntOrString) UnmarshalYAML(value *yaml.Node) error {
+	if value.Kind == yaml.ScalarNode {
+		var intVal int
+		if err := value.Decode(&intVal); err == nil {
+			i.Value = intVal
+			i.IsInt = true
+			return nil
+		}
+		i.Expression = value.Value
+		i.IsInt = false
+		return nil
+	}
+	return nil
+}
+
 // Permissions handles:
 // - String: "read-all", "write-all"
 // - Map: { contents: read, ... }
@@ -287,7 +310,7 @@ func (e *Environment) UnmarshalYAML(value *yaml.Node) error {
 type Strategy struct {
 	Matrix      Matrix      `yaml:"matrix"`
 	FailFast    interface{} `yaml:"fail-fast,omitempty"`
-	MaxParallel int         `yaml:"max-parallel,omitempty"`
+	MaxParallel IntOrString  `yaml:"max-parallel,omitempty"`
 }
 
 // Matrix can be an expression string or a map of configs

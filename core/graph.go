@@ -33,6 +33,9 @@ type RunOpts struct {
 	Args            []string
 	LocalGhServer   bool
 	VS              *ValidationState
+
+	// NodeStateCallback is called when a node starts or finishes execution.
+	NodeStateCallback func(nodeID, nodeName string, started bool)
 }
 
 type ActionGraph struct {
@@ -565,6 +568,8 @@ func RunGraph(ctx context.Context, graphName string, graphContent []byte, opts R
 		matrixTracker.toSimpleMap(),
 		needsTracker.toSimpleMap(),
 	)
+
+	c.NodeStateCallback = opts.NodeStateCallback
 
 	if isBaseNode {
 		c.PushNodeVisit(entryNode, true)
