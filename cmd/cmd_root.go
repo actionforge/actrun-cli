@@ -9,6 +9,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/actionforge/actrun-cli/agent"
 	"github.com/actionforge/actrun-cli/build"
 	"github.com/actionforge/actrun-cli/core"
 	"github.com/actionforge/actrun-cli/sessions"
@@ -207,6 +208,19 @@ func cmdRootRun(cmd *cobra.Command, args []string) {
 		LocalGhServer:   finalLocalGhServer,
 	}
 
+	// If running under an agent (BUILD_JOB_ID + BUILD_SERVER_URL + BUILD_AGENT_TOKEN),
+	// create a node state reporter that tracks active nodes and sends updates
+	// to the orchestrator in real time.
+	jobID := os.Getenv("BUILD_JOB_ID")
+	serverURL := os.Getenv("BUILD_SERVER_URL")
+	agentToken := os.Getenv("BUILD_AGENT_TOKEN")
+	if jobID != "" && serverURL != "" && agentToken != "" {
+		client := agent.NewClient(serverURL, agentToken)
+		reporter := agent.NewNodeReporter(client, jobID)
+		defer reporter.Close()
+		opts.NodeStateCallback = reporter.OnNodeState
+	}
+
 	if core.IsSharedGraphURL(finalGraphFile) {
 		err = core.RunGraphFromURL(context.Background(), finalGraphFile, opts, nil)
 	} else {
@@ -247,8 +261,8 @@ func init() {
 	}
 
 	// Enable backwards compatibility: allow both --env-file and --env_file
-	cmdRoot.PersistentFlags().SetNormalizeFunc(normalizeFlag)
-	cmdRoot.Flags().SetNormalizeFunc(normalizeFlag)
+	// SetGlobalNormalizationFunc propagates to all subcommands, not just root.
+	cmdRoot.SetGlobalNormalizationFunc(normalizeFlag)
 
 	cmdRoot.PersistentFlags().StringVar(&flagEnvFile, "env-file", "", "Absolute path to an env file (.env) to load before execution")
 
