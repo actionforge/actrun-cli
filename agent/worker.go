@@ -25,9 +25,11 @@ type Worker struct {
 	docker       DockerConfig
 	vcsOpts      vcs.Options
 	pollInterval time.Duration
-	lastCounters *RawCounters
 	uuid         string
 	log          *logrus.Entry
+
+	metricsMu    sync.Mutex
+	lastCounters *RawCounters
 }
 
 func NewWorker(client *Client, docker DockerConfig, vcsOpts vcs.Options) *Worker {
@@ -81,7 +83,9 @@ func (w *Worker) Run(ctx context.Context) error {
 
 	// Take initial snapshot for delta computation
 	if snap, err := Snapshot(); err == nil {
+		w.metricsMu.Lock()
 		w.lastCounters = &snap
+		w.metricsMu.Unlock()
 	}
 
 	// Send initial heartbeat
@@ -94,12 +98,15 @@ func (w *Worker) Run(ctx context.Context) error {
 
 	// Run heartbeats in a dedicated goroutine so they are never blocked by
 	// job execution (which can take minutes/hours).
+	// Use a cancel to stop the goroutine on all exit paths (including ErrConnectionLost).
+	heartbeatCtx, heartbeatCancel := context.WithCancel(ctx)
+	defer heartbeatCancel()
 	heartbeatDone := make(chan struct{})
 	go func() {
 		defer close(heartbeatDone)
 		for {
 			select {
-			case <-ctx.Done():
+			case <-heartbeatCtx.Done():
 				return
 			case <-heartbeat.C:
 				if err := w.client.Heartbeat(w.buildHeartbeatRequest()); err != nil {
@@ -109,12 +116,18 @@ func (w *Worker) Run(ctx context.Context) error {
 		}
 	}()
 
+	// waitHeartbeat ensures the heartbeat goroutine is stopped before returning.
+	waitHeartbeat := func() {
+		heartbeatCancel()
+		<-heartbeatDone
+	}
+
 	consecutiveErrors := 0
 
 	for {
 		select {
 		case <-ctx.Done():
-			<-heartbeatDone
+			waitHeartbeat()
 			w.log.Info("exiting")
 			return nil
 		default:
@@ -126,12 +139,13 @@ func (w *Worker) Run(ctx context.Context) error {
 			w.log.WithError(err).Warn("claim error")
 			if consecutiveErrors >= maxConsecutiveErrors {
 				w.log.WithField("errors", consecutiveErrors).Warn("too many consecutive connection errors, returning for restart")
+				waitHeartbeat()
 				return ErrConnectionLost
 			}
 			select {
 			case <-time.After(w.pollInterval):
 			case <-ctx.Done():
-				<-heartbeatDone
+				waitHeartbeat()
 				return nil
 			}
 			continue
@@ -144,7 +158,7 @@ func (w *Worker) Run(ctx context.Context) error {
 			select {
 			case <-time.After(w.pollInterval):
 			case <-ctx.Done():
-				<-heartbeatDone
+				waitHeartbeat()
 				return nil
 			}
 			continue
@@ -519,8 +533,11 @@ func (w *Worker) buildHeartbeatRequest() HeartbeatRequest {
 	snap, err := Snapshot()
 	if err != nil {
 		w.log.WithError(err).Warn("metrics snapshot error")
-		return HeartbeatRequest{}
+		return HeartbeatRequest{UUID: w.uuid}
 	}
+
+	w.metricsMu.Lock()
+	defer w.metricsMu.Unlock()
 
 	req := HeartbeatRequest{UUID: w.uuid}
 	if w.lastCounters != nil {

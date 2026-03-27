@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/actionforge/actrun-cli/core"
@@ -41,6 +43,9 @@ func (n *WorkspaceDownloadNode) ExecuteImpl(c *core.ExecutionState, inputId core
 	client := &http.Client{Timeout: 5 * time.Minute}
 
 	for _, filePath := range paths {
+		if err := validateRelativePath(filePath); err != nil {
+			return n.Execute(ni.Core_workspace_download_v1_Output_exec_err, c, core.CreateErr(c, nil, "invalid path %q: %v", filePath, err))
+		}
 		if err := downloadWorkspaceFile(c, client, serverURL, token, repoID, filePath); err != nil {
 			return n.Execute(ni.Core_workspace_download_v1_Output_exec_err, c, err)
 		}
@@ -49,9 +54,26 @@ func (n *WorkspaceDownloadNode) ExecuteImpl(c *core.ExecutionState, inputId core
 	return n.Execute(ni.Core_workspace_download_v1_Output_exec_success, c, nil)
 }
 
+// validateRelativePath ensures the path is relative and doesn't escape the
+// working directory via ".." components.
+func validateRelativePath(p string) error {
+	if p == "" {
+		return fmt.Errorf("empty path")
+	}
+	if filepath.IsAbs(p) {
+		return fmt.Errorf("absolute paths not allowed")
+	}
+	cleaned := filepath.Clean(p)
+	if cleaned == ".." || strings.HasPrefix(cleaned, ".."+string(filepath.Separator)) {
+		return fmt.Errorf("path traversal not allowed")
+	}
+	return nil
+}
+
 func downloadWorkspaceFile(c *core.ExecutionState, client *http.Client, serverURL, token, repoID, filePath string) error {
-	url := fmt.Sprintf("%s/api/v2/ci/runner/workspace/%s/file/%s", serverURL, repoID, filePath)
-	req, err := http.NewRequest("GET", url, nil)
+	escapedPath := url.PathEscape(filePath)
+	reqURL := fmt.Sprintf("%s/api/v2/ci/runner/workspace/%s/file/%s", serverURL, url.PathEscape(repoID), escapedPath)
+	req, err := http.NewRequest("GET", reqURL, nil)
 	if err != nil {
 		return core.CreateErr(c, err, "failed to create request for %s", filePath)
 	}
