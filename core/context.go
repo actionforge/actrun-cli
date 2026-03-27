@@ -170,6 +170,10 @@ type ExecutionState struct {
 
 	DebugCallback DebugCallback `json:"-"`
 
+	// NodeStateCallback is invoked when a node starts or finishes execution.
+	// The started parameter is true when the node begins executing, false when done.
+	NodeStateCallback func(nodeID, nodeName string, started bool) `json:"-"`
+
 	// PendingConcurrencyLocks tracks concurrency locks that are held during
 	// ExecuteImpl. The key is node id → *sync.Mutex. Released when the
 	// node calls Execute to dispatch downstream node, or as a fallback when
@@ -252,6 +256,7 @@ func (c *ExecutionState) PushNewExecutionState(parentNode NodeBaseInterface) *Ex
 
 		Visited:              visited,
 		DebugCallback:        c.DebugCallback,
+		NodeStateCallback:    c.NodeStateCallback,
 		PendingConcurrencyLocks: &sync.Map{},
 	}
 

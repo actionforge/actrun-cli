@@ -28,6 +28,6 @@ func main() {
 		return
 	}
 
-	cmd.ActfileSchema = actfileSchema
+	cmd.SetActfileSchema(actfileSchema)
 	cmd.Execute()
 }
