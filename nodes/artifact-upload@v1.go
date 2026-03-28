@@ -67,16 +67,24 @@ func (n *ArtifactUploadNode) ExecuteImpl(c *core.ExecutionState, inputId core.In
 
 	client := &http.Client{Timeout: 5 * time.Minute}
 	resp, uploadErr := client.Do(req)
+	var respBody string
 	if resp != nil {
 		defer resp.Body.Close()
-		// Drain body for connection reuse.
-		_, _ = io.Copy(io.Discard, resp.Body)
+		if bodyBytes, err := io.ReadAll(resp.Body); err == nil {
+			respBody = string(bodyBytes)
+		}
 	}
 
 	if uploadErr != nil {
 		uploadErr = core.CreateErr(c, uploadErr, "artifact upload failed")
+	} else if resp.StatusCode == http.StatusRequestEntityTooLarge {
+		uploadErr = core.CreateErr(c, nil, "artifact too large: server rejected the upload (HTTP 413)")
 	} else if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		uploadErr = core.CreateErr(c, nil, "artifact upload failed with status %d", resp.StatusCode)
+		if respBody != "" {
+			uploadErr = core.CreateErr(c, nil, "artifact upload failed (HTTP %d): %s", resp.StatusCode, respBody)
+		} else {
+			uploadErr = core.CreateErr(c, nil, "artifact upload failed with status %d", resp.StatusCode)
+		}
 	}
 
 	// Close the input stream; treat close failure as an error if upload itself succeeded.
