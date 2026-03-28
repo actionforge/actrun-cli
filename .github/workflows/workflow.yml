@@ -29,6 +29,7 @@ permissions:
   # TODO: (Seb) Use fine-grained permissions as
   # we only need this for Anchore SBOM Action
   contents: write
+  packages: write
 
 jobs:
   build-quick:
