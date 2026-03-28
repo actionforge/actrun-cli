@@ -5,6 +5,7 @@ Usage:
   actrun [command]
 
 Available Commands:
+  agent       Start an agent that polls the server for jobs
   completion  Generate the autocompletion script for the specified shell
   help        Help about any command
   mcp         Start the MCP server (stdio transport).
