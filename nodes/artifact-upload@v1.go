@@ -5,7 +5,6 @@ import (
 	"io"
 	"mime/multipart"
 	"net/http"
-	"time"
 
 	"github.com/actionforge/actrun-cli/core"
 	ni "github.com/actionforge/actrun-cli/node_interfaces"
@@ -58,14 +57,14 @@ func (n *ArtifactUploadNode) ExecuteImpl(c *core.ExecutionState, inputId core.In
 		pw.CloseWithError(writer.Close())
 	}()
 
-	req, err := http.NewRequest("POST", artifactURL, pr)
+	req, err := http.NewRequestWithContext(c.Ctx, "POST", artifactURL, pr)
 	if err != nil {
 		return core.CreateErr(c, err, "failed to create artifact upload request")
 	}
 	req.Header.Set("Authorization", "Bearer "+artifactToken)
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{Timeout: 5 * time.Minute}
+	client := &http.Client{}
 	resp, uploadErr := client.Do(req)
 	var respBody string
 	if resp != nil {
