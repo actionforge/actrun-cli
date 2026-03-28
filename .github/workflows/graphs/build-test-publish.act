@@ -6041,6 +6041,11 @@ nodes:
       fmt: '%v-sbom'
     label: ''
     comment: Outputs eg actrun-v0.0.2-sbom.cli-x64-windows-sbom
+  - id: switch-platform-v1-whale-indigo-kiwi
+    type: core/switch-platform@v1
+    position:
+      x: 17900
+      y: 1660
   - id: run-v1-whale-teal-apricot
     type: core/run@v1
     position:
@@ -6048,12 +6053,6 @@ nodes:
       y: 1660
     inputs:
       script: |
-        # Only publish Docker image on Linux tag pushes
-        if [[ "$(uname)" != "Linux" ]] || [[ "$GITHUB_REF" != refs/tags/* ]]; then
-          echo "Skipping Docker publish (not a Linux tag push)"
-          exit 0
-        fi
-
         echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
 
         IMAGE="ghcr.io/actionforge/actrun"
@@ -7008,6 +7007,12 @@ executions:
   - src:
       node: group-v1-seahorse-dragonfruit-panda
       port: exec-grapefruit-nectarine-dolphin
+    dst:
+      node: switch-platform-v1-whale-indigo-kiwi
+      port: exec
+  - src:
+      node: switch-platform-v1-whale-indigo-kiwi
+      port: exec-linux
     dst:
       node: run-v1-whale-teal-apricot
       port: exec
