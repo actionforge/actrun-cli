@@ -1572,6 +1572,12 @@ nodes:
             node: for-each-loop-v1-octopus-jellyfish-rabbit
             port: exec
         - src:
+            node: concurrent-for-each-loop-v1-kiwano-dog-gray
+            port: exec-completed
+          dst:
+            node: group-outputs-v1-navy-durian-violet
+            port: exec-lime-banana-jackfruit
+        - src:
             node: branch-v1-lime-peacock-kiwano
             port: exec-otherwise
           dst:
@@ -6044,38 +6050,58 @@ nodes:
   - id: switch-platform-v1-whale-indigo-kiwi
     type: core/switch-platform@v1
     position:
-      x: 17900
-      y: 1660
+      x: -20
+      y: 4770
   - id: run-v1-whale-teal-apricot
     type: core/run@v1
     position:
-      x: 18200
-      y: 1660
+      x: 280
+      y: 4770
     inputs:
-      script: |
-        echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+      script: >
+        echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR"
+        --password-stdin
+
 
         IMAGE="ghcr.io/actionforge/actrun"
+
         VERSION="${GITHUB_REF_NAME}"
 
-        docker build \
+
+        docker buildx create --use
+
+        docker buildx build \
+          --platform linux/amd64,linux/arm64 \
           --build-arg IMG_VERSION="$VERSION" \
           --build-arg IMG_SOURCE="https://github.com/$GITHUB_REPOSITORY" \
           -t "$IMAGE:$VERSION" \
           -t "$IMAGE:latest" \
+          --push \
           .
-
-        docker push "$IMAGE:$VERSION"
-        docker push "$IMAGE:latest"
       env: []
     comment: Build and push Docker image to GHCR
   - id: env-array-v1-penguin-lime-starfish
     type: core/env-array@v1
     position:
-      x: 17700
-      y: 1800
+      x: -220
+      y: 4910
     inputs:
       env[0]: GHCR_TOKEN=${{ github.token }}
+  - id: core-wait-for-v1-camel-ivory-jackfruit
+    type: core/wait-for@v1
+    position:
+      x: -350
+      y: 4640
+    inputs:
+      after: 1
+  - id: core-sequence-v1-watermelon-starfish-apple
+    type: core/sequence@v1
+    position:
+      x: -5960
+      y: 3450
+    outputs:
+      exec[0]: null
+      exec[1]: null
 connections:
   - src:
       node: const-string-v1-horse-lime-seahorse
@@ -6926,18 +6952,6 @@ executions:
       node: group-v1-purple-penguin-maroon
       port: exec-teal-gold-rhinoceros
   - src:
-      node: gh-start
-      port: exec-on_push
-    dst:
-      node: group-v1-orange-tiger-grapefruit
-      port: exec-lion-beige-dragonfruit
-  - src:
-      node: gh-start
-      port: exec-on_workflow_dispatch
-    dst:
-      node: group-v1-orange-tiger-grapefruit
-      port: exec-lion-beige-dragonfruit
-  - src:
       node: gh-actions-setup-go-shark-pineapple-lemon
       port: exec-success
     dst:
@@ -7005,14 +7019,38 @@ executions:
         gh-actions-attest-sbom-21f269c03431211cf2de4a1b5d90001746539dc9-gold-pomegranate-dolphin
       port: exec
   - src:
-      node: group-v1-seahorse-dragonfruit-panda
-      port: exec-grapefruit-nectarine-dolphin
-    dst:
-      node: switch-platform-v1-whale-indigo-kiwi
-      port: exec
-  - src:
       node: switch-platform-v1-whale-indigo-kiwi
       port: exec-linux
     dst:
       node: run-v1-whale-teal-apricot
       port: exec
+  - src:
+      node: core-wait-for-v1-camel-ivory-jackfruit
+      port: exec
+    dst:
+      node: switch-platform-v1-whale-indigo-kiwi
+      port: exec
+  - src:
+      node: concurrent-for-each-loop-v1-starfish-white-whale
+      port: exec-completed
+    dst:
+      node: core-wait-for-v1-camel-ivory-jackfruit
+      port: exec
+  - src:
+      node: gh-start
+      port: exec-on_workflow_dispatch
+    dst:
+      node: core-sequence-v1-watermelon-starfish-apple
+      port: exec
+  - src:
+      node: core-sequence-v1-watermelon-starfish-apple
+      port: exec[1]
+    dst:
+      node: core-wait-for-v1-camel-ivory-jackfruit
+      port: exec
+  - src:
+      node: gh-start
+      port: exec-on_push
+    dst:
+      node: group-v1-orange-tiger-grapefruit
+      port: exec-lion-beige-dragonfruit
