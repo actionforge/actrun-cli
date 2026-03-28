@@ -22,8 +22,11 @@ FROM alpine:3.22.0
 
 LABEL org.opencontainers.image.title="Graph Runner"
 LABEL org.opencontainers.image.description="Execution runtime for action graphs."
-LABEL org.opencontainers.image.version={{img.version}}
-LABEL org.opencontainers.image.source={{img.source}}
+ARG IMG_VERSION=dev
+ARG IMG_SOURCE=https://github.com/actionforge/actrun-cli
+
+LABEL org.opencontainers.image.version=${IMG_VERSION}
+LABEL org.opencontainers.image.source=${IMG_SOURCE}
 
 COPY --from=build /app/bin /bin
 

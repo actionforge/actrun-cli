@@ -6041,6 +6041,42 @@ nodes:
       fmt: '%v-sbom'
     label: ''
     comment: Outputs eg actrun-v0.0.2-sbom.cli-x64-windows-sbom
+  - id: run-v1-whale-teal-apricot
+    type: core/run@v1
+    position:
+      x: 18200
+      y: 1660
+    inputs:
+      script: |
+        # Only publish Docker image on Linux tag pushes
+        if [[ "$(uname)" != "Linux" ]] || [[ "$GITHUB_REF" != refs/tags/* ]]; then
+          echo "Skipping Docker publish (not a Linux tag push)"
+          exit 0
+        fi
+
+        echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+
+        IMAGE="ghcr.io/actionforge/actrun"
+        VERSION="${GITHUB_REF_NAME}"
+
+        docker build \
+          --build-arg IMG_VERSION="$VERSION" \
+          --build-arg IMG_SOURCE="https://github.com/$GITHUB_REPOSITORY" \
+          -t "$IMAGE:$VERSION" \
+          -t "$IMAGE:latest" \
+          .
+
+        docker push "$IMAGE:$VERSION"
+        docker push "$IMAGE:latest"
+      env: []
+    comment: Build and push Docker image to GHCR
+  - id: env-array-v1-penguin-lime-starfish
+    type: core/env-array@v1
+    position:
+      x: 17700
+      y: 1800
+    inputs:
+      env[0]: GHCR_TOKEN=${{ github.token }}
 connections:
   - src:
       node: const-string-v1-horse-lime-seahorse
@@ -6649,6 +6685,12 @@ connections:
       node: >-
         gh-anchore-sbom-action-deef08a0db64bfad603422135db61477b16cef56-orange-banana-pear
       port: artifact-name
+  - src:
+      node: env-array-v1-penguin-lime-starfish
+      port: env
+    dst:
+      node: run-v1-whale-teal-apricot
+      port: env
 executions:
   - src:
       node: run-v1-donkey-magenta-raspberry
@@ -6962,4 +7004,10 @@ executions:
     dst:
       node: >-
         gh-actions-attest-sbom-21f269c03431211cf2de4a1b5d90001746539dc9-gold-pomegranate-dolphin
+      port: exec
+  - src:
+      node: group-v1-seahorse-dragonfruit-panda
+      port: exec-grapefruit-nectarine-dolphin
+    dst:
+      node: run-v1-whale-teal-apricot
       port: exec
