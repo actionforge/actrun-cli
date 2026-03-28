@@ -8,7 +8,6 @@ import (
 	"log"
 	"maps"
 	"os"
-	"os/exec"
 	"reflect"
 	"strings"
 
@@ -199,15 +198,6 @@ func ResolveCliParam(name string, opts ResolveCliParamOpts) (string, string) {
 	}
 
 	return configValue, resolvedSource
-}
-
-func FindProjectRoot() string {
-	cmd := exec.Command("git", "rev-parse", "--show-toplevel")
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		panic(err)
-	}
-	return strings.Trim(string(output), " \r\n")
 }
 
 func GetSha256OfBytes(data []byte) (string, error) {
