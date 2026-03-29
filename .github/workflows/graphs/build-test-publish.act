@@ -115,6 +115,10 @@ nodes:
         CC=aarch64-linux-gnu-gcc
 
 
+        # Download P4 API SDK for the target platform
+        bash setup.sh "$CURRENT_OS" "$ARCH" || echo "P4 API download failed, building without P4 support"
+
+
         build_cli() {
             OUTPUT_CLI="$OUTPUT_DIR/actrun-cli-$CURRENT_OS-$ARCH"
             [[ "$CURRENT_OS" == "windows" ]] && OUTPUT_CLI="$OUTPUT_CLI.exe"
@@ -123,8 +127,39 @@ nodes:
             # Run Go tests if target matches the current system
             [[ "$CURRENT_OS" == "$CURRENT_OS" && "$ARCH" == "$CURRENT_ARCH" ]] && eval "go test -ldflags=\"$BUILD_FLAGS\" -o \"$OUTPUT_CLI\" ."
 
+            # Determine P4 API paths and CGO flags per platform
+            P4_INCLUDE="$(pwd)/p4api/include"
+            P4_TAGS="p4"
+            P4_CGO_ENABLED=1
+
+            case "$CURRENT_OS" in
+                linux)
+                    [[ "$ARCH" == "arm64" ]] && P4_LIB="$(pwd)/p4api/linux-aarch64/lib" || P4_LIB="$(pwd)/p4api/linux-x86_64/lib"
+                    P4_CGO_CPPFLAGS="-I$P4_INCLUDE"
+                    P4_CGO_LDFLAGS="-L$P4_LIB -lp4api -lssl -lcrypto"
+                    ;;
+                macos)
+                    P4_LIB="$(pwd)/p4api/macos/lib"
+                    P4_CGO_CPPFLAGS="-I$P4_INCLUDE"
+                    P4_CGO_LDFLAGS="-L$P4_LIB -lp4api -lssl -lcrypto -framework ApplicationServices -framework Foundation -framework Security"
+                    ;;
+                windows)
+                    if [[ "$ARCH" == "arm64" ]]; then
+                        echo "P4 not supported on Windows ARM64, building without P4"
+                        P4_TAGS=""
+                        P4_CGO_ENABLED=0
+                        P4_CGO_CPPFLAGS=""
+                        P4_CGO_LDFLAGS=""
+                    else
+                        P4_LIB="$(pwd)/p4api/windows-x86_64/lib"
+                        P4_CGO_CPPFLAGS="-I$P4_INCLUDE -DOS_NT"
+                        P4_CGO_LDFLAGS="-L$P4_LIB -lp4api -lssl -lcrypto -lcrypt32 -lws2_32 -lole32 -lshell32 -luser32 -ladvapi32"
+                    fi
+                    ;;
+            esac
+
             echo "Build CLI for $CURRENT_OS-$ARCH"
-            CGO_ENABLED=0 go build -ldflags="$BUILD_FLAGS" -o "$OUTPUT_CLI" .
+            CGO_ENABLED=$P4_CGO_ENABLED CGO_CPPFLAGS="$P4_CGO_CPPFLAGS" CGO_LDFLAGS="$P4_CGO_LDFLAGS" go build -tags="$P4_TAGS" -ldflags="$BUILD_FLAGS" -o "$OUTPUT_CLI" .
         }
 
 

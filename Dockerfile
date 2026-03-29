@@ -2,7 +2,11 @@
 ## Build
 ##
 
-FROM golang:1.25.0-alpine3.22 AS build
+FROM golang:1.25.0 AS build
+
+ARG TARGETARCH
+
+RUN apt-get update && apt-get install -y --no-install-recommends gcc g++ && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -12,7 +16,15 @@ RUN go mod download
 
 COPY . ./
 
-RUN go build -o ./bin/actrun
+RUN ARCH=$([ "$TARGETARCH" = "arm64" ] && echo "arm64" || echo "x64") && \
+    bash setup.sh linux "$ARCH" && \
+    P4_INCLUDE="$(pwd)/p4api/include" && \
+    if [ "$TARGETARCH" = "arm64" ]; then P4_LIB="$(pwd)/p4api/linux-aarch64/lib"; \
+    else P4_LIB="$(pwd)/p4api/linux-x86_64/lib"; fi && \
+    CGO_ENABLED=1 \
+    CGO_CPPFLAGS="-I$P4_INCLUDE" \
+    CGO_LDFLAGS="-L$P4_LIB -lp4api -lssl -lcrypto" \
+    go build -tags=p4 -o ./bin/actrun
 
 ##
 ## Deploy

@@ -547,13 +547,11 @@ func (w *Worker) execute(ctx context.Context, job *ClaimResponse) {
 		cleanupDockerContainer(runID)
 	}
 
-	// If the job was cancelled, report cancelled status and return early
+	// If the job was cancelled by the server, the status is already set in the DB.
+	// Don't report status again — ciDeriveRunStatus would overwrite the run's
+	// "cancelled" status with "failure".
 	if jobCtx.Err() != nil {
-		w.client.ReportStatus(jobID, RunCancelled, nil)
-		w.log.WithFields(logrus.Fields{
-			"run_id": runID,
-			"status": RunCancelled,
-		}).Info("run cancelled")
+		w.log.WithField("run_id", runID).Info("run cancelled")
 		return
 	}
 
