@@ -199,6 +199,11 @@ func (w *Worker) execute(ctx context.Context, job *ClaimResponse) {
 	w.client.ReportStatus(jobID, RunRunning, nil)
 
 	vcsOpts := w.vcsOpts
+	vcsOpts.ServerURL = w.client.ServerURL()
+	vcsOpts.RepoID = job.RepoID
+	if job.Env != nil {
+		vcsOpts.WorkspaceToken = job.Env["BUILD_WORKSPACE_TOKEN"]
+	}
 	provider, err := vcs.New(job.VCSType, vcsOpts)
 	if err != nil {
 		w.log.WithError(err).WithField("run_id", runID).Error("unsupported VCS type")
@@ -209,6 +214,17 @@ func (w *Worker) execute(ctx context.Context, job *ClaimResponse) {
 	}
 	defer provider.Cleanup(ctx)
 
+	// Set VCS credentials in the OS environment before checkout so gitAuth()
+	// can pick them up. Unset immediately after so they don't leak into the
+	// subprocess environment (graphs get them via ACT_INPUT_SECRET_ instead).
+	if job.Env != nil {
+		if v := job.Env["ACT_INPUT_SECRET_GIT_USERNAME"]; v != "" {
+			os.Setenv("GIT_USERNAME", v)
+		}
+		if v := job.Env["ACT_INPUT_SECRET_GIT_PASSWORD"]; v != "" {
+			os.Setenv("GIT_PASSWORD", v)
+		}
+	}
 	// Checkout repository
 	ref := job.Ref
 	if ref == "" {
@@ -221,6 +237,8 @@ func (w *Worker) execute(ctx context.Context, job *ClaimResponse) {
 		"run_id":   runID,
 	}).Info("fetching pipeline script from VCS")
 	checkout, err := provider.Checkout(ctx, job.VCSURL, ref, job.Pipeline, filepath.Join(tmpDir, "checkout"))
+	os.Unsetenv("GIT_USERNAME")
+	os.Unsetenv("GIT_PASSWORD")
 	if err != nil {
 		w.log.WithError(err).WithField("run_id", runID).Error("VCS fetch failed")
 		w.sendErrorLog(jobID, fmt.Sprintf("VCS checkout failed: %v", err))
@@ -334,6 +352,9 @@ func (w *Worker) execute(ctx context.Context, job *ClaimResponse) {
 	env = append(env, "BUILD_TMPDIR="+tmpDir)
 	env = append(env, "BUILD_VCS_TYPE="+job.VCSType)
 	env = append(env, "BUILD_VCS_URL="+job.VCSURL)
+	if job.RepoID != "" {
+		env = append(env, "BUILD_REPO_ID="+job.RepoID)
+	}
 	if checkout.SHA != "" {
 		env = append(env, "BUILD_COMMIT_SHA="+checkout.SHA)
 	}
@@ -356,6 +377,18 @@ func (w *Worker) execute(ctx context.Context, job *ClaimResponse) {
 		for k, v := range job.MatrixValues {
 			envKey := "MATRIX_" + strings.ToUpper(strings.ReplaceAll(k, "-", "_"))
 			env = append(env, envKey+"="+v)
+		}
+	}
+
+	// For bash scripts, expose VCS credentials as GIT_USERNAME/GIT_PASSWORD.
+	// For graphs, credentials are available via the secret-get node through
+	// ACT_INPUT_SECRET_GIT_USERNAME/ACT_INPUT_SECRET_GIT_PASSWORD.
+	if !strings.HasSuffix(job.Pipeline, ".act") {
+		if v, ok := job.Env["ACT_INPUT_SECRET_GIT_USERNAME"]; ok {
+			env = append(env, "GIT_USERNAME="+v)
+		}
+		if v, ok := job.Env["ACT_INPUT_SECRET_GIT_PASSWORD"]; ok {
+			env = append(env, "GIT_PASSWORD="+v)
 		}
 	}
 

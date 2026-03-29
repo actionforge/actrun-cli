@@ -14,6 +14,13 @@ type Options struct {
 	// temporary one per run. When empty, a temp workspace is created and
 	// cleaned up after each run.
 	P4Client string
+
+	// ServerURL is the orchestrator server URL (used by the orchestrator provider).
+	ServerURL string
+	// RepoID is the orchestrator repo ID (used by the orchestrator provider).
+	RepoID string
+	// WorkspaceToken is the run-scoped token for workspace downloads (used by the orchestrator provider).
+	WorkspaceToken string
 }
 
 // CheckoutResult contains the result of a VCS checkout operation.
@@ -47,7 +54,13 @@ func New(vcsType string, opts Options) (Provider, error) {
 			return nil, fmt.Errorf("Perforce support not compiled in. Rebuild with: go build -tags p4")
 		}
 		return &P4Provider{reuseClient: opts.P4Client}, nil
-	case "", "local", "orchestrator":
+	case "orchestrator", "local":
+		return &OrchestratorProvider{
+			serverURL:      opts.ServerURL,
+			repoID:         opts.RepoID,
+			workspaceToken: opts.WorkspaceToken,
+		}, nil
+	case "":
 		return &GitProvider{}, nil
 	default:
 		return nil, fmt.Errorf("unsupported VCS type: %s", vcsType)
