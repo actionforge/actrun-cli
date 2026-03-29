@@ -176,7 +176,7 @@ func (w *Worker) Run(ctx context.Context) error {
 }
 
 func (w *Worker) sendErrorLog(jobID string, msg string) {
-	_ = w.client.SendLogs(jobID, LogBatch{Lines: []LogEntry{
+	_, _ = w.client.SendLogs(jobID, LogBatch{Lines: []LogEntry{
 		{LineNum: 1, Stream: "stderr", Content: msg},
 	}})
 }
@@ -184,6 +184,11 @@ func (w *Worker) sendErrorLog(jobID string, msg string) {
 func (w *Worker) execute(ctx context.Context, job *ClaimResponse) {
 	runID := job.RunID
 	jobID := job.JobID
+
+	// Create a job-specific context that can be cancelled when the job is
+	// cancelled on the server side (e.g. user clicks Cancel in the UI).
+	jobCtx, jobCancel := context.WithCancel(ctx)
+	defer jobCancel()
 
 	// Create temp working directory
 	tmpDir, err := os.MkdirTemp("", fmt.Sprintf("runner-build-%s-*", jobID))
@@ -236,7 +241,7 @@ func (w *Worker) execute(ctx context.Context, job *ClaimResponse) {
 		"ref":      ref,
 		"run_id":   runID,
 	}).Info("fetching pipeline script from VCS")
-	checkout, err := provider.Checkout(ctx, job.VCSURL, ref, job.Pipeline, filepath.Join(tmpDir, "checkout"))
+	checkout, err := provider.Checkout(jobCtx, job.VCSURL, ref, job.Pipeline, filepath.Join(tmpDir, "checkout"))
 	os.Unsetenv("GIT_USERNAME")
 	os.Unsetenv("GIT_PASSWORD")
 	if err != nil {
@@ -310,7 +315,7 @@ func (w *Worker) execute(ctx context.Context, job *ClaimResponse) {
 	// Fetch BYOV secrets if configured
 	var secretValues []string
 	if len(job.VaultConfigs) > 0 {
-		vaultEnv, svals, err := FetchVaultSecrets(ctx, job.VaultConfigs)
+		vaultEnv, svals, err := FetchVaultSecrets(jobCtx, job.VaultConfigs)
 		if err != nil {
 			w.log.WithError(err).WithField("run_id", runID).Error("vault fetch failed")
 			w.sendErrorLog(jobID, fmt.Sprintf("vault secret fetch failed: %v", err))
@@ -421,14 +426,14 @@ func (w *Worker) execute(ctx context.Context, job *ClaimResponse) {
 			w.client.ReportStatus(jobID, RunFailure, &exitCode)
 			return
 		}
-		cmd = exec.CommandContext(ctx, self, scriptPath)
+		cmd = exec.CommandContext(jobCtx, self, scriptPath)
 		cmd.Dir = workDir
 		cmd.Env = env
 	} else if useDocker {
 		relPath, _ := filepath.Rel(tmpDir, scriptPath)
-		cmd = buildDockerCommand(ctx, dockerImage, runID, tmpDir, relPath, string(scriptContent), env)
+		cmd = buildDockerCommand(jobCtx, dockerImage, runID, tmpDir, relPath, string(scriptContent), env)
 	} else {
-		cmd = buildNativeCommand(ctx, workDir, scriptPath, env)
+		cmd = buildNativeCommand(jobCtx, workDir, scriptPath, env)
 	}
 
 	// Capture stdout and stderr
@@ -464,22 +469,24 @@ func (w *Worker) execute(ctx context.Context, job *ClaimResponse) {
 
 	flushLogs := func() {
 		logMu.Lock()
-		if len(pendingLogs) == 0 {
-			logMu.Unlock()
-			return
-		}
 		batch := LogBatch{Lines: make([]LogEntry, len(pendingLogs))}
 		copy(batch.Lines, pendingLogs)
 		pendingLogs = pendingLogs[:0]
 		logMu.Unlock()
 
-		if err := w.client.SendLogs(jobID, batch); err != nil {
+		status, err := w.client.SendLogs(jobID, batch)
+		if err != nil {
 			w.log.WithError(err).WithField("run_id", runID).Warn("log send error")
+			return
+		}
+		if status == "cancelled" {
+			w.log.WithField("job_id", jobID).Info("job cancelled by server, stopping")
+			jobCancel()
 		}
 	}
 
 	// Periodic flush
-	flushTicker := time.NewTicker(500 * time.Millisecond)
+	flushTicker := time.NewTicker(1 * time.Second)
 	stopFlush := make(chan struct{})
 	flushDone := make(chan struct{})
 	go func() {
@@ -538,6 +545,16 @@ func (w *Worker) execute(ctx context.Context, job *ClaimResponse) {
 	// Best-effort Docker container cleanup on cancellation
 	if useDocker {
 		cleanupDockerContainer(runID)
+	}
+
+	// If the job was cancelled, report cancelled status and return early
+	if jobCtx.Err() != nil {
+		w.client.ReportStatus(jobID, RunCancelled, nil)
+		w.log.WithFields(logrus.Fields{
+			"run_id": runID,
+			"status": RunCancelled,
+		}).Info("run cancelled")
+		return
 	}
 
 	exitCode := 0

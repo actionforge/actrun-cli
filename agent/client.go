@@ -87,12 +87,24 @@ func drainAndCheck(resp *http.Response) error {
 	return nil
 }
 
-func (c *Client) SendLogs(jobID string, batch LogBatch) error {
+// SendLogs sends a batch of log lines and returns the current job status from the server.
+func (c *Client) SendLogs(jobID string, batch LogBatch) (string, error) {
 	resp, err := c.doRequest("POST", fmt.Sprintf("/api/v2/ci/runner/logs/%s", jobID), batch)
 	if err != nil {
-		return err
+		return "", err
 	}
-	return drainAndCheck(resp)
+	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return "", fmt.Errorf("unexpected status: %s", resp.Status)
+	}
+	var result struct {
+		Status string `json:"status"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return "", nil // non-fatal: old server without status in response
+	}
+	return result.Status, nil
 }
 
 func (c *Client) ReportStatus(jobID string, status RunStatus, exitCode *int) error {
