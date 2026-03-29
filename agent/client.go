@@ -139,20 +139,6 @@ func (c *Client) Heartbeat(req HeartbeatRequest) error {
 	return drainAndCheck(resp)
 }
 
-func (c *Client) DownloadFile(repoID, filePath string) ([]byte, error) {
-	resp, err := c.doRequest("GET", fmt.Sprintf("/api/v2/ci/runner/workspace/%s/file/%s", repoID, filePath), nil)
-	if err != nil {
-		return nil, fmt.Errorf("download request failed: %w", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		body, _ := io.ReadAll(resp.Body)
-		return nil, fmt.Errorf("download failed: %s %s", resp.Status, string(body))
-	}
-
-	return io.ReadAll(resp.Body)
-}
 
 func (c *Client) Disconnect() error {
 	resp, err := c.doRequest("POST", "/api/v2/ci/runner/disconnect", nil)

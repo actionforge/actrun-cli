@@ -16,6 +16,7 @@ const (
 type ClaimResponse struct {
 	RunID         string              `json:"run_id"`
 	JobID         string              `json:"job_id,omitempty"`
+	RepoID        string              `json:"repo_id,omitempty"`
 	Owner         string              `json:"owner"`
 	Name          string              `json:"name"`
 	Pipeline      string              `json:"pipeline"`

@@ -28,4 +28,6 @@ inputs:
     name: Paths
     type: "[]string"
     index: 1
-    desc: File paths within the workspace to download. Each file is written to the same relative path on disk.
+    default:
+      - "*"
+    desc: File paths within the workspace to download. Each file is written to the same relative path on disk. Use "*" to download the entire workspace.

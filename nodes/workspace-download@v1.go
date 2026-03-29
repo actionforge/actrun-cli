@@ -1,6 +1,8 @@
 package nodes
 
 import (
+	"archive/tar"
+	"compress/gzip"
 	_ "embed"
 	"fmt"
 	"io"
@@ -27,11 +29,11 @@ type WorkspaceDownloadNode struct {
 
 func (n *WorkspaceDownloadNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, prevError error) error {
 	serverURL := envOrOs(c, "BUILD_SERVER_URL")
-	token := envOrOs(c, "BUILD_AGENT_TOKEN")
 	repoID := envOrOs(c, "BUILD_REPO_ID")
+	wsToken := envOrOs(c, "BUILD_WORKSPACE_TOKEN")
 
-	if serverURL == "" || token == "" || repoID == "" {
-		downloadErr := core.CreateErr(c, nil, "workspace download requires BUILD_SERVER_URL, BUILD_AGENT_TOKEN, and BUILD_REPO_ID environment variables (only available when running via agent)")
+	if serverURL == "" || repoID == "" || wsToken == "" {
+		downloadErr := core.CreateErr(c, nil, "workspace download requires BUILD_SERVER_URL, BUILD_REPO_ID, and BUILD_WORKSPACE_TOKEN environment variables (only available for orchestrator repos)")
 		return n.Execute(ni.Core_workspace_download_v1_Output_exec_err, c, downloadErr)
 	}
 
@@ -42,11 +44,19 @@ func (n *WorkspaceDownloadNode) ExecuteImpl(c *core.ExecutionState, inputId core
 
 	client := &http.Client{Timeout: 5 * time.Minute}
 
+	// "*" means download the entire workspace as a tar.gz archive.
+	if len(paths) == 1 && paths[0] == "*" {
+		if err := downloadAndExtractWorkspace(c, client, serverURL, repoID, wsToken); err != nil {
+			return n.Execute(ni.Core_workspace_download_v1_Output_exec_err, c, err)
+		}
+		return n.Execute(ni.Core_workspace_download_v1_Output_exec_success, c, nil)
+	}
+
 	for _, filePath := range paths {
 		if err := validateRelativePath(filePath); err != nil {
 			return n.Execute(ni.Core_workspace_download_v1_Output_exec_err, c, core.CreateErr(c, nil, "invalid path %q: %v", filePath, err))
 		}
-		if err := downloadWorkspaceFile(c, client, serverURL, token, repoID, filePath); err != nil {
+		if err := downloadWorkspaceFile(c, client, serverURL, wsToken, repoID, filePath); err != nil {
 			return n.Execute(ni.Core_workspace_download_v1_Output_exec_err, c, err)
 		}
 	}
@@ -70,14 +80,85 @@ func validateRelativePath(p string) error {
 	return nil
 }
 
-func downloadWorkspaceFile(c *core.ExecutionState, client *http.Client, serverURL, token, repoID, filePath string) error {
+func downloadAndExtractWorkspace(c *core.ExecutionState, client *http.Client, serverURL, repoID, wsToken string) error {
+	reqURL := fmt.Sprintf("%s/api/v2/ci/runner/workspace/%s?token=%s",
+		serverURL, url.PathEscape(repoID), url.QueryEscape(wsToken))
+
+	req, err := http.NewRequest("GET", reqURL, nil)
+	if err != nil {
+		return core.CreateErr(c, err, "failed to create workspace download request")
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return core.CreateErr(c, err, "failed to download workspace archive")
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		body, _ := io.ReadAll(resp.Body)
+		return core.CreateErr(c, nil, "workspace download failed: status %d: %s", resp.StatusCode, string(body))
+	}
+
+	gr, err := gzip.NewReader(resp.Body)
+	if err != nil {
+		return core.CreateErr(c, err, "failed to decompress workspace archive")
+	}
+	defer gr.Close()
+
+	tr := tar.NewReader(gr)
+	for {
+		hdr, err := tr.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return core.CreateErr(c, err, "failed to read workspace archive")
+		}
+
+		if err := validateRelativePath(hdr.Name); err != nil {
+			continue // skip invalid entries
+		}
+
+		if hdr.Typeflag == tar.TypeDir {
+			if err := os.MkdirAll(hdr.Name, 0755); err != nil {
+				return core.CreateErr(c, err, "failed to create directory %s", hdr.Name)
+			}
+			continue
+		}
+
+		dir := filepath.Dir(hdr.Name)
+		if dir != "" && dir != "." {
+			if err := os.MkdirAll(dir, 0755); err != nil {
+				return core.CreateErr(c, err, "failed to create directory for %s", hdr.Name)
+			}
+		}
+
+		f, err := os.Create(hdr.Name)
+		if err != nil {
+			return core.CreateErr(c, err, "failed to create file %s", hdr.Name)
+		}
+		_, copyErr := io.Copy(f, tr)
+		closeErr := f.Close()
+		if copyErr != nil {
+			return core.CreateErr(c, copyErr, "failed to write %s", hdr.Name)
+		}
+		if closeErr != nil {
+			return core.CreateErr(c, closeErr, "failed to close %s", hdr.Name)
+		}
+	}
+
+	return nil
+}
+
+func downloadWorkspaceFile(c *core.ExecutionState, client *http.Client, serverURL, wsToken, repoID, filePath string) error {
 	escapedPath := url.PathEscape(filePath)
-	reqURL := fmt.Sprintf("%s/api/v2/ci/runner/workspace/%s/file/%s", serverURL, url.PathEscape(repoID), escapedPath)
+	reqURL := fmt.Sprintf("%s/api/v2/ci/runner/workspace/%s/file/%s?token=%s",
+		serverURL, url.PathEscape(repoID), escapedPath, url.QueryEscape(wsToken))
 	req, err := http.NewRequest("GET", reqURL, nil)
 	if err != nil {
 		return core.CreateErr(c, err, "failed to create request for %s", filePath)
 	}
-	req.Header.Set("Authorization", "Bearer "+token)
 
 	resp, err := client.Do(req)
 	if err != nil {
