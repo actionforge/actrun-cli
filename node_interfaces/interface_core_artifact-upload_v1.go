@@ -6,6 +6,8 @@ import "github.com/actionforge/actrun-cli/core" // Upload a file as a run artifa
 
 // ==> (o) Inputs
 
+// Optional alias name for the artifact. If set, this name is used instead of the filename.
+const Core_artifact_upload_v1_Input_alias core.InputId = "alias"
 // The data stream to upload as an artifact.
 const Core_artifact_upload_v1_Input_data core.InputId = "data"
 const Core_artifact_upload_v1_Input_exec core.InputId = "exec"

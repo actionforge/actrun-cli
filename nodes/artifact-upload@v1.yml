@@ -3,7 +3,7 @@ yaml-version: 3.0
 id: core/artifact-upload
 name: Artifact Upload
 version: 1
-category: network
+category: orchestrator
 icon: featherUploadCloud
 short_desc: Upload a file as a run artifact to the orchestrator.
 style:
@@ -30,9 +30,14 @@ inputs:
     index: 1
     required: true
     desc: The filename for the artifact.
+  alias:
+    name: Alias
+    type: string
+    index: 2
+    desc: Optional alias name for the artifact. If set, this name is used instead of the filename.
   data:
     name: Data
     type: any
-    index: 2
+    index: 3
     required: true
     desc: The data stream to upload as an artifact.

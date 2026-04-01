@@ -17,51 +17,51 @@ import (
 	ni "github.com/actionforge/actrun-cli/node_interfaces"
 )
 
-//go:embed workspace-download@v1.yml
-var workspaceDownloadDefinition string
+//go:embed repo-download@v1.yml
+var repoDownloadDefinition string
 
-type WorkspaceDownloadNode struct {
+type RepoDownloadNode struct {
 	core.NodeBaseComponent
 	core.Executions
 	core.Inputs
 	core.Outputs
 }
 
-func (n *WorkspaceDownloadNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, prevError error) error {
+func (n *RepoDownloadNode) ExecuteImpl(c *core.ExecutionState, inputId core.InputId, prevError error) error {
 	serverURL := envOrOs(c, "BUILD_SERVER_URL")
 	repoID := envOrOs(c, "BUILD_REPO_ID")
-	wsToken := envOrOs(c, "BUILD_WORKSPACE_TOKEN")
+	wsToken := envOrOs(c, "BUILD_REPO_TOKEN")
 
 	if serverURL == "" || repoID == "" || wsToken == "" {
-		downloadErr := core.CreateErr(c, nil, "workspace download requires BUILD_SERVER_URL, BUILD_REPO_ID, and BUILD_WORKSPACE_TOKEN environment variables (only available for orchestrator repos)")
-		return n.Execute(ni.Core_workspace_download_v1_Output_exec_err, c, downloadErr)
+		downloadErr := core.CreateErr(c, nil, "repo download requires BUILD_SERVER_URL, BUILD_REPO_ID, and BUILD_REPO_TOKEN environment variables (only available for orchestrator repos)")
+		return n.Execute(ni.Core_repo_download_v1_Output_exec_err, c, downloadErr)
 	}
 
-	paths, err := core.InputValueById[[]string](c, n, ni.Core_workspace_download_v1_Input_paths)
+	paths, err := core.InputValueById[[]string](c, n, ni.Core_repo_download_v1_Input_paths)
 	if err != nil {
 		return err
 	}
 
 	client := &http.Client{Timeout: 5 * time.Minute}
 
-	// "*" means download the entire workspace as a tar.gz archive.
+	// "*" means download the entire repo as a tar.gz archive.
 	if len(paths) == 1 && paths[0] == "*" {
-		if err := downloadAndExtractWorkspace(c, client, serverURL, repoID, wsToken); err != nil {
-			return n.Execute(ni.Core_workspace_download_v1_Output_exec_err, c, err)
+		if err := downloadAndExtractRepo(c, client, serverURL, repoID, wsToken); err != nil {
+			return n.Execute(ni.Core_repo_download_v1_Output_exec_err, c, err)
 		}
-		return n.Execute(ni.Core_workspace_download_v1_Output_exec_success, c, nil)
+		return n.Execute(ni.Core_repo_download_v1_Output_exec_success, c, nil)
 	}
 
 	for _, filePath := range paths {
 		if err := validateRelativePath(filePath); err != nil {
-			return n.Execute(ni.Core_workspace_download_v1_Output_exec_err, c, core.CreateErr(c, nil, "invalid path %q: %v", filePath, err))
+			return n.Execute(ni.Core_repo_download_v1_Output_exec_err, c, core.CreateErr(c, nil, "invalid path %q: %v", filePath, err))
 		}
-		if err := downloadWorkspaceFile(c, client, serverURL, wsToken, repoID, filePath); err != nil {
-			return n.Execute(ni.Core_workspace_download_v1_Output_exec_err, c, err)
+		if err := downloadRepoFile(c, client, serverURL, wsToken, repoID, filePath); err != nil {
+			return n.Execute(ni.Core_repo_download_v1_Output_exec_err, c, err)
 		}
 	}
 
-	return n.Execute(ni.Core_workspace_download_v1_Output_exec_success, c, nil)
+	return n.Execute(ni.Core_repo_download_v1_Output_exec_success, c, nil)
 }
 
 // validateRelativePath ensures the path is relative and doesn't escape the
@@ -80,29 +80,29 @@ func validateRelativePath(p string) error {
 	return nil
 }
 
-func downloadAndExtractWorkspace(c *core.ExecutionState, client *http.Client, serverURL, repoID, wsToken string) error {
-	reqURL := fmt.Sprintf("%s/api/v2/ci/runner/workspace/%s?token=%s",
+func downloadAndExtractRepo(c *core.ExecutionState, client *http.Client, serverURL, repoID, wsToken string) error {
+	reqURL := fmt.Sprintf("%s/api/v2/ci/runner/repo/%s?token=%s",
 		serverURL, url.PathEscape(repoID), url.QueryEscape(wsToken))
 
 	req, err := http.NewRequest("GET", reqURL, nil)
 	if err != nil {
-		return core.CreateErr(c, err, "failed to create workspace download request")
+		return core.CreateErr(c, err, "failed to create repo download request")
 	}
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return core.CreateErr(c, err, "failed to download workspace archive")
+		return core.CreateErr(c, err, "failed to download repo archive")
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		body, _ := io.ReadAll(resp.Body)
-		return core.CreateErr(c, nil, "workspace download failed: status %d: %s", resp.StatusCode, string(body))
+		return core.CreateErr(c, nil, "repo download failed: status %d: %s", resp.StatusCode, string(body))
 	}
 
 	gr, err := gzip.NewReader(resp.Body)
 	if err != nil {
-		return core.CreateErr(c, err, "failed to decompress workspace archive")
+		return core.CreateErr(c, err, "failed to decompress repo archive")
 	}
 	defer gr.Close()
 
@@ -113,7 +113,7 @@ func downloadAndExtractWorkspace(c *core.ExecutionState, client *http.Client, se
 			break
 		}
 		if err != nil {
-			return core.CreateErr(c, err, "failed to read workspace archive")
+			return core.CreateErr(c, err, "failed to read repo archive")
 		}
 
 		if err := validateRelativePath(hdr.Name); err != nil {
@@ -151,9 +151,9 @@ func downloadAndExtractWorkspace(c *core.ExecutionState, client *http.Client, se
 	return nil
 }
 
-func downloadWorkspaceFile(c *core.ExecutionState, client *http.Client, serverURL, wsToken, repoID, filePath string) error {
+func downloadRepoFile(c *core.ExecutionState, client *http.Client, serverURL, wsToken, repoID, filePath string) error {
 	escapedPath := url.PathEscape(filePath)
-	reqURL := fmt.Sprintf("%s/api/v2/ci/runner/workspace/%s/file/%s?token=%s",
+	reqURL := fmt.Sprintf("%s/api/v2/ci/runner/repo/%s/file/%s?token=%s",
 		serverURL, url.PathEscape(repoID), escapedPath, url.QueryEscape(wsToken))
 	req, err := http.NewRequest("GET", reqURL, nil)
 	if err != nil {
@@ -197,8 +197,8 @@ func downloadWorkspaceFile(c *core.ExecutionState, client *http.Client, serverUR
 }
 
 func init() {
-	err := core.RegisterNodeFactory(workspaceDownloadDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
-		return &WorkspaceDownloadNode{}, nil
+	err := core.RegisterNodeFactory(repoDownloadDefinition, func(ctx any, parent core.NodeBaseInterface, parentId string, nodeDef map[string]any, validate bool, opts core.RunOpts) (core.NodeBaseInterface, []error) {
+		return &RepoDownloadNode{}, nil
 	})
 	if err != nil {
 		panic(err)
