@@ -30,6 +30,7 @@ __pycache__/
 .DS_Store
 
 tests_e2e/coverage
+tests_e2e/coverage.html
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out

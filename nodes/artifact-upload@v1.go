@@ -40,6 +40,11 @@ func (n *ArtifactUploadNode) ExecuteImpl(c *core.ExecutionState, inputId core.In
 		return err
 	}
 
+	alias, _ := core.InputValueById[string](c, n, ni.Core_artifact_upload_v1_Input_alias)
+	if alias != "" {
+		filename = alias
+	}
+
 	// Build multipart request using a pipe to avoid buffering the entire file in memory.
 	pr, pw := io.Pipe()
 	writer := multipart.NewWriter(pw)

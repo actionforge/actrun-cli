@@ -3,7 +3,7 @@ yaml-version: 3.0
 id: core/artifact-download
 name: Artifact Download
 version: 1
-category: network
+category: orchestrator
 icon: featherDownloadCloud
 short_desc: Download a run artifact from the orchestrator.
 style:

@@ -8,9 +8,9 @@ nodes:
   - id: start
     type: core/start@v1
 
-  # ── Download scripts from workspace ────────────────────
+  # ── Download scripts from repo ─────────────────────────
   - id: sync-scripts
-    type: core/workspace-download@v1
+    type: core/repo-download@v1
     inputs:
       paths:
         - step-fetch-assets.sh
