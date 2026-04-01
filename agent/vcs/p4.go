@@ -16,12 +16,13 @@ func init() {
 	p4Available = true
 }
 
-// P4Provider checks out from Perforce using the p4go library.
+// P4Provider fetches only the pipeline file from Perforce.
+// The full workspace sync is the graph's responsibility.
 // Credentials are handled via the runner's environment (P4USER, P4PASSWD, P4TICKETS, etc.).
 type P4Provider struct {
 	p4          *p4go.P4
 	clientName  string
-	reuseClient string // when set, reuse this existing workspace for incremental syncs
+	reuseClient string // when set, reuse this existing workspace
 	tempClient  bool   // true if we created the workspace and should delete it on cleanup
 }
 
@@ -41,11 +42,11 @@ func (p *P4Provider) Checkout(ctx context.Context, url, ref, pipeline, destDir s
 		return CheckoutResult{}, fmt.Errorf("p4 connect failed: %w", err)
 	}
 
-	// Normalize ref: ensure it ends with /...
-	depotPath := strings.TrimRight(ref, "/") + "/..."
+	// Normalize ref: ensure it ends with /
+	depotBase := strings.TrimRight(ref, "/")
 
 	if p.reuseClient != "" {
-		// Reuse existing workspace — incremental sync
+		// Reuse existing workspace — sync only the pipeline file
 		p.clientName = p.reuseClient
 		p.tempClient = false
 		p.p4.SetClient(p.clientName)
@@ -60,22 +61,14 @@ func (p *P4Provider) Checkout(ctx context.Context, url, ref, pipeline, destDir s
 			return CheckoutResult{}, fmt.Errorf("p4 client %s has no root", p.clientName)
 		}
 
-		// Ensure workspace root exists
 		if err := os.MkdirAll(root, 0755); err != nil {
 			return CheckoutResult{}, fmt.Errorf("failed to create workspace root: %w", err)
 		}
 
-		// Sync to latest; use -f (force) to handle cases where the
-		// workspace directory was wiped but P4 still thinks files are synced.
-		entries, _ := os.ReadDir(root)
-		if len(entries) == 0 {
-			if _, err := p.p4.Run("sync", "-f"); err != nil {
-				return CheckoutResult{}, fmt.Errorf("p4 force sync failed: %w", err)
-			}
-		} else {
-			if _, err := p.p4.Run("sync"); err != nil {
-				return CheckoutResult{}, fmt.Errorf("p4 sync failed: %w", err)
-			}
+		// Sync only the pipeline file
+		pipelineDepotPath := depotBase + "/" + pipeline
+		if _, err := p.p4.Run("sync", "-f", pipelineDepotPath); err != nil {
+			return CheckoutResult{}, fmt.Errorf("p4 sync pipeline file failed: %w", err)
 		}
 
 		return CheckoutResult{Dir: root, Persistent: true}, nil
@@ -104,16 +97,17 @@ func (p *P4Provider) Checkout(ctx context.Context, url, ref, pipeline, destDir s
 	clientSpec["Host"] = ""
 	clientSpec["Options"] = "noallwrite noclobber nocompress unlocked nomodtime rmdir"
 	clientSpec["View"] = []string{
-		depotPath + " //" + p.clientName + "/...",
+		depotBase + "/... //" + p.clientName + "/...",
 	}
 
 	if _, err := p.p4.RunSave("client", clientSpec); err != nil {
 		return CheckoutResult{}, fmt.Errorf("p4 save client spec failed: %w", err)
 	}
 
-	// Force sync all files into the new workspace
-	if _, err := p.p4.Run("sync", "-f", depotPath); err != nil {
-		return CheckoutResult{}, fmt.Errorf("p4 sync failed: %w", err)
+	// Sync only the pipeline file
+	pipelineDepotPath := depotBase + "/" + pipeline
+	if _, err := p.p4.Run("sync", "-f", pipelineDepotPath); err != nil {
+		return CheckoutResult{}, fmt.Errorf("p4 sync pipeline file failed: %w", err)
 	}
 
 	return CheckoutResult{Dir: absDir}, nil

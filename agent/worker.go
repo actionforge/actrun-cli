@@ -207,7 +207,7 @@ func (w *Worker) execute(ctx context.Context, job *ClaimResponse) {
 	vcsOpts.ServerURL = w.client.ServerURL()
 	vcsOpts.RepoID = job.RepoID
 	if job.Env != nil {
-		vcsOpts.WorkspaceToken = job.Env["BUILD_WORKSPACE_TOKEN"]
+		vcsOpts.RepoToken = job.Env["BUILD_REPO_TOKEN"]
 	}
 	provider, err := vcs.New(job.VCSType, vcsOpts)
 	if err != nil {
@@ -230,7 +230,8 @@ func (w *Worker) execute(ctx context.Context, job *ClaimResponse) {
 			os.Setenv("GIT_PASSWORD", v)
 		}
 	}
-	// Checkout repository
+	// Fetch only the pipeline file from VCS. The full repository clone is the
+	// graph's responsibility (e.g. via git-clone or repo-download nodes).
 	ref := job.Ref
 	if ref == "" {
 		ref = "main"
