@@ -12,30 +12,30 @@ import (
 )
 
 // OrchestratorProvider downloads only the pipeline file from the orchestrator
-// workspace endpoint. The full workspace can later be fetched during graph
-// execution via the workspace-download node.
+// repo endpoint. The full repo can later be fetched during graph
+// execution via the repo-download node.
 type OrchestratorProvider struct {
 	serverURL      string
 	repoID         string
-	workspaceToken string
+	repoToken string
 }
 
 func (o *OrchestratorProvider) Checkout(ctx context.Context, _ string, ref, pipeline, destDir string) (CheckoutResult, error) {
 	if o.repoID == "" {
 		return CheckoutResult{}, fmt.Errorf("orchestrator checkout requires a repo ID")
 	}
-	if o.serverURL == "" || o.workspaceToken == "" {
-		return CheckoutResult{}, fmt.Errorf("orchestrator checkout requires server URL and workspace token")
+	if o.serverURL == "" || o.repoToken == "" {
+		return CheckoutResult{}, fmt.Errorf("orchestrator checkout requires server URL and repo token")
 	}
 
 	if err := os.MkdirAll(destDir, 0755); err != nil {
 		return CheckoutResult{}, fmt.Errorf("create checkout dir: %w", err)
 	}
 
-	// Download only the pipeline file via the workspace file endpoint.
+	// Download only the pipeline file via the repo file endpoint.
 	client := &http.Client{Timeout: 2 * time.Minute}
-	reqURL := fmt.Sprintf("%s/api/v2/ci/runner/workspace/%s/file/%s?token=%s",
-		o.serverURL, url.PathEscape(o.repoID), url.PathEscape(pipeline), url.QueryEscape(o.workspaceToken))
+	reqURL := fmt.Sprintf("%s/api/v2/ci/runner/repo/%s/file/%s?token=%s",
+		o.serverURL, url.PathEscape(o.repoID), url.PathEscape(pipeline), url.QueryEscape(o.repoToken))
 
 	req, err := http.NewRequestWithContext(ctx, "GET", reqURL, nil)
 	if err != nil {

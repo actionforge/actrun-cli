@@ -19,8 +19,8 @@ type Options struct {
 	ServerURL string
 	// RepoID is the orchestrator repo ID (used by the orchestrator provider).
 	RepoID string
-	// WorkspaceToken is the run-scoped token for workspace downloads (used by the orchestrator provider).
-	WorkspaceToken string
+	// RepoToken is the run-scoped token for repo downloads (used by the orchestrator provider).
+	RepoToken string
 }
 
 // CheckoutResult contains the result of a VCS checkout operation.
@@ -58,7 +58,7 @@ func New(vcsType string, opts Options) (Provider, error) {
 		return &OrchestratorProvider{
 			serverURL:      opts.ServerURL,
 			repoID:         opts.RepoID,
-			workspaceToken: opts.WorkspaceToken,
+			repoToken: opts.RepoToken,
 		}, nil
 	case "":
 		return &GitProvider{}, nil
