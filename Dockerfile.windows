@@ -1,0 +1,73 @@
+# escape=`
+##
+## Build
+##
+
+FROM golang:1.25.0-windowsservercore-ltsc2022 AS build
+
+SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
+
+# Install Chocolatey
+RUN Set-ExecutionPolicy Bypass -Scope Process -Force; `
+    [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; `
+    iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
+# Install MinGW (GCC for CGO) and Git (provides bash for setup.sh)
+RUN choco install -y mingw git
+
+WORKDIR C:\app
+
+COPY go.mod .
+COPY go.sum .
+RUN go mod download
+
+COPY . .
+
+# Download P4 API SDK and build with CGO + P4 support
+RUN $env:PATH = 'C:\Program Files\Git\usr\bin;' + $env:PATH; `
+    & bash setup.sh windows x64; `
+    if ($LASTEXITCODE -ne 0) { throw 'P4 API download failed' }; `
+    $P4_INCLUDE = (Get-Location).Path + '\p4api\include'; `
+    $P4_LIB = (Get-Location).Path + '\p4api\windows-x86_64\lib'; `
+    $env:CGO_ENABLED = '1'; `
+    $env:CGO_CPPFLAGS = "-I$P4_INCLUDE -DOS_NT"; `
+    $env:CGO_LDFLAGS = "-L$P4_LIB -lp4api -lssl -lcrypto -lcrypt32 -lws2_32 -lole32 -lshell32 -luser32 -ladvapi32"; `
+    go build -tags=p4 -o .\bin\actrun.exe .
+
+##
+## Deploy
+##
+
+FROM mcr.microsoft.com/windows/servercore:ltsc2022
+
+LABEL org.opencontainers.image.title="Graph Runner"
+LABEL org.opencontainers.image.description="Execution runtime for action graphs."
+ARG IMG_VERSION=dev
+ARG IMG_SOURCE=https://github.com/actionforge/actrun-cli
+
+LABEL org.opencontainers.image.version=${IMG_VERSION}
+LABEL org.opencontainers.image.source=${IMG_SOURCE}
+
+SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
+
+# Install Chocolatey
+RUN Set-ExecutionPolicy Bypass -Scope Process -Force; `
+    [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; `
+    iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
+# Install runtime tools
+RUN choco install -y curl jq python3 7zip
+
+# PowerShell 7
+RUN Invoke-WebRequest -Uri 'https://github.com/PowerShell/PowerShell/releases/download/v7.5.5/PowerShell-7.5.5-win-x64.msi' `
+    -OutFile C:\pwsh.msi; `
+    Start-Process msiexec.exe -ArgumentList '/i', 'C:\pwsh.msi', '/quiet', '/norestart' -Wait; `
+    Remove-Item C:\pwsh.msi -Force
+
+COPY --from=build C:\app\bin\actrun.exe C:\bin\actrun.exe
+
+# Add bin to PATH
+RUN $path = [Environment]::GetEnvironmentVariable('PATH', 'Machine'); `
+    [Environment]::SetEnvironmentVariable('PATH', 'C:\bin;' + $path, 'Machine')
+
+ENTRYPOINT ["C:\\bin\\actrun.exe"]

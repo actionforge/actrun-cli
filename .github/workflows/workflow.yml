@@ -103,3 +103,29 @@ jobs:
           inputs: ${{ toJson(inputs) }}
           secrets: ${{ toJson(secrets) }}
           matrix: ${{ toJson(matrix) }}
+
+  create-docker-manifest:
+    name: Create Multi-OS Docker Manifest
+    needs: build-test-publish
+    if: startsWith(github.ref, 'refs/tags/') && (github.event_name == 'workflow_dispatch' || (github.event_name == 'push'))
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Log in to GHCR
+        run: echo "${{ github.token }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Create and push multi-OS manifest
+        run: |
+          IMAGE="ghcr.io/actionforge/actrun"
+          VERSION="${GITHUB_REF_NAME}"
+
+          docker manifest create "$IMAGE:$VERSION" \
+            "$IMAGE:${VERSION}-linux" \
+            "$IMAGE:${VERSION}-windows"
+
+          docker manifest create "$IMAGE:latest" \
+            "$IMAGE:latest-linux" \
+            "$IMAGE:latest-windows"
+
+          docker manifest push "$IMAGE:$VERSION"
+          docker manifest push "$IMAGE:latest"

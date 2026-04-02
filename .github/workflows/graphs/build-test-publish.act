@@ -6109,8 +6109,8 @@ nodes:
           --platform linux/amd64,linux/arm64 \
           --build-arg IMG_VERSION="$VERSION" \
           --build-arg IMG_SOURCE="https://github.com/$GITHUB_REPOSITORY" \
-          -t "$IMAGE:$VERSION" \
-          -t "$IMAGE:latest" \
+          -t "$IMAGE:${VERSION}-linux" \
+          -t "$IMAGE:latest-linux" \
           --push \
           .
       env: []
@@ -6122,6 +6122,32 @@ nodes:
       y: 4910
     inputs:
       env[0]: GHCR_TOKEN=${{ github.token }}
+  - id: run-v1-orca-azure-maple
+    type: core/run@v1
+    position:
+      x: 280
+      y: 5070
+    inputs:
+      script: >
+        echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR"
+        --password-stdin
+
+
+        IMAGE="ghcr.io/actionforge/actrun"
+
+        VERSION="${GITHUB_REF_NAME}"
+
+
+        docker build
+          -f Dockerfile.windows
+          --build-arg IMG_VERSION="$VERSION"
+          --build-arg IMG_SOURCE="https://github.com/$GITHUB_REPOSITORY"
+          -t "$IMAGE:${VERSION}-windows"
+          -t "$IMAGE:latest-windows"
+          --push
+          .
+      env: []
+    comment: Build and push Windows Docker image to GHCR
   - id: core-wait-for-v1-camel-ivory-jackfruit
     type: core/wait-for@v1
     position:
@@ -6751,6 +6777,12 @@ connections:
     dst:
       node: run-v1-whale-teal-apricot
       port: env
+  - src:
+      node: env-array-v1-penguin-lime-starfish
+      port: env
+    dst:
+      node: run-v1-orca-azure-maple
+      port: env
 executions:
   - src:
       node: run-v1-donkey-magenta-raspberry
@@ -7058,6 +7090,12 @@ executions:
       port: exec-linux
     dst:
       node: run-v1-whale-teal-apricot
+      port: exec
+  - src:
+      node: switch-platform-v1-whale-indigo-kiwi
+      port: exec-win
+    dst:
+      node: run-v1-orca-azure-maple
       port: exec
   - src:
       node: core-wait-for-v1-camel-ivory-jackfruit
