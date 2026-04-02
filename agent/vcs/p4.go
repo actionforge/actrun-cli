@@ -38,8 +38,30 @@ func (p *P4Provider) Checkout(ctx context.Context, url, ref, pipeline, destDir s
 		p.p4.SetPassword(passwd)
 	}
 
-	if _, err := p.p4.Connect(); err != nil {
+	// For SSL servers, set up a trust file so the API can persist fingerprints.
+	if strings.HasPrefix(url, "ssl:") {
+		trustFile := os.Getenv("P4TRUST")
+		if trustFile == "" {
+			trustFile = filepath.Join(os.TempDir(), ".p4trust")
+			os.Setenv("P4TRUST", trustFile)
+		}
+		p.p4.SetTrustFile(trustFile)
+	}
+
+	if connected, err := p.p4.Connect(); !connected {
 		return CheckoutResult{}, fmt.Errorf("p4 connect failed: %w", err)
+	}
+
+	// Accept the server fingerprint for SSL connections.
+	if strings.HasPrefix(url, "ssl:") {
+		p.p4.Run("trust", "-y")
+	}
+
+	// Authenticate using RunLogin() which feeds the password via SetInput.
+	if os.Getenv("P4PASSWD") != "" {
+		if _, err := p.p4.RunLogin(); err != nil {
+			return CheckoutResult{}, fmt.Errorf("p4 login failed: %w", err)
+		}
 	}
 
 	// Normalize ref: ensure it ends with /
