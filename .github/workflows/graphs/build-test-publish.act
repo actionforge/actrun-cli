@@ -142,7 +142,10 @@ nodes:
                 macos)
                     P4_LIB="$(pwd)/p4api/macos/lib"
                     P4_CGO_CPPFLAGS="-I$P4_INCLUDE"
-                    P4_CGO_LDFLAGS="-L$P4_LIB -lp4api -lssl -lcrypto -framework ApplicationServices -framework Foundation -framework Security"
+                    # Build static OpenSSL for macOS (not available on the runner)
+                    SSL_LIB="$(pwd)/p4api/ssl-macos-${ARCH}/lib"
+                    bash setup-openssl.sh macos "$ARCH" "$SSL_LIB"
+                    P4_CGO_LDFLAGS="-L$P4_LIB -lp4api $SSL_LIB/libssl.a $SSL_LIB/libcrypto.a -framework ApplicationServices -framework Foundation -framework Security -framework CoreFoundation"
                     ;;
                 windows)
                     if [[ "$ARCH" == "arm64" ]]; then
