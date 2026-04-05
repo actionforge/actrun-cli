@@ -96,7 +96,7 @@ nodes:
       x: 700
       y: 2310
     inputs:
-      script: |-
+      script: >
         if [[ -z "$CURRENT_OS" || -z "$ARCH" || -z "$OUTPUT_DIR" ]]; then
             echo "CURRENT_OS, ARCH and OUTPUT_DIR must be set."
             echo "CURRENT_OS: $CURRENT_OS"
@@ -139,14 +139,8 @@ nodes:
                 linux)
                     [[ "$ARCH" == "arm64" ]] && P4_LIB="$(pwd)/p4api/linux-aarch64/lib" || P4_LIB="$(pwd)/p4api/linux-x86_64/lib"
                     P4_CGO_CPPFLAGS="-I$P4_INCLUDE"
-                    if [[ "$ARCH" == "arm64" ]]; then
-                        # Cross-compile needs static OpenSSL (no arm64 libssl-dev on x64 runner)
-                        SSL_LIB="$(pwd)/p4api/ssl-linux-${ARCH}/lib"
-                        bash setup-openssl.sh linux "$ARCH" "$SSL_LIB"
-                        P4_CGO_LDFLAGS="-L$P4_LIB -lp4api $SSL_LIB/libssl.a $SSL_LIB/libcrypto.a"
-                    else
-                        P4_CGO_LDFLAGS="-L$P4_LIB -lp4api -lssl -lcrypto"
-                    fi
+                    P4_CGO_LDFLAGS="-L$P4_LIB -lp4api -lssl -lcrypto"
+                    [[ "$ARCH" == "arm64" ]] && SSL_LIB="$(pwd)/p4api/ssl-linux-${ARCH}/lib" && bash setup-openssl.sh linux "$ARCH" "$SSL_LIB" && P4_CGO_LDFLAGS="-L$P4_LIB -lp4api $SSL_LIB/libssl.a $SSL_LIB/libcrypto.a"
                     ;;
                 macos)
                     P4_LIB="$(pwd)/p4api/macos/lib"
