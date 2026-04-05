@@ -115,9 +115,9 @@ nodes:
         CC=aarch64-linux-gnu-gcc
 
 
-        # Download P4 API SDK for the target platform bash setup.sh
-        "$CURRENT_OS" "$ARCH" || echo "P4 API download failed, building without
-        P4 support"
+        # Download P4 API SDK for the target platform
+
+        bash setup.sh "$CURRENT_OS" "$ARCH"
 
 
         build_cli() {
