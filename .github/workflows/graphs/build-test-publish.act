@@ -115,8 +115,9 @@ nodes:
         CC=aarch64-linux-gnu-gcc
 
 
-        # Download P4 API SDK for the target platform
-        bash setup.sh "$CURRENT_OS" "$ARCH" || echo "P4 API download failed, building without P4 support"
+        # Download P4 API SDK for the target platform bash setup.sh
+        "$CURRENT_OS" "$ARCH" || echo "P4 API download failed, building without
+        P4 support"
 
 
         build_cli() {
@@ -719,66 +720,6 @@ nodes:
       y: 2570
     inputs:
       name: APPLE_TEAM_ID
-  - id: group-v1-watermelon-raspberry-brown
-    type: core/group@v1
-    position:
-      x: 9380
-      y: 2880
-    graph:
-      entry: group-inputs-v1-sheep-date-watermelon
-      type: group
-      nodes:
-        - id: group-inputs-v1-sheep-date-watermelon
-          type: core/group-inputs@v1
-          position:
-            x: -630
-            y: 140
-        - id: group-outputs-v1-rhinoceros-grapefruit-date
-          type: core/group-outputs@v1
-          position:
-            x: 640
-            y: 120
-        - id: env-get-v1-cat-banana-dolphin
-          type: core/env-get@v1
-          position:
-            x: -390
-            y: 160
-          inputs:
-            env: GITHUB_REF
-        - id: string-match-v1-koala-pineapple-cherry
-          type: core/string-match@v1
-          position:
-            x: 60
-            y: 120
-          inputs:
-            str2: refs/tags
-            op: startswith
-      connections:
-        - src:
-            node: env-get-v1-cat-banana-dolphin
-            port: env
-          dst:
-            node: string-match-v1-koala-pineapple-cherry
-            port: str1
-        - src:
-            node: string-match-v1-koala-pineapple-cherry
-            port: result
-          dst:
-            node: group-outputs-v1-rhinoceros-grapefruit-date
-            port: camel-mango-plum
-      executions: []
-      outputs:
-        camel-mango-plum:
-          name: Is Tag
-          type: bool
-          desc: ''
-          index: 0
-      info:
-        author: ''
-        version: ''
-        contact: ''
-        description: ''
-    label: Git Commit Info
   - id: run-v1-strawberry-plum-black
     type: core/run@v1
     position:
@@ -7086,6 +7027,12 @@ executions:
   - src:
       node: gh-start
       port: exec-on_push
+    dst:
+      node: group-v1-orange-tiger-grapefruit
+      port: exec-lion-beige-dragonfruit
+  - src:
+      node: core-sequence-v1-watermelon-starfish-apple
+      port: exec[0]
     dst:
       node: group-v1-orange-tiger-grapefruit
       port: exec-lion-beige-dragonfruit
