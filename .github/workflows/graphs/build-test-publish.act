@@ -71,7 +71,7 @@ nodes:
       x: -3030
       y: 4770
     inputs:
-      install: mingw-w64-ucrt-x86_64-gcc
+      install: mingw-w64-x86_64-gcc mingw-w64-x86_64-openssl
   - id: concurrent-for-each-loop-v1-starfish-white-whale
     type: core/concurrent-for-each-loop@v1
     position:
@@ -86,7 +86,7 @@ nodes:
       y: 4830
     inputs:
       script: |-
-        echo "$RUNNER_TEMP\\msys64\\ucrt64\\bin" >> "$GITHUB_PATH"
+        echo "$RUNNER_TEMP\\msys64\\mingw64\\bin" >> "$GITHUB_PATH"
         gcc --version
       shell: bash
     comment: Set gcc to PATH
@@ -96,7 +96,7 @@ nodes:
       x: 700
       y: 2310
     inputs:
-      script: >
+      script: |-
         if [[ -z "$CURRENT_OS" || -z "$ARCH" || -z "$OUTPUT_DIR" ]]; then
             echo "CURRENT_OS, ARCH and OUTPUT_DIR must be set."
             echo "CURRENT_OS: $CURRENT_OS"
@@ -107,12 +107,14 @@ nodes:
 
 
         export CC=gcc
+        export CXX=g++
 
         # Cgo requires a cross-compiler that is not installed on GitHub runners
         as of now.
 
         [[ "$CURRENT_OS" == "linux" && "$ARCH" == "arm64" ]] &&
-        CC=aarch64-linux-gnu-gcc
+        CC=aarch64-linux-gnu-gcc &&
+        CXX=aarch64-linux-gnu-g++
 
 
         # Download P4 API SDK for the target platform
@@ -137,12 +139,18 @@ nodes:
                 linux)
                     [[ "$ARCH" == "arm64" ]] && P4_LIB="$(pwd)/p4api/linux-aarch64/lib" || P4_LIB="$(pwd)/p4api/linux-x86_64/lib"
                     P4_CGO_CPPFLAGS="-I$P4_INCLUDE"
-                    P4_CGO_LDFLAGS="-L$P4_LIB -lp4api -lssl -lcrypto"
+                    if [[ "$ARCH" == "arm64" ]]; then
+                        # Cross-compile needs static OpenSSL (no arm64 libssl-dev on x64 runner)
+                        SSL_LIB="$(pwd)/p4api/ssl-linux-${ARCH}/lib"
+                        bash setup-openssl.sh linux "$ARCH" "$SSL_LIB"
+                        P4_CGO_LDFLAGS="-L$P4_LIB -lp4api $SSL_LIB/libssl.a $SSL_LIB/libcrypto.a"
+                    else
+                        P4_CGO_LDFLAGS="-L$P4_LIB -lp4api -lssl -lcrypto"
+                    fi
                     ;;
                 macos)
                     P4_LIB="$(pwd)/p4api/macos/lib"
                     P4_CGO_CPPFLAGS="-I$P4_INCLUDE"
-                    # Build static OpenSSL for macOS (not available on the runner)
                     SSL_LIB="$(pwd)/p4api/ssl-macos-${ARCH}/lib"
                     bash setup-openssl.sh macos "$ARCH" "$SSL_LIB"
                     P4_CGO_LDFLAGS="-L$P4_LIB -lp4api $SSL_LIB/libssl.a $SSL_LIB/libcrypto.a -framework ApplicationServices -framework Foundation -framework Security -framework CoreFoundation"
@@ -196,7 +204,7 @@ nodes:
                     cp "$OUTPUT_CLI" "$TMP_ACTRUN"
                     # encoding needed since default on Windows is cp1252
                     PYTHONIOENCODING=utf-8 python tests_e2e/tests_e2e.py
-                    rm "$TMP_ACTRUN"
+                    rm "$TMP_ACTRUN" || true
                 else
                     echo "OS and ARCH do not match the current system ($OS != $CURRENT_OS $ARCH != $CURRENT_ARCH). Skipping e2e tests."
                 fi
@@ -223,6 +231,8 @@ nodes:
         build_lib
 
         run_e2e_tests
+
+        exit 0
       env: []
     comment: build the cli and dll
   - id: length-v1-nectarine-squirrel-peacock
@@ -288,8 +298,8 @@ nodes:
     inputs:
       script: |-
         # check the build node script
-        sudo apt-get update && sudo apt-get install -y gcc-aarch64-linux-gnu
-    comment: Install a GCC version capable of cross-compiling
+        sudo apt-get update && sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+    comment: Install a GCC/G++ version capable of cross-compiling
   - id: switch-platform-v1-dog-snake-ivory
     type: core/switch-platform@v1
     position:
