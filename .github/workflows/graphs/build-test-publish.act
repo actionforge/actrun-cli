@@ -198,13 +198,16 @@ nodes:
                     cp "$OUTPUT_CLI" "$TMP_ACTRUN"
                     # encoding needed since default on Windows is cp1252
                     PYTHONIOENCODING=utf-8 python tests_e2e/tests_e2e.py
+                    echo "DEBUG: python exited $?"
                     rm "$TMP_ACTRUN" || true
+                    echo "DEBUG: rm exited $?"
                 else
-                    echo "OS and ARCH do not match the current system ($OS != $CURRENT_OS $ARCH != $CURRENT_ARCH). Skipping e2e tests."
+                    echo "DEBUG: skipping e2e (OS/ARCH mismatch)"
                 fi
             else
-                echo "Skipping e2e tests for pro license."
+                echo "DEBUG: skipping e2e (not free license)"
             fi
+            echo "DEBUG: run_e2e_tests returning"
         }
 
 
@@ -225,6 +228,8 @@ nodes:
         build_lib
 
         run_e2e_tests
+
+        echo "DEBUG: reached end of script, about to exit 0"
 
         exit 0
       env: []
