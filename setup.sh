@@ -51,8 +51,8 @@ case "$OS" in
         ;;
     windows)
         if [[ "$ARCH" == "arm64" ]]; then
-            echo "Windows ARM64 is not supported by the Perforce C++ API SDK."
-            exit 1
+            echo "Windows ARM64 is not supported by the Perforce C++ API SDK. Skipping."
+            exit 0
         fi
         URL="${P4API_BASE_URL}/bin.mingw64x64/p4api-openssl3_gcc8_posix_seh.zip"
         LIB_DIR="${P4API_DIR}/windows-x86_64/lib"
