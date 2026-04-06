@@ -1558,12 +1558,6 @@ nodes:
             node: for-each-loop-v1-octopus-jellyfish-rabbit
             port: exec
         - src:
-            node: concurrent-for-each-loop-v1-kiwano-dog-gray
-            port: exec-completed
-          dst:
-            node: group-outputs-v1-navy-durian-violet
-            port: exec-lime-banana-jackfruit
-        - src:
             node: branch-v1-lime-peacock-kiwano
             port: exec-otherwise
           dst:
