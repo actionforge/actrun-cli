@@ -73,7 +73,7 @@ jobs:
     strategy:
       matrix:
         license: [free]  # add pro when ready
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [windows-latest, ubuntu-latest, ubuntu-24.04-arm, macos-latest]
 
     runs-on: ${{ matrix.os }}
 
@@ -103,3 +103,22 @@ jobs:
           inputs: ${{ toJson(inputs) }}
           secrets: ${{ toJson(secrets) }}
           matrix: ${{ toJson(matrix) }}
+
+  docker-manifest:
+    name: Create Docker Multi-Arch Manifest
+    needs: build-test-publish
+    if: startsWith(github.ref, 'refs/tags/') && (github.event_name == 'workflow_dispatch' || (github.event_name == 'push'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create multi-arch manifest
+        run: |
+          IMAGE="ghcr.io/actionforge/actrun"
+          VERSION="${GITHUB_REF_NAME}"
+
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+          docker buildx imagetools create \
+            -t "$IMAGE:$VERSION" \
+            -t "$IMAGE:latest" \
+            "$IMAGE:${VERSION}-x64" \
+            "$IMAGE:${VERSION}-arm64"

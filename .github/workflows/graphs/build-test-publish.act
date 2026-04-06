@@ -106,15 +106,15 @@ nodes:
         fi
 
 
-        export CC=gcc
-        export CXX=g++
+        # On Linux, each arch has its own native runner, so skip non-native arch builds.
 
-        # Cgo requires a cross-compiler that is not installed on GitHub runners
-        as of now.
+        if [[ "$CURRENT_OS" == "linux" && "$ARCH" != "$CURRENT_ARCH" ]]; then
+            echo "Skipping $CURRENT_OS-$ARCH build on $CURRENT_ARCH runner (native runner handles this)."
+            exit 0
+        fi
 
-        [[ "$CURRENT_OS" == "linux" && "$ARCH" == "arm64" ]] &&
-        CC=aarch64-linux-gnu-gcc &&
-        CXX=aarch64-linux-gnu-g++
+
+        export CC=gcc export CXX=g++
 
 
         # Download P4 API SDK for the target platform
@@ -128,7 +128,7 @@ nodes:
             BUILD_FLAGS="-X actionforge/actrun-cli/build.Production=true -X actionforge/actrun-cli/build.License=$LICENSE -X actionforge/actrun-cli/build.Version=$GITHUB_REF_NAME"
 
             # Run Go tests if target matches the current system
-            [[ "$CURRENT_OS" == "$CURRENT_OS" && "$ARCH" == "$CURRENT_ARCH" ]] && eval "go test -ldflags=\"$BUILD_FLAGS\" -o \"$OUTPUT_CLI\" ."
+            [[ "$OS" == "$CURRENT_OS" && "$ARCH" == "$CURRENT_ARCH" ]] && eval "go test -ldflags=\"$BUILD_FLAGS\" -o \"$OUTPUT_CLI\" ."
 
             # Determine P4 API paths and CGO flags per platform
             P4_INCLUDE="$(pwd)/p4api/include"
@@ -225,8 +225,6 @@ nodes:
         build_lib
 
         run_e2e_tests
-
-        exit 0
       env: []
     comment: build the cli and dll
   - id: length-v1-nectarine-squirrel-peacock
@@ -291,8 +289,13 @@ nodes:
       y: 3570
     inputs:
       script: |-
-        # check the build node script
-        sudo apt-get update && sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+        # Install cross-compiler only if needed (x64 runner building for arm64).
+        # With native arm64 runners, this is typically skipped.
+        if [[ "$CURRENT_ARCH" != "arm64" ]]; then
+          sudo apt-get update && sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+        else
+          echo "Running on native arm64 runner, no cross-compiler needed."
+        fi
     comment: Install a GCC/G++ version capable of cross-compiling
   - id: switch-platform-v1-dog-snake-ivory
     type: core/switch-platform@v1
@@ -734,8 +737,13 @@ nodes:
       y: 1430
     inputs:
       script: |
-        echo "DEBUG publish: OS=$OS ARCH=$ARCH TARGET_TYPE=$TARGET_TYPE BUILD_DIR=$BUILD_DIR DIST_NEW=$DIST_NEW"
         mkdir -p "$DIST_NEW"
+
+        # On Linux, skip splitting for non-native arch (not built on this runner).
+        if [[ "$OS" == "linux" && "$ARCH" != "$CURRENT_ARCH" ]]; then
+            echo "Skipping split for $OS-$ARCH on $CURRENT_ARCH runner."
+            exit 0
+        fi
 
 
         if [[ "$TARGET_TYPE" == "cli" ]]; then
@@ -774,8 +782,12 @@ nodes:
       y: 1440
     inputs:
       script: |
-        echo "DEBUG package: OS=$OS ARCH=$ARCH TARGET_TYPE=$TARGET_TYPE DIST_NEW=$DIST_NEW"
-        ls -la "$DIST_NEW" || true
+        # On Linux, skip extras for non-native arch (not built on this runner).
+        if [[ "$OS" == "linux" && "$ARCH" != "$CURRENT_ARCH" ]]; then
+            echo "Skipping extras for $OS-$ARCH on $CURRENT_ARCH runner."
+            exit 0
+        fi
+
         if [[ "$TARGET_TYPE" == "py" ]]; then
             # Add Python libraries
             cp -r api/python/** $DIST_NEW
@@ -815,7 +827,7 @@ nodes:
       x: 8860
       y: 1060
     inputs:
-      if-no-files-found: error
+      if-no-files-found: warn
       compression-level: '6'
       retention-days: '2'
   - id: string-fmt-v1-orange-mulberry-octopus
@@ -1557,6 +1569,12 @@ nodes:
           dst:
             node: for-each-loop-v1-octopus-jellyfish-rabbit
             port: exec
+        - src:
+            node: concurrent-for-each-loop-v1-kiwano-dog-gray
+            port: exec-completed
+          dst:
+            node: group-outputs-v1-navy-durian-violet
+            port: exec-lime-banana-jackfruit
         - src:
             node: branch-v1-lime-peacock-kiwano
             port: exec-otherwise
@@ -6048,14 +6066,27 @@ nodes:
         VERSION="${GITHUB_REF_NAME}"
 
 
+        # Determine the native platform for this runner.
+
+        if [[ "$CURRENT_ARCH" == "arm64" ]]; then
+          PLATFORM="linux/arm64"
+        else
+          PLATFORM="linux/amd64"
+        fi
+
+
         docker buildx create --use
 
+
+        # Build and push a single-arch image tagged with the arch suffix.
+        # The multi-arch manifest is created by a separate workflow job
+        # after both Linux runners complete.
+
         docker buildx build \
-          --platform linux/amd64,linux/arm64 \
+          --platform "$PLATFORM" \
           --build-arg IMG_VERSION="$VERSION" \
           --build-arg IMG_SOURCE="https://github.com/$GITHUB_REPOSITORY" \
-          -t "$IMAGE:$VERSION" \
-          -t "$IMAGE:latest" \
+          -t "$IMAGE:${VERSION}-${CURRENT_ARCH}" \
           --push \
           .
       env: []
