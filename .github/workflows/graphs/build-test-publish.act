@@ -734,6 +734,7 @@ nodes:
       y: 1430
     inputs:
       script: |
+        echo "DEBUG publish: OS=$OS ARCH=$ARCH TARGET_TYPE=$TARGET_TYPE BUILD_DIR=$BUILD_DIR DIST_NEW=$DIST_NEW"
         mkdir -p "$DIST_NEW"
 
 
@@ -773,6 +774,8 @@ nodes:
       y: 1440
     inputs:
       script: |
+        echo "DEBUG package: OS=$OS ARCH=$ARCH TARGET_TYPE=$TARGET_TYPE DIST_NEW=$DIST_NEW"
+        ls -la "$DIST_NEW" || true
         if [[ "$TARGET_TYPE" == "py" ]]; then
             # Add Python libraries
             cp -r api/python/** $DIST_NEW
