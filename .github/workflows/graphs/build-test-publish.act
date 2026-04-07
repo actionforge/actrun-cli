@@ -8,8 +8,8 @@ nodes:
   - id: gh-actions-setup-go-shark-pineapple-lemon
     type: github.com/actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c
     position:
-      x: -1710
-      y: 2710
+      x: -1720
+      y: 2550
     inputs:
       go-version: '1.25'
       token: ${{ github.token }}
@@ -31,11 +31,50 @@ nodes:
   - id: string-array-v1-pink-koala-zebra
     type: core/string-array@v1
     position:
-      x: -1640
-      y: 3470
+      x: -1980
+      y: 3380
     inputs:
       inputs[0]: arm64
       inputs[1]: x64
+  - id: string-array-v1-linux-x64-only
+    type: core/string-array@v1
+    position:
+      x: -2000
+      y: 3680
+    inputs:
+      inputs[0]: x64
+  - id: string-array-v1-linux-arm64-only
+    type: core/string-array@v1
+    position:
+      x: -2000
+      y: 3750
+    inputs:
+      inputs[0]: arm64
+  - id: system-v1-arch-array-helper
+    type: core/system-info@v1
+    position:
+      x: -1810
+      y: 3900
+  - id: select-data-v1-linux-native-arch
+    type: core/select-data@v1
+    position:
+      x: -1610
+      y: 3560
+    inputs:
+      choices[0]: null
+      choices[1]: null
+    comment: Picks native arch array on Linux (x64 or arm64) based on arch_index
+  - id: select-data-v1-arch-array-for-platform
+    type: core/select-data@v1
+    position:
+      x: -1400
+      y: 3280
+    inputs:
+      choices[0]: null
+      choices[1]: null
+    comment: >-
+      Non-Linux (index 0) gets full [arm64, x64] array; Linux (index 1) gets
+      native-arch-only array
   - id: gh-actions-setup-python-panda-pomegranate-coconut
     type: github.com/actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548
     position:
@@ -106,7 +145,8 @@ nodes:
         fi
 
 
-        # On Linux, each arch has its own native runner, so skip non-native arch builds.
+        # On Linux, each arch has its own native runner, so skip non-native arch
+        builds.
 
         if [[ "$CURRENT_OS" == "linux" && "$ARCH" != "$CURRENT_ARCH" ]]; then
             echo "Skipping $CURRENT_OS-$ARCH build on $CURRENT_ARCH runner (native runner handles this)."
@@ -263,8 +303,8 @@ nodes:
   - id: wait-for-v1-ivory-turkey-grapefruit
     type: core/wait-for@v1
     position:
-      x: -2010
-      y: 3090
+      x: -2070
+      y: 3000
     inputs:
       after: 2
   - id: run-v1-indigo-grape-gray
@@ -736,14 +776,18 @@ nodes:
       x: 6450
       y: 1430
     inputs:
-      script: |
+      script: >
         mkdir -p "$DIST_NEW"
 
-        # On Linux, skip splitting for non-native arch (not built on this runner).
+
+        # On Linux, skip splitting for non-native arch (not built on this
+        runner).
+
         if [[ "$OS" == "linux" && "$ARCH" != "$CURRENT_ARCH" ]]; then
             echo "Skipping split for $OS-$ARCH on $CURRENT_ARCH runner."
             exit 0
         fi
+
 
 
         if [[ "$TARGET_TYPE" == "cli" ]]; then
@@ -772,6 +816,7 @@ nodes:
             echo "Unsupported TARGET_TYPE: $TARGET_TYPE"
             exit 1
         fi
+
 
         echo "Splitting $BUILD_DIR into $DIST_NEW done"
     comment: split dist/ into dist_cli_*/ and dist_py_*/
@@ -6078,9 +6123,9 @@ nodes:
         docker buildx create --use
 
 
-        # Build and push a single-arch image tagged with the arch suffix.
-        # The multi-arch manifest is created by a separate workflow job
-        # after both Linux runners complete.
+        # Build and push a single-arch image tagged with the arch suffix. # The
+        multi-arch manifest is created by a separate workflow job # after both
+        Linux runners complete.
 
         docker buildx build \
           --platform "$PLATFORM" \
@@ -6127,14 +6172,50 @@ connections:
       node: select-data-v1-shark-crab-navy
       port: choices[1]
   - src:
+      node: string-array-v1-linux-x64-only
+      port: array
+    dst:
+      node: select-data-v1-linux-native-arch
+      port: choices[0]
+  - src:
+      node: string-array-v1-linux-arm64-only
+      port: array
+    dst:
+      node: select-data-v1-linux-native-arch
+      port: choices[1]
+  - src:
+      node: system-v1-arch-array-helper
+      port: arch_index
+    dst:
+      node: select-data-v1-linux-native-arch
+      port: index
+  - src:
       node: string-array-v1-pink-koala-zebra
       port: array
+    dst:
+      node: select-data-v1-arch-array-for-platform
+      port: choices[0]
+  - src:
+      node: select-data-v1-linux-native-arch
+      port: value
+    dst:
+      node: select-data-v1-arch-array-for-platform
+      port: choices[1]
+  - src:
+      node: system-v1-arch-array-helper
+      port: is_linux
+    dst:
+      node: select-data-v1-arch-array-for-platform
+      port: index
+  - src:
+      node: select-data-v1-arch-array-for-platform
+      port: value
     dst:
       node: concurrent-for-each-loop-v1-starfish-white-whale
       port: input
   - src:
-      node: string-array-v1-pink-koala-zebra
-      port: array
+      node: select-data-v1-arch-array-for-platform
+      port: value
     dst:
       node: length-v1-nectarine-squirrel-peacock
       port: input
