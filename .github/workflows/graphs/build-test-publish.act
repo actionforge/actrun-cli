@@ -1462,6 +1462,38 @@ nodes:
           inputs:
             choices[0]: null
             choices[1]: null
+        - id: string-array-v1-inner-x64-only
+          type: core/string-array@v1
+          position:
+            x: -970
+            y: 660
+          inputs:
+            inputs[0]: x64
+        - id: string-array-v1-inner-arm64-only
+          type: core/string-array@v1
+          position:
+            x: -970
+            y: 790
+          inputs:
+            inputs[0]: arm64
+        - id: select-data-v1-inner-linux-native-arch
+          type: core/select-data@v1
+          position:
+            x: -750
+            y: 660
+          inputs:
+            choices[0]: null
+            choices[1]: null
+          comment: Picks native arch array on Linux based on arch_index
+        - id: select-data-v1-inner-arch-for-platform
+          type: core/select-data@v1
+          position:
+            x: -750
+            y: 530
+          inputs:
+            choices[0]: null
+            choices[1]: null
+          comment: Non-Linux gets full array; Linux gets native-arch-only
       connections:
         - src:
             node: string-array-v1-lobster-plum-pomegranate
@@ -1476,8 +1508,8 @@ nodes:
             node: group-outputs-v1-navy-durian-violet
             port: lemon-lime-duck
         - src:
-            node: string-array-v1-pear-cat-pink
-            port: array
+            node: select-data-v1-inner-arch-for-platform
+            port: value
           dst:
             node: for-each-loop-v1-ivory-rabbit-lion
             port: input
@@ -1530,8 +1562,8 @@ nodes:
             node: group-outputs-v1-navy-durian-violet
             port: zebra-watermelon-tangerine
         - src:
-            node: string-array-v1-pear-cat-pink
-            port: array
+            node: select-data-v1-inner-arch-for-platform
+            port: value
           dst:
             node: concurrent-for-each-loop-v1-kiwano-dog-gray
             port: input
@@ -1571,6 +1603,42 @@ nodes:
           dst:
             node: bool-and-v1-cherry-dragonfruit-pomegranate
             port: inputs[0]
+        - src:
+            node: string-array-v1-inner-x64-only
+            port: array
+          dst:
+            node: select-data-v1-inner-linux-native-arch
+            port: choices[0]
+        - src:
+            node: string-array-v1-inner-arm64-only
+            port: array
+          dst:
+            node: select-data-v1-inner-linux-native-arch
+            port: choices[1]
+        - src:
+            node: system-info-v1-lime-blue-wolf
+            port: arch_index
+          dst:
+            node: select-data-v1-inner-linux-native-arch
+            port: index
+        - src:
+            node: string-array-v1-pear-cat-pink
+            port: array
+          dst:
+            node: select-data-v1-inner-arch-for-platform
+            port: choices[0]
+        - src:
+            node: select-data-v1-inner-linux-native-arch
+            port: value
+          dst:
+            node: select-data-v1-inner-arch-for-platform
+            port: choices[1]
+        - src:
+            node: system-info-v1-lime-blue-wolf
+            port: is_linux
+          dst:
+            node: select-data-v1-inner-arch-for-platform
+            port: index
       executions:
         - src:
             node: for-each-loop-v1-ivory-rabbit-lion
