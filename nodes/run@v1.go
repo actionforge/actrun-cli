@@ -40,7 +40,7 @@ var winBashExes = []struct {
 	{Path: "C:\\msys64\\usr\\bin\\bash.exe", Mount: ""},
 	{Path: "C:\\cygwin64\\bin\\bash.exe", Mount: "/cygdrive"},
 }
-var bashArgs = []string{"--noprofile", "--norc", "-eo", "pipefail", "-l"}
+var bashArgs = []string{"--noprofile", "--norc", "-e", "-o", "pipefail"}
 var winBashPath string // Path to bash.exe that is valid for all run calls
 var winBashMount string
 

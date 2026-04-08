@@ -99,7 +99,18 @@ func (n *Executions) Execute(outputPort OutputId, ec *ExecutionState, err error)
 		}()
 	}
 
+	nodeID := dest.DstNode.GetId()
+	nodeName := dest.DstNode.GetName()
+	if ec.NodeStateCallback != nil {
+		ec.NodeStateCallback(nodeID, nodeName, true)
+	}
+
 	err = dest.DstNode.ExecuteImpl(ec, dest.Port, err)
+
+	if ec.NodeStateCallback != nil {
+		ec.NodeStateCallback(nodeID, nodeName, false)
+	}
+
 	if err != nil {
 		return err
 	}

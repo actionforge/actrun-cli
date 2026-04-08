@@ -8,8 +8,8 @@ nodes:
   - id: gh-actions-setup-go-shark-pineapple-lemon
     type: github.com/actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c
     position:
-      x: -1710
-      y: 2710
+      x: -1720
+      y: 2550
     inputs:
       go-version: '1.25'
       token: ${{ github.token }}
@@ -31,11 +31,50 @@ nodes:
   - id: string-array-v1-pink-koala-zebra
     type: core/string-array@v1
     position:
-      x: -1640
-      y: 3470
+      x: -1980
+      y: 3380
     inputs:
       inputs[0]: arm64
       inputs[1]: x64
+  - id: string-array-v1-linux-x64-only
+    type: core/string-array@v1
+    position:
+      x: -2000
+      y: 3680
+    inputs:
+      inputs[0]: x64
+  - id: string-array-v1-linux-arm64-only
+    type: core/string-array@v1
+    position:
+      x: -2000
+      y: 3750
+    inputs:
+      inputs[0]: arm64
+  - id: system-v1-arch-array-helper
+    type: core/system-info@v1
+    position:
+      x: -1810
+      y: 3900
+  - id: select-data-v1-linux-native-arch
+    type: core/select-data@v1
+    position:
+      x: -1610
+      y: 3560
+    inputs:
+      choices[0]: null
+      choices[1]: null
+    comment: Picks native arch array on Linux (x64 or arm64) based on arch_index
+  - id: select-data-v1-arch-array-for-platform
+    type: core/select-data@v1
+    position:
+      x: -1400
+      y: 3280
+    inputs:
+      choices[0]: null
+      choices[1]: null
+    comment: >-
+      Non-Linux (index 0) gets full [arm64, x64] array; Linux (index 1) gets
+      native-arch-only array
   - id: gh-actions-setup-python-panda-pomegranate-coconut
     type: github.com/actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548
     position:
@@ -71,7 +110,7 @@ nodes:
       x: -3030
       y: 4770
     inputs:
-      install: mingw-w64-ucrt-x86_64-gcc
+      install: mingw-w64-x86_64-gcc mingw-w64-x86_64-openssl
   - id: concurrent-for-each-loop-v1-starfish-white-whale
     type: core/concurrent-for-each-loop@v1
     position:
@@ -86,7 +125,7 @@ nodes:
       y: 4830
     inputs:
       script: |-
-        echo "$RUNNER_TEMP\\msys64\\ucrt64\\bin" >> "$GITHUB_PATH"
+        echo "$RUNNER_TEMP\\msys64\\mingw64\\bin" >> "$GITHUB_PATH"
         gcc --version
       shell: bash
     comment: Set gcc to PATH
@@ -106,13 +145,21 @@ nodes:
         fi
 
 
-        export CC=gcc
+        # On Linux, each arch has its own native runner, so skip non-native arch
+        builds.
 
-        # Cgo requires a cross-compiler that is not installed on GitHub runners
-        as of now.
+        if [[ "$CURRENT_OS" == "linux" && "$ARCH" != "$CURRENT_ARCH" ]]; then
+            echo "Skipping $CURRENT_OS-$ARCH build on $CURRENT_ARCH runner (native runner handles this)."
+            exit 0
+        fi
 
-        [[ "$CURRENT_OS" == "linux" && "$ARCH" == "arm64" ]] &&
-        CC=aarch64-linux-gnu-gcc
+
+        export CC=gcc export CXX=g++
+
+
+        # Download P4 API SDK for the target platform
+
+        bash setup.sh "$CURRENT_OS" "$ARCH"
 
 
         build_cli() {
@@ -121,10 +168,44 @@ nodes:
             BUILD_FLAGS="-X actionforge/actrun-cli/build.Production=true -X actionforge/actrun-cli/build.License=$LICENSE -X actionforge/actrun-cli/build.Version=$GITHUB_REF_NAME"
 
             # Run Go tests if target matches the current system
-            [[ "$CURRENT_OS" == "$CURRENT_OS" && "$ARCH" == "$CURRENT_ARCH" ]] && eval "go test -ldflags=\"$BUILD_FLAGS\" -o \"$OUTPUT_CLI\" ."
+            [[ "$OS" == "$CURRENT_OS" && "$ARCH" == "$CURRENT_ARCH" ]] && eval "go test -ldflags=\"$BUILD_FLAGS\" -o \"$OUTPUT_CLI\" ."
+
+            # Determine P4 API paths and CGO flags per platform
+            P4_INCLUDE="$(pwd)/p4api/include"
+            P4_TAGS="p4"
+            P4_CGO_ENABLED=1
+
+            case "$CURRENT_OS" in
+                linux)
+                    [[ "$ARCH" == "arm64" ]] && P4_LIB="$(pwd)/p4api/linux-aarch64/lib" || P4_LIB="$(pwd)/p4api/linux-x86_64/lib"
+                    P4_CGO_CPPFLAGS="-I$P4_INCLUDE"
+                    P4_CGO_LDFLAGS="-L$P4_LIB -lp4api -lssl -lcrypto"
+                    [[ "$ARCH" == "arm64" ]] && SSL_LIB="$(pwd)/p4api/ssl-linux-${ARCH}/lib" && bash setup-openssl.sh linux "$ARCH" "$SSL_LIB" && P4_CGO_LDFLAGS="-L$P4_LIB -lp4api $SSL_LIB/libssl.a $SSL_LIB/libcrypto.a"
+                    ;;
+                macos)
+                    P4_LIB="$(pwd)/p4api/macos/lib"
+                    P4_CGO_CPPFLAGS="-I$P4_INCLUDE"
+                    SSL_LIB="$(pwd)/p4api/ssl-macos-${ARCH}/lib"
+                    bash setup-openssl.sh macos "$ARCH" "$SSL_LIB"
+                    P4_CGO_LDFLAGS="-L$P4_LIB -lp4api $SSL_LIB/libssl.a $SSL_LIB/libcrypto.a -framework ApplicationServices -framework Foundation -framework Security -framework CoreFoundation"
+                    ;;
+                windows)
+                    if [[ "$ARCH" == "arm64" ]]; then
+                        echo "P4 not supported on Windows ARM64, building without P4"
+                        P4_TAGS=""
+                        P4_CGO_ENABLED=0
+                        P4_CGO_CPPFLAGS=""
+                        P4_CGO_LDFLAGS=""
+                    else
+                        P4_LIB="$(pwd)/p4api/windows-x86_64/lib"
+                        P4_CGO_CPPFLAGS="-I$P4_INCLUDE -DOS_NT"
+                        P4_CGO_LDFLAGS="-L$P4_LIB -lp4api -lssl -lcrypto -lcrypt32 -lws2_32 -lole32 -lshell32 -luser32 -ladvapi32"
+                    fi
+                    ;;
+            esac
 
             echo "Build CLI for $CURRENT_OS-$ARCH"
-            CGO_ENABLED=0 go build -ldflags="$BUILD_FLAGS" -o "$OUTPUT_CLI" .
+            CGO_ENABLED=$P4_CGO_ENABLED CGO_CPPFLAGS="$P4_CGO_CPPFLAGS" CGO_LDFLAGS="$P4_CGO_LDFLAGS" go build -tags="$P4_TAGS" -ldflags="$BUILD_FLAGS" -o "$OUTPUT_CLI" .
         }
 
 
@@ -157,7 +238,7 @@ nodes:
                     cp "$OUTPUT_CLI" "$TMP_ACTRUN"
                     # encoding needed since default on Windows is cp1252
                     PYTHONIOENCODING=utf-8 python tests_e2e/tests_e2e.py
-                    rm "$TMP_ACTRUN"
+                    rm "$TMP_ACTRUN" || true
                 else
                     echo "OS and ARCH do not match the current system ($OS != $CURRENT_OS $ARCH != $CURRENT_ARCH). Skipping e2e tests."
                 fi
@@ -222,8 +303,8 @@ nodes:
   - id: wait-for-v1-ivory-turkey-grapefruit
     type: core/wait-for@v1
     position:
-      x: -2010
-      y: 3090
+      x: -2070
+      y: 3000
     inputs:
       after: 2
   - id: run-v1-indigo-grape-gray
@@ -248,9 +329,14 @@ nodes:
       y: 3570
     inputs:
       script: |-
-        # check the build node script
-        sudo apt-get update && sudo apt-get install -y gcc-aarch64-linux-gnu
-    comment: Install a GCC version capable of cross-compiling
+        # Install cross-compiler only if needed (x64 runner building for arm64).
+        # With native arm64 runners, this is typically skipped.
+        if [[ "$CURRENT_ARCH" != "arm64" ]]; then
+          sudo apt-get update && sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+        else
+          echo "Running on native arm64 runner, no cross-compiler needed."
+        fi
+    comment: Install a GCC/G++ version capable of cross-compiling
   - id: switch-platform-v1-dog-snake-ivory
     type: core/switch-platform@v1
     position:
@@ -684,74 +770,24 @@ nodes:
       y: 2570
     inputs:
       name: APPLE_TEAM_ID
-  - id: group-v1-watermelon-raspberry-brown
-    type: core/group@v1
-    position:
-      x: 9380
-      y: 2880
-    graph:
-      entry: group-inputs-v1-sheep-date-watermelon
-      type: group
-      nodes:
-        - id: group-inputs-v1-sheep-date-watermelon
-          type: core/group-inputs@v1
-          position:
-            x: -630
-            y: 140
-        - id: group-outputs-v1-rhinoceros-grapefruit-date
-          type: core/group-outputs@v1
-          position:
-            x: 640
-            y: 120
-        - id: env-get-v1-cat-banana-dolphin
-          type: core/env-get@v1
-          position:
-            x: -390
-            y: 160
-          inputs:
-            env: GITHUB_REF
-        - id: string-match-v1-koala-pineapple-cherry
-          type: core/string-match@v1
-          position:
-            x: 60
-            y: 120
-          inputs:
-            str2: refs/tags
-            op: startswith
-      connections:
-        - src:
-            node: env-get-v1-cat-banana-dolphin
-            port: env
-          dst:
-            node: string-match-v1-koala-pineapple-cherry
-            port: str1
-        - src:
-            node: string-match-v1-koala-pineapple-cherry
-            port: result
-          dst:
-            node: group-outputs-v1-rhinoceros-grapefruit-date
-            port: camel-mango-plum
-      executions: []
-      outputs:
-        camel-mango-plum:
-          name: Is Tag
-          type: bool
-          desc: ''
-          index: 0
-      info:
-        author: ''
-        version: ''
-        contact: ''
-        description: ''
-    label: Git Commit Info
   - id: run-v1-strawberry-plum-black
     type: core/run@v1
     position:
       x: 6450
       y: 1430
     inputs:
-      script: |
+      script: >
         mkdir -p "$DIST_NEW"
+
+
+        # On Linux, skip splitting for non-native arch (not built on this
+        runner).
+
+        if [[ "$OS" == "linux" && "$ARCH" != "$CURRENT_ARCH" ]]; then
+            echo "Skipping split for $OS-$ARCH on $CURRENT_ARCH runner."
+            exit 0
+        fi
+
 
 
         if [[ "$TARGET_TYPE" == "cli" ]]; then
@@ -781,6 +817,7 @@ nodes:
             exit 1
         fi
 
+
         echo "Splitting $BUILD_DIR into $DIST_NEW done"
     comment: split dist/ into dist_cli_*/ and dist_py_*/
   - id: run-v1-octopus-navy-passionfruit
@@ -790,6 +827,12 @@ nodes:
       y: 1440
     inputs:
       script: |
+        # On Linux, skip extras for non-native arch (not built on this runner).
+        if [[ "$OS" == "linux" && "$ARCH" != "$CURRENT_ARCH" ]]; then
+            echo "Skipping extras for $OS-$ARCH on $CURRENT_ARCH runner."
+            exit 0
+        fi
+
         if [[ "$TARGET_TYPE" == "py" ]]; then
             # Add Python libraries
             cp -r api/python/** $DIST_NEW
@@ -829,7 +872,7 @@ nodes:
       x: 8860
       y: 1060
     inputs:
-      if-no-files-found: error
+      if-no-files-found: warn
       compression-level: '6'
       retention-days: '2'
   - id: string-fmt-v1-orange-mulberry-octopus
@@ -1419,6 +1462,38 @@ nodes:
           inputs:
             choices[0]: null
             choices[1]: null
+        - id: string-array-v1-inner-x64-only
+          type: core/string-array@v1
+          position:
+            x: -970
+            y: 660
+          inputs:
+            inputs[0]: x64
+        - id: string-array-v1-inner-arm64-only
+          type: core/string-array@v1
+          position:
+            x: -970
+            y: 790
+          inputs:
+            inputs[0]: arm64
+        - id: select-data-v1-inner-linux-native-arch
+          type: core/select-data@v1
+          position:
+            x: -750
+            y: 660
+          inputs:
+            choices[0]: null
+            choices[1]: null
+          comment: Picks native arch array on Linux based on arch_index
+        - id: select-data-v1-inner-arch-for-platform
+          type: core/select-data@v1
+          position:
+            x: -750
+            y: 530
+          inputs:
+            choices[0]: null
+            choices[1]: null
+          comment: Non-Linux gets full array; Linux gets native-arch-only
       connections:
         - src:
             node: string-array-v1-lobster-plum-pomegranate
@@ -1433,8 +1508,8 @@ nodes:
             node: group-outputs-v1-navy-durian-violet
             port: lemon-lime-duck
         - src:
-            node: string-array-v1-pear-cat-pink
-            port: array
+            node: select-data-v1-inner-arch-for-platform
+            port: value
           dst:
             node: for-each-loop-v1-ivory-rabbit-lion
             port: input
@@ -1487,8 +1562,8 @@ nodes:
             node: group-outputs-v1-navy-durian-violet
             port: zebra-watermelon-tangerine
         - src:
-            node: string-array-v1-pear-cat-pink
-            port: array
+            node: select-data-v1-inner-arch-for-platform
+            port: value
           dst:
             node: concurrent-for-each-loop-v1-kiwano-dog-gray
             port: input
@@ -1528,6 +1603,42 @@ nodes:
           dst:
             node: bool-and-v1-cherry-dragonfruit-pomegranate
             port: inputs[0]
+        - src:
+            node: string-array-v1-inner-x64-only
+            port: array
+          dst:
+            node: select-data-v1-inner-linux-native-arch
+            port: choices[0]
+        - src:
+            node: string-array-v1-inner-arm64-only
+            port: array
+          dst:
+            node: select-data-v1-inner-linux-native-arch
+            port: choices[1]
+        - src:
+            node: system-info-v1-lime-blue-wolf
+            port: arch_index
+          dst:
+            node: select-data-v1-inner-linux-native-arch
+            port: index
+        - src:
+            node: string-array-v1-pear-cat-pink
+            port: array
+          dst:
+            node: select-data-v1-inner-arch-for-platform
+            port: choices[0]
+        - src:
+            node: select-data-v1-inner-linux-native-arch
+            port: value
+          dst:
+            node: select-data-v1-inner-arch-for-platform
+            port: choices[1]
+        - src:
+            node: system-info-v1-lime-blue-wolf
+            port: is_linux
+          dst:
+            node: select-data-v1-inner-arch-for-platform
+            port: index
       executions:
         - src:
             node: for-each-loop-v1-ivory-rabbit-lion
@@ -1571,6 +1682,12 @@ nodes:
           dst:
             node: for-each-loop-v1-octopus-jellyfish-rabbit
             port: exec
+        - src:
+            node: concurrent-for-each-loop-v1-kiwano-dog-gray
+            port: exec-completed
+          dst:
+            node: group-outputs-v1-navy-durian-violet
+            port: exec-lime-banana-jackfruit
         - src:
             node: branch-v1-lime-peacock-kiwano
             port: exec-otherwise
@@ -6041,6 +6158,74 @@ nodes:
       fmt: '%v-sbom'
     label: ''
     comment: Outputs eg actrun-v0.0.2-sbom.cli-x64-windows-sbom
+  - id: switch-platform-v1-whale-indigo-kiwi
+    type: core/switch-platform@v1
+    position:
+      x: -20
+      y: 4770
+  - id: run-v1-whale-teal-apricot
+    type: core/run@v1
+    position:
+      x: 280
+      y: 4770
+    inputs:
+      script: >
+        echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR"
+        --password-stdin
+
+
+        IMAGE="ghcr.io/actionforge/actrun"
+
+        VERSION="${GITHUB_REF_NAME}"
+
+
+        # Determine the native platform for this runner.
+
+        if [[ "$CURRENT_ARCH" == "arm64" ]]; then
+          PLATFORM="linux/arm64"
+        else
+          PLATFORM="linux/amd64"
+        fi
+
+
+        docker buildx create --use
+
+
+        # Build and push a single-arch image tagged with the arch suffix. # The
+        multi-arch manifest is created by a separate workflow job # after both
+        Linux runners complete.
+
+        docker buildx build \
+          --platform "$PLATFORM" \
+          --build-arg IMG_VERSION="$VERSION" \
+          --build-arg IMG_SOURCE="https://github.com/$GITHUB_REPOSITORY" \
+          -t "$IMAGE:${VERSION}-${CURRENT_ARCH}" \
+          --push \
+          .
+      env: []
+    comment: Build and push Docker image to GHCR
+  - id: env-array-v1-penguin-lime-starfish
+    type: core/env-array@v1
+    position:
+      x: -220
+      y: 4910
+    inputs:
+      env[0]: GHCR_TOKEN=${{ github.token }}
+  - id: core-wait-for-v1-camel-ivory-jackfruit
+    type: core/wait-for@v1
+    position:
+      x: -350
+      y: 4640
+    inputs:
+      after: 1
+  - id: core-sequence-v1-watermelon-starfish-apple
+    type: core/sequence@v1
+    position:
+      x: -5960
+      y: 3450
+    outputs:
+      exec[0]: null
+      exec[1]: null
 connections:
   - src:
       node: const-string-v1-horse-lime-seahorse
@@ -6055,14 +6240,50 @@ connections:
       node: select-data-v1-shark-crab-navy
       port: choices[1]
   - src:
+      node: string-array-v1-linux-x64-only
+      port: array
+    dst:
+      node: select-data-v1-linux-native-arch
+      port: choices[0]
+  - src:
+      node: string-array-v1-linux-arm64-only
+      port: array
+    dst:
+      node: select-data-v1-linux-native-arch
+      port: choices[1]
+  - src:
+      node: system-v1-arch-array-helper
+      port: arch_index
+    dst:
+      node: select-data-v1-linux-native-arch
+      port: index
+  - src:
       node: string-array-v1-pink-koala-zebra
       port: array
+    dst:
+      node: select-data-v1-arch-array-for-platform
+      port: choices[0]
+  - src:
+      node: select-data-v1-linux-native-arch
+      port: value
+    dst:
+      node: select-data-v1-arch-array-for-platform
+      port: choices[1]
+  - src:
+      node: system-v1-arch-array-helper
+      port: is_linux
+    dst:
+      node: select-data-v1-arch-array-for-platform
+      port: index
+  - src:
+      node: select-data-v1-arch-array-for-platform
+      port: value
     dst:
       node: concurrent-for-each-loop-v1-starfish-white-whale
       port: input
   - src:
-      node: string-array-v1-pink-koala-zebra
-      port: array
+      node: select-data-v1-arch-array-for-platform
+      port: value
     dst:
       node: length-v1-nectarine-squirrel-peacock
       port: input
@@ -6649,6 +6870,12 @@ connections:
       node: >-
         gh-anchore-sbom-action-deef08a0db64bfad603422135db61477b16cef56-orange-banana-pear
       port: artifact-name
+  - src:
+      node: env-array-v1-penguin-lime-starfish
+      port: env
+    dst:
+      node: run-v1-whale-teal-apricot
+      port: env
 executions:
   - src:
       node: run-v1-donkey-magenta-raspberry
@@ -6885,18 +7112,6 @@ executions:
       node: group-v1-purple-penguin-maroon
       port: exec-teal-gold-rhinoceros
   - src:
-      node: gh-start
-      port: exec-on_push
-    dst:
-      node: group-v1-orange-tiger-grapefruit
-      port: exec-lion-beige-dragonfruit
-  - src:
-      node: gh-start
-      port: exec-on_workflow_dispatch
-    dst:
-      node: group-v1-orange-tiger-grapefruit
-      port: exec-lion-beige-dragonfruit
-  - src:
       node: gh-actions-setup-go-shark-pineapple-lemon
       port: exec-success
     dst:
@@ -6963,3 +7178,45 @@ executions:
       node: >-
         gh-actions-attest-sbom-21f269c03431211cf2de4a1b5d90001746539dc9-gold-pomegranate-dolphin
       port: exec
+  - src:
+      node: switch-platform-v1-whale-indigo-kiwi
+      port: exec-linux
+    dst:
+      node: run-v1-whale-teal-apricot
+      port: exec
+  - src:
+      node: core-wait-for-v1-camel-ivory-jackfruit
+      port: exec
+    dst:
+      node: switch-platform-v1-whale-indigo-kiwi
+      port: exec
+  - src:
+      node: concurrent-for-each-loop-v1-starfish-white-whale
+      port: exec-completed
+    dst:
+      node: core-wait-for-v1-camel-ivory-jackfruit
+      port: exec
+  - src:
+      node: gh-start
+      port: exec-on_workflow_dispatch
+    dst:
+      node: core-sequence-v1-watermelon-starfish-apple
+      port: exec
+  - src:
+      node: core-sequence-v1-watermelon-starfish-apple
+      port: exec[1]
+    dst:
+      node: core-wait-for-v1-camel-ivory-jackfruit
+      port: exec
+  - src:
+      node: gh-start
+      port: exec-on_push
+    dst:
+      node: group-v1-orange-tiger-grapefruit
+      port: exec-lion-beige-dragonfruit
+  - src:
+      node: core-sequence-v1-watermelon-starfish-apple
+      port: exec[0]
+    dst:
+      node: group-v1-orange-tiger-grapefruit
+      port: exec-lion-beige-dragonfruit

@@ -1,0 +1,33 @@
+yaml-version: 3.0
+
+id: core/repo-download
+name: Repo Download
+version: 1
+category: orchestrator
+icon: featherDownloadCloud
+short_desc: Download files from a repo on the orchestrator and write them to disk.
+style:
+  header:
+    background: "#1b5f5e"
+  body:
+    background: "#429694"
+outputs:
+  exec-success:
+    name: Success
+    exec: true
+    index: 0
+  exec-err:
+    name: Error
+    exec: true
+    index: 1
+inputs:
+  exec:
+    exec: true
+    index: 0
+  paths:
+    name: Paths
+    type: "[]string"
+    index: 1
+    default:
+      - "*"
+    desc: File paths within the repo to download. Each file is written to the same relative path on disk. Use "*" to download the entire repo.
