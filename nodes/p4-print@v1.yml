@@ -1,0 +1,53 @@
+yaml-version: 3.0
+id: core/p4-print
+name: P4 Print
+version: 1
+category: perforce
+icon: tablerFileDownload
+style:
+  header:
+    background: "#07a3ee"
+    color: "#ffffff"
+  body:
+    background: "#055f8a"
+short_desc: Downloads a file from the Perforce P4 depot without requiring a workspace.
+addendum: |
+  Runs `p4 print -q -o <output_path> <depot_path>` to download a single file from the depot directly to disk.
+
+  This does not require a workspace (P4CLIENT) to be set, making it useful for fetching individual files.
+
+  For SSL servers, `p4 trust -y` is automatically executed before the command.
+outputs:
+  exec-success:
+    name: Success
+    exec: true
+    desc: Executes if the file is downloaded successfully.
+    index: 0
+  exec-err:
+    name: Error
+    exec: true
+    desc: Executes if there is an error downloading the file.
+    index: 1
+inputs:
+  exec:
+    exec: true
+    index: 0
+  depot_path:
+    type: string
+    name: Depot Path
+    hint: "//depot/project/README.md"
+    desc: The depot path of the file to download.
+    index: 1
+    required: true
+  output_path:
+    type: string
+    name: Output Path
+    desc: The local file path where the downloaded file will be saved.
+    index: 2
+    required: true
+  credentials:
+    type: credentials
+    name: Credentials
+    desc: Optional P4 credentials. If not provided, falls back to P4 environment variables.
+    index: 3
+    optional: true
