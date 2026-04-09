@@ -14,19 +14,14 @@ looking for value: 'create_debug_session'
   evaluated to: 'false'
 Welcome to your Actionforge Runner
 
-----------------------[ HOW TO RUN ]----------------------
-
-[ 🚀 OPTION 1: RUN LOCAL ACTION GRAPH ]
-    Execute a local graph file directly from your terminal.
-    Example: $ actrun my-graph.act
-
-[ 🔗 OPTION 2: CONNECT TO WEB APP ]
-    Please paste the session token from your browser to connect.
-
-----------------------------------------------------------
-
 📖 Docs: https:[REDACTED]/docs.actionforge.dev
 
-No config file specified, config values will be derived from environment variables and flags
+🚀 Run a graph — execute a local graph file
+   actrun <file.act>
 
-🔑 Enter session token: no session token provided, exiting.
+🔗 Connect to web debug session — paste a session token
+   actrun debug --session-token <token>
+
+🤖 Connect as agent — connect to the orchestrator
+   actrun agent --token <token>
+

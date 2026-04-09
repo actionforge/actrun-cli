@@ -7,6 +7,7 @@ Usage:
 Available Commands:
   agent       Start an agent that polls the server for jobs
   completion  Generate the autocompletion script for the specified shell
+  debug       Connect to the web app with a session token
   help        Help about any command
   mcp         Start the MCP server (stdio transport).
   schema      Print the JSON schema for .act files.

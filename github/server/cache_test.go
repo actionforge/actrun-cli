@@ -154,7 +154,10 @@ func TestCachePrefixMatch(t *testing.T) {
 	}
 
 	// Download and verify it's one of the two entries (the newest)
-	getResp, _ := http.Get(dlResp.SignedDownloadURL)
+	getResp, err := http.Get(dlResp.SignedDownloadURL)
+	if err != nil {
+		t.Fatal(err)
+	}
 	defer getResp.Body.Close()
 	data, _ := io.ReadAll(getResp.Body)
 	if string(data) != "node-modules-bbb" {
@@ -204,7 +207,10 @@ func TestCacheOverwrite(t *testing.T) {
 		"metadata": map[string]string{"scope": scope},
 	})
 	dlResp := decodeResponse[GetCacheEntryDownloadURLResponse](t, resp)
-	getResp, _ := http.Get(dlResp.SignedDownloadURL)
+	getResp, err := http.Get(dlResp.SignedDownloadURL)
+	if err != nil {
+		t.Fatal(err)
+	}
 	defer getResp.Body.Close()
 	data, _ := io.ReadAll(getResp.Body)
 	if string(data) != "new-data" {

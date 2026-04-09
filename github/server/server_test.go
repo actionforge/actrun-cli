@@ -264,7 +264,10 @@ func TestChunkedUpload(t *testing.T) {
 		"name":                   "chunked-artifact",
 	})
 	urlResp := decodeResponse[GetSignedArtifactURLResponse](t, resp)
-	dlResp, _ := http.Get(urlResp.SignedURL)
+	dlResp, err := http.Get(urlResp.SignedURL)
+	if err != nil {
+		t.Fatal(err)
+	}
 	defer dlResp.Body.Close()
 	data, _ := io.ReadAll(dlResp.Body)
 	expected := append(append(chunk1, chunk2...), chunk3...)
@@ -639,7 +642,10 @@ func TestMigrateArtifact(t *testing.T) {
 		"name":                   "migrated-artifact",
 	})
 	urlResp := decodeResponse[GetSignedArtifactURLResponse](t, resp)
-	dlResp, _ := http.Get(urlResp.SignedURL)
+	dlResp, err := http.Get(urlResp.SignedURL)
+	if err != nil {
+		t.Fatal(err)
+	}
 	defer dlResp.Body.Close()
 	data, _ := io.ReadAll(dlResp.Body)
 	if !bytes.Equal(data, blobContent) {

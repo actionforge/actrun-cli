@@ -191,7 +191,10 @@ func TestLegacyChunkedUpload(t *testing.T) {
 
 	dlReq, _ := http.NewRequest("GET", contentLocation, nil)
 	dlReq.Header.Set("Authorization", "Bearer test-token")
-	dlResp, _ := http.DefaultClient.Do(dlReq)
+	dlResp, err := http.DefaultClient.Do(dlReq)
+	if err != nil {
+		t.Fatal(err)
+	}
 	defer dlResp.Body.Close()
 	data, _ := io.ReadAll(dlResp.Body)
 	expected := append(chunk1, chunk2...)
@@ -249,7 +252,10 @@ func TestLegacyGzipRoundtrip(t *testing.T) {
 	client := &http.Client{Transport: transport}
 	dlReq, _ := http.NewRequest("GET", filesResult.Value[0]["contentLocation"].(string), nil)
 	dlReq.Header.Set("Authorization", "Bearer test-token")
-	dlResp, _ := client.Do(dlReq)
+	dlResp, err := client.Do(dlReq)
+	if err != nil {
+		t.Fatal(err)
+	}
 	defer dlResp.Body.Close()
 
 	if dlResp.Header.Get("Content-Encoding") != "gzip" {

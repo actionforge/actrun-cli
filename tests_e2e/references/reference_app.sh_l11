@@ -13,21 +13,6 @@ looking for value: 'session_token'
 looking for value: 'create_debug_session'
   found value in flags
   evaluated to: 'false'
-Welcome to your Actionforge Runner
-
-----------------------[ HOW TO RUN ]----------------------
-
-[ 🚀 OPTION 1: RUN LOCAL ACTION GRAPH ]
-    Execute a local graph file directly from your terminal.
-    Example: $ actrun my-graph.act
-
-[ 🔗 OPTION 2: CONNECT TO WEB APP ]
-    Please paste the session token from your browser to connect.
-
-----------------------------------------------------------
-
-📖 Docs: https:[REDACTED]/docs.actionforge.dev
-
 No config file specified, config values will be derived from environment variables and flags
 
 🔑 Enter session token: <session token was provided via flag>
