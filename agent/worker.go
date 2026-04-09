@@ -24,7 +24,6 @@ type Worker struct {
 	client       *Client
 	docker       DockerConfig
 	vcsOpts      vcs.Options
-	labels       string
 	pollInterval time.Duration
 	uuid         string
 	slotCleanup  func()
@@ -34,14 +33,13 @@ type Worker struct {
 	lastCounters *RawCounters
 }
 
-func NewWorker(client *Client, docker DockerConfig, vcsOpts vcs.Options, labels string) *Worker {
+func NewWorker(client *Client, docker DockerConfig, vcsOpts vcs.Options) *Worker {
 	uuid, cleanup := acquireAgentSlot()
 	client.SetUUID(uuid)
 	return &Worker{
 		client:       client,
 		docker:       docker,
 		vcsOpts:      vcsOpts,
-		labels:       labels,
 		pollInterval: 1 * time.Second,
 		uuid:         uuid,
 		slotCleanup:  cleanup,
@@ -630,13 +628,13 @@ func (w *Worker) buildHeartbeatRequest() HeartbeatRequest {
 	snap, err := Snapshot()
 	if err != nil {
 		w.log.WithError(err).Warn("metrics snapshot error")
-		return HeartbeatRequest{UUID: w.uuid, Labels: w.labels}
+		return HeartbeatRequest{UUID: w.uuid}
 	}
 
 	w.metricsMu.Lock()
 	defer w.metricsMu.Unlock()
 
-	req := HeartbeatRequest{UUID: w.uuid, Labels: w.labels}
+	req := HeartbeatRequest{UUID: w.uuid}
 	if w.lastCounters != nil {
 		// CPU percent
 		if snap.CPUInstant {

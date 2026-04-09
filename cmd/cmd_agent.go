@@ -16,7 +16,6 @@ import (
 var (
 	flagAgentServer             string
 	flagAgentToken              string
-	flagAgentLabels             string
 	flagAgentDockerDisabled     bool
 	flagAgentDockerDefaultImage string
 	flagAgentP4Client           string
@@ -36,7 +35,6 @@ func init() {
 	if os.Getenv("ACT_AGENT_TOKEN") == "" {
 		cmdAgent.MarkFlagRequired("token")
 	}
-	cmdAgent.Flags().StringVar(&flagAgentLabels, "labels", envOr("ACT_AGENT_LABELS", ""), "Comma-separated labels for job matching (env: ACT_AGENT_LABELS)")
 	cmdAgent.Flags().BoolVar(&flagAgentDockerDisabled, "docker-disabled", envOrBool("ACT_AGENT_DOCKER_DISABLED", false), "Disable Docker execution, always run natively")
 	cmdAgent.Flags().StringVar(&flagAgentDockerDefaultImage, "docker-default-image", envOr("ACT_AGENT_DOCKER_DEFAULT_IMAGE", ""), "Force this Docker image for all scripts")
 	cmdAgent.Flags().StringVar(&flagAgentP4Client, "p4-client", envOr("ACT_AGENT_P4CLIENT", ""), "Reuse an existing Perforce workspace instead of creating a temporary one (env: ACT_AGENT_P4CLIENT)")
@@ -70,7 +68,7 @@ func cmdAgentRun(cmd *cobra.Command, args []string) {
 			DefaultImage: flagAgentDockerDefaultImage,
 		}, vcs.Options{
 			P4Client: flagAgentP4Client,
-		}, flagAgentLabels)
+		})
 
 		log.WithField("server", serverURL).Info("connecting")
 		err := w.Run(ctx)
