@@ -132,7 +132,7 @@ func (p *P4Provider) Checkout(ctx context.Context, url, ref, pipeline, destDir s
 		return CheckoutResult{}, fmt.Errorf("p4 sync pipeline file failed: %w", err)
 	}
 
-	return CheckoutResult{Dir: absDir, P4Client: p.clientName}, nil
+	return CheckoutResult{Dir: absDir, Persistent: true, P4Client: p.clientName}, nil
 }
 
 func (p *P4Provider) Cleanup(ctx context.Context) error {
