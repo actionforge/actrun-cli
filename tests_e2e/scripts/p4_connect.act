@@ -2,7 +2,7 @@ editor:
   version:
     created: v1.0.0
 entry: start
-type: orchestrator
+type: generic
 nodes:
   - id: start
     type: core/start@v1

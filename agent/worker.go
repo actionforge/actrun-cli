@@ -24,6 +24,7 @@ type Worker struct {
 	client       *Client
 	docker       DockerConfig
 	vcsOpts      vcs.Options
+	labels       string
 	pollInterval time.Duration
 	uuid         string
 	log          *logrus.Entry
@@ -32,11 +33,12 @@ type Worker struct {
 	lastCounters *RawCounters
 }
 
-func NewWorker(client *Client, docker DockerConfig, vcsOpts vcs.Options) *Worker {
+func NewWorker(client *Client, docker DockerConfig, vcsOpts vcs.Options, labels string) *Worker {
 	return &Worker{
 		client:       client,
 		docker:       docker,
 		vcsOpts:      vcsOpts,
+		labels:       labels,
 		pollInterval: 1 * time.Second,
 		uuid:         loadOrGenerateUUID(),
 		log:          logrus.WithField("component", "agent"),
@@ -586,13 +588,13 @@ func (w *Worker) buildHeartbeatRequest() HeartbeatRequest {
 	snap, err := Snapshot()
 	if err != nil {
 		w.log.WithError(err).Warn("metrics snapshot error")
-		return HeartbeatRequest{UUID: w.uuid}
+		return HeartbeatRequest{UUID: w.uuid, Labels: w.labels}
 	}
 
 	w.metricsMu.Lock()
 	defer w.metricsMu.Unlock()
 
-	req := HeartbeatRequest{UUID: w.uuid}
+	req := HeartbeatRequest{UUID: w.uuid, Labels: w.labels}
 	if w.lastCounters != nil {
 		// CPU percent
 		if snap.CPUInstant {

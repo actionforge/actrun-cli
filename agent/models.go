@@ -75,6 +75,7 @@ type StatusReport struct {
 // HeartbeatRequest is sent periodically with agent metrics.
 type HeartbeatRequest struct {
 	UUID          string  `json:"uuid,omitempty"`
+	Labels        string  `json:"labels,omitempty"`
 	CPUPercent    float64 `json:"cpu_percent"`
 	MemPercent    float64 `json:"mem_percent"`
 	MemUsedBytes  int64   `json:"mem_used_bytes"`
