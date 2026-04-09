@@ -180,7 +180,7 @@ func cmdRootRun(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	// if we still have no graph file, go to Session Mode
+	// if we still have no graph file, show the interactive menu or go to Session Mode
 	if finalGraphFile == "" || finalCreateDebugSession {
 		trapfn := func() {
 			if mousetrap.StartedByExplorer() {
@@ -189,14 +189,54 @@ func cmdRootRun(cmd *cobra.Command, args []string) {
 			}
 		}
 
-		err := sessions.RunSessionMode(finalConfigFile, finalGraphFile, finalSessionToken, finalConfigValueSource)
-		if err != nil {
-			utils.LogErr.Print(err.Error())
+		// If a session token was explicitly provided or debug session requested,
+		// go straight to session mode. Otherwise, show the interactive menu.
+		if finalSessionToken != "" || finalCreateDebugSession {
+			err := sessions.RunSessionMode(finalConfigFile, finalGraphFile, finalSessionToken, finalConfigValueSource)
+			if err != nil {
+				utils.LogErr.Print(err.Error())
+				trapfn()
+				os.Exit(1)
+			}
 			trapfn()
-			os.Exit(1)
+			return
 		}
-		trapfn()
-		return
+
+		sessions.PrintWelcomeMessage()
+
+		if !sessions.IsInteractive() {
+			sessions.PrintUsageHints()
+			return
+		}
+
+		choice := sessions.PromptMainMenu()
+
+		switch choice {
+		case 1: // Run a graph
+			graphFile := sessions.PromptGraphFile()
+			if graphFile == "" {
+				return
+			}
+			finalGraphFile = graphFile
+			// Fall through to graph execution below.
+
+		case 2: // Connect to web debug session (session token)
+			err := sessions.RunSessionMode(finalConfigFile, "", "", "")
+			if err != nil {
+				utils.LogErr.Print(err.Error())
+				trapfn()
+				os.Exit(1)
+			}
+			trapfn()
+			return
+
+		case 3: // Connect as agent
+			fmt.Println("Agent mode is not yet implemented.")
+			return
+
+		default:
+			return
+		}
 	}
 
 	var err error

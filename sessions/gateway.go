@@ -19,17 +19,16 @@ import (
 
 	"github.com/actionforge/actrun-cli/build"
 	"github.com/actionforge/actrun-cli/utils"
+	"github.com/charmbracelet/huh"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/gorilla/websocket"
+	"github.com/mattn/go-isatty"
 )
 
 func RunSessionMode(configFile string, graphFileForDebugSession string, sessionToken string, configValueSource string) error {
 
 	if graphFileForDebugSession != "" && sessionToken != "" {
 		return errors.New("both createDebugSession and sessionToken cannot be set")
-	}
-
-	if graphFileForDebugSession == "" {
-		PrintWelcomeMessage()
 	}
 
 	if configFile != "" {
@@ -350,25 +349,77 @@ func GetSessionToken(sessionToken string, configValueSource string) (string, err
 }
 
 func PrintWelcomeMessage() {
-	welcomeText := `Welcome to your Actionforge Runner
+	fmt.Print("Welcome to your Actionforge Runner\n\n")
+	fmt.Print("📖 Docs: https://docs.actionforge.dev\n\n")
+}
 
-----------------------[ HOW TO RUN ]----------------------
+// IsInteractive returns true if stdin is a terminal.
+func IsInteractive() bool {
+	return isatty.IsTerminal(os.Stdin.Fd()) || isatty.IsCygwinTerminal(os.Stdin.Fd())
+}
 
-[ 🚀 OPTION 1: RUN LOCAL ACTION GRAPH ]
-    Execute a local graph file directly from your terminal.
-    Example: $ actrun my-graph.act
+// PrintUsageHints prints a static version of the menu options for non-interactive environments.
+func PrintUsageHints() {
+	fmt.Print("🚀 Run a graph — execute a local graph file\n")
+	fmt.Print("   actrun <file.act>\n\n")
+	fmt.Print("🔗 Connect to web debug session — paste a session token\n")
+	fmt.Print("   actrun debug --session-token <token>\n\n")
+	fmt.Print("🤖 Connect as agent — connect to the orchestrator\n")
+	fmt.Print("   actrun agent --token <token>\n\n")
+}
 
-[ 🔗 OPTION 2: CONNECT TO WEB APP ]
-    Please paste the session token from your browser to connect.
+// PromptMainMenu displays an interactive menu with arrow-key navigation.
+// Returns 1, 2, or 3 for the selected option, or 0 if the user quits.
+func PromptMainMenu() int {
+	var choice int
 
-----------------------------------------------------------
+	hint := lipgloss.NewStyle().Foreground(lipgloss.Color("240"))
 
-📖 Docs: https://docs.actionforge.dev
+	err := huh.NewSelect[int]().
+		Title("Choose an option").
+		Options(
+			huh.NewOption("🚀 Run a graph — execute a local graph file\n"+hint.Render("   actrun <file.act>"), 1),
+			huh.NewOption("🔗 Connect to web debug session — paste a session token\n"+hint.Render("   actrun debug --session-token <token>"), 2),
+			huh.NewOption("🤖 Connect as agent — connect to the orchestrator\n"+hint.Render("   actrun agent --token <token>"), 3),
+		).
+		Value(&choice).
+		Run()
 
-`
+	if err != nil {
+		return 0
+	}
+	return choice
+}
 
-	// Print the message to standard output.
-	// We use fmt.Print here instead of Println to avoid adding an extra
-	// newline at the very end, keeping the cursor right after the prompt.
-	fmt.Print(welcomeText)
+// PromptGraphFile asks the user for a graph file path and returns it.
+func PromptGraphFile() string {
+	var path string
+
+	err := huh.NewInput().
+		Title("Enter graph file path").
+		Prompt("📂 ").
+		Value(&path).
+		Run()
+
+	if err != nil {
+		return ""
+	}
+	return strings.TrimSpace(path)
+}
+
+// PromptAgentToken asks the user for an agent token and returns it.
+func PromptAgentToken() string {
+	var token string
+
+	err := huh.NewInput().
+		Title("Enter agent token").
+		Prompt("🔑 ").
+		Placeholder("bsa_...").
+		Value(&token).
+		Run()
+
+	if err != nil {
+		return ""
+	}
+	return strings.TrimSpace(token)
 }
