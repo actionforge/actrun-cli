@@ -76,7 +76,9 @@ func acquireAgentSlot() (string, func()) {
 		}
 
 		if err := lockFileExclusive(lockFile); err != nil {
-			lockFile.Close()
+			if cerr := lockFile.Close(); cerr != nil {
+				logrus.WithError(cerr).Warn("failed to close lock file")
+			}
 			continue
 		}
 
@@ -99,7 +101,9 @@ func acquireAgentSlot() (string, func()) {
 
 		cleanup := func() {
 			unlockFile(lockFile)
-			lockFile.Close()
+			if cerr := lockFile.Close(); cerr != nil {
+				logrus.WithError(cerr).Warn("failed to close lock file")
+			}
 		}
 		return uuid, cleanup
 	}
