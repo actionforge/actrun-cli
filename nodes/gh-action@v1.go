@@ -41,7 +41,7 @@ var (
 // 3. ([-\w\.]+)            -> Repo Name (Required)
 // 4. (/[^@]+)?             -> Path (Optional). Matches slash followed by anything NOT an @
 // 5. (@[-\w\.]+)?          -> Ref/Version (Optional). Matches @ followed by chars
-var nodeTypeIdRegex = regexp.MustCompile(`^(github.com/)?([-\w\.]+)/([-\w\.]+)(/[^@]+)?(@[-\w\.]+)?$`)
+var nodeTypeIdRegex = regexp.MustCompile(`^(github\.com/)?([-\w\.]+)/([-\w\.]+)(/[^@]+)?(@[-\w\.]+)?$`)
 
 type ActionType int
 
