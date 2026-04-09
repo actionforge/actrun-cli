@@ -33,6 +33,10 @@ type CheckoutResult struct {
 	Persistent bool
 	// SHA is the resolved commit SHA (or changelist number for P4) after checkout.
 	SHA string
+	// P4Client is the Perforce workspace name created or reused during checkout.
+	// The worker should set P4CLIENT in the subprocess environment so that
+	// p4 commands within the graph can operate on the same workspace.
+	P4Client string
 }
 
 // Provider handles VCS checkout operations.

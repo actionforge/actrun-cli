@@ -358,11 +358,15 @@ func (w *Worker) execute(ctx context.Context, job *ClaimResponse) {
 	env = append(env, "BUILD_TMPDIR="+tmpDir)
 	env = append(env, "BUILD_VCS_TYPE="+job.VCSType)
 	env = append(env, "BUILD_VCS_URL="+job.VCSURL)
+	env = append(env, "BUILD_REF="+ref)
 	if job.RepoID != "" {
 		env = append(env, "BUILD_REPO_ID="+job.RepoID)
 	}
 	if checkout.SHA != "" {
 		env = append(env, "BUILD_COMMIT_SHA="+checkout.SHA)
+	}
+	if checkout.P4Client != "" {
+		env = append(env, "P4CLIENT="+checkout.P4Client)
 	}
 
 	// Resolve env mappings from trigger config (if present)
