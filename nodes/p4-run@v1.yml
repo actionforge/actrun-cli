@@ -1,0 +1,64 @@
+yaml-version: 3.0
+id: core/p4-run
+name: P4 Run
+version: 1
+category: perforce
+icon: tablerTerminal
+style:
+  header:
+    background: "#07a3ee"
+    color: "#ffffff"
+  body:
+    background: "#055f8a"
+short_desc: Runs an arbitrary Perforce P4 command.
+addendum: |
+  Executes any Perforce command via the `p4` CLI. Use this for commands not covered by dedicated P4 nodes (e.g. `p4 files`, `p4 changes`, `p4 client`).
+
+  The `command` input is the p4 subcommand (e.g. "files", "changes", "describe").
+  Additional arguments go into the `args` input.
+
+  For SSL servers, `p4 trust -y` is automatically executed before the command.
+outputs:
+  exec-success:
+    name: Success
+    exec: true
+    desc: Executes if the command succeeds (exit code 0).
+    index: 0
+  exec-err:
+    name: Error
+    exec: true
+    desc: Executes if the command fails (non-zero exit code).
+    index: 1
+  output:
+    type: string
+    name: Output
+    desc: The combined stdout/stderr output from the p4 command.
+    index: 2
+  exit_code:
+    name: Exit Code
+    type: number
+    desc: The exit code of the p4 command.
+    index: 3
+inputs:
+  exec:
+    exec: true
+    index: 0
+  command:
+    type: string
+    name: Command
+    hint: "files"
+    desc: The p4 subcommand to run (e.g. files, changes, describe, client).
+    index: 1
+    required: true
+  args:
+    name: Args
+    type: "[]string"
+    desc: Additional arguments for the p4 command.
+    index: 2
+    optional: true
+  credentials:
+    type: credentials
+    name: Credentials
+    desc: Optional P4 credentials. If not provided, falls back to P4 environment variables.
+    index: 3
+    optional: true

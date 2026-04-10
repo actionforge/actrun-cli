@@ -49,6 +49,7 @@ const (
 	CredentialTypeSSH CredentialType = iota
 	CredentialTypeUsernamePassword
 	CredentialTypeAccessKey
+	CredentialTypeP4
 )
 
 type Credentials interface {

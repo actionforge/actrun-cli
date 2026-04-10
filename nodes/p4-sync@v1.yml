@@ -1,0 +1,65 @@
+yaml-version: 3.0
+id: core/p4-sync
+name: P4 Sync
+version: 1
+category: perforce
+icon: tablerRefresh
+style:
+  header:
+    background: "#07a3ee"
+    color: "#ffffff"
+  body:
+    background: "#055f8a"
+short_desc: Syncs files from a Perforce P4 depot path.
+addendum: |
+  Runs `p4 sync` to download files from a depot path to the local workspace.
+
+  Requires a Perforce workspace (P4CLIENT) to be set, either via the credentials input, environment variable, or the `client` input.
+
+  For SSL servers, `p4 trust -y` is automatically executed before syncing.
+outputs:
+  exec-success:
+    name: Success
+    exec: true
+    desc: Executes if the sync operation is successful.
+    index: 0
+  exec-err:
+    name: Error
+    exec: true
+    desc: Executes if there is an error during sync.
+    index: 1
+  output:
+    type: string
+    name: Output
+    desc: The stdout/stderr output from the p4 sync command.
+    index: 2
+inputs:
+  exec:
+    exec: true
+    index: 0
+  depot_path:
+    type: string
+    name: Depot Path
+    hint: "//depot/..."
+    desc: The Perforce depot path to sync (e.g. //depot/project/...).
+    index: 1
+    required: true
+  credentials:
+    type: credentials
+    name: Credentials
+    desc: Optional P4 credentials. If not provided, falls back to P4PORT/P4USER/P4PASSWD environment variables.
+    index: 2
+    optional: true
+  client:
+    type: string
+    name: P4CLIENT
+    desc: The Perforce workspace name. Overrides the value from credentials or P4CLIENT env var.
+    index: 3
+    optional: true
+  force:
+    type: bool
+    name: Force
+    desc: If true, forces the sync (-f flag), re-downloading all files regardless of have list.
+    index: 4
+    optional: true
+    default: false

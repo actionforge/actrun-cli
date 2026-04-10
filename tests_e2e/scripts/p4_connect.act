@@ -1,0 +1,47 @@
+editor:
+  version:
+    created: v1.0.0
+entry: start
+type: generic
+nodes:
+  - id: start
+    type: core/start@v1
+    position:
+      x: 0
+      y: 0
+  - id: list-files
+    type: core/p4-run@v1
+    position:
+      x: 200
+      y: 0
+    inputs:
+      command: files
+      args:
+        - "//depot/pong/..."
+  - id: print-result
+    type: core/print@v1
+    position:
+      x: 300
+      y: 0
+    inputs:
+      values[0]: null
+connections:
+  - src:
+      node: list-files
+      port: output
+    dst:
+      node: print-result
+      port: "values[0]"
+executions:
+  - src:
+      node: start
+      port: exec
+    dst:
+      node: list-files
+      port: exec
+  - src:
+      node: list-files
+      port: exec-success
+    dst:
+      node: print-result
+      port: exec

@@ -93,7 +93,7 @@ func (p *P4Provider) Checkout(ctx context.Context, url, ref, pipeline, destDir s
 			return CheckoutResult{}, fmt.Errorf("p4 sync pipeline file failed: %w", err)
 		}
 
-		return CheckoutResult{Dir: root, Persistent: true}, nil
+		return CheckoutResult{Dir: root, Persistent: true, P4Client: p.clientName}, nil
 	}
 
 	// Create temporary workspace
@@ -132,7 +132,7 @@ func (p *P4Provider) Checkout(ctx context.Context, url, ref, pipeline, destDir s
 		return CheckoutResult{}, fmt.Errorf("p4 sync pipeline file failed: %w", err)
 	}
 
-	return CheckoutResult{Dir: absDir}, nil
+	return CheckoutResult{Dir: absDir, Persistent: true, P4Client: p.clientName}, nil
 }
 
 func (p *P4Provider) Cleanup(ctx context.Context) error {

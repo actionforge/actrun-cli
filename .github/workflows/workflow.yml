@@ -101,7 +101,17 @@ jobs:
           runner-path: ${{ github.workspace }}/actrun
           graph-file: build-test-publish.act
           inputs: ${{ toJson(inputs) }}
-          secrets: ${{ toJson(secrets) }}
+          secrets: >-
+            {
+              "APPLE_P12_CERTIFICATE_PASSWORD": "${{ secrets.APPLE_P12_CERTIFICATE_PASSWORD }}",
+              "APPLE_P12_CERTIFICATE_BASE64": "${{ secrets.APPLE_P12_CERTIFICATE_BASE64 }}",
+              "TESTE2E_DO_S3_ACCESS_KEY": "${{ secrets.TESTE2E_DO_S3_ACCESS_KEY }}",
+              "TESTE2E_DO_S3_SECRET_KEY": "${{ secrets.TESTE2E_DO_S3_SECRET_KEY }}",
+              "TESTE2E_AWS_S3_ACCESS_KEY": "${{ secrets.TESTE2E_AWS_S3_ACCESS_KEY }}",
+              "TESTE2E_AWS_S3_SECRET_KEY": "${{ secrets.TESTE2E_AWS_S3_SECRET_KEY }}",
+              "PUBLISH_S3_SECRET_KEY": "${{ secrets.PUBLISH_S3_SECRET_KEY }}",
+              "PUBLISH_S3_ACCESS_KEY": "${{ secrets.PUBLISH_S3_ACCESS_KEY }}"
+            }
           matrix: ${{ toJson(matrix) }}
 
   docker-manifest:
