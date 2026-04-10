@@ -68,6 +68,7 @@ class Enviro {
 
 	void		Print( const char *var, int quiet = 0 );
 	char		*Get( const char *var );
+	char		*GetSystemIgnore( const char *var );
 	void		Set( const char *var, const char *value, Error *e );
 	void		Update( const char *var, const char *value );
 
@@ -90,10 +91,13 @@ class Enviro {
 	const StrPtr	*GetEnviroFile();
 	int		GetHome( StrBuf &result );
 
+	int		GetGen() const { return gen; }
+
     private:
 
 	EnviroTable	*symbolTab;
 	EnviroItem	*GetItem( const char *var );
+	EnviroItem	*GetItemSystemIgnore( const char *var );
 	void		ReadConfig( FileSys *, Error *, int, ItemType );
 	void		Setup();
 
@@ -104,6 +108,8 @@ class Enviro {
 	StrArray	*configFiles;
 	StrBuf		enviroFile;
 	StrBuf		serviceName;
+
+	P4INT64		gen;
 
 	// used for netsslcredentials to get at service name
 	static const StrPtr *sServiceNameStrP;

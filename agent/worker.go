@@ -3,7 +3,6 @@ package agent
 import (
 	"bufio"
 	"context"
-	"crypto/rand"
 	"fmt"
 	"os"
 	"os/exec"
@@ -25,8 +24,6 @@ type Worker struct {
 	docker       DockerConfig
 	vcsOpts      vcs.Options
 	pollInterval time.Duration
-	uuid         string
-	slotCleanup  func()
 	log          *logrus.Entry
 
 	metricsMu    sync.Mutex
@@ -34,87 +31,13 @@ type Worker struct {
 }
 
 func NewWorker(client *Client, docker DockerConfig, vcsOpts vcs.Options) *Worker {
-	uuid, cleanup := acquireAgentSlot()
-	client.SetUUID(uuid)
 	return &Worker{
 		client:       client,
 		docker:       docker,
 		vcsOpts:      vcsOpts,
 		pollInterval: 1 * time.Second,
-		uuid:         uuid,
-		slotCleanup:  cleanup,
 		log:          logrus.WithField("component", "agent"),
 	}
-}
-
-// agentSlotDir returns the directory for agent UUID slot files.
-func agentSlotDir() string {
-	dir, err := os.UserConfigDir()
-	if err != nil {
-		dir = os.TempDir()
-	}
-	return filepath.Join(dir, "actionforge")
-}
-
-// acquireAgentSlot finds and locks the lowest available agent slot.
-// Each slot has a persistent UUID file and a lock file. When the process
-// exits, the lock is released so the next process can reuse that slot
-// (and its UUID/metrics history).
-// Returns the UUID and a cleanup function that releases the lock.
-func acquireAgentSlot() (string, func()) {
-	dir := agentSlotDir()
-	_ = os.MkdirAll(dir, 0700)
-
-	const maxSlots = 256
-	for i := 0; i < maxSlots; i++ {
-		lockPath := filepath.Join(dir, fmt.Sprintf("agent-%d.lock", i))
-		uuidPath := filepath.Join(dir, fmt.Sprintf("agent-%d.uuid", i))
-
-		lockFile, err := os.OpenFile(lockPath, os.O_CREATE|os.O_RDWR, 0600)
-		if err != nil {
-			continue
-		}
-
-		if err := lockFileExclusive(lockFile); err != nil {
-			if cerr := lockFile.Close(); cerr != nil {
-				logrus.WithError(cerr).Warn("failed to close lock file")
-			}
-			continue
-		}
-
-		// Slot acquired — read or generate UUID
-		uuid := ""
-		if data, err := os.ReadFile(uuidPath); err == nil {
-			if id := strings.TrimSpace(string(data)); len(id) == 36 {
-				uuid = id
-			}
-		}
-		if uuid == "" {
-			var buf [16]byte
-			_, _ = rand.Read(buf[:])
-			buf[6] = (buf[6] & 0x0f) | 0x40 // version 4
-			buf[8] = (buf[8] & 0x3f) | 0x80 // variant 1
-			uuid = fmt.Sprintf("%08x-%04x-%04x-%04x-%012x",
-				buf[0:4], buf[4:6], buf[6:8], buf[8:10], buf[10:16])
-			_ = os.WriteFile(uuidPath, []byte(uuid+"\n"), 0600)
-		}
-
-		cleanup := func() {
-			unlockFile(lockFile)
-			if cerr := lockFile.Close(); cerr != nil {
-				logrus.WithError(cerr).Warn("failed to close lock file")
-			}
-		}
-		return uuid, cleanup
-	}
-
-	// Fallback: all slots taken, generate ephemeral UUID with no lock
-	var buf [16]byte
-	_, _ = rand.Read(buf[:])
-	buf[6] = (buf[6] & 0x0f) | 0x40
-	buf[8] = (buf[8] & 0x3f) | 0x80
-	return fmt.Sprintf("%08x-%04x-%04x-%04x-%012x",
-		buf[0:4], buf[4:6], buf[6:8], buf[8:10], buf[10:16]), func() {}
 }
 
 // maxConsecutiveErrors is the number of consecutive connection errors before
@@ -122,9 +45,6 @@ func acquireAgentSlot() (string, func()) {
 const maxConsecutiveErrors = 10
 
 func (w *Worker) Run(ctx context.Context) error {
-	if w.slotCleanup != nil {
-		defer w.slotCleanup()
-	}
 	w.log.Info("starting")
 
 	// Take initial snapshot for delta computation
@@ -632,13 +552,13 @@ func (w *Worker) buildHeartbeatRequest() HeartbeatRequest {
 	snap, err := Snapshot()
 	if err != nil {
 		w.log.WithError(err).Warn("metrics snapshot error")
-		return HeartbeatRequest{UUID: w.uuid}
+		return HeartbeatRequest{}
 	}
 
 	w.metricsMu.Lock()
 	defer w.metricsMu.Unlock()
 
-	req := HeartbeatRequest{UUID: w.uuid}
+	req := HeartbeatRequest{}
 	if w.lastCounters != nil {
 		// CPU percent
 		if snap.CPUInstant {

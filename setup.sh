@@ -54,7 +54,7 @@ case "$OS" in
             echo "Windows ARM64 is not supported by the Perforce C++ API SDK. Skipping."
             exit 0
         fi
-        URL="${P4API_BASE_URL}/bin.mingw64x64/p4api-openssl3_gcc8_posix_seh.zip"
+        URL="${P4API_BASE_URL}/bin.mingw64x64/p4api-openssl3_gcc8_win32_seh.zip"
         LIB_DIR="${P4API_DIR}/windows-x86_64/lib"
         ARCHIVE_TYPE="zip"
         ;;
@@ -91,4 +91,9 @@ fi
 
 mkdir -p "$LIB_DIR"
 cp "$EXTRACTED"/lib/*.a "$LIB_DIR/"
+
+# Update shared include directory to match the downloaded SDK variant
+rm -rf "$P4API_DIR/include"
+cp -r "$EXTRACTED/include" "$P4API_DIR/include"
+
 echo "Installed P4 API libs to $LIB_DIR ($(ls "$LIB_DIR"/*.a | wc -l | tr -d ' ') files)"

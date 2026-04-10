@@ -55,16 +55,17 @@ nodes:
       script: |-
         OS="$(uname -s)"
 
+        LDFLAGS=""
         case "$OS" in
             Linux*)     OUTPUT="actrun";;
             Darwin*)    OUTPUT="actrun";;
-            CYGWIN*)    OUTPUT="actrun.exe";;
-            MINGW*)     OUTPUT="actrun.exe";;
-            MSYS*)      OUTPUT="actrun.exe";;
+            CYGWIN*)    OUTPUT="actrun.exe"; LDFLAGS="-extldflags '-static-libgcc -static-libstdc++ -Wl,-Bstatic -lpthread -Wl,-Bdynamic'";;
+            MINGW*)     OUTPUT="actrun.exe"; LDFLAGS="-extldflags '-static-libgcc -static-libstdc++ -Wl,-Bstatic -lpthread -Wl,-Bdynamic'";;
+            MSYS*)      OUTPUT="actrun.exe"; LDFLAGS="-extldflags '-static-libgcc -static-libstdc++ -Wl,-Bstatic -lpthread -Wl,-Bdynamic'";;
             *)          OUTPUT="actrun";;
         esac
 
-        go build --tags=github_impl -o "$OUTPUT" .
+        go build --tags=github_impl -ldflags="$LDFLAGS" -o "$OUTPUT" .
       env:
         - CGO_ENABLED=1
   - id: env-get-v1-panda-apple-rabbit

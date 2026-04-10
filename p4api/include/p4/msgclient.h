@@ -60,6 +60,7 @@ class MsgClient {
 	static ErrorId LoginPrintTicket;
 	static ErrorId DigestMisMatch;
 	static ErrorId NotUnderPath;
+	static ErrorId PathProtected;
 
 	static ErrorId UnknownCharset;
 	static ErrorId FileKept;

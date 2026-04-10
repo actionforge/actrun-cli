@@ -10,6 +10,7 @@ frozen
 *.so
 *.dylib
 *.a
+.claude
 ./actrun
 actrun-cli
 __debug_bin

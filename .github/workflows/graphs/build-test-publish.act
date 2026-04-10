@@ -110,7 +110,7 @@ nodes:
       x: -3030
       y: 4770
     inputs:
-      install: mingw-w64-x86_64-gcc mingw-w64-x86_64-openssl
+      install: mingw-w64-x86_64-gcc make perl-IPC-Cmd perl-Locale-Maketext-Simple
   - id: concurrent-for-each-loop-v1-starfish-white-whale
     type: core/concurrent-for-each-loop@v1
     position:
@@ -166,6 +166,9 @@ nodes:
             OUTPUT_CLI="$OUTPUT_DIR/actrun-cli-$CURRENT_OS-$ARCH"
             [[ "$CURRENT_OS" == "windows" ]] && OUTPUT_CLI="$OUTPUT_CLI.exe"
             BUILD_FLAGS="-X actionforge/actrun-cli/build.Production=true -X actionforge/actrun-cli/build.License=$LICENSE -X actionforge/actrun-cli/build.Version=$GITHUB_REF_NAME"
+            # Statically link mingw runtime on Windows so the binary doesn't depend on
+            # libgcc_s_seh-1.dll / libstdc++-6.dll / libwinpthread-1.dll at runtime.
+            [[ "$CURRENT_OS" == "windows" ]] && BUILD_FLAGS="$BUILD_FLAGS -extldflags '-static-libgcc -static-libstdc++ -Wl,-Bstatic -lpthread -Wl,-Bdynamic'"
 
             # Run Go tests if target matches the current system
             [[ "$OS" == "$CURRENT_OS" && "$ARCH" == "$CURRENT_ARCH" ]] && eval "go test -ldflags=\"$BUILD_FLAGS\" -o \"$OUTPUT_CLI\" ."
@@ -197,9 +200,12 @@ nodes:
                         P4_CGO_CPPFLAGS=""
                         P4_CGO_LDFLAGS=""
                     else
-                        P4_LIB="$(pwd)/p4api/windows-x86_64/lib"
+                        WIN_PWD="$(pwd -W)"
+                        P4_LIB="$WIN_PWD/p4api/windows-x86_64/lib"
                         P4_CGO_CPPFLAGS="-I$P4_INCLUDE -DOS_NT"
-                        P4_CGO_LDFLAGS="-L$P4_LIB -lp4api -lssl -lcrypto -lcrypt32 -lws2_32 -lole32 -lshell32 -luser32 -ladvapi32"
+                        SSL_LIB="$WIN_PWD/p4api/ssl-windows-x64/lib"
+                        PATH="$RUNNER_TEMP/msys64/mingw64/bin:$RUNNER_TEMP/msys64/usr/bin:$PATH" bash setup-openssl.sh windows x64 "$SSL_LIB"
+                        P4_CGO_LDFLAGS="-L$P4_LIB -L$SSL_LIB -lp4api -lssl -lcrypto -lcrypt32 -lws2_32 -lole32 -lshell32 -luser32 -ladvapi32"
                     fi
                     ;;
             esac

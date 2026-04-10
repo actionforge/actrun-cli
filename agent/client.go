@@ -12,7 +12,6 @@ import (
 type Client struct {
 	serverURL  string
 	token      string
-	uuid       string
 	httpClient *http.Client
 }
 
@@ -24,10 +23,6 @@ func NewClient(serverURL, token string) *Client {
 			Timeout: 30 * time.Second,
 		},
 	}
-}
-
-func (c *Client) SetUUID(uuid string) {
-	c.uuid = uuid
 }
 
 func (c *Client) doRequest(method, path string, body interface{}) (*http.Response, error) {
@@ -45,9 +40,6 @@ func (c *Client) doRequest(method, path string, body interface{}) (*http.Respons
 		return nil, err
 	}
 	req.Header.Set("Authorization", "Bearer "+c.token)
-	if c.uuid != "" {
-		req.Header.Set("X-Agent-UUID", c.uuid)
-	}
 	if body != nil {
 		req.Header.Set("Content-Type", "application/json")
 	}

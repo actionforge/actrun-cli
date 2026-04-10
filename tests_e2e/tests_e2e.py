@@ -6,6 +6,24 @@ Runs all .sh files in "tests_e2e/scripts".
 These scripts contain "#! test <command>" comments.
 They are expanded, executed and then diffed against the output in
 "tests/integrations/references".
+
+Platform-specific tests:
+    Scripts suffixed with _linux, _darwin, or _windows (e.g., docker-alpine_linux.sh)
+    only run on that platform. Scripts without a suffix run on all platforms.
+
+Build tags (p4):
+    Some nodes require Go build tags to be compiled in. P4 nodes (core/p4-run@v1,
+    core/p4-sync@v1, etc.) are guarded by `//go:build p4` and require the P4 API SDK.
+    The test runner auto-detects the P4 API SDK in `p4api/` and builds with `-tags=p4`
+    when available. Run `bash setup.sh` to download the SDK if not present.
+
+    To add a new P4 e2e test:
+    1. Run `bash setup.sh` to download the P4 API SDK (if not already done)
+    2. Create a .sh script in tests_e2e/scripts/ (no platform suffix = runs everywhere)
+    3. Set P4 env vars (P4PORT, P4USER, P4PASSWD) and use `#! test actrun <graph_file>`
+    4. Run `python tests_e2e/tests_e2e.py p4_connect.sh` to generate the reference file
+    5. Commit the reference file — it must match output for the tagged build in CI
+    6. See tests_e2e/scripts/p4_connect.sh for an example
 """
 
 import os
@@ -19,6 +37,13 @@ import tempfile
 import concurrent.futures
 import io
 from pathlib import Path
+
+# Ensure Unicode output works on Windows cp1252 consoles (affects this process and all children).
+os.environ["PYTHONIOENCODING"] = "utf-8"
+if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+if sys.stderr.encoding and sys.stderr.encoding.lower() != "utf-8":
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
 
 # Setup paths
 CURRENT_DIR = Path(__file__).parent.absolute()
@@ -262,8 +287,13 @@ def process_and_run_test(root_dir: str, source_script: str, ref_dir: str, cov_di
                 # write the echo command for logs
                 dest.write(f"echo % {Style.GRAY}L{lineno} $ {shlex.quote(test_cmd)}{Style.RESET}\n")
                 
-                # write the execution command piped to redaction and reference file
-                dest.write(f"{test_cmd} 2>&1 | redact_abs_paths | tr -d '\r' | tee {ref_file}\n")
+                # write command output to temp file first, then redact and save as reference.
+                # Piping directly from the command can lose output if it crashes (exit 127).
+                tmp_ref = ref_file + ".tmp"
+                dest.write(f"{test_cmd} > {tmp_ref} 2>&1 || true\n")
+                dest.write(f"redact_abs_paths < {tmp_ref} | tr -d '\\r' > {ref_file}\n")
+                dest.write(f"rm -f {tmp_ref}\n")
+                dest.write(f"cat {ref_file}\n")
             
             else:
                 # here are all the other non test lines
@@ -297,21 +327,141 @@ def process_and_run_test(root_dir: str, source_script: str, ref_dir: str, cov_di
     normalize_stack_trace_lines(ref_dir, script_name)
     return output.getvalue(), result.returncode == 0
 
+def get_p4_build_config() -> dict | None:
+    """Detect P4 API SDK and return CGO flags for building with p4 tag.
+    Returns None if P4 SDK is not available."""
+    p4api_dir = Path(os.getcwd()) / "p4api"
+    if not p4api_dir.exists():
+        return None
+
+    p4_include = str(p4api_dir / "include")
+    arch = platform.machine().lower()
+    if arch in ("aarch64", "arm64"):
+        arch = "arm64"
+    else:
+        arch = "x64"
+
+    if sys.platform == "linux":
+        lib_name = "linux-aarch64" if arch == "arm64" else "linux-x86_64"
+        p4_lib = str(p4api_dir / lib_name / "lib")
+        ssl_lib = str(p4api_dir / f"ssl-linux-{arch}" / "lib")
+        if not Path(p4_lib).exists():
+            return None
+        cgo_cppflags = f"-I{p4_include}"
+        if Path(ssl_lib).exists():
+            cgo_ldflags = f"-L{p4_lib} -lp4api {ssl_lib}/libssl.a {ssl_lib}/libcrypto.a"
+        else:
+            cgo_ldflags = f"-L{p4_lib} -lp4api -lssl -lcrypto"
+    elif sys.platform == "darwin":
+        p4_lib = str(p4api_dir / "macos" / "lib")
+        ssl_lib = str(p4api_dir / f"ssl-macos-{arch}" / "lib")
+        if not Path(p4_lib).exists():
+            return None
+        cgo_cppflags = f"-I{p4_include}"
+        cgo_ldflags = f"-L{p4_lib} -lp4api {ssl_lib}/libssl.a {ssl_lib}/libcrypto.a -framework ApplicationServices -framework Foundation -framework Security -framework CoreFoundation"
+    elif sys.platform == "win32":
+        if arch == "arm64":
+            return None  # P4 not supported on Windows ARM64
+        p4_lib = (p4api_dir / "windows-x86_64" / "lib").as_posix()
+        if not Path(p4_lib).exists():
+            return None
+        # Use forward-slash Windows paths (C:/...) for CGo compatibility
+        p4_include = Path(p4_include).as_posix()
+        cgo_cppflags = f"-I{p4_include} -DOS_NT"
+        ssl_lib = (p4api_dir / "ssl-windows-x64" / "lib").as_posix()
+        if not (Path(ssl_lib).exists() and (Path(ssl_lib) / "libssl.a").exists()):
+            return None
+        cgo_ldflags = f"-L{p4_lib} -L{ssl_lib} -lp4api -lssl -lcrypto -lcrypt32 -lws2_32 -lole32 -lshell32 -luser32 -ladvapi32"
+    else:
+        return None
+
+    return {
+        "CGO_ENABLED": "1",
+        "CGO_CPPFLAGS": cgo_cppflags,
+        "CGO_LDFLAGS": cgo_ldflags,
+    }
+
+
 def compile_binaries(is_github_runner: bool):
     if is_github_runner:
         return
 
     # build CLI
     cli_out = 'dist/actrun' + ('.exe' if IS_WINDOWS else '')
-    
+
     env = GLOBAL_ENVS.copy()
     env["GCFLAGS"] = "-N -l"
-    
-    build_cmd = ['go', 'build', '-o', cli_out, '.']
+
+    # Auto-download P4 API SDK if not present
+    p4api_dir = Path(os.getcwd()) / "p4api"
+    setup_sh = Path(os.getcwd()) / "setup.sh"
+    if setup_sh.exists() and not get_p4_build_config():
+        print("P4 API SDK not found, running setup.sh to download...")
+        result = subprocess.run(["bash", str(setup_sh)], capture_output=True, text=True)
+        if result.returncode == 0:
+            print(result.stdout.strip())
+        else:
+            print(f"setup.sh failed: {result.stderr.strip()}")
+
+    # Auto-build static OpenSSL if not present (one-time cost)
+    setup_openssl_sh = Path(os.getcwd()) / "setup-openssl.sh"
+    if setup_openssl_sh.exists() and p4api_dir.exists():
+        arch = "arm64" if platform.machine().lower() in ("aarch64", "arm64") else "x64"
+        ssl_os_map = {"linux": "linux", "darwin": "macos", "win32": "windows"}
+        ssl_os = ssl_os_map.get(sys.platform)
+        if ssl_os:
+            ssl_arch_suffix = {"linux": f"ssl-linux-{arch}", "macos": f"ssl-macos-{arch}", "windows": "ssl-windows-x64"}
+            ssl_dir = p4api_dir / ssl_arch_suffix[ssl_os] / "lib"
+            if not (ssl_dir / "libssl.a").exists():
+                print(f"Static OpenSSL not found, building via setup-openssl.sh (one-time)...")
+                if IS_WINDOWS:
+                    # Must run inside MSYS2 shell — Chocolatey's as.exe has temp dir issues
+                    msys2_shell = Path(r"C:\msys64\msys2_shell.cmd")
+                    if not msys2_shell.exists():
+                        print("MSYS2 not found at C:\\msys64. Install MSYS2 to build static OpenSSL.")
+                        sys.exit(1)
+                    ssl_dir_posix = ssl_dir.as_posix()
+                    result = subprocess.run(
+                        [str(msys2_shell), "-defterm", "-here", "-no-start", "-mingw64", "-c",
+                         f"cd '{Path(os.getcwd()).as_posix()}' && bash setup-openssl.sh {ssl_os} {arch} '{ssl_dir_posix}'"],
+                        capture_output=True, text=True)
+                else:
+                    result = subprocess.run(
+                        ["bash", str(setup_openssl_sh), ssl_os, arch, str(ssl_dir)],
+                        capture_output=True, text=True)
+                if result.returncode == 0:
+                    print(result.stdout.strip())
+                else:
+                    print(f"setup-openssl.sh failed: {result.stderr.strip()}")
+                    sys.exit(1)
+
+    # On Windows, use MSYS2 GCC for ABI compatibility with P4 SDK and OpenSSL
+    if IS_WINDOWS:
+        msys2_gcc = Path(r"C:\msys64\mingw64\bin")
+        if msys2_gcc.exists():
+            env["PATH"] = str(msys2_gcc) + os.pathsep + env.get("PATH", "")
+
+    # Detect P4 API SDK — P4 support is always required
+    tags = []
+    p4_config = get_p4_build_config()
+    if p4_config:
+        tags.append("p4")
+        env.update(p4_config)
+        print(f"P4 API SDK detected, building with -tags=p4")
+    else:
+        print(f"P4 API SDK not found. Run 'bash setup.sh' to download it.")
+        sys.exit(1)
+
+    build_cmd = ['go', 'build']
+    if tags:
+        build_cmd.append(f'-tags={",".join(tags)}')
+    build_cmd.extend(['-o', cli_out, '.'])
+
     if COVERAGE:
         # TODO: (Seb) coverage build takes ages
-        build_cmd = ['go', 'test', '.', '-buildvcs=true', '-cover', '-coverprofile', '-tags=main_test', '-c', '-o', cli_out]
-    
+        coverage_tags = ['main_test'] + tags
+        build_cmd = ['go', 'test', '.', '-buildvcs=true', '-cover', '-coverprofile', f'-tags={",".join(coverage_tags)}', '-c', '-o', cli_out]
+
     print(f"Building {cli_out}")
     subprocess.run(build_cmd, stdout=sys.stdout, stderr=subprocess.STDOUT, check=True, env=env)
 
