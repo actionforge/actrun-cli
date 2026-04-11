@@ -72,7 +72,13 @@ fi
 
 echo "Downloading P4 API SDK for $OS/$ARCH..."
 TMPDIR="$(mktemp -d)"
-trap 'rm -rf "$TMPDIR"' EXIT
+INCLUDE_LOCK="${P4API_DIR}/.include.lock"
+mkdir -p "$P4API_DIR"
+cleanup() {
+    rm -rf "$TMPDIR"
+    rmdir "$INCLUDE_LOCK" 2>/dev/null || true
+}
+trap cleanup EXIT
 
 if [[ "$ARCHIVE_TYPE" == "tgz" ]]; then
     curl -sL "$URL" -o "$TMPDIR/p4api.tgz"
@@ -92,8 +98,21 @@ fi
 mkdir -p "$LIB_DIR"
 cp "$EXTRACTED"/lib/*.a "$LIB_DIR/"
 
-# Update shared include directory to match the downloaded SDK variant
-rm -rf "$P4API_DIR/include"
-cp -r "$EXTRACTED/include" "$P4API_DIR/include"
+# Update shared include directory to match the downloaded SDK variant.
+# Multiple arch builds may run in parallel and share $P4API_DIR/include,
+# so serialize the rm+cp with an atomic mkdir lock and a version sentinel.
+SENTINEL="$P4API_DIR/include/.p4api-version"
+for _ in $(seq 1 120); do
+    if mkdir "$INCLUDE_LOCK" 2>/dev/null; then
+        break
+    fi
+    sleep 1
+done
+if [[ ! -f "$SENTINEL" ]] || [[ "$(cat "$SENTINEL" 2>/dev/null)" != "$P4API_VERSION" ]]; then
+    rm -rf "$P4API_DIR/include"
+    cp -r "$EXTRACTED/include" "$P4API_DIR/include"
+    echo "$P4API_VERSION" > "$SENTINEL"
+fi
+rmdir "$INCLUDE_LOCK" 2>/dev/null || true
 
 echo "Installed P4 API libs to $LIB_DIR ($(ls "$LIB_DIR"/*.a | wc -l | tr -d ' ') files)"
