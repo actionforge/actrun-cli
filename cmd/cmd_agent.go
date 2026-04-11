@@ -41,10 +41,16 @@ func init() {
 }
 
 func cmdAgentRun(cmd *cobra.Command, args []string) {
-	log := logrus.WithField("component", "agent")
+	runAgentLoop(flagAgentServer, flagAgentToken, agent.DockerConfig{
+		Disabled:     flagAgentDockerDisabled,
+		DefaultImage: flagAgentDockerDefaultImage,
+	}, vcs.Options{
+		P4Client: flagAgentP4Client,
+	})
+}
 
-	serverURL := flagAgentServer
-	agentToken := flagAgentToken
+func runAgentLoop(serverURL, agentToken string, dockerCfg agent.DockerConfig, vcsOpts vcs.Options) {
+	log := logrus.WithField("component", "agent")
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -63,12 +69,7 @@ func cmdAgentRun(cmd *cobra.Command, args []string) {
 
 	for {
 		client := agent.NewClient(serverURL, agentToken)
-		w := agent.NewWorker(client, agent.DockerConfig{
-			Disabled:     flagAgentDockerDisabled,
-			DefaultImage: flagAgentDockerDefaultImage,
-		}, vcs.Options{
-			P4Client: flagAgentP4Client,
-		})
+		w := agent.NewWorker(client, dockerCfg, vcsOpts)
 
 		log.WithField("server", serverURL).Info("connecting")
 		err := w.Run(ctx)

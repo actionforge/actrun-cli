@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/actionforge/actrun-cli/agent"
+	"github.com/actionforge/actrun-cli/agent/vcs"
 	"github.com/actionforge/actrun-cli/build"
 	"github.com/actionforge/actrun-cli/core"
 	"github.com/actionforge/actrun-cli/sessions"
@@ -231,7 +232,23 @@ func cmdRootRun(cmd *cobra.Command, args []string) {
 			return
 
 		case 3: // Connect as agent
-			fmt.Println("Agent mode is not yet implemented.")
+			serverURL := envOr("ACT_AGENT_SERVER", "https://orch.actionforge.dev")
+			token := envOr("ACT_AGENT_TOKEN", "")
+			if token == "" {
+				token = sessions.PromptAgentToken()
+			}
+			if token == "" {
+				fmt.Println("No agent token provided.")
+				trapfn()
+				return
+			}
+			runAgentLoop(serverURL, token, agent.DockerConfig{
+				Disabled:     envOrBool("ACT_AGENT_DOCKER_DISABLED", false),
+				DefaultImage: envOr("ACT_AGENT_DOCKER_DEFAULT_IMAGE", ""),
+			}, vcs.Options{
+				P4Client: envOr("ACT_AGENT_P4CLIENT", ""),
+			})
+			trapfn()
 			return
 
 		default:
