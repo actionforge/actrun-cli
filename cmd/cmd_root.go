@@ -272,7 +272,7 @@ func cmdRootRun(cmd *cobra.Command, args []string) {
 	serverURL := os.Getenv("BUILD_SERVER_URL")
 	agentToken := os.Getenv("BUILD_AGENT_TOKEN")
 	if jobID != "" && serverURL != "" && agentToken != "" {
-		client := agent.NewClient(serverURL, agentToken)
+		client := agent.NewClientFromSecret(serverURL, agentToken)
 		reporter := agent.NewNodeReporter(client, jobID)
 		defer reporter.Close()
 		opts.NodeStateCallback = reporter.OnNodeState

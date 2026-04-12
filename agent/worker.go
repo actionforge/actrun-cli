@@ -3,6 +3,7 @@ package agent
 import (
 	"bufio"
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -54,28 +55,44 @@ func (w *Worker) Run(ctx context.Context) error {
 		w.metricsMu.Unlock()
 	}
 
-	// Send initial heartbeat
-	if err := w.client.Heartbeat(w.buildHeartbeatRequest()); err != nil {
+	// Send initial heartbeat. If the server reports our instance has
+	// been revoked (deleted from the UI, pool removed, secret rotated),
+	// unwind so the caller can re-register with the enrollment token.
+	if _, err := w.client.Heartbeat(w.buildHeartbeatRequest()); err != nil {
+		if errors.Is(err, ErrInstanceRevoked) {
+			w.log.Error("instance revoked, re-register required")
+			return ErrInstanceRevoked
+		}
 		w.log.WithError(err).Warn("initial heartbeat failed")
 	}
 
 	heartbeat := time.NewTicker(30 * time.Second)
 	defer heartbeat.Stop()
 
-	// Run heartbeats in a dedicated goroutine so they are never blocked by
-	// job execution (which can take minutes/hours).
-	// Use a cancel to stop the goroutine on all exit paths (including ErrConnectionLost).
-	heartbeatCtx, heartbeatCancel := context.WithCancel(ctx)
-	defer heartbeatCancel()
+	// workerCtx is a child of ctx shared across the heartbeat goroutine, the
+	// claim loop, and any running job. If the heartbeat goroutine observes a
+	// session conflict, it cancels workerCtx so the parent loop and any
+	// in-flight job abort immediately instead of continuing to poll against
+	// a token we no longer own.
+	workerCtx, workerCancel := context.WithCancel(ctx)
+	defer workerCancel()
+
+	instanceRevoked := atomic.Bool{}
 	heartbeatDone := make(chan struct{})
 	go func() {
 		defer close(heartbeatDone)
 		for {
 			select {
-			case <-heartbeatCtx.Done():
+			case <-workerCtx.Done():
 				return
 			case <-heartbeat.C:
-				if err := w.client.Heartbeat(w.buildHeartbeatRequest()); err != nil {
+				if _, err := w.client.Heartbeat(w.buildHeartbeatRequest()); err != nil {
+					if errors.Is(err, ErrInstanceRevoked) {
+						w.log.Error("instance revoked, stopping")
+						instanceRevoked.Store(true)
+						workerCancel()
+						return
+					}
 					w.log.WithError(err).Warn("heartbeat error")
 				}
 			}
@@ -84,7 +101,7 @@ func (w *Worker) Run(ctx context.Context) error {
 
 	// waitHeartbeat ensures the heartbeat goroutine is stopped before returning.
 	waitHeartbeat := func() {
-		heartbeatCancel()
+		workerCancel()
 		<-heartbeatDone
 	}
 
@@ -92,8 +109,11 @@ func (w *Worker) Run(ctx context.Context) error {
 
 	for {
 		select {
-		case <-ctx.Done():
+		case <-workerCtx.Done():
 			waitHeartbeat()
+			if instanceRevoked.Load() {
+				return ErrInstanceRevoked
+			}
 			w.log.Info("exiting")
 			return nil
 		default:
@@ -101,6 +121,11 @@ func (w *Worker) Run(ctx context.Context) error {
 
 		job, err := w.client.Claim()
 		if err != nil {
+			if errors.Is(err, ErrInstanceRevoked) {
+				w.log.Error("instance revoked, exiting")
+				waitHeartbeat()
+				return ErrInstanceRevoked
+			}
 			consecutiveErrors++
 			w.log.WithError(err).Warn("claim error")
 			if consecutiveErrors >= maxConsecutiveErrors {
@@ -110,8 +135,11 @@ func (w *Worker) Run(ctx context.Context) error {
 			}
 			select {
 			case <-time.After(w.pollInterval):
-			case <-ctx.Done():
+			case <-workerCtx.Done():
 				waitHeartbeat()
+				if instanceRevoked.Load() {
+					return ErrInstanceRevoked
+				}
 				return nil
 			}
 			continue
@@ -123,8 +151,11 @@ func (w *Worker) Run(ctx context.Context) error {
 		if job == nil {
 			select {
 			case <-time.After(w.pollInterval):
-			case <-ctx.Done():
+			case <-workerCtx.Done():
 				waitHeartbeat()
+				if instanceRevoked.Load() {
+					return ErrInstanceRevoked
+				}
 				return nil
 			}
 			continue
@@ -137,7 +168,7 @@ func (w *Worker) Run(ctx context.Context) error {
 			"name":     job.Name,
 			"pipeline": job.Pipeline,
 		}).Info("claimed job")
-		w.execute(ctx, job)
+		w.execute(workerCtx, job)
 	}
 }
 
@@ -320,7 +351,7 @@ func (w *Worker) execute(ctx context.Context, job *ClaimResponse) {
 	env = append(env, "BUILD_RUN_ID="+runID)
 	env = append(env, "BUILD_JOB_ID="+jobID)
 	env = append(env, "BUILD_SERVER_URL="+w.client.ServerURL())
-	env = append(env, "BUILD_AGENT_TOKEN="+w.client.Token())
+	env = append(env, "BUILD_AGENT_TOKEN="+w.client.Cred().InstanceSecret)
 	env = append(env, "BUILD_TMPDIR="+tmpDir)
 	env = append(env, "BUILD_VCS_TYPE="+job.VCSType)
 	env = append(env, "BUILD_VCS_URL="+job.VCSURL)
