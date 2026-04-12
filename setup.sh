@@ -92,8 +92,13 @@ fi
 mkdir -p "$LIB_DIR"
 cp "$EXTRACTED"/lib/*.a "$LIB_DIR/"
 
-# Update shared include directory to match the downloaded SDK variant
-rm -rf "$P4API_DIR/include"
-cp -r "$EXTRACTED/include" "$P4API_DIR/include"
+# Update shared include directory (atomic via temp dir + mv to avoid races
+# when multiple concurrent invocations run setup.sh in parallel).
+INCLUDE_TMP="${P4API_DIR}/include.$$"
+cp -r "$EXTRACTED/include" "$INCLUDE_TMP"
+if ! mv -n "$INCLUDE_TMP" "$P4API_DIR/include" 2>/dev/null; then
+    # Another invocation already placed the include dir — that's fine.
+    rm -rf "$INCLUDE_TMP"
+fi
 
 echo "Installed P4 API libs to $LIB_DIR ($(ls "$LIB_DIR"/*.a | wc -l | tr -d ' ') files)"

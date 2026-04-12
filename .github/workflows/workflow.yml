@@ -32,6 +32,28 @@ permissions:
   packages: write
 
 jobs:
+  agent-tests:
+    runs-on: ubuntu-latest
+    name: Agent Tests (race + fuzz)
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Unit tests with race detector
+        run: go test -race -count=1 -v ./agent/...
+
+      - name: Fuzz ParseDockerImage
+        run: go test -fuzz=FuzzParseDockerImage -fuzztime=30s ./agent
+
+      - name: Fuzz ParseShebang
+        run: go test -fuzz=FuzzParseShebang -fuzztime=30s ./agent
+
+      - name: Fuzz ResolveTemplate
+        run: go test -fuzz=FuzzResolveTemplate -fuzztime=30s ./agent
+
   build-quick:
 
     runs-on: ubuntu-latest

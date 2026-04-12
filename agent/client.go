@@ -158,7 +158,17 @@ func saveInstanceCred(serverURL, agentToken string, cred *InstanceCred) error {
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(path, data, 0o600)
+	// Atomic write: temp file → fsync → rename. Prevents a crash
+	// mid-write from leaving a truncated or empty credential file.
+	tmp := path + ".tmp"
+	if err := os.WriteFile(tmp, data, 0o600); err != nil {
+		return err
+	}
+	if f, err := os.Open(tmp); err == nil {
+		_ = f.Sync()
+		f.Close()
+	}
+	return os.Rename(tmp, path)
 }
 
 // DeleteInstanceCred removes the on-disk credential file for a given

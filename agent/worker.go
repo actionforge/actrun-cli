@@ -21,11 +21,12 @@ import (
 var ErrConnectionLost = fmt.Errorf("connection lost")
 
 type Worker struct {
-	client       *Client
-	docker       DockerConfig
-	vcsOpts      vcs.Options
-	pollInterval time.Duration
-	log          *logrus.Entry
+	client            *Client
+	docker            DockerConfig
+	vcsOpts           vcs.Options
+	pollInterval      time.Duration
+	heartbeatInterval time.Duration
+	log               *logrus.Entry
 
 	metricsMu    sync.Mutex
 	lastCounters *RawCounters
@@ -33,11 +34,12 @@ type Worker struct {
 
 func NewWorker(client *Client, docker DockerConfig, vcsOpts vcs.Options) *Worker {
 	return &Worker{
-		client:       client,
-		docker:       docker,
-		vcsOpts:      vcsOpts,
-		pollInterval: 1 * time.Second,
-		log:          logrus.WithField("component", "agent"),
+		client:            client,
+		docker:            docker,
+		vcsOpts:           vcsOpts,
+		pollInterval:      1 * time.Second,
+		heartbeatInterval: 30 * time.Second,
+		log:               logrus.WithField("component", "agent"),
 	}
 }
 
@@ -66,7 +68,7 @@ func (w *Worker) Run(ctx context.Context) error {
 		w.log.WithError(err).Warn("initial heartbeat failed")
 	}
 
-	heartbeat := time.NewTicker(30 * time.Second)
+	heartbeat := time.NewTicker(w.heartbeatInterval)
 	defer heartbeat.Stop()
 
 	// workerCtx is a child of ctx shared across the heartbeat goroutine, the
