@@ -12,7 +12,7 @@ const Core_artifact_download_v1_Input_name core.InputId = "name"
 // The run ID to download the artifact from. Defaults to the current run if empty.
 const Core_artifact_download_v1_Input_run_id core.InputId = "run_id"
 
-// Outputs (o) ==>
+// Outputs (o) ==> 
 
 // The downloaded artifact data stream.
 const Core_artifact_download_v1_Output_data core.OutputId = "data"

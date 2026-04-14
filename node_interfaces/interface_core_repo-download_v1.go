@@ -7,10 +7,10 @@ import "github.com/actionforge/actrun-cli/core" // Download files from a repo on
 // ==> (o) Inputs
 
 const Core_repo_download_v1_Input_exec core.InputId = "exec"
-// File paths within the repo to download. Each file is written to the same relative path on disk.
+// File paths within the repo to download. Each file is written to the same relative path on disk. Use "*" to download the entire repo.
 const Core_repo_download_v1_Input_paths core.InputId = "paths"
 
-// Outputs (o) ==>
+// Outputs (o) ==> 
 
 const Core_repo_download_v1_Output_exec_err core.OutputId = "exec-err"
 const Core_repo_download_v1_Output_exec_success core.OutputId = "exec-success"

@@ -15,5 +15,4 @@ const Core_parser_v1_Input_input core.InputId = "input"
 const Core_parser_v1_Output_exec_err core.OutputId = "exec-err"
 const Core_parser_v1_Output_exec_success core.OutputId = "exec-success"
 // The parsed object.
-
 const Core_parser_v1_Output_object core.OutputId = "object"

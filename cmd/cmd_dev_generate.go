@@ -144,7 +144,9 @@ func createGoApi(projectRootDir string) error {
 		for _, inputId := range inputIds {
 			p := node.Inputs[inputId]
 			if p.Desc != "" {
-				fmt.Fprintf(fp, "// %v\n", p.Desc)
+				for _, line := range strings.Split(strings.TrimRight(p.Desc, "\n"), "\n") {
+					fmt.Fprintf(fp, "// %v\n", line)
+				}
 			}
 			v := strings.ReplaceAll(string(inputId), "-", "_")
 			fmt.Fprintf(fp, "const %v_Input_%v core.InputId = \"%v\"\n",
@@ -161,7 +163,9 @@ func createGoApi(projectRootDir string) error {
 		for _, outputId := range outputIds {
 			p := node.Outputs[outputId]
 			if p.Desc != "" {
-				fmt.Fprintf(fp, "// %v\n", p.Desc)
+				for _, line := range strings.Split(strings.TrimRight(p.Desc, "\n"), "\n") {
+					fmt.Fprintf(fp, "// %v\n", line)
+				}
 			}
 			v := strings.ReplaceAll(string(outputId), "-", "_")
 			fmt.Fprintf(fp, "const %v_Output_%v core.OutputId = \"%v\"\n", enumName, core.OutputId(v), outputId)

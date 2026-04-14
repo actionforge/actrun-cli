@@ -8,25 +8,34 @@ import "github.com/actionforge/actrun-cli/core" // Run a Docker container from a
 
 // Arguments to pass to the container entrypoint.
 const Core_docker_run_v1_Input_args core.InputId = "args"
-// Override the default entrypoint of the container.
+// Mount the host's Docker socket into the container, enabling Docker-in-Docker.
+// This matches GitHub Actions' default behavior for container actions.
+// Disable if the container doesn't need Docker access.
+const Core_docker_run_v1_Input_docker_socket core.InputId = "docker_socket"
+// Override the image's default entrypoint.
+// Example: `["/bin/sh", "-c"]`
 const Core_docker_run_v1_Input_entrypoint core.InputId = "entrypoint"
-// Environment variables to pass to the container.
+// Additional environment variables for the container.
+// Workflow/job environment variables are automatically included.
+// Use `KEY=VALUE` format to add or override variables.
 const Core_docker_run_v1_Input_env core.InputId = "env"
 const Core_docker_run_v1_Input_exec core.InputId = "exec"
-// Docker image URL or Dockerfile path.
+// Use `docker://` prefix for registry images, or path for Dockerfile.
+// Registry: `docker://alpine:latest`, `docker://ghcr.io/owner/image`
+// Dockerfile: `Dockerfile`, `./build/Dockerfile.prod`
 const Core_docker_run_v1_Input_image core.InputId = "image"
-// Docker network to connect the container to.
+// Docker network to connect the container to (e.g., host, bridge, or a custom network name).
 const Core_docker_run_v1_Input_network core.InputId = "network"
 // When to pull the image from the registry.
 const Core_docker_run_v1_Input_pull core.InputId = "pull"
-// Mount the host's Docker socket into the container, enabling Docker-in-Docker.
-const Core_docker_run_v1_Input_docker_socket core.InputId = "docker_socket"
-// Volume mounts in the format host_path:container_path.
+// Volume mounts in the format `host_path:container_path` or `host_path:container_path:ro` for read-only.
 const Core_docker_run_v1_Input_volumes core.InputId = "volumes"
 // Working directory inside the container.
+// For GitHub workflows: defaults to `/github/workspace` (where the repo is mounted).
+// Otherwise: uses the image's default WORKDIR.
 const Core_docker_run_v1_Input_workdir core.InputId = "workdir"
 
-// Outputs (o) ==>
+// Outputs (o) ==> 
 
 const Core_docker_run_v1_Output_exec_err core.OutputId = "exec-err"
 const Core_docker_run_v1_Output_exec_success core.OutputId = "exec-success"

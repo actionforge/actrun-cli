@@ -1,0 +1,69 @@
+yaml-version: 3.0
+id: core/file-decompress
+name: File Decompress
+version: 1
+category: filesystem
+icon: tablerFileZip
+short_desc: Decompresses an archive stream to a directory.
+long_desc: 'Decompresses an archive data stream into a target directory on-the-fly, using a minimal memory footprint regardless
+  of the size or number of files. Supports ZIP, TAR, and TAR.GZ formats.
+
+
+  ### Symlink Handling
+
+  Symbolic links inside the archive are silently skipped to ensure safe and portable extraction across all platforms.
+
+  '
+style:
+  header:
+    background: rgb(197, 147, 31)
+  body:
+    background: rgb(164 115 29)
+outputs:
+  exec-success:
+    name: Success
+    exec: true
+    index: 0
+    desc: Triggered when decompression is successful.
+  exec-err:
+    name: Error
+    exec: true
+    index: 1
+    desc: Triggered if an error occurs during decompression.
+  files:
+    name: Files
+    type: "[]string"
+    index: 2
+    desc: A list of absolute file paths that were extracted.
+inputs:
+  exec:
+    exec: true
+    index: 0
+    desc: Starts the decompression process.
+  format:
+    name: Format
+    type: option
+    index: 1
+    default: zip
+    options:
+      - name: zip
+        value: zip
+      - name: tar
+        value: tar
+      - name: tar.gz
+        value: targz
+        desc: The archive format to decompress.
+  dest_path:
+    name: Destination
+    type: string
+    hint: Directory to extract files into
+    index: 2
+    required: true
+    desc: The target directory where files will be extracted. Created automatically if it does not exist. Relative paths are
+      resolved from the current working directory.
+  data:
+    name: Data
+    type: stream
+    index: 3
+    required: true
+    desc: The binary data stream of the archive to decompress.

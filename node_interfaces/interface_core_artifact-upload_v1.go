@@ -14,7 +14,7 @@ const Core_artifact_upload_v1_Input_exec core.InputId = "exec"
 // The filename for the artifact.
 const Core_artifact_upload_v1_Input_name core.InputId = "name"
 
-// Outputs (o) ==>
+// Outputs (o) ==> 
 
 const Core_artifact_upload_v1_Output_exec_err core.OutputId = "exec-err"
 const Core_artifact_upload_v1_Output_exec_success core.OutputId = "exec-success"
