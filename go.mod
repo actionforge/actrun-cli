@@ -36,11 +36,11 @@ require (
 	github.com/tmc/langchaingo v0.1.14
 	go.mongodb.org/mongo-driver v1.17.6
 	go.yaml.in/yaml/v4 v4.0.0-rc.3
-	golang.org/x/crypto v0.49.0
+	golang.org/x/crypto v0.51.0
 	golang.org/x/exp v0.0.0-20251219203646-944ab1f22d93
-	golang.org/x/net v0.52.0
-	golang.org/x/sys v0.42.0
-	golang.org/x/text v0.35.0
+	golang.org/x/net v0.55.0
+	golang.org/x/sys v0.45.0
+	golang.org/x/text v0.37.0
 	gopkg.in/ini.v1 v1.67.0
 )
 
