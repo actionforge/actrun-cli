@@ -19,5 +19,5 @@ PushNodeVisit: list-files, execute: true
 PushNodeVisit: print-result, execute: true
 PushNodeVisit: (cached) list-files, execute: false
 [REDACTED]/background.jpg#1 - add change 3 (binary+F)
-[REDACTED]/build-pong-game.act#3 - edit change 5 (text)
+[REDACTED]/build-pong-game.act#5 - edit change 7 (text)
 [REDACTED]/tutorial-readme.md#1 - add change 3 (text)

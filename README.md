@@ -19,7 +19,7 @@ It handles the traversal, concurrency, and data flow of visual graphs created in
 
 ### 📥 Installation
 
-Requires **Go 1.25+**.
+Requires **Go 1.26+**.
 
 ```bash
 git clone git@github.com:actionforge/actrun-cli.git

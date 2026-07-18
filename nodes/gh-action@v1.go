@@ -743,7 +743,7 @@ func init() {
 					return nil, []error{err}
 				}
 
-				runnersSha256, err := u.GetSha256OfFile(filepath.Join(runnersDir, ".runner"))
+				runnersSha256, err := u.GetSha256OfFile(filepath.Join(runnersDir, runnerConfigFile))
 				if err != nil {
 					return nil, []error{err}
 				}
@@ -892,7 +892,59 @@ type ActionRuns struct {
 	Args           []string `json:"args"`
 }
 
-// getRunnersDir returns the directory of the latest runner version.
+// runnerConfigFile is the GitHub Actions runner's own settings file
+// (written by the runner itself next to its "bin" directory). We use it to
+// fingerprint the machine. Its parent directory has moved across runner
+// image versions (flat vs. version-nested "cached" layouts), so we check
+// several known candidate layouts rather than assuming a single fixed path.
+const runnerConfigFile = ".runner"
+
+// hasRunnerConfigFile reports whether dir directly contains the runner's
+// .runner settings file.
+func hasRunnerConfigFile(dir string) bool {
+	_, err := os.Stat(filepath.Join(dir, runnerConfigFile))
+	return err == nil
+}
+
+// latestVersionedSubdir returns the highest semver-named subdirectory of
+// parentDir for which match returns true, if any.
+func latestVersionedSubdir(parentDir string, match func(dir string) bool) (string, bool) {
+	files, err := os.ReadDir(parentDir)
+	if err != nil {
+		return "", false
+	}
+
+	var highestVersion *semver.Version
+	var highestVersionDir string
+
+	for _, file := range files {
+		if !file.IsDir() {
+			continue
+		}
+		ver, err := semver.NewVersion(file.Name())
+		if err != nil {
+			continue
+		}
+		if highestVersion != nil && !ver.GreaterThan(highestVersion) {
+			continue
+		}
+		dir := filepath.Join(parentDir, file.Name())
+		if !match(dir) {
+			continue
+		}
+		highestVersion = ver
+		highestVersionDir = dir
+	}
+
+	if highestVersion == nil {
+		return "", false
+	}
+
+	return highestVersionDir, true
+}
+
+// getRunnersDir returns the directory containing the runner's .runner
+// settings file, checking known runner install layouts in turn.
 func getRunnersDir() (string, error) {
 
 	homeDir, err := os.UserHomeDir()
@@ -900,47 +952,29 @@ func getRunnersDir() (string, error) {
 		return "", core.CreateErr(nil, err, "unable to get user home directory")
 	}
 
-	// First, try the path ~/actions-runner/cached
+	// Flat layout: ~/actions-runner/cached/.runner
 	cachedDir := filepath.Join(homeDir, "actions-runner", "cached")
-	_, err = os.Stat(cachedDir)
-	if err == nil {
+	if hasRunnerConfigFile(cachedDir) {
 		return cachedDir, nil
 	}
 
-	// TODO: (Seb) The code below iterates over the different runner versions
-	// in the home folder to find the latest dir version. There is currently
-	// no other way to find the real runner version.
-	_, err = os.ReadDir(cachedDir)
-	if err == nil {
-		return "", core.CreateErr(nil, err, "unable to read runners directory")
+	// Version-nested layout: ~/actions-runner/cached/<version>/.runner
+	if dir, ok := latestVersionedSubdir(cachedDir, hasRunnerConfigFile); ok {
+		return dir, nil
 	}
 
-	// If not found, fallback to ~/runners, not sure when they changed the directory structure.
-	files, err := os.ReadDir(filepath.Join(homeDir, "runners"))
-	if err != nil {
-		return "", core.CreateErr(nil, err, "unable to read runners directory")
+	// Layout without a "cached" subfolder: ~/actions-runner/.runner
+	actionsRunnerDir := filepath.Join(homeDir, "actions-runner")
+	if hasRunnerConfigFile(actionsRunnerDir) {
+		return actionsRunnerDir, nil
 	}
 
-	var highestVersion *semver.Version
-	var highestVersionDir string
-
-	for _, file := range files {
-		if file.IsDir() {
-			ver, err := semver.NewVersion(file.Name())
-			if err == nil {
-				if highestVersion == nil || ver.GreaterThan(highestVersion) {
-					highestVersion = ver
-					highestVersionDir = file.Name()
-				}
-			}
-		}
+	// Fallback layout: ~/runners/<version>/.runner
+	if dir, ok := latestVersionedSubdir(filepath.Join(homeDir, "runners"), hasRunnerConfigFile); ok {
+		return dir, nil
 	}
 
-	if highestVersion == nil {
-		return "", core.CreateErr(nil, nil, "no valid semantic version directories found")
-	}
-
-	return filepath.Join(homeDir, "runners", highestVersionDir), nil
+	return "", core.CreateErr(nil, nil, "unable to locate .runner file under any known runner install directory")
 }
 
 // https://github.com/actions/runner/blob/f467e9e1255530d3bf2e33f580d041925ab01951/src/Runner.Worker/GitHubContext.cs#L9

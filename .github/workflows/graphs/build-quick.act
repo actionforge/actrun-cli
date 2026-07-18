@@ -16,7 +16,7 @@ nodes:
       x: 1150
       y: 220
     inputs:
-      go-version: '1.25'
+      go-version: '1.26'
   - id: run-v1-coconut-banana-green
     type: core/run@v1
     position:

@@ -11,7 +11,7 @@ nodes:
       x: -1720
       y: 2550
     inputs:
-      go-version: '1.25'
+      go-version: '1.26'
       token: ${{ github.token }}
   - id: gh-apple-actions-import-codesign-certs-peach-butterfly-apple
     type: >-
